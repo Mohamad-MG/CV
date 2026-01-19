@@ -10,39 +10,10 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
         rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/theme.css">
+    <script src="assets/js/theme.js" defer></script>
     <style>
-        :root {
-            --teal-deep: #1A6B6B;
-            --teal-primary: #2B9B9B;
-            --teal-light: #4DC4C4;
-            --teal-glow: rgba(45, 180, 180, 0.15);
-            --purple-deep: #5D4A7A;
-            --purple-primary: #8B6AAF;
-            --purple-light: #B89DD8;
-            --purple-glow: rgba(139, 106, 175, 0.12);
-
-            --white: #FFFFFF;
-            --off-white: #FAFBFC;
-            --gray-50: #F8F9FA;
-            --gray-100: #F1F3F5;
-            --gray-200: #E9ECEF;
-            --gray-300: #DEE2E6;
-            --gray-400: #CED4DA;
-            --gray-500: #ADB5BD;
-            --gray-600: #868E96;
-            --gray-700: #495057;
-            --gray-800: #343A40;
-            --gray-900: #1A2B3C;
-
-            --text-primary: #1A2B3C;
-            --text-secondary: #495057;
-            --text-muted: #868E96;
-
-            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04);
-            --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.06);
-            --shadow-lg: 0 10px 40px rgba(0, 0, 0, 0.08);
-            --shadow-xl: 0 20px 60px rgba(0, 0, 0, 0.1);
-        }
+        /* :root variables are now imported from assets/css/theme.css */
 
         * {
             margin: 0;
@@ -53,12 +24,12 @@
         html {
             scroll-behavior: smooth;
             scrollbar-width: thin;
-            scrollbar-color: var(--teal-primary) var(--gray-100);
+            scrollbar-color: var(--teal-primary) var(--border-color);
         }
 
         body {
             font-family: 'Outfit', sans-serif;
-            background: var(--white);
+            background: var(--bg-body);
             color: var(--text-primary);
             overflow-x: hidden;
             line-height: 1.7;
@@ -183,7 +154,7 @@
             align-items: center;
             padding-top: 80px;
             padding-bottom: 80px;
-            background: linear-gradient(180deg, var(--white) 0%, var(--gray-50) 50%, var(--white) 100%);
+            background: var(--bg-body);
             position: relative;
             overflow: hidden;
         }
@@ -424,7 +395,7 @@
 
         /* Career Story */
         .story-section {
-            background: var(--white);
+            background: var(--bg-card);
         }
 
         .section-header {
@@ -470,7 +441,7 @@
 
         /* Experience Timeline */
         .experience-section {
-            background: var(--gray-50);
+            background: var(--bg-body);
         }
 
         .timeline {
@@ -504,7 +475,7 @@
         .timeline-content {
             width: 45%;
             padding: 25px 30px;
-            background: var(--white);
+            background: var(--bg-card);
             border-radius: 16px;
             box-shadow: var(--shadow-md);
             transition: all 0.4s ease;
@@ -528,7 +499,7 @@
             transform: translateX(-50%);
             width: 16px;
             height: 16px;
-            background: var(--white);
+            background: var(--bg-card);
             border: 3px solid var(--teal-primary);
             border-radius: 50%;
             z-index: 5;
@@ -556,7 +527,7 @@
 
         /* Achievements */
         .achievements-section {
-            background: var(--white);
+            background: var(--bg-card);
         }
 
         .achievements-grid {
@@ -708,7 +679,7 @@
 
         /* Skills */
         .skills-section {
-            background: var(--gray-50);
+            background: var(--bg-body);
         }
 
         .skills-grid {
@@ -720,7 +691,7 @@
         }
 
         .skill-item {
-            background: var(--white);
+            background: var(--bg-card);
             padding: 25px 20px;
             border-radius: 16px;
             text-align: center;
@@ -758,7 +729,7 @@
 
         /* Tools */
         .tools-section {
-            background: var(--white);
+            background: var(--bg-card);
         }
 
         .tools-container {
@@ -788,7 +759,7 @@
 
         /* Education */
         .education-section {
-            background: var(--gray-50);
+            background: var(--bg-body);
         }
 
         .education-grid {
@@ -800,7 +771,7 @@
         }
 
         .education-card {
-            background: var(--white);
+            background: var(--bg-card);
             padding: 30px;
             border-radius: 16px;
             border-left: 4px solid var(--teal-primary);
@@ -826,7 +797,7 @@
 
         /* Video Showreel Section */
         .video-section {
-            background: linear-gradient(180deg, var(--gray-50) 0%, var(--white) 50%, var(--gray-50) 100%);
+            background: var(--bg-body);
             overflow: hidden;
         }
 
@@ -986,7 +957,7 @@
 
         /* Contact */
         .contact-section {
-            background: linear-gradient(180deg, var(--white), var(--gray-50));
+            background: var(--bg-card);
             text-align: center;
         }
 
@@ -1043,7 +1014,7 @@
         footer {
             padding: 40px;
             text-align: center;
-            background: var(--gray-50);
+            background: var(--bg-body);
             border-top: 1px solid var(--gray-200);
         }
 
@@ -1578,7 +1549,7 @@
         </section>
     </main>
 
-    <footer style="padding: 40px 20px; text-align: center; background: var(--gray-50); border-top: 1px solid var(--gray-200);">
+    <footer style="padding: 40px 20px; text-align: center; background: var(--bg-body); border-top: 1px solid var(--border-color);">
         <div style="display: flex; justify-content: center; gap: 25px; margin-bottom: 20px; flex-wrap: wrap;">
             <a href="/CV/" style="text-decoration: none; color: var(--text-secondary); font-weight: 500; font-size: 0.9rem; transition: color 0.3s ease;">Home</a>
             <a href="/CV/portfolio/" style="text-decoration: none; color: var(--text-secondary); font-weight: 500; font-size: 0.9rem; transition: color 0.3s ease;">Portfolio</a>

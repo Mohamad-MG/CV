@@ -10,34 +10,10 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
         rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/theme.css">
+    <script src="../assets/js/theme.js" defer></script>
     <style>
-        :root {
-            --teal-deep: #1A6B6B;
-            --teal-primary: #2B9B9B;
-            --teal-light: #4DC4C4;
-            --teal-glow: rgba(45, 180, 180, 0.15);
-            --purple-deep: #5D4A7A;
-            --purple-primary: #8B6AAF;
-            --purple-light: #B89DD8;
-            --purple-glow: rgba(139, 106, 175, 0.12);
-            --gold: #C4A962;
-            --gold-light: #E8D5A3;
-
-            --white: #FFFFFF;
-            --gray-50: #F8F9FA;
-            --gray-100: #F1F3F5;
-            --gray-200: #E9ECEF;
-            --gray-700: #495057;
-            --gray-900: #1A2B3C;
-
-            --text-primary: #1A2B3C;
-            --text-secondary: #495057;
-            --text-muted: #868E96;
-
-            --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.08);
-            --shadow-lg: 0 10px 40px rgba(0, 0, 0, 0.12);
-            --shadow-xl: 0 20px 60px rgba(0, 0, 0, 0.15);
-        }
+        /* Variables now in theme.css */
 
         * {
             margin: 0;
@@ -51,7 +27,7 @@
 
         body {
             font-family: 'Outfit', sans-serif;
-            background: var(--gray-50);
+            background: var(--bg-body);
             color: var(--text-primary);
             overflow-x: hidden;
             line-height: 1.7;
@@ -186,7 +162,7 @@
             justify-content: center;
             text-align: center;
             padding: 80px 20px 50px;
-            background: linear-gradient(180deg, var(--white) 0%, var(--gray-50) 100%);
+            background: var(--bg-body);
             position: relative;
             z-index: 10;
         }
@@ -313,7 +289,7 @@
         /* Filter Tabs */
         .filter-section {
             padding: 30px 20px;
-            background: var(--white);
+            background: var(--bg-card);
             position: sticky;
             top: 0;
             z-index: 100;
@@ -369,7 +345,7 @@
             position: relative;
             border-radius: 20px;
             overflow: hidden;
-            background: var(--white);
+            background: var(--bg-card);
             box-shadow: var(--shadow-md);
             cursor: pointer;
             transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
@@ -523,7 +499,7 @@
         footer {
             padding: 60px 20px;
             text-align: center;
-            background: var(--white);
+            background: var(--bg-card);
             border-top: 1px solid var(--gray-200);
             position: relative;
             z-index: 10;
@@ -1155,7 +1131,7 @@
     </div>
 
     <!-- Footer -->
-    <footer style="padding: 40px 20px; text-align: center; background: var(--gray-50); border-top: 1px solid var(--gray-200); margin-top: 60px;">
+    <footer style="padding: 40px 20px; text-align: center; background: var(--bg-body); border-top: 1px solid var(--border-color); margin-top: 60px;">
         <div style="display: flex; justify-content: center; gap: 25px; margin-bottom: 20px; flex-wrap: wrap;">
             <a href="/CV/" style="text-decoration: none; color: var(--text-secondary); font-weight: 500; font-size: 0.9rem; transition: color 0.3s ease;">Home</a>
             <a href="/CV/portfolio/" style="text-decoration: none; color: var(--text-secondary); font-weight: 500; font-size: 0.9rem; transition: color 0.3s ease;">Portfolio</a>

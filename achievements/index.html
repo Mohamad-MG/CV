@@ -10,22 +10,10 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
         rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/theme.css">
+    <script src="../assets/js/theme.js" defer></script>
     <style>
-        :root {
-            --bg-dark: #0a0f16;
-            --bg-card: rgba(255, 255, 255, 0.03);
-            --bg-card-hover: rgba(255, 255, 255, 0.07);
-            --border-color: rgba(255, 255, 255, 0.1);
-            
-            --teal-primary: #2B9B9B;
-            --teal-glow: #4DC4C4;
-            --purple-primary: #8B6AAF;
-            --purple-glow: #B89DD8;
-            --gold: #FFD700;
-            
-            --text-primary: #FFFFFF;
-            --text-secondary: #A0AEC0;
-        }
+        /* :root variables imported from theme.css */
 
         * {
             margin: 0;
@@ -35,7 +23,7 @@
 
         body {
             font-family: 'Outfit', sans-serif;
-            background-color: var(--bg-dark);
+            background-color: var(--bg-body);
             color: var(--text-primary);
             overflow-x: hidden;
             line-height: 1.6;
@@ -289,7 +277,7 @@
         }
 
         .achieve-card {
-            background: var(--bg-card);
+            background: var(--bg-glass);
             border: 1px solid var(--border-color);
             border-radius: 24px;
             padding: 40px;
@@ -307,7 +295,7 @@
         }
 
         .achieve-card:hover {
-            background: var(--bg-card-hover);
+            background: var(--bg-card);
             border-color: rgba(255, 255, 255, 0.3);
             transform: translateY(-10px);
         }
@@ -365,7 +353,7 @@
             text-align: center;
             position: relative;
             z-index: 10;
-            background: #05080c;
+            background: var(--bg-body);
         }
 
         .footer-links {

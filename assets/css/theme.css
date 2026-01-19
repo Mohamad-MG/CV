@@ -1,0 +1,117 @@
+/* --- Design System & Theme Variables --- */
+:root {
+    /* Core Hues */
+    --teal-primary: #2B9B9B;
+    --teal-glow: rgba(45, 180, 180, 0.15);
+    --purple-primary: #8B6AAF;
+    --purple-glow: rgba(139, 106, 175, 0.12);
+    --gold: #C4A962;
+
+    /* Transition Settings */
+    --theme-transition: background-color 0.4s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Light Theme (Default) */
+:root[data-theme="light"] {
+    --bg-body: #FAFBFC;
+    --bg-card: #FFFFFF;
+    --bg-glass: rgba(255, 255, 255, 0.8);
+    --text-primary: #1A2B3C;
+    --text-secondary: #495057;
+    --text-muted: #868E96;
+    --border-color: #E9ECEF;
+    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.08);
+    --shadow-glow: 0 0 0 transparent; /* No glow in light mode usually */
+    --gradient-overlay: linear-gradient(180deg, rgba(255,255,255,0) 0%, #FAFBFC 100%);
+}
+
+/* Dark Theme */
+:root[data-theme="dark"] {
+    --bg-body: #0a0f16;
+    --bg-card: #161b22;
+    --bg-glass: rgba(22, 27, 34, 0.8);
+    --text-primary: #f0f6fc;
+    --text-secondary: #8b949e;
+    --text-muted: #6e7681;
+    --border-color: #30363d;
+    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.2);
+    --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.4);
+    --shadow-glow: 0 0 40px rgba(43, 155, 155, 0.1);
+    --gradient-overlay: linear-gradient(180deg, rgba(10,15,22,0) 0%, #0a0f16 100%);
+}
+
+/* Base Styles Applying Variables */
+body {
+    background-color: var(--bg-body);
+    color: var(--text-primary);
+    transition: var(--theme-transition);
+}
+
+section, footer, nav, div, p, h1, h2, h3, h4, span, a, li {
+    transition: var(--theme-transition);
+}
+
+/* Card Styles Reuse */
+.card-base {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-sm);
+}
+
+/* Theme Toggle Button Style */
+.theme-toggle {
+    position: fixed;
+    top: 25px;
+    right: 25px; /* Default position */
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 2000;
+    box-shadow: var(--shadow-md);
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.theme-toggle:hover {
+    transform: scale(1.1) rotate(15deg);
+    box-shadow: 0 0 20px var(--teal-glow);
+    border-color: var(--teal-primary);
+}
+
+.theme-toggle svg {
+    width: 22px;
+    height: 22px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+/* Hide/Show Icons based on theme */
+[data-theme="light"] .icon-moon { display: block; }
+[data-theme="light"] .icon-sun { display: none; }
+[data-theme="dark"] .icon-moon { display: none; }
+[data-theme="dark"] .icon-sun { display: block; }
+
+/* Scrollbar Polish */
+::-webkit-scrollbar {
+    width: 8px;
+}
+::-webkit-scrollbar-track {
+    background: var(--bg-body);
+}
+::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: var(--teal-primary);
+}
