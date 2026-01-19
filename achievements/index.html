@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mohamed Gamal | Hall of Achievements</title>
+    <meta name="description" content="Awards, recognitions, and major milestones in digital marketing and business growth.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0a0f16;
+            --bg-card: rgba(255, 255, 255, 0.03);
+            --bg-card-hover: rgba(255, 255, 255, 0.07);
+            --border-color: rgba(255, 255, 255, 0.1);
+            
+            --teal-primary: #2B9B9B;
+            --teal-glow: #4DC4C4;
+            --purple-primary: #8B6AAF;
+            --purple-glow: #B89DD8;
+            --gold: #FFD700;
+            
+            --text-primary: #FFFFFF;
+            --text-secondary: #A0AEC0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* Ambient Background */
+        .ambient-glow {
+            position: fixed;
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(circle, rgba(43, 155, 155, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+            top: -200px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 0;
+            pointer-events: none;
+            animation: pulseGlow 8s ease-in-out infinite;
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { opacity: 0.5; transform: translateX(-50%) scale(1); }
+            50% { opacity: 0.8; transform: translateX(-50%) scale(1.1); }
+        }
+
+        /* Navigation */
+        .back-nav {
+            position: fixed;
+            top: 30px;
+            left: 30px;
+            z-index: 1000;
+            mix-blend-mode: difference;
+        }
+
+        .back-nav a {
+            text-decoration: none;
+            color: white;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.1rem;
+            opacity: 0.8;
+            transition: all 0.3s ease;
+        }
+
+        .back-nav a:hover {
+            opacity: 1;
+            transform: translateX(-5px);
+        }
+
+        /* Hero Section */
+        header {
+            min-height: 80vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+            z-index: 10;
+            padding: 0 20px;
+        }
+
+        .hero-label {
+            font-size: 0.9rem;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            color: var(--teal-glow);
+            margin-bottom: 20px;
+            opacity: 0;
+            animation: fadeDown 1s ease forwards 0.2s;
+        }
+
+        h1 {
+            font-size: clamp(3rem, 8vw, 6rem);
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 30px;
+            background: linear-gradient(to right, #fff, #a5a5a5);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            opacity: 0;
+            animation: fadeUp 1s ease forwards 0.4s;
+        }
+
+        .hero-desc {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto;
+            opacity: 0;
+            animation: fadeUp 1s ease forwards 0.6s;
+        }
+
+        /* Stats Grid */
+        .stats-container {
+            display: flex;
+            justify-content: center;
+            gap: 60px;
+            margin-top: 80px;
+            flex-wrap: wrap;
+            opacity: 0;
+            animation: fadeUp 1s ease forwards 0.8s;
+        }
+
+        .stat-box {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 3.5rem;
+            font-weight: 700;
+            color: transparent;
+            -webkit-text-stroke: 1px rgba(255,255,255,0.3);
+            position: relative;
+            margin-bottom: 10px;
+        }
+        
+        .stat-number::before {
+            content: attr(data-val);
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 0%;
+            height: 100%;
+            color: var(--teal-glow);
+            overflow: hidden;
+            border-right: 2px solid var(--teal-glow);
+            transition: width 1.5s ease-out;
+            -webkit-text-stroke: 0px;
+        }
+
+        .stat-box.visible .stat-number::before {
+            width: 100%;
+            border-right: none;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* The Crown Jewel - Record Section */
+        .record-section {
+            padding: 100px 20px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .record-card {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: linear-gradient(145deg, rgba(255,215,0,0.05), rgba(0,0,0,0));
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            border-radius: 30px;
+            padding: 60px;
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            gap: 50px;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.5s ease;
+        }
+
+        .record-card:hover {
+            transform: scale(1.01);
+            border-color: rgba(255, 215, 0, 0.4);
+            box-shadow: 0 0 50px rgba(255, 215, 0, 0.05);
+        }
+
+        .record-content h2 {
+            font-size: clamp(2rem, 4vw, 3rem);
+            margin-bottom: 20px;
+            color: var(--gold);
+        }
+
+        .record-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 16px;
+            background: rgba(255, 215, 0, 0.1);
+            border: 1px solid var(--gold);
+            border-radius: 50px;
+            color: var(--gold);
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+        }
+
+        .record-desc {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            margin-bottom: 30px;
+        }
+
+        .record-visual {
+            position: relative;
+            height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .gold-ring {
+            position: absolute;
+            width: 250px;
+            height: 250px;
+            border: 2px solid rgba(255, 215, 0, 0.2);
+            border-radius: 50%;
+            animation: spin 10s linear infinite;
+        }
+
+        .gold-ring::after {
+            content: '';
+            position: absolute;
+            top: -5px;
+            left: 50%;
+            width: 10px;
+            height: 10px;
+            background: var(--gold);
+            border-radius: 50%;
+            box-shadow: 0 0 20px var(--gold);
+        }
+
+        .gold-ring:nth-child(2) {
+            width: 180px;
+            height: 180px;
+            animation-duration: 15s;
+            animation-direction: reverse;
+            border-color: rgba(255, 215, 0, 0.4);
+        }
+
+        /* Achievements Grid */
+        .grid-section {
+            padding: 50px 20px 150px;
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 10;
+        }
+
+        .achieve-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+        }
+
+        .achieve-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            padding: 40px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s ease;
+            backdrop-filter: blur(10px);
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        .achieve-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .achieve-card:hover {
+            background: var(--bg-card-hover);
+            border-color: rgba(255, 255, 255, 0.3);
+            transform: translateY(-10px);
+        }
+
+        .card-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, var(--teal-primary), rgba(43, 155, 155, 0.2));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 30px rgba(43, 155, 155, 0.2);
+        }
+
+        .achieve-card:nth-child(2) .card-icon {
+            background: linear-gradient(135deg, var(--purple-primary), rgba(139, 106, 175, 0.2));
+            box-shadow: 0 10px 30px rgba(139, 106, 175, 0.2);
+        }
+
+        .achieve-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+        }
+
+        .achieve-card p {
+            color: var(--text-secondary);
+            font-size: 1rem;
+        }
+
+        /* Mouse Spotlight Effect */
+        .achieve-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(800px circle at var(--mouse-x) var(--mouse-y), rgba(255,255,255,0.06), transparent 40%);
+            z-index: 0;
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+
+        .achieve-card:hover::before {
+            opacity: 1;
+        }
+
+        /* Footer */
+        footer {
+            border-top: 1px solid var(--border-color);
+            padding: 40px;
+            text-align: center;
+            position: relative;
+            z-index: 10;
+            background: #05080c;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 20px;
+        }
+
+        .footer-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: white;
+        }
+
+        /* Animations */
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 900px) {
+            .record-card {
+                grid-template-columns: 1fr;
+                text-align: center;
+                padding: 40px;
+            }
+            .record-badge {
+                margin: 0 auto 20px;
+            }
+            .record-visual {
+                height: 200px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="ambient-glow"></div>
+
+    <div class="back-nav">
+        <a href="/CV/">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+            Back to Home
+        </a>
+    </div>
+
+    <header>
+        <div class="hero-label">Excellence in Action</div>
+        <h1>Defining<br>The Standard</h1>
+        <p class="hero-desc">Over a decade of breaking records, transforming businesses, and setting new benchmarks in the MENA digital landscape.</p>
+        
+        <div class="stats-container">
+            <div class="stat-box visible">
+                <div class="stat-number" data-val="10+">10+</div>
+                <div class="stat-label">Years Exp</div>
+            </div>
+            <div class="stat-box visible">
+                <div class="stat-number" data-val="#1">#1</div>
+                <div class="stat-label">Ranking</div>
+            </div>
+            <div class="stat-box visible">
+                <div class="stat-number" data-val="40%">40%</div>
+                <div class="stat-label">Growth</div>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <!-- The Record -->
+        <section class="record-section">
+            <div class="record-card">
+                <div class="record-content">
+                    <div class="record-badge">
+                        <span>🏆 Guinness World Record Holder</span>
+                    </div>
+                    <h2>The 5 Million Order Milestone</h2>
+                    <p class="record-desc">
+                        Led the digital strategy for Arabian Oud that resulted in breaking the Guinness World Record for the most orders on a single platform during a Black Friday campaign. This wasn't just about traffic; it was about orchestrating a flawless logistical and digital symphony.
+                    </p>
+                    <p class="record-desc" style="color: white; font-weight: 500;">
+                        Result: Recognized as the #1 Top Performer E-commerce Platform in KSA.
+                    </p>
+                </div>
+                <div class="record-visual">
+                    <div class="gold-ring"></div>
+                    <div class="gold-ring"></div>
+                    <div style="font-size: 4rem; z-index: 2;">👑</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Other Achievements -->
+        <section class="grid-section">
+            <div class="achieve-grid">
+                
+                <!-- Card 1 -->
+                <div class="achieve-card">
+                    <div class="card-icon">🚀</div>
+                    <h3>Strategic B2B Transformation</h3>
+                    <p>At Qeyadat, I shifted the paradigm from "Selling Services" to "Selling Solutions." This strategic pivot secured long-term contracts with major Saudi government sectors and diversified revenue streams beyond traditional models.</p>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="achieve-card">
+                    <div class="card-icon">🏛️</div>
+                    <h3>GovTech Digital Compliance</h3>
+                    <p>Developed the "Digital Readiness Framework" for Iso-tec. This innovation helped major ministries qualify for ISO certifications, turning a complex compliance hurdle into a streamlined, productized service.</p>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="achieve-card">
+                    <div class="card-icon">📈</div>
+                    <h3>Omnichannel Masterclass</h3>
+                    <p>Successfully bridged the gap between Arabian Oud's massive retail footprint (900+ stores) and their digital presence. Created a unified customer view that increased Lifetime Value (LTV) by 35% across both channels.</p>
+                </div>
+
+                <!-- Card 4 -->
+                <div class="achieve-card">
+                    <div class="card-icon">💡</div>
+                    <h3>Business Model Innovation</h3>
+                    <p>Founded distinct business units within existing structures to capture new market segments, proving that intrapreneurship is just as vital as entrepreneurship for sustained growth.</p>
+                </div>
+
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-links">
+            <a href="/CV/">Home</a>
+            <a href="/CV/portfolio/">Portfolio</a>
+            <a href="/CV/clients/healthcare-growth/">Case Studies</a>
+        </div>
+        <p style="color: var(--text-secondary); font-size: 0.9rem;">© 2026 Mohamed Gamal | Excellence Delivered</p>
+    </footer>
+
+    <script>
+        // Spotlight Effect
+        document.querySelector('.grid-section').onmousemove = e => {
+            for(const card of document.getElementsByClassName("achieve-card")) {
+                const rect = card.getBoundingClientRect(),
+                      x = e.clientX - rect.left,
+                      y = e.clientY - rect.top;
+
+                card.style.setProperty("--mouse-x", `${x}px`);
+                card.style.setProperty("--mouse-y", `${y}px`);
+            };
+        }
+
+        // Scroll Observer
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    
+                    // Trigger number animation if it's the stats container
+                    if (entry.target.classList.contains('stat-box')) {
+                        // Animation is handled by CSS width transition on pseudo element
+                    }
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.achieve-card, .stat-box').forEach(el => observer.observe(el));
+    </script>
+</body>
+</html>
