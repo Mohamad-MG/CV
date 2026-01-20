@@ -1,0 +1,472 @@
+/* ============================================
+   ULTRA MODERN MOTION EFFECTS
+   Advanced animations for premium UX
+   ============================================ */
+
+/* ============================================
+   1. ENHANCED REVEAL ON SCROLL
+   Replaces basic fadeUp with clip-path + blur
+   ============================================ */
+
+@keyframes revealClipBlur {
+    from {
+        opacity: 0;
+        clip-path: inset(0 0 100% 0);
+        filter: blur(10px);
+        transform: translateY(40px);
+    }
+
+    to {
+        opacity: 1;
+        clip-path: inset(0 0 0 0);
+        filter: blur(0);
+        transform: translateY(0);
+    }
+}
+
+@keyframes revealSlideUp {
+    from {
+        opacity: 0;
+        transform: translateY(60px) scale(0.95);
+        filter: blur(8px) brightness(0.8);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        filter: blur(0) brightness(1);
+    }
+}
+
+/* Enhanced reveal classes */
+.reveal-modern {
+    opacity: 0;
+    animation: revealSlideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.reveal-clip {
+    opacity: 0;
+    animation: revealClipBlur 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* ============================================
+   2. MAGNETIC HOVER EFFECT
+   Cards "attract" towards cursor
+   ============================================ */
+
+.magnetic-card {
+    position: relative;
+    transition: transform 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+    will-change: transform;
+}
+
+.magnetic-card::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border-radius: inherit;
+    background: linear-gradient(135deg,
+            rgba(43, 155, 155, 0.1),
+            rgba(138, 43, 226, 0.1));
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    z-index: -1;
+}
+
+.magnetic-card:hover::before {
+    opacity: 1;
+}
+
+/* Magnetic glow effect */
+.magnetic-glow {
+    position: relative;
+    overflow: hidden;
+}
+
+.magnetic-glow::after {
+    content: '';
+    position: absolute;
+    width: 200px;
+    height: 200px;
+    background: radial-gradient(circle,
+            rgba(43, 155, 155, 0.4) 0%,
+            transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    transform: translate(-50%, -50%);
+}
+
+.magnetic-glow:hover::after {
+    opacity: 1;
+}
+
+/* ============================================
+   3. 3D TILT EFFECT
+   Perspective tilt following mouse
+   ============================================ */
+
+.tilt-3d {
+    transform-style: preserve-3d;
+    transition: transform 0.4s cubic-bezier(0.03, 0.98, 0.52, 0.99);
+    will-change: transform;
+}
+
+.tilt-3d:hover {
+    transform: perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1.02, 1.02, 1.02);
+}
+
+/* Tilt inner layer for depth */
+.tilt-inner {
+    transform: translateZ(30px);
+    transition: transform 0.4s cubic-bezier(0.03, 0.98, 0.52, 0.99);
+}
+
+.tilt-3d:hover .tilt-inner {
+    transform: translateZ(50px);
+}
+
+/* ============================================
+   4. ELASTIC BOUNCE
+   Spring-like button interactions
+   ============================================ */
+
+@keyframes elasticBounce {
+    0% {
+        transform: scale(1);
+    }
+
+    30% {
+        transform: scale(1.15);
+    }
+
+    50% {
+        transform: scale(0.95);
+    }
+
+    70% {
+        transform: scale(1.05);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+.elastic-hover {
+    transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.elastic-hover:hover {
+    transform: scale(1.05);
+}
+
+.elastic-hover:active {
+    animation: elasticBounce 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+/* ============================================
+   5. MORPHING SHAPES (SVG Blob)
+   Organic shape transformations
+   ============================================ */
+
+@keyframes blobMorph {
+
+    0%,
+    100% {
+        border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+    }
+
+    25% {
+        border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%;
+    }
+
+    50% {
+        border-radius: 50% 60% 30% 60% / 30% 60% 70% 40%;
+    }
+
+    75% {
+        border-radius: 60% 40% 60% 40% / 70% 30% 50% 60%;
+    }
+}
+
+.blob-morph {
+    animation: blobMorph 20s ease-in-out infinite;
+    will-change: border-radius;
+}
+
+/* Enhanced ambient glow with morphing */
+.ambient-morph {
+    position: absolute;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle,
+            rgba(43, 155, 155, 0.15) 0%,
+            transparent 70%);
+    filter: blur(60px);
+    animation: blobMorph 25s ease-in-out infinite,
+        ambientFloat 30s ease-in-out infinite;
+    opacity: 0.6;
+}
+
+@keyframes ambientFloat {
+
+    0%,
+    100% {
+        transform: translate(0, 0) scale(1);
+    }
+
+    25% {
+        transform: translate(100px, -50px) scale(1.1);
+    }
+
+    50% {
+        transform: translate(-50px, 100px) scale(0.9);
+    }
+
+    75% {
+        transform: translate(50px, -100px) scale(1.05);
+    }
+}
+
+/* ============================================
+   6. PARALLAX FLOAT
+   3D depth with scroll-based movement
+   ============================================ */
+
+.parallax-float {
+    transform-style: preserve-3d;
+    animation: parallaxDrift 15s ease-in-out infinite;
+    will-change: transform;
+}
+
+@keyframes parallaxDrift {
+
+    0%,
+    100% {
+        transform: translateZ(0) translateY(0) rotateX(0deg);
+    }
+
+    25% {
+        transform: translateZ(20px) translateY(-15px) rotateX(2deg);
+    }
+
+    50% {
+        transform: translateZ(-10px) translateY(10px) rotateX(-1deg);
+    }
+
+    75% {
+        transform: translateZ(15px) translateY(-10px) rotateX(1deg);
+    }
+}
+
+/* ============================================
+   7. TEXT REVEAL ANIMATION
+   Character-by-character reveal
+   ============================================ */
+
+@keyframes textReveal {
+    from {
+        opacity: 0;
+        transform: translateY(20px) rotateX(-90deg);
+        filter: blur(5px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) rotateX(0deg);
+        filter: blur(0);
+    }
+}
+
+.text-reveal {
+    display: inline-block;
+    opacity: 0;
+    animation: textReveal 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Stagger delays for characters */
+.text-reveal:nth-child(1) {
+    animation-delay: 0.05s;
+}
+
+.text-reveal:nth-child(2) {
+    animation-delay: 0.1s;
+}
+
+.text-reveal:nth-child(3) {
+    animation-delay: 0.15s;
+}
+
+.text-reveal:nth-child(4) {
+    animation-delay: 0.2s;
+}
+
+.text-reveal:nth-child(5) {
+    animation-delay: 0.25s;
+}
+
+.text-reveal:nth-child(6) {
+    animation-delay: 0.3s;
+}
+
+.text-reveal:nth-child(7) {
+    animation-delay: 0.35s;
+}
+
+.text-reveal:nth-child(8) {
+    animation-delay: 0.4s;
+}
+
+/* ============================================
+   8. SMOOTH TRANSITIONS
+   Page/Section transitions
+   ============================================ */
+
+@keyframes pageTransitionIn {
+    from {
+        opacity: 0;
+        transform: translateY(30px) scale(0.98);
+        filter: blur(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        filter: blur(0);
+    }
+}
+
+.page-transition {
+    animation: pageTransitionIn 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ============================================
+   9. GLOW PULSE (Enhanced)
+   Sophisticated glow animations
+   ============================================ */
+
+@keyframes glowPulseAdvanced {
+
+    0%,
+    100% {
+        box-shadow:
+            0 0 20px rgba(43, 155, 155, 0.3),
+            0 0 40px rgba(43, 155, 155, 0.2),
+            0 0 60px rgba(43, 155, 155, 0.1);
+        filter: brightness(1);
+    }
+
+    50% {
+        box-shadow:
+            0 0 30px rgba(43, 155, 155, 0.5),
+            0 0 60px rgba(43, 155, 155, 0.3),
+            0 0 90px rgba(43, 155, 155, 0.2);
+        filter: brightness(1.1);
+    }
+}
+
+.glow-advanced {
+    animation: glowPulseAdvanced 3s ease-in-out infinite;
+}
+
+/* ============================================
+   10. STAGGER ANIMATIONS
+   Smart sequential reveals
+   ============================================ */
+
+.stagger-item {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+        transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.stagger-item.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Dynamic stagger delays */
+.stagger-item:nth-child(1) {
+    transition-delay: 0.05s;
+}
+
+.stagger-item:nth-child(2) {
+    transition-delay: 0.1s;
+}
+
+.stagger-item:nth-child(3) {
+    transition-delay: 0.15s;
+}
+
+.stagger-item:nth-child(4) {
+    transition-delay: 0.2s;
+}
+
+.stagger-item:nth-child(5) {
+    transition-delay: 0.25s;
+}
+
+.stagger-item:nth-child(6) {
+    transition-delay: 0.3s;
+}
+
+.stagger-item:nth-child(7) {
+    transition-delay: 0.35s;
+}
+
+.stagger-item:nth-child(8) {
+    transition-delay: 0.4s;
+}
+
+/* ============================================
+   11. PERFORMANCE OPTIMIZATIONS
+   ============================================ */
+
+/* GPU acceleration hints */
+.gpu-accelerated {
+    will-change: transform, opacity;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+
+    .magnetic-card,
+    .tilt-3d,
+    .parallax-float,
+    .blob-morph {
+        animation: none !important;
+        transform: none !important;
+    }
+}
+
+/* ============================================
+   12. UTILITY CLASSES
+   ============================================ */
+
+/* Smooth spring transition */
+.spring-smooth {
+    transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+/* Ease out back */
+.ease-out-back {
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Ease in out expo */
+.ease-expo {
+    transition: all 0.6s cubic-bezier(0.87, 0, 0.13, 1);
+}
