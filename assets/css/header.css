@@ -376,7 +376,3 @@ body:has(.site-header)>.lang-switch:not(.site-header .lang-switch) {
 body {
     padding-top: 60px;
 }
-
-.site-header.scrolled~* {
-    /* Adjust if needed when header shrinks */
-}
