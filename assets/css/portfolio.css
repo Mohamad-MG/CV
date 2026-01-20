@@ -778,43 +778,49 @@ body {
     }
 }
 
-/* Portfolio Tabs */
+/* Portfolio Tabs - Premium Polish */
 .portfolio-tabs {
     display: flex;
     gap: 12px;
-    margin-top: 35px;
+    margin-top: 40px;
     opacity: 0;
     animation: fadeUp 0.8s ease forwards 0.6s;
+    background: var(--bg-glass);
+    padding: 6px;
+    border-radius: 60px;
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-sm);
+    position: relative;
+    z-index: 20;
 }
 
 .tab-btn {
     display: flex;
     align-items: center;
     gap: 10px;
-    padding: 14px 28px;
-    background: var(--bg-glass);
-    backdrop-filter: blur(15px);
-    -webkit-backdrop-filter: blur(15px);
-    border: 1px solid var(--border-color);
+    padding: 12px 32px;
+    background: transparent;
+    border: none;
     border-radius: 50px;
     font-family: inherit;
     font-size: 0.95rem;
     font-weight: 600;
     color: var(--text-secondary);
     cursor: pointer;
-    transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    position: relative;
+    overflow: hidden;
 }
 
 .tab-btn svg {
     stroke: currentColor;
+    width: 18px;
+    height: 18px;
     transition: transform 0.3s ease;
 }
 
 .tab-btn:hover {
-    border-color: var(--teal-primary);
     color: var(--text-primary);
-    transform: translateY(-3px);
-    box-shadow: var(--shadow-md);
 }
 
 .tab-btn:hover svg {
@@ -824,15 +830,30 @@ body {
 .tab-btn.active {
     background: linear-gradient(135deg, var(--teal-primary), var(--purple-primary));
     color: white;
-    border-color: transparent;
-    box-shadow: 0 8px 25px rgba(43, 155, 155, 0.35);
+    box-shadow: 0 4px 15px rgba(43, 155, 155, 0.3);
 }
 
 .tab-btn.active svg {
     stroke: white;
 }
 
-/* Video Gallery Section */
+/* Tab Content Animation */
+.tab-content {
+    animation: fadeInTab 0.5s ease forwards;
+}
+
+@keyframes fadeInTab {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Video Gallery Section - Premium Reels Look */
 .video-gallery-section {
     padding: 20px 0 80px;
     opacity: 0;
@@ -844,105 +865,119 @@ body {
 
 .video-gallery-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-    gap: 20px;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 25px;
     width: 100%;
-    max-width: 1000px;
-    /* Constrain width for better balance */
+    max-width: 1100px;
     padding: 0 20px;
-    /* Ensure margins on small screens */
 }
 
 .video-item {
     position: relative;
-    border-radius: 12px;
-    /* Slightly reduced radius for smaller cards */
+    border-radius: 20px;
     overflow: hidden;
     aspect-ratio: 9 / 16;
-    background: #000;
+    background: var(--gray-100); /* Skeleton loading color */
     cursor: pointer;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-    transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.4s ease;
+    box-shadow: var(--shadow-md);
+    transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+    border: 1px solid var(--border-color);
 }
 
 .video-item:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: var(--shadow-lg), 0 0 20px rgba(43, 155, 155, 0.15);
+    border-color: rgba(43, 155, 155, 0.4);
 }
 
 .video-item video {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform 0.6s ease;
-    opacity: 0.9;
+    transition: transform 0.6s ease, filter 0.4s ease;
+    opacity: 1;
+    filter: brightness(0.9);
 }
 
 .video-item:hover video {
     transform: scale(1.05);
-    opacity: 0.6;
+    filter: brightness(0.7);
 }
 
 .video-overlay {
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+    inset: 0;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     z-index: 2;
     pointer-events: none;
+    background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 40%);
 }
 
 .video-play-icon {
-    width: 60px;
-    height: 60px;
-    background: rgba(255, 255, 255, 0.2);
-    backdrop-filter: blur(5px);
+    width: 50px;
+    height: 50px;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.5rem;
     color: white;
-    transition: transform 0.3s ease, background 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     margin-bottom: auto;
     margin-top: auto;
+    opacity: 0.9;
+}
+
+.video-play-icon svg {
+    width: 20px;
+    height: 20px;
+    fill: white;
+    margin-left: 2px; /* Visual centering adjustment for play icon */
 }
 
 .video-item:hover .video-play-icon {
     transform: scale(1.2);
-    background: rgba(255, 255, 255, 0.3);
+    background: rgba(43, 155, 155, 0.8);
+    border-color: transparent;
+    box-shadow: 0 0 20px rgba(43, 155, 155, 0.4);
+    opacity: 1;
 }
 
 .video-info {
     width: 100%;
     padding: 20px;
-    background: linear-gradient(to top, rgba(0, 0, 0, 0.9), transparent);
-    transform: translateY(100%);
-    transition: transform 0.4s ease;
+    transform: translateY(10px);
+    opacity: 0;
+    transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
     display: flex;
     flex-direction: column;
-    gap: 5px;
+    gap: 4px;
 }
 
 .video-item:hover .video-info {
     transform: translateY(0);
+    opacity: 1;
 }
 
 .video-info h4 {
     color: white;
-    font-size: 1.1rem;
-    font-weight: 600;
+    font-size: 1.05rem;
+    font-weight: 700;
     margin: 0;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
 }
 
 .video-info span {
-    color: rgba(255, 255, 255, 0.8);
-    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 0.85rem;
+    font-weight: 400;
+    letter-spacing: 0.3px;
 }
 
 /* Video Lightbox */
