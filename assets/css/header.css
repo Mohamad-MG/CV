@@ -1,0 +1,376 @@
+/* ============================================
+   PREMIUM HEADER WITH NAVIGATION
+   Modern glassmorphism header with nav menu
+   ============================================ */
+
+/* ============================================
+   1. HEADER CONTAINER
+   ============================================ */
+
+.site-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    background: rgba(var(--bg-body-rgb, 10, 15, 20), 0.7);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    padding: 20px 0;
+}
+
+.site-header.scrolled {
+    padding: 12px 0;
+    background: rgba(var(--bg-body-rgb, 10, 15, 20), 0.85);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.15);
+    border-bottom-color: rgba(255, 255, 255, 0.12);
+}
+
+.header-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 40px;
+}
+
+/* ============================================
+   2. LOGO/BRAND
+   ============================================ */
+
+.header-logo {
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.header-logo:hover {
+    transform: scale(1.05);
+}
+
+.logo-text {
+    font-size: 1.5rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--teal-primary), var(--purple-primary));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -0.02em;
+}
+
+.logo-subtitle {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    font-weight: 500;
+    margin-top: -4px;
+}
+
+/* ============================================
+   3. NAVIGATION MENU
+   ============================================ */
+
+.header-nav {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    position: relative;
+    background: rgba(255, 255, 255, 0.03);
+    padding: 6px;
+    border-radius: 50px;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.nav-link {
+    position: relative;
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.95rem;
+    padding: 10px 20px;
+    border-radius: 50px;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    z-index: 2;
+}
+
+.nav-link:hover {
+    color: var(--text-primary);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.nav-link.active {
+    color: var(--text-primary);
+    background: linear-gradient(135deg,
+            rgba(43, 155, 155, 0.15),
+            rgba(138, 43, 226, 0.15));
+    box-shadow:
+        0 2px 8px rgba(43, 155, 155, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+/* Active indicator (animated underline) */
+.nav-indicator {
+    position: absolute;
+    bottom: 2px;
+    height: 2px;
+    background: linear-gradient(90deg, var(--teal-primary), var(--purple-primary));
+    border-radius: 2px;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    opacity: 0;
+    pointer-events: none;
+}
+
+.header-nav:has(.nav-link.active) .nav-indicator {
+    opacity: 1;
+}
+
+/* ============================================
+   4. HEADER CONTROLS
+   ============================================ */
+
+.header-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Adjust existing theme toggle and lang switch to fit header */
+.site-header .theme-toggle,
+.site-header .lang-switch {
+    position: static;
+    margin: 0;
+}
+
+/* ============================================
+   5. MOBILE MENU TOGGLE
+   ============================================ */
+
+.mobile-menu-toggle {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 8px;
+    transition: background 0.3s ease;
+}
+
+.mobile-menu-toggle:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.mobile-menu-toggle span {
+    width: 24px;
+    height: 2px;
+    background: var(--text-primary);
+    border-radius: 2px;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.mobile-menu-toggle.active span:nth-child(1) {
+    transform: rotate(45deg) translateY(7px);
+}
+
+.mobile-menu-toggle.active span:nth-child(2) {
+    opacity: 0;
+}
+
+.mobile-menu-toggle.active span:nth-child(3) {
+    transform: rotate(-45deg) translateY(-7px);
+}
+
+/* ============================================
+   6. MOBILE NAVIGATION
+   ============================================ */
+
+@media (max-width: 768px) {
+    .header-container {
+        padding: 0 20px;
+    }
+
+    .mobile-menu-toggle {
+        display: flex;
+    }
+
+    .header-nav {
+        position: fixed;
+        top: 0;
+        right: -100%;
+        width: 280px;
+        height: 100vh;
+        flex-direction: column;
+        gap: 0;
+        padding: 100px 30px 30px;
+        background: rgba(var(--bg-body-rgb, 10, 15, 20), 0.95);
+        backdrop-filter: blur(30px);
+        border-radius: 0;
+        border: none;
+        border-left: 1px solid rgba(255, 255, 255, 0.1);
+        transition: right 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        z-index: 999;
+    }
+
+    .header-nav.mobile-open {
+        right: 0;
+    }
+
+    .nav-link {
+        width: 100%;
+        padding: 16px 20px;
+        border-radius: 12px;
+        font-size: 1.1rem;
+    }
+
+    .nav-indicator {
+        display: none;
+    }
+
+    /* Mobile overlay */
+    .mobile-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.6);
+        backdrop-filter: blur(4px);
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+        z-index: 998;
+    }
+
+    .mobile-overlay.active {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    .logo-text {
+        font-size: 1.3rem;
+    }
+}
+
+/* ============================================
+   7. SCROLL ANIMATIONS
+   ============================================ */
+
+@keyframes headerSlideDown {
+    from {
+        transform: translateY(-100%);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.site-header {
+    animation: headerSlideDown 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ============================================
+   8. THEME VARIATIONS
+   ============================================ */
+
+/* Dark theme adjustments */
+[data-theme="dark"] .site-header {
+    background: rgba(10, 15, 20, 0.7);
+}
+
+[data-theme="dark"] .header-nav {
+    background: rgba(255, 255, 255, 0.02);
+    border-color: rgba(255, 255, 255, 0.05);
+}
+
+/* Light theme adjustments */
+[data-theme="light"] .site-header {
+    background: rgba(255, 255, 255, 0.7);
+    border-bottom-color: rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="light"] .header-nav {
+    background: rgba(0, 0, 0, 0.03);
+    border-color: rgba(0, 0, 0, 0.06);
+}
+
+[data-theme="light"] .nav-link:hover {
+    background: rgba(0, 0, 0, 0.05);
+}
+
+/* ============================================
+   9. RTL SUPPORT
+   ============================================ */
+
+[dir="rtl"] .header-container {
+    flex-direction: row-reverse;
+}
+
+[dir="rtl"] .header-logo {
+    flex-direction: row-reverse;
+}
+
+[dir="rtl"] .header-nav {
+    flex-direction: row-reverse;
+}
+
+@media (max-width: 768px) {
+    [dir="rtl"] .header-nav {
+        right: auto;
+        left: -100%;
+        border-left: none;
+        border-right: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    [dir="rtl"] .header-nav.mobile-open {
+        right: auto;
+        left: 0;
+    }
+}
+
+/* ============================================
+   10. ACCESSIBILITY
+   ============================================ */
+
+.nav-link:focus-visible {
+    outline: 2px solid var(--teal-primary);
+    outline-offset: 4px;
+}
+
+.mobile-menu-toggle:focus-visible {
+    outline: 2px solid var(--teal-primary);
+    outline-offset: 2px;
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+
+    .site-header,
+    .nav-link,
+    .header-nav,
+    .mobile-menu-toggle span {
+        transition: none;
+        animation: none;
+    }
+}
+
+/* ============================================
+   11. BODY PADDING ADJUSTMENT
+   ============================================ */
+
+/* Add padding to body to prevent content from hiding under fixed header */
+body {
+    padding-top: 80px;
+}
+
+.site-header.scrolled~* {
+    /* Adjust if needed when header shrinks */
+}
