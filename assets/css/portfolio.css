@@ -837,18 +837,26 @@ body {
     padding: 20px 0 80px;
     opacity: 0;
     animation: fadeUp 0.8s ease forwards;
+    width: 100%;
+    display: flex;
+    justify-content: center;
 }
 
 .video-gallery-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 24px;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 20px;
     width: 100%;
+    max-width: 1000px;
+    /* Constrain width for better balance */
+    padding: 0 20px;
+    /* Ensure margins on small screens */
 }
 
 .video-item {
     position: relative;
-    border-radius: 16px;
+    border-radius: 12px;
+    /* Slightly reduced radius for smaller cards */
     overflow: hidden;
     aspect-ratio: 9 / 16;
     background: #000;
