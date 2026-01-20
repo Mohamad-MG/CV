@@ -161,7 +161,98 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // ========== TAB SWITCHING ==========
+    // ========== VIDEO GALLERY FUNCTIONALITY ==========
+    const videoLightbox = document.getElementById('videoLightbox');
+    const lightboxVideo = document.getElementById('lightboxVideo');
+    const videoLightboxTitle = document.getElementById('videoLightboxTitle');
+    const videoLightboxDesc = document.getElementById('videoLightboxDesc');
+    const videoClose = videoLightbox?.querySelector('.lightbox-close');
+    const videoPrev = videoLightbox?.querySelector('.video-nav-prev');
+    const videoNext = videoLightbox?.querySelector('.video-nav-next');
+
+    const videoItems = Array.from(document.querySelectorAll('.video-item'));
+    let currentVideoIndex = 0;
+
+    const openVideoLightbox = (index) => {
+        if (!videoLightbox || !lightboxVideo || !videoItems[index]) return;
+
+        currentVideoIndex = index;
+        const targetItem = videoItems[currentVideoIndex];
+        const sourceVideo = targetItem.querySelector('video');
+        const title = targetItem.querySelector('h4').textContent;
+        const desc = targetItem.querySelector('span').textContent;
+
+        lightboxVideo.src = sourceVideo.src;
+        videoLightboxTitle.textContent = title;
+        videoLightboxDesc.textContent = desc;
+
+        videoLightbox.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+
+        // Auto play
+        lightboxVideo.play().catch(e => console.log('Autoplay blocked:', e));
+    };
+
+    const closeVideoLightbox = () => {
+        if (!videoLightbox || !lightboxVideo) return;
+
+        videoLightbox.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+
+        lightboxVideo.pause();
+        lightboxVideo.currentTime = 0;
+        lightboxVideo.src = ''; // Clear source to stop buffering
+    };
+
+    const navVideo = (direction) => {
+        if (!videoItems.length) return;
+
+        currentVideoIndex += direction;
+        if (currentVideoIndex < 0) currentVideoIndex = videoItems.length - 1;
+        if (currentVideoIndex >= videoItems.length) currentVideoIndex = 0;
+
+        const targetItem = videoItems[currentVideoIndex];
+        const sourceVideo = targetItem.querySelector('video');
+        const title = targetItem.querySelector('h4').textContent;
+        const desc = targetItem.querySelector('span').textContent;
+
+        // Smooth switch
+        lightboxVideo.src = sourceVideo.src;
+        videoLightboxTitle.textContent = title;
+        videoLightboxDesc.textContent = desc;
+        lightboxVideo.play().catch(e => console.log('Autoplay blocked:', e));
+    };
+
+    // Event Listeners
+    videoItems.forEach((item, index) => {
+        item.addEventListener('click', () => openVideoLightbox(index));
+    });
+
+    videoClose?.addEventListener('click', closeVideoLightbox);
+    videoPrev?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        navVideo(-1);
+    });
+    videoNext?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        navVideo(1);
+    });
+
+    // Close on background click
+    videoLightbox?.addEventListener('click', (e) => {
+        if (e.target === videoLightbox) closeVideoLightbox();
+    });
+
+    // Keyboard Navigation for Video
+    document.addEventListener('keydown', (e) => {
+        if (videoLightbox?.getAttribute('aria-hidden') === 'false') {
+            if (e.key === 'Escape') closeVideoLightbox();
+            if (e.key === 'ArrowRight') navVideo(1);
+            if (e.key === 'ArrowLeft') navVideo(-1);
+        }
+    });
+
+    // Update Tab Switching Logic
     const tabBtns = document.querySelectorAll('.tab-btn');
     const gallerySection = document.querySelector('.gallery-section');
     const reelsSection = document.getElementById('reelsSection');
@@ -177,92 +268,12 @@ document.addEventListener('DOMContentLoaded', () => {
             if (tab === 'images') {
                 if (gallerySection) gallerySection.style.display = 'block';
                 if (reelsSection) reelsSection.style.display = 'none';
-                // Pause all videos
-                pauseAllVideos();
+                closeVideoLightbox(); // Ensure video is closed/paused
             } else if (tab === 'videos') {
                 if (gallerySection) gallerySection.style.display = 'none';
                 if (reelsSection) reelsSection.style.display = 'block';
             }
         });
     });
-
-    // ========== VIDEO REELS FUNCTIONALITY ==========
-    const reelItems = document.querySelectorAll('.reel-item');
-    const reelsScroll = document.getElementById('reelsScroll');
-    let currentlyPlaying = null;
-
-    // Pause all videos helper
-    const pauseAllVideos = () => {
-        reelItems.forEach(item => {
-            const video = item.querySelector('video');
-            if (video) {
-                video.pause();
-                item.classList.remove('playing');
-            }
-        });
-        currentlyPlaying = null;
-    };
-
-    // Play/Pause on tap
-    reelItems.forEach(item => {
-        const video = item.querySelector('video');
-        const playBtn = item.querySelector('.reel-play-btn');
-
-        const togglePlay = () => {
-            if (!video) return;
-
-            if (video.paused) {
-                // Pause any other playing video first
-                pauseAllVideos();
-                video.muted = false;
-                video.play().catch(() => {
-                    // Autoplay blocked, keep muted
-                    video.muted = true;
-                    video.play();
-                });
-                item.classList.add('playing');
-                currentlyPlaying = video;
-            } else {
-                video.pause();
-                item.classList.remove('playing');
-                currentlyPlaying = null;
-            }
-        };
-
-        playBtn?.addEventListener('click', togglePlay);
-        video?.addEventListener('click', togglePlay);
-    });
-
-    // Auto-pause on scroll (play visible video)
-    if (reelsScroll && 'IntersectionObserver' in window) {
-        const reelObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                const video = entry.target.querySelector('video');
-                if (!video) return;
-
-                if (!entry.isIntersecting) {
-                    video.pause();
-                    entry.target.classList.remove('playing');
-                    if (currentlyPlaying === video) {
-                        currentlyPlaying = null;
-                    }
-                }
-            });
-        }, { 
-            root: reelsScroll, 
-            threshold: 0.5 
-        });
-
-        reelItems.forEach(item => reelObserver.observe(item));
-    }
-
-    // Hide scroll indicator after first scroll
-    const scrollIndicator = document.querySelector('.scroll-indicator');
-    if (reelsScroll && scrollIndicator) {
-        reelsScroll.addEventListener('scroll', () => {
-            scrollIndicator.style.opacity = '0';
-            scrollIndicator.style.pointerEvents = 'none';
-        }, { once: true });
-    }
 });
 

@@ -832,273 +832,210 @@ body {
     stroke: white;
 }
 
-/* Reels Section */
-.reels-section {
-    padding: 60px 20px;
+/* Video Gallery Section */
+.video-gallery-section {
+    padding: 20px 0 80px;
+    opacity: 0;
+    animation: fadeUp 0.8s ease forwards;
+}
+
+.video-gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 24px;
+    width: 100%;
+}
+
+.video-item {
     position: relative;
-    z-index: 10;
-    min-height: 80vh;
-}
-
-.reels-container {
-    max-width: 500px;
-    margin: 0 auto;
-    text-align: center;
-}
-
-/* Phone Mockup - iPhone Style */
-.phone-mockup {
-    position: relative;
-    margin: 0 auto;
-    max-width: 320px;
-}
-
-.phone-frame {
-    background: linear-gradient(145deg, #2c2c2e 0%, #1c1c1e 50%, #0a0a0a 100%);
-    border-radius: 45px;
-    padding: 12px;
-    box-shadow:
-        0 50px 100px rgba(0, 0, 0, 0.4),
-        0 20px 60px rgba(0, 0, 0, 0.3),
-        inset 0 1px 0 rgba(255, 255, 255, 0.1),
-        inset 0 -1px 0 rgba(0, 0, 0, 0.3);
-    position: relative;
-}
-
-.phone-notch {
-    position: absolute;
-    top: 12px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 120px;
-    height: 28px;
-    background: #000;
-    border-radius: 0 0 20px 20px;
-    z-index: 20;
-}
-
-.phone-notch::before {
-    content: '';
-    position: absolute;
-    top: 10px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 8px;
-    height: 8px;
-    background: radial-gradient(circle, #3a3a3c 0%, #1c1c1e 100%);
-    border-radius: 50%;
-}
-
-.phone-screen {
-    background: #000;
-    border-radius: 35px;
+    border-radius: 16px;
     overflow: hidden;
-    position: relative;
-    height: 600px;
-}
-
-/* Reels Scroll Container */
-.reels-scroll {
-    height: 100%;
-    overflow-y: auto;
-    scroll-snap-type: y mandatory;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-}
-
-.reels-scroll::-webkit-scrollbar {
-    display: none;
-}
-
-/* Individual Reel Item */
-.reel-item {
-    height: 100%;
-    scroll-snap-align: start;
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    aspect-ratio: 9 / 16;
     background: #000;
+    cursor: pointer;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.4s ease;
 }
 
-.reel-item video {
+.video-item:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+.video-item video {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    transition: transform 0.6s ease;
+    opacity: 0.9;
 }
 
-/* Play Button Overlay */
-.reel-play-btn {
+.video-item:hover video {
+    transform: scale(1.05);
+    opacity: 0.6;
+}
+
+.video-overlay {
     position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 70px;
-    height: 70px;
-    background: rgba(255, 255, 255, 0.2);
-    backdrop-filter: blur(10px);
-    border-radius: 50%;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
     display: flex;
-    align-items: center;
+    flex-direction: column;
     justify-content: center;
-    font-size: 1.8rem;
-    color: white;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    z-index: 15;
-}
-
-.reel-play-btn:hover {
-    background: rgba(255, 255, 255, 0.3);
-    transform: translate(-50%, -50%) scale(1.1);
-}
-
-.reel-item.playing .reel-play-btn {
-    opacity: 0;
+    align-items: center;
+    z-index: 2;
     pointer-events: none;
 }
 
-/* Reel Info Overlay */
-.reel-overlay {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    padding: 60px 20px 25px;
-    background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, transparent 100%);
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    z-index: 10;
-}
-
-.reel-info {
-    text-align: left;
-}
-
-.reel-info h4 {
-    color: white;
-    font-size: 1.2rem;
-    font-weight: 700;
-    margin-bottom: 5px;
-    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
-}
-
-.reel-info span {
-    color: rgba(255, 255, 255, 0.7);
-    font-size: 0.9rem;
-}
-
-/* Reel Actions (Like, Share) */
-.reel-actions {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-}
-
-.reel-action {
-    width: 45px;
-    height: 45px;
-    background: rgba(255, 255, 255, 0.15);
-    backdrop-filter: blur(10px);
-    border: none;
+.video-play-icon {
+    width: 60px;
+    height: 60px;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(5px);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.2rem;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.reel-action:hover {
-    background: rgba(255, 255, 255, 0.25);
-    transform: scale(1.1);
-}
-
-/* Scroll Indicator */
-.scroll-indicator {
-    position: absolute;
-    bottom: 80px;
-    left: 50%;
-    transform: translateX(-50%);
-    color: rgba(255, 255, 255, 0.6);
-    font-size: 0.8rem;
-    text-align: center;
-    z-index: 15;
-    animation: fadeInOut 3s ease-in-out infinite;
-}
-
-.scroll-arrow {
     font-size: 1.5rem;
-    animation: bounceDown 1.5s ease-in-out infinite;
+    color: white;
+    transition: transform 0.3s ease, background 0.3s ease;
+    margin-bottom: auto;
+    margin-top: auto;
 }
 
-@keyframes bounceDown {
-
-    0%,
-    100% {
-        transform: translateY(0);
-    }
-
-    50% {
-        transform: translateY(8px);
-    }
+.video-item:hover .video-play-icon {
+    transform: scale(1.2);
+    background: rgba(255, 255, 255, 0.3);
 }
 
-@keyframes fadeInOut {
-
-    0%,
-    100% {
-        opacity: 0.6;
-    }
-
-    50% {
-        opacity: 1;
-    }
+.video-info {
+    width: 100%;
+    padding: 20px;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.9), transparent);
+    transform: translateY(100%);
+    transition: transform 0.4s ease;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
 }
 
-/* Reels Hint */
-.reels-hint {
-    margin-top: 25px;
-    color: var(--text-muted);
+.video-item:hover .video-info {
+    transform: translateY(0);
+}
+
+.video-info h4 {
+    color: white;
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+.video-info span {
+    color: rgba(255, 255, 255, 0.8);
     font-size: 0.9rem;
 }
 
-.reels-hint p {
+/* Video Lightbox */
+.video-lightbox {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.95);
+    backdrop-filter: blur(10px);
+    z-index: 10000;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
 }
 
-/* Responsive for Reels */
-@media (max-width: 480px) {
-    .phone-mockup {
-        max-width: 280px;
+.video-lightbox[aria-hidden="false"] {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.video-lightbox-content {
+    position: relative;
+    width: 90%;
+    max-width: 400px;
+    /* Mobile portrait ratio preference */
+    height: 80vh;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
+    display: flex;
+    flex-direction: column;
+}
+
+.video-lightbox-content video {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    background: black;
+}
+
+.video-lightbox-info {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 20px;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+    pointer-events: none;
+}
+
+.video-lightbox-info h3 {
+    color: white;
+    margin: 0 0 5px 0;
+    font-size: 1.2rem;
+}
+
+.video-lightbox-info span {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.9rem;
+}
+
+/* Reuse existing lightbox controls but override positioning if needed */
+.video-lightbox .lightbox-close {
+    top: 20px;
+    right: 20px;
+    z-index: 10001;
+}
+
+.video-lightbox .lightbox-nav {
+    position: fixed;
+    /* Fixed to screen edges */
+    z-index: 10001;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .video-gallery-grid {
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        gap: 12px;
     }
 
-    .phone-screen {
-        height: 500px;
+    .video-item:hover .video-info {
+        transform: translateY(0);
+        /* Always show info on mobile if possible, or keep hidden? */
     }
 
-    .phone-frame {
-        border-radius: 38px;
-        padding: 10px;
+    .video-info {
+        transform: translateY(0);
+        /* Always visible on mobile for clarity */
+        padding: 15px 10px;
+        background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
     }
 
-    .phone-screen {
-        border-radius: 30px;
-    }
-
-    .portfolio-tabs {
-        flex-direction: column;
-        align-items: center;
-    }
-
-    .tab-btn {
-        width: 100%;
-        max-width: 200px;
-        justify-content: center;
+    .video-play-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
     }
 }
