@@ -1,0 +1,105 @@
+/* RTL Support for Arabic Version */
+@import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&display=swap');
+
+:root {
+    --font-primary: 'Tajawal', sans-serif;
+}
+
+html[lang="ar"] {
+    direction: rtl;
+    text-align: right;
+}
+
+html[lang="ar"] body {
+    font-family: var(--font-primary);
+}
+
+/* Flip Flexbox directions */
+html[lang="ar"] .hero,
+html[lang="ar"] .section-header,
+html[lang="ar"] .stats-grid,
+html[lang="ar"] .clients-grid,
+html[lang="ar"] .timeline-item {
+    direction: rtl;
+}
+
+/* Flip specific margins and paddings if needed */
+html[lang="ar"] .stat-card,
+html[lang="ar"] .client-item {
+    text-align: center;
+    /* Keep centers centered */
+}
+
+/* Timeline Specifics */
+html[lang="ar"] .timeline-item {
+    padding-right: 30px;
+    /* Was padding-left */
+    padding-left: 0;
+    border-right: 2px solid var(--border-color);
+    /* Was border-left */
+    border-left: none;
+}
+
+html[lang="ar"] .timeline-dot {
+    right: -6px;
+    /* Was left */
+    left: auto;
+}
+
+/* Navigation / Header */
+html[lang="ar"] nav {
+    flex-direction: row-reverse;
+}
+
+/* Stats Context */
+html[lang="ar"] .stat-context {
+    font-size: 0.85rem;
+}
+
+/* Experience Section */
+html[lang="ar"] .timeline-date {
+    font-family: 'Outfit', sans-serif;
+    /* Keep numbers/dates in Outfit */
+    direction: ltr;
+    text-align: right;
+    display: inline-block;
+    width: 100%;
+}
+
+/* Language Switcher Button Styles */
+.lang-switch {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    /* Default for EN */
+    z-index: 1000;
+    padding: 10px 20px;
+    background: var(--bg-glass);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid var(--border-color);
+    border-radius: 30px;
+    color: var(--text-primary);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: var(--shadow-sm);
+}
+
+.lang-switch:hover {
+    background: var(--bg-surface);
+    border-color: var(--teal-primary);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+/* Position switcher on left for Arabic page */
+html[lang="ar"] .lang-switch {
+    right: auto;
+    left: 20px;
+    flex-direction: row-reverse;
+}
