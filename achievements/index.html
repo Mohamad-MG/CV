@@ -595,6 +595,17 @@
 </head>
 
 <body>
+    <!-- Language Switcher -->
+    <a href="index-ar.html" class="lang-switch">
+        <span>العربية</span>
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="2" y1="12" x2="22" y2="12"></line>
+            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+        </svg>
+    </a>
+
     <div class="ambient-glow"></div>
 
     <div class="back-nav">
@@ -748,7 +759,256 @@
 
             </div>
         </section>
+
+        <!-- Full Career Journey Section -->
+        <section class="journey-section">
+            <div class="journey-header">
+                <h2>The Full Journey</h2>
+                <p>Every role, every company, every step of the way.</p>
+            </div>
+            
+            <div class="journey-timeline">
+                <!-- Qyadat -->
+                <div class="journey-item">
+                    <div class="journey-year">2023</div>
+                    <div class="journey-marker"></div>
+                    <div class="journey-content">
+                        <h4>Qyadat</h4>
+                        <span>Marketing Manager</span>
+                        <p>Riyadh • Present</p>
+                    </div>
+                </div>
+
+                <!-- Gento Shop -->
+                <div class="journey-item">
+                    <div class="journey-year">2023</div>
+                    <div class="journey-marker"></div>
+                    <div class="journey-content">
+                        <h4>Gento Shop</h4>
+                        <span>E-commerce Supervisor</span>
+                        <p>Electronics Sector • 2 Years</p>
+                    </div>
+                </div>
+
+                <!-- DigiMora -->
+                <div class="journey-item">
+                    <div class="journey-year">2022</div>
+                    <div class="journey-marker"></div>
+                    <div class="journey-content">
+                        <h4>DigiMora</h4>
+                        <span>Business Development Lead</span>
+                        <p>Digital Solutions • 2 Years</p>
+                    </div>
+                </div>
+
+                <!-- Kuwait Finance House -->
+                <div class="journey-item">
+                    <div class="journey-year">2021</div>
+                    <div class="journey-marker"></div>
+                    <div class="journey-content">
+                        <h4>Kuwait Finance House</h4>
+                        <span>Digital Transformation Strategist</span>
+                        <p>Banking Sector • 10 Months</p>
+                    </div>
+                </div>
+
+                <!-- PeoplePerHour -->
+                <div class="journey-item">
+                    <div class="journey-year">2019</div>
+                    <div class="journey-marker"></div>
+                    <div class="journey-content">
+                        <h4>PeoplePerHour</h4>
+                        <span>Junior Marketing Specialist</span>
+                        <p>Freelance Marketplace • 3 Years</p>
+                    </div>
+                </div>
+
+                <!-- Iso-tec -->
+                <div class="journey-item">
+                    <div class="journey-year">2018</div>
+                    <div class="journey-marker"></div>
+                    <div class="journey-content">
+                        <h4>Iso-tec</h4>
+                        <span>Digital Transformation Specialist</span>
+                        <p>Quality Management • 5 Years</p>
+                    </div>
+                </div>
+
+                <!-- Arabian Oud -->
+                <div class="journey-item">
+                    <div class="journey-year">2014</div>
+                    <div class="journey-marker"></div>
+                    <div class="journey-content">
+                        <h4>Arabian Oud</h4>
+                        <span>Digital Marketing Supervisor</span>
+                        <p>Retail & Perfumes • 9 Years</p>
+                    </div>
+                </div>
+
+                <!-- TwinExcel -->
+                <div class="journey-item">
+                    <div class="journey-year">2011</div>
+                    <div class="journey-marker"></div>
+                    <div class="journey-content">
+                        <h4>TwinExcel</h4>
+                        <span>Digital Marketing Specialist</span>
+                        <p>Agency • 6 Years</p>
+                    </div>
+                </div>
+            </div>
+        </section>
     </main>
+
+    <style>
+        /* Embedded CSS for Journey Section */
+        .journey-section {
+            padding: 80px 20px;
+            max-width: 900px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 10;
+        }
+
+        .journey-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .journey-header h2 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, var(--text-primary), var(--teal-primary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .journey-header p {
+            color: var(--text-secondary);
+        }
+
+        .journey-timeline {
+            position: relative;
+        }
+
+        .journey-timeline::before {
+            content: '';
+            position: absolute;
+            left: 50px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(180deg, var(--teal-primary), var(--purple-primary), transparent);
+        }
+
+        .journey-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 40px;
+            position: relative;
+            opacity: 0;
+            transform: translateX(-20px);
+            transition: all 0.5s ease;
+        }
+        
+        .journey-item.visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .journey-year {
+            width: 50px;
+            text-align: right;
+            font-weight: 700;
+            color: var(--teal-primary);
+            padding-right: 20px;
+            margin-top: 5px;
+            flex-shrink: 0;
+        }
+
+        .journey-marker {
+            width: 12px;
+            height: 12px;
+            background: var(--bg-body);
+            border: 2px solid var(--purple-primary);
+            border-radius: 50%;
+            margin-top: 8px;
+            position: absolute;
+            left: 45px; /* Aligned with line */
+            z-index: 2;
+            box-shadow: 0 0 10px var(--purple-glow);
+        }
+        
+        .journey-item:hover .journey-marker {
+            background: var(--teal-primary);
+            transform: scale(1.3);
+            transition: all 0.3s ease;
+        }
+
+        .journey-content {
+            background: var(--bg-glass);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border-color);
+            padding: 20px 30px;
+            border-radius: 16px;
+            margin-left: 40px;
+            flex: 1;
+            transition: all 0.3s ease;
+        }
+
+        .journey-content:hover {
+            transform: translateX(10px);
+            border-color: var(--teal-primary);
+            box-shadow: 0 5px 20px rgba(43, 155, 155, 0.1);
+        }
+
+        .journey-content h4 {
+            font-size: 1.2rem;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .journey-content span {
+            display: block;
+            color: var(--purple-primary);
+            font-weight: 500;
+            font-size: 0.95rem;
+            margin-bottom: 4px;
+        }
+
+        .journey-content p {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        @media (max-width: 600px) {
+            .journey-timeline::before {
+                left: 20px;
+            }
+            .journey-year {
+                display: none; /* Hide year on side for mobile, maybe move inside? */
+            }
+            .journey-marker {
+                left: 15px;
+            }
+            .journey-content {
+                margin-left: 35px;
+            }
+        }
+    </style>
+    
+    <script>
+        // Observe journey items
+        const journeyObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if(entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.1 });
+        
+        document.querySelectorAll('.journey-item').forEach(el => journeyObserver.observe(el));
+    </script>
 
     <footer>
         <div class="footer-links">

@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="ar">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>محمد جمال | سجل الإنجازات</title>
+    <meta name="description" content="الجوائز والإنجازات والأرقام القياسية في مسيرة محمد جمال للتسويق الرقمي">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <!-- Arabic Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="../assets/css/theme.css">
+    <script src="../assets/js/theme.js" defer></script>
+    <link rel="stylesheet" href="../assets/css/rtl.css"> <!-- RTL Styles -->
+    <style>
+        /* :root variables imported from theme.css */
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            line-height: 1.7;
+            animation: pageLoad 1s cubic-bezier(0.16, 1, 0.3, 1);
+            direction: rtl;
+            /* Ensure RTL */
+            text-align: right;
+        }
+
+        @keyframes pageLoad {
+            from {
+                opacity: 0;
+                filter: blur(10px);
+                transform: scale(0.98);
+            }
+
+            to {
+                opacity: 1;
+                filter: blur(0);
+                transform: scale(1);
+            }
+        }
+
+        /* Ambient Background - Dual Glow */
+        .ambient-glow {
+            position: fixed;
+            width: 1000px;
+            height: 1000px;
+            background: radial-gradient(circle, rgba(43, 155, 155, 0.12) 0%, transparent 60%);
+            border-radius: 50%;
+            top: -300px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 0;
+            pointer-events: none;
+            animation: pulseGlow 10s ease-in-out infinite;
+            mix-blend-mode: screen;
+        }
+
+        .ambient-glow::after {
+            content: '';
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(139, 106, 175, 0.1) 0%, transparent 60%);
+            border-radius: 50%;
+            bottom: -100px;
+            right: -200px;
+            animation: pulseGlow 12s ease-in-out infinite reverse;
+        }
+
+        @keyframes pulseGlow {
+
+            0%,
+            100% {
+                opacity: 0.6;
+                transform: translateX(-50%) scale(1) rotate(0deg);
+            }
+
+            50% {
+                opacity: 1;
+                transform: translateX(-50%) scale(1.15) rotate(5deg);
+            }
+        }
+
+        /* Navigation - Premium */
+        .back-nav {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            /* Right for RTL */
+            left: auto;
+            z-index: 1000;
+        }
+
+        .back-nav a {
+            text-decoration: none;
+            color: var(--text-primary);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1rem;
+            padding: 12px 20px;
+            background: var(--bg-glass);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
+            border-radius: 50px;
+            transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .back-nav a:hover {
+            background: var(--bg-card);
+            border-color: var(--teal-primary);
+            transform: translateX(5px);
+            /* Flip movement */
+            box-shadow: 0 8px 30px rgba(43, 155, 155, 0.15);
+        }
+
+        /* Hero Section - Premium */
+        header {
+            min-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+            z-index: 10;
+            padding: 0 20px;
+        }
+
+        .hero-label {
+            font-size: 0.85rem;
+            letter-spacing: 5px;
+            text-transform: uppercase;
+            color: var(--teal-primary);
+            font-weight: 600;
+            margin-bottom: 25px;
+            opacity: 0;
+            animation: fadeDown 1s ease forwards 0.2s;
+        }
+
+        h1 {
+            font-size: clamp(2.8rem, 7vw, 5.5rem);
+            font-weight: 800;
+            line-height: 1.05;
+            margin-bottom: 35px;
+            background: linear-gradient(135deg, var(--text-primary) 0%, var(--teal-deep) 50%, var(--purple-deep) 100%);
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            opacity: 0;
+            animation: fadeUp 1s ease forwards 0.4s, gradientShift 8s ease-in-out infinite;
+        }
+
+        @keyframes gradientShift {
+
+            0%,
+            100% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+        }
+
+        .hero-desc {
+            font-size: 1.15rem;
+            color: var(--text-secondary);
+            max-width: 650px;
+            margin: 0 auto;
+            font-weight: 400;
+            opacity: 0;
+            animation: fadeUp 1s ease forwards 0.6s;
+        }
+
+        /* Stats Grid - Glassmorphism */
+        .stats-container {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 60px;
+            flex-wrap: wrap;
+            opacity: 0;
+            animation: fadeUp 1s ease forwards 0.8s;
+        }
+
+        .stat-box {
+            text-align: center;
+            padding: 30px 40px;
+            background: var(--bg-glass);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--teal-primary), var(--purple-primary));
+            background-size: 200% 100%;
+            animation: gradientShift 4s ease infinite;
+        }
+
+        .stat-box:hover {
+            transform: translateY(-8px) scale(1.02);
+            border-color: rgba(43, 155, 155, 0.4);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2), 0 0 40px rgba(43, 155, 155, 0.1);
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--teal-primary) 0%, var(--purple-primary) 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            position: relative;
+            margin-bottom: 8px;
+            line-height: 1.2;
+            font-family: 'Outfit', sans-serif;
+            /* Keep numbers in English font */
+            direction: ltr;
+            /* Force LTR for numbers */
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 500;
+        }
+
+        /* The Crown Jewel - Record Section */
+        .record-section {
+            padding: 80px 20px 120px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .record-card {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: linear-gradient(145deg, rgba(196, 169, 98, 0.08) 0%, rgba(0, 0, 0, 0) 100%);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(196, 169, 98, 0.25);
+            border-radius: 32px;
+            padding: 60px;
+            display: grid;
+            grid-template-columns: 1.3fr 0.7fr;
+            gap: 50px;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        /* Shine sweep on hover */
+        .record-card::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg,
+                    transparent 40%,
+                    rgba(196, 169, 98, 0.05) 50%,
+                    transparent 60%);
+            transform: translateX(-100%) rotate(45deg);
+            transition: transform 1s ease;
+            pointer-events: none;
+        }
+
+        .record-card:hover::after {
+            transform: translateX(100%) rotate(45deg);
+        }
+
+        .record-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(196, 169, 98, 0.5);
+            box-shadow:
+                0 30px 80px rgba(0, 0, 0, 0.3),
+                0 0 60px rgba(196, 169, 98, 0.1);
+        }
+
+        .record-content h2 {
+            font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+            font-weight: 700;
+            margin-bottom: 25px;
+            color: var(--gold);
+            line-height: 1.2;
+        }
+
+        .record-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 20px;
+            background: rgba(196, 169, 98, 0.12);
+            border: 1px solid rgba(196, 169, 98, 0.4);
+            border-radius: 50px;
+            color: var(--gold);
+            font-weight: 600;
+            font-size: 0.85rem;
+            margin-bottom: 25px;
+            letter-spacing: 0.5px;
+        }
+
+        .record-desc {
+            font-size: 1.05rem;
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+            line-height: 1.8;
+        }
+
+        .record-desc strong {
+            color: var(--gold);
+        }
+
+        .record-visual {
+            position: relative;
+            height: 280px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .gold-ring {
+            position: absolute;
+            width: 220px;
+            height: 220px;
+            border: 2px solid rgba(196, 169, 98, 0.25);
+            border-radius: 50%;
+            animation: spin 12s linear infinite;
+        }
+
+        .gold-ring::after {
+            content: '';
+            position: absolute;
+            top: -6px;
+            left: 50%;
+            width: 12px;
+            height: 12px;
+            background: var(--gold);
+            border-radius: 50%;
+            box-shadow: 0 0 25px var(--gold), 0 0 50px rgba(196, 169, 98, 0.5);
+        }
+
+        .gold-ring:nth-child(2) {
+            width: 160px;
+            height: 160px;
+            animation-duration: 18s;
+            animation-direction: reverse;
+            border-color: rgba(196, 169, 98, 0.5);
+        }
+
+        /* Achievements Grid - Premium */
+        .grid-section {
+            padding: 40px 20px 120px;
+            max-width: 1300px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 10;
+        }
+
+        .achieve-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+            gap: 28px;
+        }
+
+        .achieve-card {
+            background: var(--bg-glass);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
+            border-radius: 28px;
+            padding: 42px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+            opacity: 0;
+            transform: translateY(40px) scale(0.97);
+            filter: blur(5px);
+        }
+
+        /* Staggered reveal */
+        .achieve-card:nth-child(1) {
+            transition-delay: 0.1s;
+        }
+
+        .achieve-card:nth-child(2) {
+            transition-delay: 0.2s;
+        }
+
+        .achieve-card:nth-child(3) {
+            transition-delay: 0.3s;
+        }
+
+        .achieve-card:nth-child(4) {
+            transition-delay: 0.4s;
+        }
+
+        .achieve-card:nth-child(5) {
+            transition-delay: 0.5s;
+        }
+
+        .achieve-card:nth-child(6) {
+            transition-delay: 0.6s;
+        }
+
+        .achieve-card.visible {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            filter: blur(0);
+        }
+
+        /* Gradient border on hover */
+        .achieve-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--teal-primary), var(--purple-primary));
+            transform: scaleX(0);
+            transition: transform 0.4s ease;
+        }
+
+        .achieve-card:hover::after {
+            transform: scaleX(1);
+        }
+
+        .achieve-card:hover {
+            background: var(--bg-card);
+            border-color: rgba(43, 155, 155, 0.3);
+            transform: translateY(-12px) scale(1.01);
+            box-shadow:
+                0 25px 60px rgba(0, 0, 0, 0.25),
+                0 0 40px rgba(43, 155, 155, 0.08);
+        }
+
+        .card-icon {
+            width: 65px;
+            height: 65px;
+            border-radius: 18px;
+            background: linear-gradient(135deg, var(--teal-primary), rgba(43, 155, 155, 0.3));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.7rem;
+            margin-bottom: 28px;
+            box-shadow: 0 12px 35px rgba(43, 155, 155, 0.25);
+            transition: transform 0.4s ease;
+        }
+
+        .achieve-card:hover .card-icon {
+            transform: scale(1.1) rotate(-5deg);
+        }
+
+        .achieve-card:nth-child(2) .card-icon {
+            background: linear-gradient(135deg, var(--purple-primary), rgba(139, 106, 175, 0.3));
+            box-shadow: 0 12px 35px rgba(139, 106, 175, 0.25);
+        }
+
+        .achieve-card:nth-child(4) .card-icon {
+            background: linear-gradient(135deg, var(--gold), rgba(196, 169, 98, 0.3));
+            box-shadow: 0 12px 35px rgba(196, 169, 98, 0.25);
+        }
+
+        .achieve-card h3 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 18px;
+            color: var(--text-primary);
+            line-height: 1.3;
+        }
+
+        .achieve-card p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+
+        .achieve-card p strong {
+            color: var(--teal-primary);
+            font-weight: 600;
+        }
+
+        /* Mouse Spotlight Effect */
+        .achieve-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(600px circle at var(--mouse-x) var(--mouse-y), rgba(43, 155, 155, 0.08), transparent 40%);
+            z-index: 0;
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+
+        .achieve-card:hover::before {
+            opacity: 1;
+        }
+
+        /* Footer */
+        footer {
+            border-top: 1px solid var(--border-color);
+            padding: 40px;
+            text-align: center;
+            position: relative;
+            z-index: 10;
+            background: var(--bg-body);
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 20px;
+        }
+
+        .footer-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: white;
+        }
+
+        /* Animations */
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 900px) {
+            .record-card {
+                grid-template-columns: 1fr;
+                text-align: center;
+                padding: 40px;
+            }
+
+            .record-badge {
+                margin: 0 auto 20px;
+            }
+
+            .record-visual {
+                height: 200px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Language Switcher -->
+    <a href="index.html" class="lang-switch">
+        <span>English</span>
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="2" y1="12" x2="22" y2="12"></line>
+            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+        </svg>
+    </a>
+
+    <div class="ambient-glow"></div>
+
+    <div class="back-nav">
+        <a href="../index-ar.html">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <line x1="19" y1="12" x2="5" y2="12"></line>
+                <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+            العودة للرئيسية
+        </a>
+    </div>
+
+    <header>
+        <div class="hero-label">النتائج هي الدليل</div>
+        <h1>لحظات شكلت<br>مسيرتي المهنية</h1>
+        <p class="hero-desc">كل رقم يحكي قصة. كل إنجاز بدأ بمشكلة قيل إنها "مستحيلة الحل".
+            هنا ما حدث عندما قررت أن أحاول رغم ذلك.</p>
+
+        <div class="stats-container">
+            <div class="stat-box visible">
+                <div class="stat-number" data-val="6x">6x</div>
+                <div class="stat-label">نمو عضوي</div>
+            </div>
+            <div class="stat-box visible">
+                <div class="stat-number" data-val="5M">5M</div>
+                <div class="stat-label">رقم قياسي في الطلبات</div>
+            </div>
+            <div class="stat-box visible">
+                <div class="stat-number" data-val="900+">900+</div>
+                <div class="stat-label">متجر موحد</div>
+            </div>
+            <div class="stat-box visible">
+                <div class="stat-number" data-val="12+">12+</div>
+                <div class="stat-label">سنوات القيادة</div>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <!-- The Record -->
+        <section class="record-section">
+            <div class="record-card">
+                <div class="record-content">
+                    <div class="record-badge">
+                        <span>🏆 حامل رقم قياسي في غينيس</span>
+                    </div>
+                    <h2>الليلة التي كسرنا فيها الإنترنت</h2>
+                    <p class="record-desc">
+                        <strong>نوفمبر 2021. الجمعة البيضاء. 11:47 مساءً.</strong><br>
+                        السيرفرات تعاني. 5 ملايين طلب في يوم واحد — أكثر مما عالجته أي منصة تجارة إلكترونية في الشرق
+                        الأوسط حينها.
+                        أتذكر وقوفي في غرفة العمليات، أراقب الأرقام تتصاعد وأنا أفكر: "لم يكن من المفترض أن ينجح هذا."
+                    </p>
+                    <p class="record-desc">
+                        لكنه نجح. ليس بسبب الحظ — بل لأننا قضينا 6 أشهر نبني نظاماً قادر على تحمل 10 أضعاف الحمل
+                        الطبيعي.
+                        تدربنا على سيناريوهات الفشل. جهزنا المخزون مسبقاً. ودربنا خدمة العملاء على التعامل مع الفوضى.
+                    </p>
+                    <p class="record-desc" style="color: white; font-weight: 500;">
+                        عندما اتصلت "غينيس" للتحقق من الرقم، استطعت أخيراً النوم.. لأول مرة منذ 72 ساعة.
+                    </p>
+                </div>
+                <div class="record-visual">
+                    <div class="gold-ring"></div>
+                    <div class="gold-ring"></div>
+                    <div style="font-size: 4rem; z-index: 2;">👑</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Other Achievements -->
+        <section class="grid-section">
+            <div class="achieve-grid">
+
+                <!-- Card 1 - Qyadat Transformation -->
+                <div class="achieve-card">
+                    <div class="card-icon">🚀</div>
+                    <h3>السؤال الذي غيّر كل شيء</h3>
+                    <p><strong>المشكلة:</strong> في "قيادات"، كنا نتنافس على السعر. كل عرض كان سباقاً نحو القاع.</p>
+                    <p style="margin-top: 12px;"><strong>اللحظة الحاسمة:</strong> سألت في اجتماع: "لماذا قد تدفع لنا
+                        وزارة ضعف السعر؟" عم الصمت الغرفة. ثم أعدنا بناء كل شيء.</p>
+                    <p style="margin-top: 12px;"><strong>النتيجة:</strong> توقفنا عن بيع "خدمات". بدأنا نبيع "نتائج
+                        مضمونة". خلال 8 أشهر، وقعنا 3 عقود حكومية بقيمة تفوق السنتين الماضيتين مجتمعتين.</p>
+                </div>
+
+                <!-- Card 2 - ISO Digital Framework -->
+                <div class="achieve-card">
+                    <div class="card-icon">🏛️</div>
+                    <h3>عندما تلتقي البيروقراطية بالأتمتة</h3>
+                    <p><strong>المشكلة:</strong> الجهات الحكومية كانت تقضي شهوراً للتحضير لتدقيقات الآيزو (ISO). فوضى
+                        ورقية وإرهاق للموظفين.</p>
+                    <p style="margin-top: 12px;"><strong>الحل:</strong> بنيت في "Iso-tec" إطار عمل للجاهزية الرقمية. ليس
+                        مجرد قوالب، بل نظام حي يقوم بالتحديث التلقائي وتحديد الفجوات.</p>
+                    <p style="margin-top: 12px;"><strong>النتيجة:</strong> 4 وزارات وجامعتين اجتازوا الآيزو من المحاولة
+                        الأولى. وانخفض وقت التحضير من 6 أشهر إلى 6 أسابيع.</p>
+                </div>
+
+                <!-- Card 3 - Arabian Oud Omnichannel -->
+                <div class="achieve-card">
+                    <div class="card-icon">📈</div>
+                    <h3>900 متجر، وعقل عميل واحد</h3>
+                    <p><strong>المشكلة:</strong> "العربية للعود" تملك 900+ متجر وموقع إلكتروني. لكن لم يكن بإمكانهم
+                        معرفة ما إذا كان العميل يشتري من الاثنين معاً. التسويق كان "أعمى".</p>
+                    <p style="margin-top: 12px;"><strong>البناء:</strong> طبقة بيانات موحدة للعملاء. تتبع للسلوك عبر
+                        القنوات. رسائل مخصصة بناءً على أنماط التسوق.</p>
+                    <p style="margin-top: 12px;"><strong>الأثر:</strong> زادت القيمة الدائمة للعميل (LTV) بنسبة 35%.
+                        ومعدل تكرار الشراء قفز 22%.</p>
+                </div>
+
+                <!-- Card 4 - DigiMora Growth -->
+                <div class="achieve-card">
+                    <div class="card-icon">📊</div>
+                    <h3>من عميلين إلى 14 في عام واحد</h3>
+                    <p><strong>نقطة البداية:</strong> "ديجيمورا" كانت وكالة صغيرة بطموح كبير ولكن نادراً ما كانت تبيع.
+                    </p>
+                    <p style="margin-top: 12px;"><strong>الاستراتيجية:</strong> تحويل الخدمات إلى منتجات (Productized
+                        Services). بنينا دراسات حالة تبيع نفسها بنفسها. وأنشأنا نظام إحالة حول العملاء إلى مندوبي
+                        مبيعات.</p>
+                    <p style="margin-top: 12px;"><strong>النمو:</strong> نمو في العقود 7 أضعاف في 12 شهراً. وزيادة
+                        إيرادات العميل الواحد بنسبة 40%.</p>
+                </div>
+
+                <!-- Card 5 - Team Building -->
+                <div class="achieve-card">
+                    <div class="card-icon">👥</div>
+                    <h3>بناء فرق تستمر بعد رحيلي</h3>
+                    <p><strong>فلسفتي:</strong> الاختبار الحقيقي للقائد ليس ما يحدث وهو موجود، بل ما يحدث عندما يغادر.
+                    </p>
+                    <p style="margin-top: 12px;"><strong>الممارسة:</strong> في كل شركة، بنيت أنظمة تدريب، ووثقت
+                        العمليات، ورقيت المواهب الداخلية. ليس للتجميل، بل لأن التوسع يعتمد على ذلك.</p>
+                    <p style="margin-top: 12px;"><strong>الدليل:</strong> الفرق التي بنيتها في "العربية للعود" و"قيادات"
+                        لا تزال تعمل بالأنظمة التي صممتها. وبعضهم يقودون الأقسام الآن.</p>
+                </div>
+
+                <!-- Card 6 - Intrapreneurship -->
+                <div class="achieve-card">
+                    <div class="card-icon">💡</div>
+                    <h3>شركات ناشئة داخل الشركات الكبرى</h3>
+                    <p><strong>الرؤية:</strong> لا تحتاج دائماً لإنشاء شركة لتبني شيئاً جديداً. أحياناً أفضل "ستارتب" هي
+                        قسم جديد داخل شركة قائمة.</p>
+                    <p style="margin-top: 12px;"><strong>النهج:</strong> أطلقت وحدات تجارة إلكترونية وأقسام تسويق رقمي
+                        وخطوط خدمات جديدة — كلها بموارد الشركة ولكن بعقلية الشركات الناشئة.</p>
+                    <p style="margin-top: 12px;"><strong>الدرس:</strong> ريادة الأعمال الداخلية (Intrapreneurship)
+                        مظلومة. مخاطر أقل. موارد أسرع. ونفس متعة البناء من الصفر.</p>
+                </div>
+
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-links">
+            <a href="/CV/index-ar.html">الرئيسية</a>
+            <a href="/CV/portfolio/index-ar.html">أعمالي</a>
+        </div>
+        <p style="color: var(--text-secondary); font-size: 0.9rem;">© 2026 محمد جمال | التميز هو المعيار</p>
+    </footer>
+
+    <script>
+        // Spotlight Effect
+        document.querySelector('.grid-section').onmousemove = e => {
+            for (const card of document.getElementsByClassName("achieve-card")) {
+                const rect = card.getBoundingClientRect(),
+                    x = e.clientX - rect.left,
+                    y = e.clientY - rect.top;
+
+                card.style.setProperty("--mouse-x", `${x}px`);
+                card.style.setProperty("--mouse-y", `${y}px`);
+            };
+        }
+
+        // Scroll Observer
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.achieve-card, .stat-box').forEach(el => observer.observe(el));
+    </script>
+</body>
+
+</html>
