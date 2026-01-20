@@ -27,67 +27,101 @@
             background-color: var(--bg-body);
             color: var(--text-primary);
             overflow-x: hidden;
-            line-height: 1.6;
+            line-height: 1.7;
+            animation: pageLoad 1s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        /* Ambient Background */
+        @keyframes pageLoad {
+            from {
+                opacity: 0;
+                filter: blur(10px);
+                transform: scale(0.98);
+            }
+
+            to {
+                opacity: 1;
+                filter: blur(0);
+                transform: scale(1);
+            }
+        }
+
+        /* Ambient Background - Dual Glow */
         .ambient-glow {
             position: fixed;
-            width: 800px;
-            height: 800px;
-            background: radial-gradient(circle, rgba(43, 155, 155, 0.15) 0%, transparent 70%);
+            width: 1000px;
+            height: 1000px;
+            background: radial-gradient(circle, rgba(43, 155, 155, 0.12) 0%, transparent 60%);
             border-radius: 50%;
-            top: -200px;
+            top: -300px;
             left: 50%;
             transform: translateX(-50%);
             z-index: 0;
             pointer-events: none;
-            animation: pulseGlow 8s ease-in-out infinite;
+            animation: pulseGlow 10s ease-in-out infinite;
+            mix-blend-mode: screen;
+        }
+
+        .ambient-glow::after {
+            content: '';
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(139, 106, 175, 0.1) 0%, transparent 60%);
+            border-radius: 50%;
+            bottom: -100px;
+            right: -200px;
+            animation: pulseGlow 12s ease-in-out infinite reverse;
         }
 
         @keyframes pulseGlow {
 
             0%,
             100% {
-                opacity: 0.5;
-                transform: translateX(-50%) scale(1);
+                opacity: 0.6;
+                transform: translateX(-50%) scale(1) rotate(0deg);
             }
 
             50% {
-                opacity: 0.8;
-                transform: translateX(-50%) scale(1.1);
+                opacity: 1;
+                transform: translateX(-50%) scale(1.15) rotate(5deg);
             }
         }
 
-        /* Navigation */
+        /* Navigation - Premium */
         .back-nav {
             position: fixed;
             top: 30px;
             left: 30px;
             z-index: 1000;
-            mix-blend-mode: difference;
         }
 
         .back-nav a {
             text-decoration: none;
-            color: white;
+            color: var(--text-primary);
             font-weight: 600;
             display: flex;
             align-items: center;
             gap: 10px;
-            font-size: 1.1rem;
-            opacity: 0.8;
-            transition: all 0.3s ease;
+            font-size: 1rem;
+            padding: 12px 20px;
+            background: var(--bg-glass);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
+            border-radius: 50px;
+            transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
         }
 
         .back-nav a:hover {
-            opacity: 1;
+            background: var(--bg-card);
+            border-color: var(--teal-primary);
             transform: translateX(-5px);
+            box-shadow: 0 8px 30px rgba(43, 155, 155, 0.15);
         }
 
-        /* Hero Section */
+        /* Hero Section - Premium */
         header {
-            min-height: 80vh;
+            min-height: 90vh;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -99,43 +133,58 @@
         }
 
         .hero-label {
-            font-size: 0.9rem;
-            letter-spacing: 4px;
+            font-size: 0.85rem;
+            letter-spacing: 5px;
             text-transform: uppercase;
-            color: var(--teal-glow);
-            margin-bottom: 20px;
+            color: var(--teal-primary);
+            font-weight: 600;
+            margin-bottom: 25px;
             opacity: 0;
             animation: fadeDown 1s ease forwards 0.2s;
         }
 
         h1 {
-            font-size: clamp(3rem, 8vw, 6rem);
+            font-size: clamp(2.8rem, 7vw, 5.5rem);
             font-weight: 800;
-            line-height: 1.1;
-            margin-bottom: 30px;
-            background: linear-gradient(to right, #fff, #a5a5a5);
+            line-height: 1.05;
+            margin-bottom: 35px;
+            background: linear-gradient(135deg, var(--text-primary) 0%, var(--teal-deep) 50%, var(--purple-deep) 100%);
+            background-size: 200% 200%;
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
             opacity: 0;
-            animation: fadeUp 1s ease forwards 0.4s;
+            animation: fadeUp 1s ease forwards 0.4s, gradientShift 8s ease-in-out infinite;
+        }
+
+        @keyframes gradientShift {
+
+            0%,
+            100% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
         }
 
         .hero-desc {
-            font-size: 1.2rem;
+            font-size: 1.15rem;
             color: var(--text-secondary);
-            max-width: 600px;
+            max-width: 650px;
             margin: 0 auto;
+            font-weight: 400;
             opacity: 0;
             animation: fadeUp 1s ease forwards 0.6s;
         }
 
-        /* Stats Grid */
+        /* Stats Grid - Glassmorphism */
         .stats-container {
             display: flex;
             justify-content: center;
-            gap: 60px;
-            margin-top: 80px;
+            gap: 30px;
+            margin-top: 60px;
             flex-wrap: wrap;
             opacity: 0;
             animation: fadeUp 1s ease forwards 0.8s;
@@ -143,46 +192,58 @@
 
         .stat-box {
             text-align: center;
+            padding: 30px 40px;
+            background: var(--bg-glass);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--teal-primary), var(--purple-primary));
+            background-size: 200% 100%;
+            animation: gradientShift 4s ease infinite;
+        }
+
+        .stat-box:hover {
+            transform: translateY(-8px) scale(1.02);
+            border-color: rgba(43, 155, 155, 0.4);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2), 0 0 40px rgba(43, 155, 155, 0.1);
         }
 
         .stat-number {
-            font-size: 3.5rem;
-            font-weight: 700;
-            color: transparent;
-            -webkit-text-stroke: 1px rgba(255, 255, 255, 0.3);
+            font-size: 3rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--teal-primary) 0%, var(--purple-primary) 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
             position: relative;
-            margin-bottom: 10px;
-        }
-
-        .stat-number::before {
-            content: attr(data-val);
-            position: absolute;
-            left: 0;
-            top: 0;
-            width: 0%;
-            height: 100%;
-            color: var(--teal-glow);
-            overflow: hidden;
-            border-right: 2px solid var(--teal-glow);
-            transition: width 1.5s ease-out;
-            -webkit-text-stroke: 0px;
-        }
-
-        .stat-box.visible .stat-number::before {
-            width: 100%;
-            border-right: none;
+            margin-bottom: 8px;
+            line-height: 1.2;
         }
 
         .stat-label {
-            font-size: 0.9rem;
-            color: var(--text-secondary);
+            font-size: 0.8rem;
+            color: var(--text-muted);
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 2px;
+            font-weight: 500;
         }
 
         /* The Crown Jewel - Record Section */
         .record-section {
-            padding: 100px 20px;
+            padding: 80px 20px 120px;
             position: relative;
             z-index: 10;
         }
@@ -190,54 +251,87 @@
         .record-card {
             max-width: 1100px;
             margin: 0 auto;
-            background: linear-gradient(145deg, rgba(255, 215, 0, 0.05), rgba(0, 0, 0, 0));
-            border: 1px solid rgba(255, 215, 0, 0.2);
-            border-radius: 30px;
+            background: linear-gradient(145deg, rgba(196, 169, 98, 0.08) 0%, rgba(0, 0, 0, 0) 100%);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(196, 169, 98, 0.25);
+            border-radius: 32px;
             padding: 60px;
             display: grid;
-            grid-template-columns: 1.2fr 0.8fr;
+            grid-template-columns: 1.3fr 0.7fr;
             gap: 50px;
             align-items: center;
             position: relative;
             overflow: hidden;
-            transition: transform 0.5s ease;
+            transition: all 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        /* Shine sweep on hover */
+        .record-card::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg,
+                    transparent 40%,
+                    rgba(196, 169, 98, 0.05) 50%,
+                    transparent 60%);
+            transform: translateX(-100%) rotate(45deg);
+            transition: transform 1s ease;
+            pointer-events: none;
+        }
+
+        .record-card:hover::after {
+            transform: translateX(100%) rotate(45deg);
         }
 
         .record-card:hover {
-            transform: scale(1.01);
-            border-color: rgba(255, 215, 0, 0.4);
-            box-shadow: 0 0 50px rgba(255, 215, 0, 0.05);
+            transform: translateY(-5px);
+            border-color: rgba(196, 169, 98, 0.5);
+            box-shadow:
+                0 30px 80px rgba(0, 0, 0, 0.3),
+                0 0 60px rgba(196, 169, 98, 0.1);
         }
 
         .record-content h2 {
-            font-size: clamp(2rem, 4vw, 3rem);
-            margin-bottom: 20px;
+            font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+            font-weight: 700;
+            margin-bottom: 25px;
             color: var(--gold);
+            line-height: 1.2;
         }
 
         .record-badge {
             display: inline-flex;
             align-items: center;
             gap: 10px;
-            padding: 8px 16px;
-            background: rgba(255, 215, 0, 0.1);
-            border: 1px solid var(--gold);
+            padding: 10px 20px;
+            background: rgba(196, 169, 98, 0.12);
+            border: 1px solid rgba(196, 169, 98, 0.4);
             border-radius: 50px;
             color: var(--gold);
             font-weight: 600;
-            font-size: 0.9rem;
-            margin-bottom: 20px;
+            font-size: 0.85rem;
+            margin-bottom: 25px;
+            letter-spacing: 0.5px;
         }
 
         .record-desc {
-            font-size: 1.1rem;
+            font-size: 1.05rem;
             color: var(--text-secondary);
-            margin-bottom: 30px;
+            margin-bottom: 20px;
+            line-height: 1.8;
+        }
+
+        .record-desc strong {
+            color: var(--gold);
         }
 
         .record-visual {
             position: relative;
-            height: 300px;
+            height: 280px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -245,37 +339,37 @@
 
         .gold-ring {
             position: absolute;
-            width: 250px;
-            height: 250px;
-            border: 2px solid rgba(255, 215, 0, 0.2);
+            width: 220px;
+            height: 220px;
+            border: 2px solid rgba(196, 169, 98, 0.25);
             border-radius: 50%;
-            animation: spin 10s linear infinite;
+            animation: spin 12s linear infinite;
         }
 
         .gold-ring::after {
             content: '';
             position: absolute;
-            top: -5px;
+            top: -6px;
             left: 50%;
-            width: 10px;
-            height: 10px;
+            width: 12px;
+            height: 12px;
             background: var(--gold);
             border-radius: 50%;
-            box-shadow: 0 0 20px var(--gold);
+            box-shadow: 0 0 25px var(--gold), 0 0 50px rgba(196, 169, 98, 0.5);
         }
 
         .gold-ring:nth-child(2) {
-            width: 180px;
-            height: 180px;
-            animation-duration: 15s;
+            width: 160px;
+            height: 160px;
+            animation-duration: 18s;
             animation-direction: reverse;
-            border-color: rgba(255, 215, 0, 0.4);
+            border-color: rgba(196, 169, 98, 0.5);
         }
 
-        /* Achievements Grid */
+        /* Achievements Grid - Premium */
         .grid-section {
-            padding: 50px 20px 150px;
-            max-width: 1200px;
+            padding: 40px 20px 120px;
+            max-width: 1300px;
             margin: 0 auto;
             position: relative;
             z-index: 10;
@@ -283,60 +377,127 @@
 
         .achieve-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 30px;
+            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+            gap: 28px;
         }
 
         .achieve-card {
             background: var(--bg-glass);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             border: 1px solid var(--border-color);
-            border-radius: 24px;
-            padding: 40px;
+            border-radius: 28px;
+            padding: 42px;
             position: relative;
             overflow: hidden;
-            transition: all 0.4s ease;
-            backdrop-filter: blur(10px);
+            transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
             opacity: 0;
-            transform: translateY(30px);
+            transform: translateY(40px) scale(0.97);
+            filter: blur(5px);
+        }
+
+        /* Staggered reveal */
+        .achieve-card:nth-child(1) {
+            transition-delay: 0.1s;
+        }
+
+        .achieve-card:nth-child(2) {
+            transition-delay: 0.2s;
+        }
+
+        .achieve-card:nth-child(3) {
+            transition-delay: 0.3s;
+        }
+
+        .achieve-card:nth-child(4) {
+            transition-delay: 0.4s;
+        }
+
+        .achieve-card:nth-child(5) {
+            transition-delay: 0.5s;
+        }
+
+        .achieve-card:nth-child(6) {
+            transition-delay: 0.6s;
         }
 
         .achieve-card.visible {
             opacity: 1;
-            transform: translateY(0);
+            transform: translateY(0) scale(1);
+            filter: blur(0);
+        }
+
+        /* Gradient border on hover */
+        .achieve-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--teal-primary), var(--purple-primary));
+            transform: scaleX(0);
+            transition: transform 0.4s ease;
+        }
+
+        .achieve-card:hover::after {
+            transform: scaleX(1);
         }
 
         .achieve-card:hover {
             background: var(--bg-card);
-            border-color: rgba(255, 255, 255, 0.3);
-            transform: translateY(-10px);
+            border-color: rgba(43, 155, 155, 0.3);
+            transform: translateY(-12px) scale(1.01);
+            box-shadow:
+                0 25px 60px rgba(0, 0, 0, 0.25),
+                0 0 40px rgba(43, 155, 155, 0.08);
         }
 
         .card-icon {
-            width: 60px;
-            height: 60px;
-            border-radius: 16px;
-            background: linear-gradient(135deg, var(--teal-primary), rgba(43, 155, 155, 0.2));
+            width: 65px;
+            height: 65px;
+            border-radius: 18px;
+            background: linear-gradient(135deg, var(--teal-primary), rgba(43, 155, 155, 0.3));
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.5rem;
-            margin-bottom: 25px;
-            box-shadow: 0 10px 30px rgba(43, 155, 155, 0.2);
+            font-size: 1.7rem;
+            margin-bottom: 28px;
+            box-shadow: 0 12px 35px rgba(43, 155, 155, 0.25);
+            transition: transform 0.4s ease;
+        }
+
+        .achieve-card:hover .card-icon {
+            transform: scale(1.1) rotate(-5deg);
         }
 
         .achieve-card:nth-child(2) .card-icon {
-            background: linear-gradient(135deg, var(--purple-primary), rgba(139, 106, 175, 0.2));
-            box-shadow: 0 10px 30px rgba(139, 106, 175, 0.2);
+            background: linear-gradient(135deg, var(--purple-primary), rgba(139, 106, 175, 0.3));
+            box-shadow: 0 12px 35px rgba(139, 106, 175, 0.25);
+        }
+
+        .achieve-card:nth-child(4) .card-icon {
+            background: linear-gradient(135deg, var(--gold), rgba(196, 169, 98, 0.3));
+            box-shadow: 0 12px 35px rgba(196, 169, 98, 0.25);
         }
 
         .achieve-card h3 {
-            font-size: 1.5rem;
-            margin-bottom: 15px;
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 18px;
+            color: var(--text-primary);
+            line-height: 1.3;
         }
 
         .achieve-card p {
             color: var(--text-secondary);
-            font-size: 1rem;
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+
+        .achieve-card p strong {
+            color: var(--teal-primary);
+            font-weight: 600;
         }
 
         /* Mouse Spotlight Effect */
@@ -347,7 +508,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: radial-gradient(800px circle at var(--mouse-x) var(--mouse-y), rgba(255, 255, 255, 0.06), transparent 40%);
+            background: radial-gradient(600px circle at var(--mouse-x) var(--mouse-y), rgba(43, 155, 155, 0.08), transparent 40%);
             z-index: 0;
             opacity: 0;
             transition: opacity 0.5s;
@@ -449,22 +610,26 @@
 
     <header>
         <div class="hero-label">The Proof Is In The Work</div>
-        <h1>Moments That<br>Defined The Journey</h1>
-        <p class="hero-desc">These aren't just metrics — they're problems I solved, teams I built, and systems that
-            still run today.</p>
+        <h1>Moments That<br>Shaped My Career</h1>
+        <p class="hero-desc">Every number tells a story. Every achievement started with a problem someone said couldn't
+            be solved. Here's what happened when I decided to try anyway.</p>
 
         <div class="stats-container">
             <div class="stat-box visible">
-                <div class="stat-number" data-val="10+">10+</div>
-                <div class="stat-label">Years Exp</div>
+                <div class="stat-number" data-val="6x">6x</div>
+                <div class="stat-label">Organic Growth</div>
             </div>
             <div class="stat-box visible">
-                <div class="stat-number" data-val="#1">#1</div>
-                <div class="stat-label">Ranking</div>
+                <div class="stat-number" data-val="5M">5M</div>
+                <div class="stat-label">Orders Record</div>
             </div>
             <div class="stat-box visible">
-                <div class="stat-number" data-val="40%">40%</div>
-                <div class="stat-label">Growth</div>
+                <div class="stat-number" data-val="900+">900+</div>
+                <div class="stat-label">Stores Unified</div>
+            </div>
+            <div class="stat-box visible">
+                <div class="stat-number" data-val="12+">12+</div>
+                <div class="stat-label">Years Leading</div>
             </div>
         </div>
     </header>
@@ -477,14 +642,20 @@
                     <div class="record-badge">
                         <span>🏆 Guinness World Record Holder</span>
                     </div>
-                    <h2>The 5 Million Order Milestone</h2>
+                    <h2>The Night We Broke The Internet</h2>
                     <p class="record-desc">
-                        Led the digital strategy for Arabian Oud that resulted in breaking the Guinness World Record for
-                        the most orders on a single platform during a Black Friday campaign. This wasn't just about
-                        traffic; it was about orchestrating a flawless logistical and digital symphony.
+                        <strong>November 2021. Black Friday. 11:47 PM.</strong><br>
+                        The servers were screaming. Five million orders in a single day — more than any e-commerce
+                        platform in the Middle East had ever processed. I remember standing in the operations room,
+                        watching the numbers climb, and thinking: "This wasn't supposed to work."
+                    </p>
+                    <p class="record-desc">
+                        But it did. Not because of luck — because we spent 6 months building a system that could handle
+                        10x our normal load. We rehearsed failure scenarios. We pre-positioned inventory. We trained
+                        customer service for chaos.
                     </p>
                     <p class="record-desc" style="color: white; font-weight: 500;">
-                        Result: Recognized as the #1 Top Performer E-commerce Platform in KSA.
+                        When Guinness called to verify the record, I finally slept. For the first time in 72 hours.
                     </p>
                 </div>
                 <div class="record-visual">
@@ -499,42 +670,80 @@
         <section class="grid-section">
             <div class="achieve-grid">
 
-                <!-- Card 1 -->
+                <!-- Card 1 - Qyadat Transformation -->
                 <div class="achieve-card">
                     <div class="card-icon">🚀</div>
-                    <h3>The "Stop Selling Services" Moment</h3>
-                    <p>At Qyadat, I asked a simple question: "Why would someone choose us over a cheaper competitor?"
-                        The answer changed everything. We stopped selling hours and started selling guaranteed outcomes.
-                        Result? Long-term government contracts instead of one-off projects.</p>
+                    <h3>The Question That Changed Everything</h3>
+                    <p><strong>The Problem:</strong> At Qyadat, we were competing on price. Every proposal was a race to
+                        the bottom.</p>
+                    <p style="margin-top: 12px;"><strong>The Moment:</strong> I asked in a meeting: "Why would a
+                        ministry pay us double?" The room went silent. Then we rebuilt everything.</p>
+                    <p style="margin-top: 12px;"><strong>The Result:</strong> We stopped selling services. We started
+                        selling guaranteed outcomes with SLAs. Within 8 months, we signed 3 government contracts worth
+                        more than the previous 2 years combined.</p>
                 </div>
 
-                <!-- Card 2 -->
+                <!-- Card 2 - ISO Digital Framework -->
                 <div class="achieve-card">
                     <div class="card-icon">🏛️</div>
-                    <h3>Making ISO Actually Useful</h3>
-                    <p>Most companies dread ISO certification — it's paperwork hell. At Iso-tec, I built a "Digital
-                        Readiness Framework" that turned compliance into a product. Ministries went from dreading audits
-                        to passing them on autopilot. The secret? Making the system serve people, not the other way
-                        around.</p>
+                    <h3>When Bureaucracy Met Automation</h3>
+                    <p><strong>The Problem:</strong> Government agencies were spending months preparing for ISO audits.
+                        Paperwork chaos. Staff burnout.</p>
+                    <p style="margin-top: 12px;"><strong>The Solution:</strong> I built a "Digital Readiness Framework"
+                        at Iso-tec. Not just templates — a living system that auto-updates, flags gaps, and generates
+                        reports.</p>
+                    <p style="margin-top: 12px;"><strong>The Result:</strong> 4 ministries and 2 universities passed ISO
+                        certification on first attempt. Average prep time dropped from 6 months to 6 weeks.</p>
                 </div>
 
-                <!-- Card 3 -->
+                <!-- Card 3 - Arabian Oud Omnichannel -->
                 <div class="achieve-card">
                     <div class="card-icon">📈</div>
-                    <h3>900 Stores + 1 Digital Brain</h3>
-                    <p>Arabian Oud had a problem: 900+ retail stores and an e-commerce site that felt like two different
-                        companies. I built the bridge — a unified customer view that tracked behavior across both
-                        channels. LTV increased 35% because we finally knew who our customers were, no matter where they
-                        shopped.</p>
+                    <h3>900 Stores, One Customer Brain</h3>
+                    <p><strong>The Problem:</strong> Arabian Oud had 900+ retail stores and an e-commerce site. But they
+                        couldn't tell if the same customer bought in both. Marketing was shooting blind.</p>
+                    <p style="margin-top: 12px;"><strong>The Build:</strong> Unified customer data layer. Cross-channel
+                        behavior tracking. Personalized messaging based on shopping patterns.</p>
+                    <p style="margin-top: 12px;"><strong>The Impact:</strong> Customer Lifetime Value increased 35%.
+                        Repeat purchase rate jumped 22%. The CMO finally knew who was actually buying.</p>
                 </div>
 
-                <!-- Card 4 -->
+                <!-- Card 4 - DigiMora Growth -->
+                <div class="achieve-card">
+                    <div class="card-icon">📊</div>
+                    <h3>From 2 Clients to 14 in One Year</h3>
+                    <p><strong>The Starting Point:</strong> DigiMora was a small agency with big ambitions but no sales
+                        engine.</p>
+                    <p style="margin-top: 12px;"><strong>The Strategy:</strong> Productized services. Built case studies
+                        that sold themselves. Created a referral system that turned clients into salespeople.</p>
+                    <p style="margin-top: 12px;"><strong>The Growth:</strong> 7x contract growth in 12 months. Revenue
+                        per client increased 40% by focusing on retainers over projects.</p>
+                </div>
+
+                <!-- Card 5 - Team Building -->
+                <div class="achieve-card">
+                    <div class="card-icon">👥</div>
+                    <h3>Building Teams That Outlast Me</h3>
+                    <p><strong>My Philosophy:</strong> A leader's real test isn't what happens when they're there — it's
+                        what happens when they leave.</p>
+                    <p style="margin-top: 12px;"><strong>The Practice:</strong> At every company, I've built training
+                        systems, documented processes, and promoted internal talent. Not because it looks good — because
+                        scaling depends on it.</p>
+                    <p style="margin-top: 12px;"><strong>The Proof:</strong> Teams I've built at Arabian Oud, DigiMora,
+                        and Qyadat still operate using systems I designed. Some are leading departments now.</p>
+                </div>
+
+                <!-- Card 6 - Intrapreneurship -->
                 <div class="achieve-card">
                     <div class="card-icon">💡</div>
-                    <h3>Building Inside The Building</h3>
-                    <p>Sometimes the best startups are born inside existing companies. I've launched internal business
-                        units that captured new markets without the risk of starting from scratch — proving that
-                        intrapreneurship is just as powerful as entrepreneurship when done right.</p>
+                    <h3>Startups Inside Companies</h3>
+                    <p><strong>The Insight:</strong> You don't always need to start a company to build something new.
+                        Sometimes the best "startup" is a new division inside an existing business.</p>
+                    <p style="margin-top: 12px;"><strong>The Approach:</strong> I've launched internal e-commerce units,
+                        digital marketing departments, and new service lines — all with company resources but startup
+                        mindset.</p>
+                    <p style="margin-top: 12px;"><strong>The Learning:</strong> Intrapreneurship is underrated. Lower
+                        risk. Faster resources. Same satisfaction of building from zero.</p>
                 </div>
 
             </div>
