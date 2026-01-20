@@ -3,8 +3,12 @@
     /* Core Hues */
     --teal-primary: #2B9B9B;
     --teal-glow: rgba(45, 180, 180, 0.15);
+    --teal-light: #6FCBCB;
+    --teal-deep: #1E6F6F;
     --purple-primary: #8B6AAF;
     --purple-glow: rgba(139, 106, 175, 0.12);
+    --purple-light: #B89AD6;
+    --purple-deep: #5C3E7B;
     --gold: #C4A962;
 
     /* Transition Settings */
@@ -20,8 +24,11 @@
     --text-secondary: #495057;
     --text-muted: #868E96;
     --border-color: #E9ECEF;
+    --gray-100: #F1F3F5;
+    --gray-200: #E9ECEF;
     --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.05);
     --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.08);
+    --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.12);
     --shadow-glow: 0 0 0 transparent; /* No glow in light mode usually */
     --gradient-overlay: linear-gradient(180deg, rgba(255,255,255,0) 0%, #FAFBFC 100%);
 }
@@ -35,8 +42,11 @@
     --text-secondary: #8b949e;
     --text-muted: #6e7681;
     --border-color: #30363d;
+    --gray-100: #1b222a;
+    --gray-200: #2a313a;
     --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.2);
     --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.4);
+    --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.6);
     --shadow-glow: 0 0 40px rgba(43, 155, 155, 0.1);
     --gradient-overlay: linear-gradient(180deg, rgba(10,15,22,0) 0%, #0a0f16 100%);
 }

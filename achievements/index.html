@@ -5,7 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mohamed Gamal | Hall of Achievements</title>
-    <meta name="description" content="Awards, recognitions, and major milestones in digital marketing and business growth.">
+    <meta name="description"
+        content="Awards, recognitions, and major milestones in digital marketing and business growth.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
@@ -45,8 +46,17 @@
         }
 
         @keyframes pulseGlow {
-            0%, 100% { opacity: 0.5; transform: translateX(-50%) scale(1); }
-            50% { opacity: 0.8; transform: translateX(-50%) scale(1.1); }
+
+            0%,
+            100% {
+                opacity: 0.5;
+                transform: translateX(-50%) scale(1);
+            }
+
+            50% {
+                opacity: 0.8;
+                transform: translateX(-50%) scale(1.1);
+            }
         }
 
         /* Navigation */
@@ -105,6 +115,7 @@
             margin-bottom: 30px;
             background: linear-gradient(to right, #fff, #a5a5a5);
             -webkit-background-clip: text;
+            background-clip: text;
             -webkit-text-fill-color: transparent;
             opacity: 0;
             animation: fadeUp 1s ease forwards 0.4s;
@@ -138,11 +149,11 @@
             font-size: 3.5rem;
             font-weight: 700;
             color: transparent;
-            -webkit-text-stroke: 1px rgba(255,255,255,0.3);
+            -webkit-text-stroke: 1px rgba(255, 255, 255, 0.3);
             position: relative;
             margin-bottom: 10px;
         }
-        
+
         .stat-number::before {
             content: attr(data-val);
             position: absolute;
@@ -179,7 +190,7 @@
         .record-card {
             max-width: 1100px;
             margin: 0 auto;
-            background: linear-gradient(145deg, rgba(255,215,0,0.05), rgba(0,0,0,0));
+            background: linear-gradient(145deg, rgba(255, 215, 0, 0.05), rgba(0, 0, 0, 0));
             border: 1px solid rgba(255, 215, 0, 0.2);
             border-radius: 30px;
             padding: 60px;
@@ -336,7 +347,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: radial-gradient(800px circle at var(--mouse-x) var(--mouse-y), rgba(255,255,255,0.06), transparent 40%);
+            background: radial-gradient(800px circle at var(--mouse-x) var(--mouse-y), rgba(255, 255, 255, 0.06), transparent 40%);
             z-index: 0;
             opacity: 0;
             transition: opacity 0.5s;
@@ -375,17 +386,33 @@
 
         /* Animations */
         @keyframes spin {
-            to { transform: rotate(360deg); }
+            to {
+                transform: rotate(360deg);
+            }
         }
 
         @keyframes fadeUp {
-            from { opacity: 0; transform: translateY(40px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         @keyframes fadeDown {
-            from { opacity: 0; transform: translateY(-20px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         @media (max-width: 900px) {
@@ -394,9 +421,11 @@
                 text-align: center;
                 padding: 40px;
             }
+
             .record-badge {
                 margin: 0 auto 20px;
             }
+
             .record-visual {
                 height: 200px;
             }
@@ -409,16 +438,21 @@
 
     <div class="back-nav">
         <a href="/CV/">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <line x1="19" y1="12" x2="5" y2="12"></line>
+                <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
             Back to Home
         </a>
     </div>
 
     <header>
-        <div class="hero-label">Excellence in Action</div>
-        <h1>Defining<br>The Standard</h1>
-        <p class="hero-desc">Over a decade of breaking records, transforming businesses, and setting new benchmarks in the MENA digital landscape.</p>
-        
+        <div class="hero-label">The Proof Is In The Work</div>
+        <h1>Moments That<br>Defined The Journey</h1>
+        <p class="hero-desc">These aren't just metrics — they're problems I solved, teams I built, and systems that
+            still run today.</p>
+
         <div class="stats-container">
             <div class="stat-box visible">
                 <div class="stat-number" data-val="10+">10+</div>
@@ -445,7 +479,9 @@
                     </div>
                     <h2>The 5 Million Order Milestone</h2>
                     <p class="record-desc">
-                        Led the digital strategy for Arabian Oud that resulted in breaking the Guinness World Record for the most orders on a single platform during a Black Friday campaign. This wasn't just about traffic; it was about orchestrating a flawless logistical and digital symphony.
+                        Led the digital strategy for Arabian Oud that resulted in breaking the Guinness World Record for
+                        the most orders on a single platform during a Black Friday campaign. This wasn't just about
+                        traffic; it was about orchestrating a flawless logistical and digital symphony.
                     </p>
                     <p class="record-desc" style="color: white; font-weight: 500;">
                         Result: Recognized as the #1 Top Performer E-commerce Platform in KSA.
@@ -462,33 +498,43 @@
         <!-- Other Achievements -->
         <section class="grid-section">
             <div class="achieve-grid">
-                
+
                 <!-- Card 1 -->
                 <div class="achieve-card">
                     <div class="card-icon">🚀</div>
-                    <h3>Strategic B2B Transformation</h3>
-                    <p>At Qeyadat, I shifted the paradigm from "Selling Services" to "Selling Solutions." This strategic pivot secured long-term contracts with major Saudi government sectors and diversified revenue streams beyond traditional models.</p>
+                    <h3>The "Stop Selling Services" Moment</h3>
+                    <p>At Qyadat, I asked a simple question: "Why would someone choose us over a cheaper competitor?"
+                        The answer changed everything. We stopped selling hours and started selling guaranteed outcomes.
+                        Result? Long-term government contracts instead of one-off projects.</p>
                 </div>
 
                 <!-- Card 2 -->
                 <div class="achieve-card">
                     <div class="card-icon">🏛️</div>
-                    <h3>GovTech Digital Compliance</h3>
-                    <p>Developed the "Digital Readiness Framework" for Iso-tec. This innovation helped major ministries qualify for ISO certifications, turning a complex compliance hurdle into a streamlined, productized service.</p>
+                    <h3>Making ISO Actually Useful</h3>
+                    <p>Most companies dread ISO certification — it's paperwork hell. At Iso-tec, I built a "Digital
+                        Readiness Framework" that turned compliance into a product. Ministries went from dreading audits
+                        to passing them on autopilot. The secret? Making the system serve people, not the other way
+                        around.</p>
                 </div>
 
                 <!-- Card 3 -->
                 <div class="achieve-card">
                     <div class="card-icon">📈</div>
-                    <h3>Omnichannel Masterclass</h3>
-                    <p>Successfully bridged the gap between Arabian Oud's massive retail footprint (900+ stores) and their digital presence. Created a unified customer view that increased Lifetime Value (LTV) by 35% across both channels.</p>
+                    <h3>900 Stores + 1 Digital Brain</h3>
+                    <p>Arabian Oud had a problem: 900+ retail stores and an e-commerce site that felt like two different
+                        companies. I built the bridge — a unified customer view that tracked behavior across both
+                        channels. LTV increased 35% because we finally knew who our customers were, no matter where they
+                        shopped.</p>
                 </div>
 
                 <!-- Card 4 -->
                 <div class="achieve-card">
                     <div class="card-icon">💡</div>
-                    <h3>Business Model Innovation</h3>
-                    <p>Founded distinct business units within existing structures to capture new market segments, proving that intrapreneurship is just as vital as entrepreneurship for sustained growth.</p>
+                    <h3>Building Inside The Building</h3>
+                    <p>Sometimes the best startups are born inside existing companies. I've launched internal business
+                        units that captured new markets without the risk of starting from scratch — proving that
+                        intrapreneurship is just as powerful as entrepreneurship when done right.</p>
                 </div>
 
             </div>
@@ -506,10 +552,10 @@
     <script>
         // Spotlight Effect
         document.querySelector('.grid-section').onmousemove = e => {
-            for(const card of document.getElementsByClassName("achieve-card")) {
+            for (const card of document.getElementsByClassName("achieve-card")) {
                 const rect = card.getBoundingClientRect(),
-                      x = e.clientX - rect.left,
-                      y = e.clientY - rect.top;
+                    x = e.clientX - rect.left,
+                    y = e.clientY - rect.top;
 
                 card.style.setProperty("--mouse-x", `${x}px`);
                 card.style.setProperty("--mouse-y", `${y}px`);
@@ -521,7 +567,7 @@
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     entry.target.classList.add('visible');
-                    
+
                     // Trigger number animation if it's the stats container
                     if (entry.target.classList.contains('stat-box')) {
                         // Animation is handled by CSS width transition on pseudo element
@@ -533,4 +579,5 @@
         document.querySelectorAll('.achieve-card, .stat-box').forEach(el => observer.observe(el));
     </script>
 </body>
+
 </html>
