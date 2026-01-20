@@ -48,8 +48,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const lightbox = document.getElementById('lightbox');
     const lightboxImg = document.getElementById('lightboxImg');
     const lightboxClose = document.querySelector('.lightbox-close');
-    const lightboxPrev = document.querySelector('.lightbox-prev');
-    const lightboxNext = document.querySelector('.lightbox-next');
+    const lightboxPrev = lightbox?.querySelector('.lightbox-prev');
+    const lightboxNext = lightbox?.querySelector('.lightbox-next');
     const images = galleryItems
         .map(item => item.querySelector('img'))
         .filter(Boolean);
