@@ -99,13 +99,14 @@ section {
     opacity: 0;
     transform: translateY(60px) scale(0.97);
     filter: blur(8px);
-    transition: all 1s cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: transform, opacity, filter;
 }
 
 .reveal.visible {
     opacity: 1;
     transform: translateY(0) scale(1);
     filter: blur(0);
+    animation: revealSlideUp 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 /* Staggered reveal for children */
@@ -942,6 +943,12 @@ section {
     color: var(--text-primary);
 }
 
+.skill-item .skill-icon {
+    display: inline-block;
+    margin-right: 8px;
+    vertical-align: middle;
+}
+
 /* Tools */
 .tools-section {
     background: var(--bg-panel);
@@ -1514,6 +1521,11 @@ section {
     .reveal {
         opacity: 1;
         transform: none;
+        filter: none;
+    }
+
+    .reveal.visible {
+        animation: none;
     }
 }
 
