@@ -16,6 +16,7 @@
     <link rel="stylesheet" href="../assets/css/motion-effects.css">
 
     <script src="../assets/js/motion-effects.js" defer></script>
+    <script src="../assets/js/header.js" defer></script>
     <style>
         /* :root variables imported from theme.css */
 
@@ -123,7 +124,7 @@
         }
 
         /* Hero Section - Premium */
-        header {
+        .hero-section {
             min-height: 90vh;
             display: flex;
             flex-direction: column;
@@ -772,17 +773,10 @@
 </head>
 
 <body>
-    <!-- Language Switcher -->
-    <a href="index-ar.html" class="lang-switch" aria-label="Switch to Arabic">
-        <span style="font-family: 'Tajawal'; font-weight: 700; font-size: 0.85rem;">العربية</span>
-    </a>
-
     <div class="ambient-glow"></div>
 
     <!-- Progress Line -->
     <div class="progress-line" id="progressLine"></div>
-
-    <!-- Hero Section -->
 
     <!-- Premium Header -->
     <header class="site-header">
@@ -815,6 +809,32 @@
             </button>
         </div>
     </header>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="hero-label">Results are the Evidence</div>
+        <h1>Moments That Shaped<br>My Career</h1>
+        <p class="hero-desc">Every number tells a story. Every milestone started with a problem someone said was "impossible to solve." Here is what happened when I decided to try anyway.</p>
+
+        <div class="stats-container">
+            <div class="stat-box visible">
+                <div class="stat-number" data-val="6x">6x</div>
+                <div class="stat-label">Sales Growth (SEO)</div>
+            </div>
+            <div class="stat-box visible">
+                <div class="stat-number" data-val="5M">5M</div>
+                <div class="stat-label">Order Record</div>
+            </div>
+            <div class="stat-box visible">
+                <div class="stat-number" data-val="900+">900+</div>
+                <div class="stat-label">Unified Stores</div>
+            </div>
+            <div class="stat-box visible">
+                <div class="stat-number" data-val="12+">12+</div>
+                <div class="stat-label">Leadership Years</div>
+            </div>
+        </div>
+    </section>
 
     <main>
         <!-- The Record -->
