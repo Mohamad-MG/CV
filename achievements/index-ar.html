@@ -16,7 +16,6 @@
 
     <link rel="stylesheet" href="../assets/css/theme.css">
     <link rel="stylesheet" href="../assets/css/header.css">
-    <link rel="stylesheet" href="../assets/css/back-nav.css">
     <link rel="stylesheet" href="../assets/css/motion-effects.css">
 
     <script src="../assets/js/motion-effects.js" defer></script>
@@ -908,24 +907,42 @@
 </head>
 
 <body>
-    <!-- Language Switcher -->
-    <a href="index.html" class="lang-switch" aria-label="Switch to English">
-        <span style="font-family: 'Outfit'; font-weight: 700; font-size: 0.85rem;">English</span>
-    </a>
+    <!-- Premium Header -->
+    <header class="site-header">
+        <div class="header-container">
+            <!-- Logo/Brand -->
+            <a href="/CV/index-ar.html" class="header-logo">
+                <img src="../assets/images/arabic-logo-mg.png" alt="محمد جمال" class="logo-img">
+            </a>
 
-    <div class="ambient-glow"></div>
+            <!-- Navigation -->
+            <nav class="header-nav">
+                <a href="/CV/index-ar.html" class="nav-link">الرئيسية</a>
+                <a href="/CV/portfolio/index-ar.html" class="nav-link">أعمالي</a>
+                <a href="/CV/achievements/index-ar.html" class="nav-link active">إنجازاتي</a>
+                <div class="nav-indicator"></div>
+            </nav>
 
-    <!-- Back to Home Navigation -->
-    <nav class="back-to-home">
-        <a href="../index-ar.html" class="back-link">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M5 12h14M12 5l7 7-7 7" />
-            </svg>
-            <span>العودة للرئيسية</span>
-        </a>
-    </nav>
+            <!-- Controls -->
+            <div class="header-controls">
+                <a href="index.html" class="lang-switch" aria-label="Switch to English">
+                    <span style="font-family: 'Outfit'; font-weight: 700; font-size: 0.85rem;">English</span>
+                </a>
+            </div>
 
-    <header>
+            <!-- Mobile Menu Toggle -->
+            <button class="mobile-menu-toggle" aria-label="القائمة">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Progress Line -->
+    <div class="progress-line" id="progressLine"></div>
+
+    <!-- Hero Section -->
         <div class="hero-label">النتائج هي الدليل</div>
         <h1>لحظات شكلت<br>مسيرتي المهنية</h1>
         <p class="hero-desc">كل رقم يحكي قصة. كل إنجاز بدأ بمشكلة قيل إنها "مستحيلة الحل".

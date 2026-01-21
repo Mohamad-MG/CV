@@ -13,7 +13,6 @@
         rel="stylesheet">
     <link rel="stylesheet" href="../assets/css/theme.css">
     <link rel="stylesheet" href="../assets/css/header.css">
-    <link rel="stylesheet" href="../assets/css/back-nav.css">
     <link rel="stylesheet" href="../assets/css/motion-effects.css">
 
     <script src="../assets/js/motion-effects.js" defer></script>
@@ -780,39 +779,40 @@
 
     <div class="ambient-glow"></div>
 
-    <!-- Back to Home Navigation -->
-    <nav class="back-to-home">
-        <a href="/CV/" class="back-link">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M19 12H5M12 19l-7-7 7-7" />
-            </svg>
-            <span>Back to Home</span>
-        </a>
-    </nav>
+    <!-- Progress Line -->
+    <div class="progress-line" id="progressLine"></div>
 
-    <header>
-        <div class="hero-label">The Proof Is In The Work</div>
-        <h1>Moments That<br>Shaped My Career</h1>
-        <p class="hero-desc">Every number tells a story. Every achievement started with a problem someone said couldn't
-            be solved. Here's what happened when I decided to try anyway.</p>
+    <!-- Hero Section -->
 
-        <div class="stats-container">
-            <div class="stat-box visible">
-                <div class="stat-number" data-val="6x">6x</div>
-                <div class="stat-label">Organic Growth</div>
+    <!-- Premium Header -->
+    <header class="site-header">
+        <div class="header-container">
+            <!-- Logo/Brand -->
+            <a href="/CV/" class="header-logo">
+                <img src="../assets/images/Eng-logo-mg2.png" alt="Mohamed Gamal Logo" class="logo-img">
+            </a>
+
+            <!-- Navigation -->
+            <nav class="header-nav">
+                <a href="/CV/" class="nav-link">Home</a>
+                <a href="/CV/portfolio/" class="nav-link">Portfolio</a>
+                <a href="/CV/achievements/" class="nav-link active">Achievements</a>
+                <div class="nav-indicator"></div>
+            </nav>
+
+            <!-- Controls -->
+            <div class="header-controls">
+                <a href="index-ar.html" class="lang-switch" aria-label="Switch to Arabic">
+                    <span style="font-family: 'Tajawal'; font-weight: 700; font-size: 0.85rem;">العربية</span>
+                </a>
             </div>
-            <div class="stat-box visible">
-                <div class="stat-number" data-val="5M">5M</div>
-                <div class="stat-label">Orders Record</div>
-            </div>
-            <div class="stat-box visible">
-                <div class="stat-number" data-val="900+">900+</div>
-                <div class="stat-label">Stores Unified</div>
-            </div>
-            <div class="stat-box visible">
-                <div class="stat-number" data-val="12+">12+</div>
-                <div class="stat-label">Years Leading</div>
-            </div>
+
+            <!-- Mobile Menu Toggle -->
+            <button class="mobile-menu-toggle" aria-label="Toggle menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
         </div>
     </header>
 
