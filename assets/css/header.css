@@ -29,10 +29,10 @@
     max-width: 1400px;
     margin: 0 auto;
     padding: 0 40px;
-    display: flex;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    gap: 20px;
     align-items: center;
-    justify-content: space-between;
-    /* Space out the 3 islands: Logo, Nav, Controls */
     pointer-events: auto;
     /* Re-enable clicks on elements */
 }
@@ -46,6 +46,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    justify-self: start;
     height: 60px;
     min-width: 60px;
     padding: 8px 16px;
@@ -89,6 +90,7 @@
 .header-nav {
     display: flex;
     align-items: center;
+    justify-self: center;
     gap: 4px;
     background: rgba(30, 30, 35, 0.6);
     backdrop-filter: blur(20px) saturate(180%);
@@ -145,6 +147,7 @@
 .header-controls {
     display: flex;
     align-items: center;
+    justify-self: end;
     gap: 12px;
     background: rgba(30, 30, 35, 0.6);
     backdrop-filter: blur(20px);
@@ -222,6 +225,12 @@
 }
 
 @media (max-width: 900px) {
+    .header-container {
+        display: flex;
+        justify-content: flex-start;
+        gap: 12px;
+    }
+
     .header-nav {
         display: none;
         /* Move to mobile menu logic */
@@ -262,6 +271,7 @@
     .header-controls {
         background: rgba(255, 255, 255, 0.8);
         /* Ensure visibility */
+        margin-left: auto;
     }
 
     /* Adjust container padding */
