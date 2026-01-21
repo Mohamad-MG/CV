@@ -13,9 +13,9 @@
     left: 0;
     right: 0;
     z-index: 1000;
-    background: rgba(var(--bg-body-rgb, 10, 15, 20), 0.7);
-    backdrop-filter: blur(20px) saturate(180%);
-    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    background: rgba(var(--bg-body-rgb, 255, 255, 255), 0.65);
+    backdrop-filter: blur(25px) saturate(200%);
+    -webkit-backdrop-filter: blur(25px) saturate(200%);
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
     transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     padding: 12px 0;
@@ -23,9 +23,9 @@
 
 .site-header.scrolled {
     padding: 8px 0;
-    background: rgba(var(--bg-body-rgb, 10, 15, 20), 0.85);
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.15);
-    border-bottom-color: rgba(255, 255, 255, 0.12);
+    background: rgba(var(--bg-body-rgb, 255, 255, 255), 0.85);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+    border-bottom-color: rgba(255, 255, 255, 0.15);
 }
 
 .header-container {
@@ -55,8 +55,9 @@
 }
 
 .logo-text {
-    font-size: 1.3rem;
-    font-weight: 800;
+    font-size: 1.4rem;
+    font-weight: 700;
+    letter-spacing: -0.03em;
     background: linear-gradient(135deg, var(--teal-primary), var(--purple-primary));
     -webkit-background-clip: text;
     background-clip: text;
@@ -90,9 +91,9 @@
     position: relative;
     color: var(--text-secondary);
     text-decoration: none;
-    font-weight: 500;
-    font-size: 0.9rem;
-    padding: 8px 16px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    padding: 10px 20px;
     border-radius: 50px;
     transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     z-index: 2;
@@ -289,12 +290,12 @@ body:has(.site-header)>.lang-switch:not(.site-header .lang-switch) {
 
 /* Dark theme adjustments */
 [data-theme="dark"] .site-header {
-    background: rgba(10, 15, 20, 0.7);
+    background: rgba(10, 15, 20, 0.75);
 }
 
 [data-theme="dark"] .header-nav {
-    background: rgba(255, 255, 255, 0.02);
-    border-color: rgba(255, 255, 255, 0.05);
+    background: rgba(255, 255, 255, 0.03);
+    border-color: rgba(255, 255, 255, 0.06);
 }
 
 /* Light theme adjustments */
