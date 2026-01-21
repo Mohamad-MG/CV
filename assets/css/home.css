@@ -1435,45 +1435,58 @@ section {
     border-radius: 24px;
     text-align: center;
     border: 1px solid var(--border-color);
-    transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); /* Bouncy smooth */
     position: relative;
     overflow: hidden;
+    z-index: 1;
 }
 
-.industry-card::after {
+/* Gradient Glow Background on Hover */
+.industry-card::before {
     content: '';
     position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 3px;
-    background: linear-gradient(90deg, var(--teal-primary), var(--purple-primary));
-    transform: scaleX(0);
-    transition: transform 0.4s ease;
+    inset: 0;
+    border-radius: 24px;
+    padding: 2px; /* Border width */
+    background: linear-gradient(135deg, var(--teal-primary), var(--purple-primary));
+    -webkit-mask: 
+       linear-gradient(#fff 0 0) content-box, 
+       linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    pointer-events: none;
+    z-index: -1;
 }
 
-.industry-card:hover::after {
-    transform: scaleX(1);
+.industry-card:hover::before {
+    opacity: 1;
 }
 
 .industry-card:hover {
-    border-color: rgba(43, 155, 155, 0.4);
-    box-shadow:
-        var(--shadow-lg),
-        0 0 40px rgba(43, 155, 155, 0.1);
-    transform: translateY(-10px) rotateX(5deg);
+    transform: translateY(-8px);
+    box-shadow: 
+        0 20px 40px rgba(0, 0, 0, 0.12),
+        0 0 20px rgba(43, 155, 155, 0.1); /* Subtle color glow */
+    border-color: transparent; /* Hide original border to show gradient mask */
+}
+
+.industry-card::after {
+    display: none; /* Remove old bottom line */
 }
 
 .industry-card .industry-icon {
     font-size: 3rem;
-    margin-bottom: 18px;
+    margin-bottom: 20px;
     display: inline-block;
     color: var(--teal-primary);
-    transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.3s ease;
 }
 
 .industry-card:hover .industry-icon {
-    transform: scale(1.2) translateY(-5px);
+    transform: scale(1.15) translateY(-5px);
+    filter: drop-shadow(0 10px 15px rgba(43, 155, 155, 0.3));
 }
 
 .industry-card h4 {
@@ -1481,11 +1494,17 @@ section {
     font-weight: 700;
     color: var(--text-primary);
     margin-bottom: 8px;
+    transition: color 0.3s ease;
 }
 
 .industry-card p {
     font-size: 0.85rem;
     color: var(--text-muted);
+    transition: color 0.3s ease;
+}
+
+.industry-card:hover h4 {
+    color: var(--teal-deep);
 }
 
 /* Responsive for new sections */

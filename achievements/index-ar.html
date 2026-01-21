@@ -15,6 +15,8 @@
         rel="stylesheet">
 
     <link rel="stylesheet" href="../assets/css/theme.css">
+    <link rel="stylesheet" href="../assets/css/header.css">
+    <link rel="stylesheet" href="../assets/css/back-nav.css">
     <link rel="stylesheet" href="../assets/css/motion-effects.css">
     <script src="../assets/js/theme.js" defer></script>
     <script src="../assets/js/motion-effects.js" defer></script>
@@ -255,6 +257,133 @@
             text-transform: uppercase;
             letter-spacing: 2px;
             font-weight: 500;
+        }
+
+        /* Journey Timeline - Enhanced */
+        .journey-section {
+            padding: 80px 20px 100px;
+            max-width: 900px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 10;
+        }
+
+        .journey-header {
+            text-align: center;
+            margin-bottom: 70px;
+        }
+
+        .journey-header h2 {
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 700;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, var(--teal-primary), var(--purple-primary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .journey-header p {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+        }
+
+        .journey-timeline {
+            position: relative;
+            padding-right: 60px;
+        }
+
+        /* Timeline vertical line */
+        .journey-timeline::before {
+            content: '';
+            position: absolute;
+            right: 20px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(180deg,
+                    transparent,
+                    rgba(43, 155, 155, 0.3) 10%,
+                    rgba(43, 155, 155, 0.3) 90%,
+                    transparent);
+        }
+
+        .journey-item {
+            position: relative;
+            margin-bottom: 50px;
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 30px;
+            align-items: start;
+            opacity: 0;
+            transform: translateX(30px);
+            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .journey-item.visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .journey-year {
+            position: absolute;
+            right: -60px;
+            top: 0;
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--teal-primary);
+            background: var(--bg-body);
+            padding: 4px 8px;
+            border-radius: 6px;
+        }
+
+        .journey-marker {
+            position: absolute;
+            right: -60px;
+            top: 8px;
+            width: 16px;
+            height: 16px;
+            background: var(--teal-primary);
+            border: 3px solid var(--bg-body);
+            border-radius: 50%;
+            box-shadow: 0 0 0 4px rgba(43, 155, 155, 0.2);
+            z-index: 2;
+        }
+
+        .journey-content {
+            background: var(--bg-glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 25px 28px;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .journey-content:hover {
+            transform: translateX(-8px);
+            border-color: rgba(43, 155, 155, 0.4);
+            box-shadow: 0 8px 30px rgba(43, 155, 155, 0.15);
+        }
+
+        .journey-content h4 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .journey-content span {
+            display: block;
+            font-size: 1rem;
+            color: var(--teal-primary);
+            font-weight: 500;
+            margin-bottom: 6px;
+        }
+
+        .journey-content p {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin: 0;
         }
 
         /* The Crown Jewel - Record Section */
@@ -786,6 +915,16 @@
 
     <div class="ambient-glow"></div>
 
+    <!-- Back to Home Navigation -->
+    <nav class="back-to-home">
+        <a href="../index-ar.html" class="back-link">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M5 12h14M12 5l7 7-7 7" />
+            </svg>
+            <span>العودة للرئيسية</span>
+        </a>
+    </nav>
+
     <header>
         <div class="hero-label">النتائج هي الدليل</div>
         <h1>لحظات شكلت<br>مسيرتي المهنية</h1>
@@ -1168,6 +1307,47 @@
             if (e.key === 'Escape') {
                 hideContactModal();
             }
+        });
+
+        // Scroll-triggered animations
+        const observerOptions = {
+            threshold: 0.15,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        // Observe journey items
+        document.querySelectorAll('.journey-item').forEach(item => {
+            observer.observe(item);
+        });
+
+        // Observe achievement cards
+        document.querySelectorAll('.achieve-card').forEach(card => {
+            observer.observe(card);
+        });
+
+        // Observe record section
+        const recordSection = document.querySelector('.record-section');
+        if (recordSection) {
+            observer.observe(recordSection);
+        }
+
+        // Add stagger animation classes to journey items
+        document.querySelectorAll('.journey-item').forEach((item, index) => {
+            item.style.transitionDelay = `${index * 0.1}s`;
+        });
+
+        // Add stagger animation classes to achievement cards
+        document.querySelectorAll('.achieve-card').forEach((card, index) => {
+            card.style.transitionDelay = `${index * 0.15}s`;
         });
     </script>
 </body>
