@@ -2148,32 +2148,341 @@ section {
     background-clip: text;
 }
 
-/* Responsive */
-@media (max-width: 900px) {
-    .future-grid {
-        grid-template-columns: repeat(2, 1fr);
+/* --- BACKGROUND SYSTEM (ULTRA 2026) --- */
+.noise-overlay {
+    position: fixed;
+    inset: 0;
+    background: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+    opacity: 0.03;
+    pointer-events: none;
+    z-index: 9000;
+}
+
+/* Slower, subtler ambient light */
+.ambient-light {
+    position: fixed;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(112, 0, 255, 0.08) 0%, transparent 70%);
+    border-radius: 50%;
+    filter: blur(100px);
+    z-index: -1;
+    pointer-events: none;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    transition: transform 1.5s cubic-bezier(0.1, 0.5, 0.5, 1); /* Smoother lag */
+}
+
+/* --- SOCIAL SIGNALS (Background Activity - Ultra) --- */
+.social-particles {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: -1;
+    perspective: 1000px;
+}
+
+.signal {
+    position: absolute;
+    opacity: 0;
+    filter: blur(0px); /* Sharp icons, blurred glows */
+    animation: floatUltra linear infinite;
+    will-change: transform, opacity;
+}
+
+.signal-icon {
+    width: 40px;
+    height: 40px;
+    color: rgba(255, 255, 255, 0.05); /* Ghostly white */
+    backdrop-filter: blur(4px);
+    transition: all 0.3s ease;
+}
+
+.signal-icon svg {
+    width: 100%;
+    height: 100%;
+    filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.1));
+}
+
+/* 1. Heart (Soft Red Pulse) */
+.signal-1 {
+    color: rgba(255, 60, 100, 0.15);
+    left: 10%;
+    bottom: -10%;
+    width: 50px;
+    height: 50px;
+    animation-duration: 20s;
+    animation-delay: -5s; /* Negative delay for instant visibility */
+}
+
+/* 2. TikTok (Cyan/Pink Glitch Feel) */
+.signal-2 {
+    color: rgba(0, 240, 255, 0.12);
+    right: 15%;
+    bottom: -15%;
+    width: 60px;
+    height: 60px;
+    animation-duration: 25s;
+    animation-delay: -12s;
+}
+
+/* 3. Network (Tech Blue) */
+.signal-3 {
+    color: rgba(112, 0, 255, 0.15);
+    left: 80%;
+    bottom: -20%;
+    width: 45px;
+    height: 45px;
+    animation-duration: 22s;
+    animation-delay: -8s;
+}
+
+/* 4. Thumb (Gold/Success) */
+.signal-4 {
+    color: rgba(255, 215, 0, 0.12);
+    left: 20%;
+    bottom: -25%;
+    width: 55px;
+    height: 55px;
+    animation-duration: 28s;
+    animation-delay: -20s;
+}
+
+/* 5. Deep Ambient Glow (Purple) */
+.signal-5 {
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, rgba(112, 0, 255, 0.06) 0%, transparent 60%);
+    border-radius: 50%;
+    filter: blur(60px);
+    left: 60%;
+    top: 20%;
+    animation: pulseGlow 15s ease-in-out infinite alternate;
+}
+
+/* 6. Deep Ambient Glow (Teal) */
+.signal-6 {
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(0, 240, 255, 0.04) 0%, transparent 60%);
+    border-radius: 50%;
+    filter: blur(80px);
+    left: -10%;
+    bottom: -20%;
+    animation: pulseGlow 20s ease-in-out infinite alternate-reverse;
+}
+
+/* 7. Snapchat (Ghost White/Yellow) */
+.signal-7 {
+    color: rgba(255, 252, 0, 0.15); /* Snap Yellow */
+    left: 45%;
+    bottom: -15%;
+    width: 48px;
+    height: 48px;
+    animation-duration: 24s;
+    animation-delay: -2s;
+}
+
+/* 8. Google Maps (Location Red/Green) */
+.signal-8 {
+    color: rgba(52, 168, 83, 0.15); /* Google Greenish */
+    right: 35%;
+    bottom: -30%;
+    width: 52px;
+    height: 52px;
+    animation-duration: 32s;
+    animation-delay: -15s;
+}
+
+/* 9. Shopping Cart (E-commerce Orange) */
+.signal-9 {
+    color: rgba(255, 100, 0, 0.15);
+    left: 5%;
+    bottom: -10%;
+    width: 58px;
+    height: 58px;
+    animation-duration: 26s;
+    animation-delay: -10s;
+}
+
+/* 10. ChatGPT (OpenAI Green) */
+.signal-10 {
+    color: rgba(16, 163, 127, 0.15);
+    left: 28%;
+    bottom: -15%;
+    width: 45px;
+    height: 45px;
+    animation-duration: 22s;
+    animation-delay: -4s;
+}
+
+/* 11. Gemini (Blue/Purple Gradient feel) */
+.signal-11 {
+    color: rgba(78, 168, 246, 0.2);
+    right: 22%;
+    bottom: -10%;
+    width: 50px;
+    height: 50px;
+    animation-duration: 28s;
+    animation-delay: -18s;
+}
+
+/* 12. Jira (Blue) */
+.signal-12 {
+    color: rgba(38, 132, 255, 0.15);
+    left: 55%;
+    bottom: -20%;
+    width: 42px;
+    height: 42px;
+    animation-duration: 25s;
+    animation-delay: -22s;
+}
+
+/* 13. Amazon (Orange/Black) */
+.signal-13 {
+    color: rgba(255, 153, 0, 0.15);
+    right: 8%;
+    bottom: -12%;
+    width: 55px;
+    height: 55px;
+    animation-duration: 30s;
+    animation-delay: -7s;
+}
+
+/* 14. Google (Multi-color abstract -> White/Blue) */
+.signal-14 {
+    color: rgba(255, 255, 255, 0.12);
+    left: 12%;
+    bottom: -18%;
+    width: 48px;
+    height: 48px;
+    animation-duration: 23s;
+    animation-delay: -16s;
+}
+
+/* 15. Claude (Anthropic Sand) */
+.signal-15 {
+    color: rgba(217, 180, 143, 0.15);
+    right: 42%;
+    bottom: -22%;
+    width: 44px;
+    height: 44px;
+    animation-duration: 27s;
+    animation-delay: -3s;
+}
+
+/* 16. YouTube (Red) */
+.signal-16 {
+    color: rgba(255, 0, 0, 0.15);
+    left: 38%;
+    bottom: -14%;
+    width: 52px;
+    height: 52px;
+    animation-duration: 21s;
+    animation-delay: -14s;
+}
+
+/* 17. Instagram (Pink/Purple) */
+.signal-17 {
+    color: rgba(193, 53, 132, 0.15);
+    right: 28%;
+    bottom: -8%;
+    width: 46px;
+    height: 46px;
+    animation-duration: 29s;
+    animation-delay: -9s;
+}
+
+/* 18. Facebook (Blue) */
+.signal-18 {
+    color: rgba(24, 119, 242, 0.15);
+    left: 65%;
+    bottom: -16%;
+    width: 48px;
+    height: 48px;
+    animation-duration: 24s;
+    animation-delay: -11s;
+}
+
+/* 19. KSA Flag (Green) */
+.signal-19 {
+    color: rgba(0, 100, 0, 0.2);
+    left: 75%;
+    bottom: -25%;
+    width: 60px;
+    height: 60px;
+    animation-duration: 35s;
+    animation-delay: -1s;
+}
+
+/* 20. Egypt Flag (Gold/Red hint) */
+.signal-20 {
+    color: rgba(200, 160, 50, 0.15);
+    right: 55%;
+    bottom: -10%;
+    width: 58px;
+    height: 58px;
+    animation-duration: 33s;
+    animation-delay: -13s;
+}
+
+/* 21. UAE Flag (Red/Green hint) */
+.signal-21 {
+    color: rgba(0, 120, 50, 0.15);
+    left: 2%;
+    bottom: -15%;
+    width: 56px;
+    height: 56px;
+    animation-duration: 31s;
+    animation-delay: -6s;
+}
+
+/* 22. Box (Logistics Blue) */
+.signal-22 {
+    color: rgba(100, 149, 237, 0.15);
+    right: 5%;
+    bottom: -20%;
+    width: 54px;
+    height: 54px;
+    animation-duration: 26s;
+    animation-delay: -19s;
+}
+
+/* 23. Tag (Sales Red) */
+.signal-23 {
+    color: rgba(220, 20, 60, 0.15);
+    left: 50%;
+    bottom: -30%;
+    width: 40px;
+    height: 40px;
+    animation-duration: 22s;
+    animation-delay: -21s;
+}
+
+@keyframes floatUltra {
+    0% {
+        transform: translateY(0) rotate(0deg) scale(0.9);
+        opacity: 0;
+    }
+    15% {
+        opacity: 0.6;
+    }
+    50% {
+        transform: translateY(-40vh) rotate(20deg) scale(1.1);
+        opacity: 0.4;
+    }
+    85% {
+        opacity: 0;
+    }
+    100% {
+        transform: translateY(-100vh) rotate(45deg) scale(0.8);
+        opacity: 0;
     }
 }
 
-@media (max-width: 600px) {
-    .future-grid {
-        grid-template-columns: 1fr;
-    }
-    
-    .future-card {
-        flex-direction: row;
-        text-align: left;
-        padding: 20px;
-    }
-    
-    .card-icon {
-        width: 48px;
-        height: 48px;
-        flex-shrink: 0;
-    }
-    
-    .card-icon svg {
-        width: 24px;
-        height: 24px;
-    }
+@keyframes pulseGlow {
+    0% { opacity: 0.4; transform: scale(1); }
+    100% { opacity: 0.8; transform: scale(1.2); }
 }

@@ -143,3 +143,43 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 });
+
+/* --- ULTRA 2026 INTERACTION LOGIC --- */
+document.addEventListener('DOMContentLoaded', () => {
+    // Custom Cursor Logic
+    const cursorDot = document.querySelector('[data-cursor-dot]');
+    const cursorOutline = document.querySelector('[data-cursor-outline]');
+    const ambientLight = document.getElementById('ambientLight');
+    
+    // Only activate on non-touch devices
+    if (window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
+        if (cursorDot && cursorOutline && ambientLight) {
+            window.addEventListener('mousemove', function(e) {
+                const posX = e.clientX;
+                const posY = e.clientY;
+
+                // Dot moves instantly
+                cursorDot.style.left = `${posX}px`;
+                cursorDot.style.top = `${posY}px`;
+
+                // Outline moves with lag
+                cursorOutline.animate({
+                    left: `${posX}px`,
+                    top: `${posY}px`
+                }, { duration: 500, fill: "forwards" });
+
+                // Ambient Light follows smoothly
+                ambientLight.animate({
+                    left: `${posX}px`,
+                    top: `${posY}px`
+                }, { duration: 4000, fill: "forwards" }); // Very slow drift
+            });
+
+            // Hover States
+            document.querySelectorAll('a, button').forEach(el => {
+                el.addEventListener('mouseenter', () => document.body.classList.add('hovering'));
+                el.addEventListener('mouseleave', () => document.body.classList.remove('hovering'));
+            });
+        }
+    }
+});

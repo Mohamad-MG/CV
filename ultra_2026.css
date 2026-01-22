@@ -1,0 +1,548 @@
+/* 
+   DESIGN TOKENS - LUMINOUS VOID (ULTRA 2026)
+   ------------------------------------------
+   Background: Didactic Black (#050505)
+   Primary Text: Mist White (#F0F0F0)
+   Secondary Text: Steel Grey (#888888)
+   Accent: Electric Cyan (#00F0FF) - Usage < 5%
+   
+   Typography:
+   - Display: 'Space Grotesk', sans-serif (Weights: 300, 400)
+   - Body: 'Outfit', sans-serif (Weights: 300, 400)
+   
+   Motion Guidelines:
+   - Duration: 240ms (Micro), 420ms (Macro), 800ms (Entrance)
+   - Easing: cubic-bezier(0.22, 1, 0.36, 1) (Smooth ease-out)
+   
+   Assumptions:
+   - User prefers a cinematic, scroll-driven experience.
+   - Reduced motion preference is respected (via media query).
+*/
+
+:root {
+    /* Colors */
+    --color-bg: #050505;
+    --color-text-primary: #F0F0F0;
+    --color-text-secondary: #888888;
+    --color-accent: #00F0FF;
+    --color-accent-dim: rgba(0, 240, 255, 0.1);
+
+    /* Spacing */
+    --space-unit: 8px;
+    --space-md: 24px;
+    --space-xl: 64px;
+    --space-xxl: 120px;
+
+    /* Typography */
+    --font-display: 'Space Grotesk', sans-serif;
+    --font-body: 'Outfit', sans-serif;
+
+    /* Effects */
+    --glow-subtle: 0 0 40px rgba(255, 255, 255, 0.03);
+    --glow-accent: 0 0 30px rgba(0, 240, 255, 0.15);
+    --glass-bg: rgba(255, 255, 255, 0.02);
+    --glass-border: 1px solid rgba(255, 255, 255, 0.08);
+    --backdrop-blur: blur(20px);
+}
+
+/* Reset & Base */
+*,
+*::before,
+*::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+    font-size: 16px;
+}
+
+body {
+    background-color: var(--color-bg);
+    color: var(--color-text-primary);
+    font-family: var(--font-body);
+    line-height: 1.6;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3,
+h4 {
+    font-family: var(--font-display);
+    font-weight: 300;
+    line-height: 1.1;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* -----------------------------
+   UTILITIES
+   ----------------------------- */
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 var(--space-md);
+    width: 100%;
+}
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+}
+
+/* -----------------------------
+   AMBIENT BACKGROUND
+   ----------------------------- */
+/* -----------------------------
+   AMBIENT BACKGROUND SYSTEM
+   ----------------------------- */
+.ambient-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: -1;
+    overflow: hidden;
+    pointer-events: none;
+    background: var(--color-bg);
+}
+
+/* Noise Texture for Film Grain Feel */
+.noise-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0.05;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 2;
+}
+
+#void-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    /* Behind noise, Front of Bg color */
+    opacity: 0.6;
+    /* Subtle blend */
+}
+
+/* Moving Orbs */
+.glow-orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.4;
+    transition: transform 0.2s cubic-bezier(0.2, 0, 0.2, 1);
+    /* Smooth mouse follow */
+    will-change: transform;
+    z-index: 0;
+    /* Behind particles */
+}
+
+.glow-1 {
+    top: 20%;
+    left: 30%;
+    width: 50vw;
+    height: 50vw;
+    background: radial-gradient(circle, rgba(0, 240, 255, 0.15) 0%, transparent 70%);
+    animation: breathe 10s infinite alternate cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glow-2 {
+    bottom: -10%;
+    right: 10%;
+    width: 60vw;
+    height: 60vw;
+    background: radial-gradient(circle, rgba(100, 100, 255, 0.08) 0%, transparent 70%);
+    animation: breathe 14s infinite alternate-reverse cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glow-3 {
+    top: 40%;
+    left: 60%;
+    width: 30vw;
+    height: 30vw;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.03) 0%, transparent 70%);
+    animation: breathe 8s infinite alternate cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes breathe {
+    0% {
+        transform: scale(0.9);
+        opacity: 0.3;
+    }
+
+    100% {
+        transform: scale(1.1);
+        opacity: 0.5;
+    }
+}
+
+/* -----------------------------
+   HERO SECTION (THE HOOK)
+   ----------------------------- */
+.hero {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    padding: 0 var(--space-md);
+}
+
+.hero-content {
+    position: relative;
+    z-index: 2;
+    padding-top: 0;
+    /* Centered visually */
+    max-width: 1200px;
+    margin: 0 auto;
+    text-align: left;
+    /* Ensure left align for editorial feel */
+}
+
+.hero-label {
+    font-family: var(--font-display);
+    font-size: 0.85rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--color-accent);
+    display: block;
+    margin-bottom: var(--space-md);
+    opacity: 0;
+    animation: driftUp 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.2s forwards;
+}
+
+.hero-title {
+    font-size: clamp(2.5rem, 6vw, 6.5rem);
+    /* Tamed down from 9.5rem */
+    color: var(--color-text-primary);
+    margin-bottom: var(--space-xl);
+    opacity: 0;
+    line-height: 1.2;
+    /* More breathing room */
+    animation: driftUp 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.4s forwards;
+    letter-spacing: -0.02em;
+    max-width: 1000px;
+    /* Prevent it from getting too wide/uncontrollable */
+}
+
+.hero-title span {
+    display: block;
+}
+
+/* Contrast Weighting */
+.hero-title span:nth-child(1) {
+    font-weight: 300;
+    /* Light */
+    color: rgba(240, 240, 240, 0.9);
+    font-size: 0.9em;
+    /* Slightly smaller than the bold part */
+}
+
+.hero-title span:nth-child(2) {
+    font-weight: 600;
+    /* Bold */
+    color: #FFFFFF;
+    letter-spacing: -0.02em;
+}
+
+.hero-subtitle {
+    font-size: clamp(1rem, 1.5vw, 1.25rem);
+    color: var(--color-text-secondary);
+    width: 100%;
+    max-width: 800px;
+    /* Expanded to allow single line */
+    line-height: 1.7;
+    margin-top: -10px;
+    /* Pull closer to title visually */
+    opacity: 0;
+    animation: driftUp 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.6s forwards;
+    white-space: nowrap;
+    /* Force single line on desktop */
+}
+
+@media (max-width: 768px) {
+    .hero-subtitle {
+        white-space: normal;
+        /* Allow wrap on mobile */
+    }
+}
+
+/* Scroll Indicator */
+.scroll-indicator {
+    position: absolute;
+    bottom: var(--space-xl);
+    left: 50%;
+    /* Center again */
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* Center align */
+    gap: var(--space-unit);
+    opacity: 0;
+    animation: fadeIn 1s ease 1.2s forwards;
+}
+
+.scroll-text {
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--color-text-secondary);
+    opacity: 0.7;
+}
+
+.scroll-line {
+    width: 1px;
+    /* Back to vertical line */
+    height: 40px;
+    background: linear-gradient(to bottom, var(--color-accent), transparent);
+}
+
+/* -----------------------------
+   EVIDENCE SECTION (METRICS CLUSTER)
+   ----------------------------- */
+.evidence {
+    padding: var(--space-xxl) 0;
+    position: relative;
+}
+
+.evidence-title {
+    font-size: clamp(2rem, 4vw, 3rem);
+    margin-bottom: var(--space-xxl);
+    text-align: center;
+}
+
+.metrics-cluster {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: var(--space-xl);
+    position: relative;
+}
+
+/* The Signature Interaction: Floating Data Points */
+.metric-node {
+    position: relative;
+    padding: var(--space-xl) var(--space-md);
+    border-left: 1px solid rgba(255, 255, 255, 0.05);
+    transition: border-color 0.4s ease;
+    cursor: default;
+}
+
+.metric-node:hover {
+    border-left-color: var(--color-accent);
+}
+
+.metric-value {
+    display: block;
+    font-family: var(--font-display);
+    font-size: clamp(3rem, 6vw, 5rem);
+    line-height: 1;
+    color: var(--color-text-primary);
+    margin-bottom: var(--space-unit);
+    position: relative;
+    transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), text-shadow 0.4s ease;
+}
+
+.metric-node:hover .metric-value {
+    transform: translateX(10px);
+    text-shadow: 0 0 20px var(--color-accent-dim);
+    color: white;
+    /* Brighter white on hover */
+}
+
+.metric-label {
+    font-size: 1rem;
+    color: var(--color-text-secondary);
+    display: block;
+    margin-bottom: var(--space-unit);
+    transition: color 0.3s ease;
+}
+
+.metric-node:hover .metric-label {
+    color: var(--color-accent);
+}
+
+.metric-context {
+    font-size: 0.875rem;
+    color: #555;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.metric-node:hover .metric-context {
+    opacity: 1;
+    transform: translateY(0);
+    color: var(--color-text-secondary);
+}
+
+/* -----------------------------
+   PLACEHOLDER SECTIONS
+   ----------------------------- */
+.section-placeholder {
+    padding: var(--space-xxl) 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    opacity: 0.3;
+}
+
+.placeholder-title {
+    font-size: 1.5rem;
+    color: var(--color-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+}
+
+/* -----------------------------
+   CONNECTION SECTION (CONTACT)
+   ----------------------------- */
+.connection {
+    min-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    position: relative;
+}
+
+.connect-heading {
+    font-size: 1rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--color-text-secondary);
+    margin-bottom: var(--space-xl);
+}
+
+.linkedin-huge {
+    font-family: var(--font-display);
+    font-size: clamp(3rem, 10vw, 10rem);
+    color: var(--color-text-primary);
+    line-height: 1;
+    position: relative;
+    z-index: 10;
+    transition: color 0.4s ease;
+}
+
+.linkedin-huge:hover {
+    color: var(--color-accent);
+}
+
+.linkedin-huge::after {
+    content: '↗';
+    font-size: 0.5em;
+    vertical-align: top;
+    opacity: 0;
+    transition: opacity 0.4s ease, transform 0.4s ease;
+    display: inline-block;
+    transform: translate(-20px, 20px);
+}
+
+.linkedin-huge:hover::after {
+    opacity: 1;
+    transform: translate(0, 0);
+}
+
+.whatsapp-alt {
+    margin-top: var(--space-xl);
+    font-size: 1rem;
+    color: var(--color-text-secondary);
+    padding: var(--space-unit) var(--space-md);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 100px;
+    transition: all 0.3s ease;
+}
+
+.whatsapp-alt:hover {
+    border-color: #25D366;
+    color: #25D366;
+    background: rgba(37, 211, 102, 0.05);
+}
+
+/* -----------------------------
+   ANIMATIONS
+   ----------------------------- */
+@keyframes driftUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+/* -----------------------------
+   RESPONSIVE
+   ----------------------------- */
+@media (max-width: 768px) {
+    :root {
+        --space-xl: 40px;
+        --space-xxl: 80px;
+    }
+
+    .metrics-cluster {
+        gap: var(--space-md);
+    }
+
+    .metric-node {
+        border-left: none;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        padding: var(--space-md) 0;
+    }
+
+    .metric-context {
+        opacity: 1;
+        transform: none;
+        margin-top: var(--space-unit);
+    }
+
+    .linkedin-huge {
+        font-size: 15vw;
+    }
+}
