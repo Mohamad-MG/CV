@@ -113,34 +113,7 @@ document.addEventListener('DOMContentLoaded', () => {
         revealObserver.observe(el);
     });
 
-    // ============================================
-    // 4. PARALLAX SCROLL EFFECT
-    // ============================================
-
-    const parallaxElements = document.querySelectorAll('.parallax-float, .ambient-morph');
-
-    let ticking = false;
-
-    const updateParallax = () => {
-        const scrolled = window.pageYOffset;
-
-        parallaxElements.forEach((el, index) => {
-            const speed = el.dataset.speed || 0.5;
-            const direction = index % 2 === 0 ? 1 : -1;
-            const yPos = -(scrolled * speed * direction * 0.3);
-
-            el.style.transform = `translateY(${yPos}px)`;
-        });
-
-        ticking = false;
-    };
-
-    window.addEventListener('scroll', () => {
-        if (!ticking) {
-            window.requestAnimationFrame(updateParallax);
-            ticking = true;
-        }
-    }, { passive: true });
+    // Parallax Scroll Removed for Static Ground
 
     // ============================================
     // 5. TEXT REVEAL ANIMATION

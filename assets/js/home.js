@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('scroll', handleScroll, { passive: true });
     updateProgress();
 
-    const revealTargets = document.querySelectorAll('.reveal, .timeline-content, .skill-item, .stagger-item');
+    const revealTargets = document.querySelectorAll('.reveal, .timeline-content, .skill-chip, .stagger-item');
     if ('IntersectionObserver' in window) {
         const revealObserver = new IntersectionObserver((entries, observer) => {
             entries.forEach(entry => {
@@ -41,37 +41,64 @@ document.addEventListener('DOMContentLoaded', () => {
         revealTargets.forEach(el => el.classList.add('visible'));
     }
 
+    /* --- COUNTER ANIMATION (STATS) --- */
+    const statNumbers = document.querySelectorAll('.stat-number, .proof-number');
+
+    const animateValue = (obj, start, end, duration, suffix = '') => {
+        let startTimestamp = null;
+        const step = (timestamp) => {
+            if (!startTimestamp) startTimestamp = timestamp;
+            const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+            
+            // Easing function: easeOutQuart
+            const easeProgress = 1 - Math.pow(1 - progress, 4);
+            
+            // Handle float vs int
+            let current;
+            if (end % 1 !== 0) {
+                 current = (easeProgress * (end - start) + start).toFixed(1);
+            } else {
+                 current = Math.floor(easeProgress * (end - start) + start);
+            }
+            
+            obj.innerHTML = current + suffix;
+            if (progress < 1) {
+                window.requestAnimationFrame(step);
+            }
+        };
+        window.requestAnimationFrame(step);
+    };
+
+    const statObserver = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const el = entry.target;
+                const rawText = el.innerText;
+                
+                // Parse number and suffix (e.g., "5M" -> 5, "M"; "6x" -> 6, "x")
+                const match = rawText.match(/([\d\.]+)(.*)/);
+                
+                if (match) {
+                    const value = parseFloat(match[1]);
+                    const suffix = match[2];
+                    
+                    // Don't animate if already animated or invalid
+                    if (!isNaN(value)) {
+                        animateValue(el, 0, value, 2000, suffix);
+                    }
+                }
+                
+                observer.unobserve(el);
+            }
+        });
+    }, { threshold: 0.5 });
+
+    statNumbers.forEach(el => statObserver.observe(el));
+
     /* --- PARALLAX EFFECT --- */
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (!prefersReducedMotion) {
-        const ambients = document.querySelectorAll('.ambient');
-        if (ambients.length) {
-            let mouseTicking = false;
-            let mouseX = 0;
-            let mouseY = 0;
-
-            const applyParallax = () => {
-                const x = (mouseX / window.innerWidth - 0.5) * 15;
-                const y = (mouseY / window.innerHeight - 0.5) * 15;
-
-                ambients.forEach((amb, i) => {
-                    const speed = (i + 1) * 0.3;
-                    amb.style.transform = `translate(${x * speed}px, ${y * speed}px)`;
-                });
-
-                mouseTicking = false;
-            };
-
-            document.addEventListener('mousemove', (e) => {
-                mouseX = e.clientX;
-                mouseY = e.clientY;
-
-                if (!mouseTicking) {
-                    mouseTicking = true;
-                    window.requestAnimationFrame(applyParallax);
-                }
-            });
-        }
+    /* Parallax Removed for Static Ground */
     }
 
     /* --- VIDEO LOGIC --- */
@@ -125,10 +152,8 @@ document.addEventListener('DOMContentLoaded', () => {
         contactModal.setAttribute('aria-hidden', 'true');
     };
 
-    if (contactFab) {
-        contactFab.addEventListener('click', showContactModal);
-    }
-
+    // Removed direct FAB listener as it is now a tel: link
+    
     if (modalClose) {
         modalClose.addEventListener('click', hideContactModal);
     }
@@ -146,6 +171,40 @@ document.addEventListener('DOMContentLoaded', () => {
             hideContactModal();
         }
     });
+
+    /* --- SIDE WHATSAPP VISIBILITY LOGIC --- */
+    const whatsappSideFab = document.getElementById('whatsappSideFab');
+    const footer = document.querySelector('.site-footer-2026');
+
+    if (whatsappSideFab && footer) {
+        const footerObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    whatsappSideFab.classList.add('visible');
+                } else {
+                    whatsappSideFab.classList.remove('visible');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        footerObserver.observe(footer);
+    }
+
+    /* --- BACK TO TOP LOGIC --- */
+    const backToTop = document.getElementById('backToTop');
+    if (backToTop) {
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 500) {
+                backToTop.classList.add('visible');
+            } else {
+                backToTop.classList.remove('visible');
+            }
+        }, { passive: true });
+
+        backToTop.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    }
 
     /* --- ULTRA 2026 INTERACTION LOGIC (CUSTOM CURSOR) --- */
     const cursorDot = document.querySelector('[data-cursor-dot]');
@@ -169,11 +228,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     top: `${posY}px`
                 }, { duration: 500, fill: "forwards" });
 
-                // Ambient Light follows smoothly
-                ambientLight.animate({
-                    left: `${posX}px`,
-                    top: `${posY}px`
-                }, { duration: 4000, fill: "forwards" }); // Very slow drift
+                // Ambient Light removed for Static Ground
             });
 
             // Hover States
@@ -185,7 +240,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /* --- SPOTLIGHT EFFECT LOGIC --- */
-    const spotlightCards = document.querySelectorAll('.stat-card, .future-card, .industry-card, .client-item, .hero-card, .proof-item, .edu-row');
+    const spotlightCards = document.querySelectorAll('.stat-card, .future-card, .industry-card, .client-item, .hero-card, .proof-item, .edu-row, .skill-chip, .cert-badge');
     
     spotlightCards.forEach(card => {
         card.classList.add('spotlight-card'); // Ensure CSS class is applied
@@ -218,121 +273,128 @@ document.addEventListener('DOMContentLoaded', () => {
         el.addEventListener('mouseleave', () => {
             el.style.transform = 'translate(0px, 0px)';
         });
-    /* --- DRAGGABLE INFINITE MARQUEE (PHYSICS BASED) --- */
-    const track = document.querySelector('.marquee-track');
-    const container = document.querySelector('.marquee-container');
+    }); // Fixed missing closing brace
 
-    if (track && container) {
+    /* --- 3D AVATAR TILT --- */
+    const avatarWrap = document.querySelector('.avatar-wrap');
+    if (avatarWrap) {
+        avatarWrap.addEventListener('mousemove', (e) => {
+            const rect = avatarWrap.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            // Calculate rotation
+            // Center is (width/2, height/2)
+            const centerX = rect.width / 2;
+            const centerY = rect.height / 2;
+            
+            const rotateX = ((y - centerY) / centerY) * -15; // Invert Y for correct tilt
+            const rotateY = ((x - centerX) / centerX) * 15;
+            
+            avatarWrap.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.05)`;
+        });
+        
+        avatarWrap.addEventListener('mouseleave', () => {
+            avatarWrap.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) scale(1)';
+        });
+    }
+
+
+    /* --- DRAGGABLE INFINITE MARQUEE (PHYSICS BASED - ULTRA SMOOTH) --- */
+    const marqueeContainers = document.querySelectorAll('.marquee-container');
+
+    marqueeContainers.forEach(container => {
+        const track = container.querySelector('.marquee-track');
+        if (!track) return;
+
+        // State
         let currentPos = 0;
         let isDragging = false;
         let startX = 0;
-        let prevPos = 0;
-        let animationId;
+        let lastX = 0;
+        let dragOffset = 0;
         
-        // Configuration
-        const baseSpeed = 0.5; // Auto-scroll speed
-        let speed = baseSpeed;
+        // Read speed from data attribute, fallback to default
+        const baseSpeed = parseFloat(container.getAttribute('data-speed')) || -1.0;
+        let speed = baseSpeed; 
+        
         let velocity = 0;
-        
-        // Calculate the width of one set of items (half the track since we duplicated)
-        // We assume the track has 2 identical sets of items
-        const getHalfWidth = () => track.scrollWidth / 2;
+        const friction = 0.96;
+        let rafId;
+
+        // Calculate Widths
+        const getHalfWidth = () => {
+            return track.getBoundingClientRect().width / 2;
+        };
         let halfWidth = getHalfWidth();
 
-        // Recalculate on resize
         window.addEventListener('resize', () => {
             halfWidth = getHalfWidth();
         });
 
-        // Main Animation Loop
+        // Animation Loop
         const animate = () => {
-            // Apply velocity or base speed
             if (!isDragging) {
-                // Decay velocity back to base speed (Inertia)
-                speed += (baseSpeed - speed) * 0.05;
-                currentPos -= speed;
+                const targetSpeed = baseSpeed;
+                speed += (targetSpeed - speed) * 0.05;
+                currentPos += speed;
             }
 
             // Infinite Loop Logic
-            // If we've scrolled past the first set, reset to 0 (seamless jump)
             if (currentPos <= -halfWidth) {
                 currentPos += halfWidth;
-                prevPos += halfWidth; // Adjust drag reference
+                dragOffset += halfWidth; 
             } else if (currentPos > 0) {
                 currentPos -= halfWidth;
-                prevPos -= halfWidth;
+                dragOffset -= halfWidth;
             }
 
-            // Apply Transform
             track.style.transform = `translateX(${currentPos}px)`;
-
-            animationId = requestAnimationFrame(animate);
+            rafId = requestAnimationFrame(animate);
         };
 
-        // Start Animation
-        animationId = requestAnimationFrame(animate);
+        rafId = requestAnimationFrame(animate);
 
-        // --- Drag Events (Mouse & Touch) ---
-
-        const startDrag = (x) => {
+        // Interaction
+        const handleStart = (x) => {
             isDragging = true;
             startX = x;
-            prevPos = currentPos;
-            track.style.cursor = 'grabbing';
-            // Cancel inertia smoothing temporarily
-            speed = 0; 
+            lastX = x;
+            dragOffset = currentPos;
+            velocity = 0;
+            container.style.cursor = 'grabbing';
         };
 
-        const moveDrag = (x) => {
+        const handleMove = (x) => {
             if (!isDragging) return;
             const diff = x - startX;
-            currentPos = prevPos + diff;
-            
-            // Calculate velocity for inertia
-            // Simple way: track movement per frame (or rough approximation)
-            // Here we just let the position update directly
+            currentPos = dragOffset + diff;
+            velocity = x - lastX;
+            lastX = x;
         };
 
-        const endDrag = (x) => {
+        const handleEnd = () => {
             if (!isDragging) return;
             isDragging = false;
-            track.style.cursor = 'grab';
-            
-            // Calculate throw velocity based on the last movement
-            // Ideally we'd track points, but for this "feel":
-            // We just let the animate loop pull 'speed' back to 'baseSpeed'
-            // To add a "throw", we could calculate the diff from the last few frames.
-            // For now, smooth return to base speed feels high-end.
-            
-            // Optional: Calculate 'speed' based on drag release to give it a "push"
-            // speed = (lastDiff) * friction... (Simplification for robustness)
+            container.style.cursor = 'grab';
+            speed = velocity;
+            if (speed > 25) speed = 25;
+            if (speed < -25) speed = -25;
         };
 
-        // Mouse Events
         container.addEventListener('mousedown', (e) => {
-            e.preventDefault(); // Prevent text selection
-            startDrag(e.pageX);
+            e.preventDefault();
+            handleStart(e.pageX);
         });
+        window.addEventListener('mousemove', (e) => handleMove(e.pageX));
+        window.addEventListener('mouseup', handleEnd);
 
-        window.addEventListener('mousemove', (e) => {
-            moveDrag(e.pageX);
-        });
-
-        window.addEventListener('mouseup', (e) => {
-            endDrag(e.pageX);
-        });
-
-        // Touch Events
         container.addEventListener('touchstart', (e) => {
-            startDrag(e.touches[0].pageX);
-        });
-
+            handleStart(e.touches[0].pageX);
+        }, { passive: true });
         window.addEventListener('touchmove', (e) => {
-            moveDrag(e.touches[0].pageX);
-        });
-
-        window.addEventListener('touchend', () => {
-            endDrag(0); // x not needed for logic, just state change
-        });
-    }
+            handleMove(e.touches[0].pageX);
+        }, { passive: true });
+        window.addEventListener('touchend', handleEnd);
+    });
 });

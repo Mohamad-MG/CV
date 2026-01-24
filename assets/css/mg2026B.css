@@ -1,0 +1,53 @@
+/* 
+   MG 2026B - BLUEPRINT & SCRAMBLE STYLES
+   Exceptional Motion Performance
+*/
+
+:root {
+    --blueprint-stroke: #2b9b9b;
+    --blueprint-fill: #ffffff;
+    --scramble-font: 'Space Grotesk', sans-serif;
+}
+
+/* Blueprint Text Effect */
+.blueprint-text {
+    position: relative;
+    color: transparent !important;
+    -webkit-text-stroke: 1px var(--blueprint-stroke);
+    text-stroke: 1px var(--blueprint-stroke);
+    transition: color 0.8s cubic-bezier(0.16, 1, 0.3, 1), 
+                -webkit-text-stroke 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+                text-shadow 0.8s ease;
+    will-change: color, -webkit-text-stroke, contents;
+}
+
+.blueprint-text.settled {
+    color: var(--blueprint-fill) !important;
+    -webkit-text-stroke: 0px transparent;
+    text-stroke: 0px transparent;
+}
+
+/* Exceptional Performance: Hardware Acceleration */
+.hero-eyebrow, .tagline {
+    backface-visibility: hidden;
+    transform: translateZ(0);
+    display: block; /* Ensure block level for better animation stability */
+}
+
+.hero-eyebrow {
+    min-height: 1.5em;
+}
+
+.tagline {
+    min-height: 1.2em;
+}
+
+/* Glow effect during architectural phase */
+.architect-glow {
+    text-shadow: 0 0 20px rgba(43, 155, 155, 0.6);
+}
+
+/* Scrambling state specific styles */
+.scrambling {
+    letter-spacing: 0.05em;
+}

@@ -11,7 +11,9 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap"
         rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/theme.css">
+    <link rel="stylesheet" href="assets/css/mg2026B.css">
 
     <link rel="stylesheet" href="assets/css/home.css">
     <link rel="stylesheet" href="assets/css/motion-effects.css">
@@ -19,6 +21,7 @@
     <script src="assets/js/home.js" defer></script>
     <script src="assets/js/motion-effects.js" defer></script>
     <script src="assets/js/header.js" defer></script>
+    <script src="assets/js/ultra_2026.js" defer></script>
 </head>
 
 <body>
@@ -26,125 +29,53 @@
     <div class="cursor-dot" data-cursor-dot></div>
     <div class="cursor-outline" data-cursor-outline></div>
 
-    <!-- Background System -->
-    <div class="noise-overlay"></div>
-    <div class="ambient-light" id="ambientLight"></div>
-    
-    <!-- Social Signals (Background Motion) -->
-    <div class="social-particles">
-        <!-- Heart / Like -->
-        <div class="signal signal-icon signal-1">
-            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
-        </div>
-        
-        <!-- TikTok / Viral -->
-        <div class="signal signal-icon signal-2">
-             <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/></svg>
-        </div>
-        
-        <!-- Network / Connection -->
-        <div class="signal signal-icon signal-3">
-             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="3"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="12" x2="6.5" y2="17.5"></line><line x1="12" y1="12" x2="17.5" y2="17.5"></line><circle cx="6.5" cy="17.5" r="2.5"></circle><circle cx="17.5" cy="17.5" r="2.5"></circle></svg>
-        </div>
+    <!-- Background Foundation System (Ultra 2026) -->
+    <div class="bg-base-layer"></div>
+    <div class="bg-grid-texture"></div>
+    <div class="bg-horizon-anchor"></div>
+    <div class="bg-floor-perspective"></div>
+    <div class="bg-static-fog"></div>
+    <div class="noise-grain"></div>
 
-        <!-- Thumb / Approval -->
-        <div class="signal signal-icon signal-4">
-             <svg viewBox="0 0 24 24" fill="currentColor"><path d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-1.91l-.01-.01L23 10z"/></svg>
-        </div>
+    <!-- 🌌 SOCIAL NEBULA 2.0 - Cinematic Icon Drift -->
+    <div class="social-nebula">
+        <!-- THE 5 STARTERS (Immediate Entry) -->
+        <div class="signal starter-1 ani-rise sig-lg"><i class="ri-openai-fill"></i></div>
+        <div class="signal starter-2 ani-fade sig-md"><img src="https://cdn.simpleicons.org/whatsapp/white"></div>
+        <div class="signal starter-3 ani-sway sig-sm"><img src="https://cdn.simpleicons.org/snapchat/white"></div>
+        <div class="signal starter-4 ani-drop sig-md"><img src="https://cdn.simpleicons.org/tiktok/white"></div>
+        <div class="signal starter-5 ani-rise sig-lg"><img src="https://cdn.simpleicons.org/instagram/white"></div>
 
-        <!-- Snapchat (Ghost) -->
-        <div class="signal signal-icon signal-7">
-            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.003 2c-2.484 0-4.636 1.487-5.59 3.738-.28.663-.22 1.378-.06 2.05.02.083.04.167.062.25.163.606.49 1.15.894 1.57.48.497 1.096.862 1.77 1.05.155.044.314.075.474.094.463.055.934-.052 1.345-.3.12-.072.24-.15.353-.234.338-.25.63-.56.853-.91.077-.12.146-.245.207-.375.31-.664.47-1.396.47-2.148 0-.752-.16-1.484-.47-2.148-.204-.438-.49-.834-.84-1.168-.7-.67-1.637-1.04-2.617-1.04-1.95 0-3.666 1.446-3.89 3.42-.023.19-.033.38-.033.57 0 1.63.886 3.08 2.235 3.9.117.072.24.135.367.19.463.2.97.28 1.48.234.48-.043.934-.22 1.32-.507.283-.21.523-.47.712-.76.38-.58.583-1.26.583-1.968 0-1.26-.69-2.39-1.74-3.03-.42-.257-.89-.41-1.38-.45-.19-.016-.38-.016-.57 0-1.45.12-2.63 1.18-2.9 2.61-.03.16-.046.32-.046.485 0 .914.37 1.764.97 2.383.56.58 1.32.93 2.15.98.18.01.36 0 .54-.03.84-.13 1.58-.58 2.09-1.23.23-.29.4-.62.51-.97.05-.15.08-.3.1-.46.07-.63-.12-1.26-.52-1.74-.38-.46-.92-.74-1.51-.79-.14-.01-.28-.01-.42 0-.96.08-1.76.74-2.02 1.67-.04.13-.06.27-.06.41 0 .68.39 1.28.97 1.59.57.31 1.26.29 1.82-.06.12-.08.23-.17.33-.27.35-.36.54-.85.52-1.36-.01-.24-.07-.48-.17-.7-.19-.43-.54-.77-.97-.96-.44-.19-.93-.19-1.37 0-.74.32-1.2 1.07-1.15 1.88.01.2.06.4.15.58.26.54.81.88 1.41.88h.08c.57-.04 1.08-.34 1.38-.82.13-.2.21-.44.24-.68.04-.32-.05-.64-.24-.91-.19-.27-.47-.46-.79-.53-.08-.02-.16-.02-.24-.02-.54 0-1.02.32-1.22.81-.09.22-.12.46-.08.7.07.44.45.77.9.77.06 0 .12 0 .18-.01.44-.06.79-.41.87-.85.03-.17.02-.35-.04-.51-.11-.3-.4-.5-.72-.5z"/></svg>
-        </div>
+        <!-- THE GRADUAL ONES (Wave 1: Early/Mid) -->
+        <div class="signal wait-early ani-fade sig-md" style="left:5%;"><i class="ri-robot-2-line"></i></div>
+        <div class="signal wait-early ani-rise sig-sm" style="left:25%;"><img
+                src="https://cdn.simpleicons.org/googlegemini/white"></div>
+        <div class="signal wait-mid ani-sway sig-lg" style="left:35%;"><img
+                src="https://cdn.simpleicons.org/facebook/white"></div>
+        <div class="signal wait-mid ani-drop sig-md" style="left:55%;"><img
+                src="https://cdn.simpleicons.org/youtube/white"></div>
+        <div class="signal wait-late ani-rise sig-lg" style="left:65%;"><i class="ri-microsoft-fill"></i></div>
+        <div class="signal wait-late ani-fade sig-sm" style="left:85%;"><img
+                src="https://cdn.simpleicons.org/anthropic/white"></div>
 
-        <!-- Google Maps (Pin) -->
-        <div class="signal signal-icon signal-8">
-            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
-        </div>
+        <!-- THE GRADUAL ONES (Wave 2: Mid/Late) -->
+        <div class="signal wait-mid ani-sway sig-md" style="left:92%;"><img
+                src="https://cdn.simpleicons.org/google/white"></div>
+        <div class="signal wait-early ani-drop sig-sm" style="left:10%;"><i class="ri-search-eye-line"></i></div>
+        <div class="signal wait-late ani-rise sig-md" style="left:20%;"><i class="ri-zoom-in-line"></i></div>
+        <div class="signal wait-early ani-fade sig-sm" style="left:40%;"><i class="ri-slack-fill"></i></div>
+        <div class="signal wait-mid ani-sway sig-md" style="left:50%;"><i class="ri-trello-fill"></i></div>
+        <div class="signal wait-late ani-drop sig-sm" style="left:70%;"><i class="ri-heart-fill"
+                style="color:#ff4757;"></i></div>
+        <div class="signal wait-early ani-rise sig-md" style="left:80%;"><i class="ri-shopping-cart-fill"></i></div>
 
-        <!-- Shopping Cart -->
-        <div class="signal signal-icon signal-9">
-             <svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/></svg>
-        </div>
-
-        <!-- ChatGPT (OpenAI) -->
-        <div class="signal signal-icon signal-10">
-            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M22.2819 9.8211a5.9847 5.9847 0 0 0-.5157-4.9108 6.0462 6.0462 0 0 0-6.5098-2.9A6.0651 6.0651 0 0 0 4.9807 4.1818a5.9847 5.9847 0 0 0-3.9977 2.9 6.0462 6.0462 0 0 0 .7427 7.0966 5.98 5.98 0 0 0 .511 4.9107 6.0462 6.0462 0 0 0 6.5146 2.9001A5.9847 5.9847 0 0 0 13.2599 24a6.0557 6.0557 0 0 0 5.7718-4.2058 5.9894 5.9894 0 0 0 3.9977-2.9001 6.0557 6.0557 0 0 0-.7475-7.0729zm-9.022 12.6081a4.4755 4.4755 0 0 1-2.8764-1.0408l.1419-.0804 4.7783-2.7582a.7948.7948 0 0 0 .3927-.6813v-6.7369l2.02 1.1686a.071.071 0 0 1 .038.052v5.5826a4.504 4.504 0 0 1-4.4945 4.4944zm-9.6607-4.1254a4.4708 4.4708 0 0 1-.5346-3.0137l.142.0852 4.783 2.7582a.7712.7712 0 0 0 .7806 0l5.8428-3.3685v2.3324a.0804.0804 0 0 1-.0332.0615L9.74 19.9502a4.4992 4.4992 0 0 1-6.1408-1.6464zM2.3408 7.8956a4.485 4.485 0 0 1 2.3655-1.9728V11.6a.7664.7664 0 0 0 .3879.6765l5.8144 3.3543-2.0201 1.1685a.0757.0757 0 0 1-.071 0l-4.8303-2.7865A4.504 4.504 0 0 1 2.3408 7.872zm16.5963 3.8558L13.1038 8.364 15.1195 7.2a.0757.0757 0 0 1 .071 0l4.8303 2.7913a4.4944 4.4944 0 0 1-.6765 8.1042v-5.6772a.79.79 0 0 0-.407-.667zm2.0107-3.0231l-.142-.0852-4.7735-2.7818a.7759.7759 0 0 0-.7854 0L9.409 9.2297V6.8974a.0662.0662 0 0 1 .0284-.0615l4.8303-2.7866a4.4992 4.4992 0 0 1 6.6802 4.66zM8.3065 12.863l-2.02-1.1638a.0804.0804 0 0 1-.038-.0567V6.0742a4.4992 4.4992 0 0 1 7.3757-3.4537l-.142.0805L8.704 5.459a.7948.7948 0 0 0-.3927.6813zm1.0916-4.3665l3.842 2.2144-3.842 2.2191-3.842-2.2239z"/></svg>
-        </div>
-
-        <!-- Gemini (Sparkle) -->
-        <div class="signal signal-icon signal-11">
-            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M11.94 2.22a.56.56 0 0 0-.42.22l-3.3 4.28a.56.56 0 0 1-.44.22H3.34a.56.56 0 0 0-.44.9l2.76 3.58a.56.56 0 0 1 .1.46l-1.06 4.38a.56.56 0 0 0 .8.6l3.92-2.06a.56.56 0 0 1 .52 0l3.92 2.06a.56.56 0 0 0 .8-.6l-1.06-4.38a.56.56 0 0 1 .1-.46l2.76-3.58a.56.56 0 0 0-.44-.9h-4.44a.56.56 0 0 1-.44-.22L12.36 2.44a.56.56 0 0 0-.42-.22z"/></svg>
-        </div>
-
-        <!-- Jira (Diamond/Gear abstract) -->
-        <div class="signal signal-icon signal-12">
-            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M11.53 2C11.73 2 11.93 2.06 12.11 2.17L21.49 7.63C21.91 7.87 22.05 8.41 21.8 8.83L12.42 24.3C12.32 24.47 12.16 24.59 11.97 24.63C11.9 24.64 11.83 24.63 11.77 24.6L2.39 19.13C1.97 18.89 1.83 18.35 2.07 17.93L11.46 2.47C11.46 2.46 11.47 2.45 11.48 2.44C11.49 2.43 11.51 2.42 11.53 2Z"/></svg>
-        </div>
-
-        <!-- Amazon (Smile) -->
-        <div class="signal signal-icon signal-13">
-             <svg viewBox="0 0 24 24" fill="currentColor"><path d="M15.54,13.56C15.17,14 14.73,14.39 14.23,14.73C13.73,15.07 13.15,15.35 12.5,15.56C11.85,15.77 11.16,15.87 10.42,15.87C9.37,15.87 8.43,15.68 7.58,15.29C6.73,14.9 6,14.37 5.4,13.71C4.8,13.05 4.5,12.28 4.5,11.41C4.5,10.66 4.7,9.97 5.1,9.36C5.5,8.75 6.08,8.23 6.84,7.8C7.6,7.37 8.5,7.06 9.53,6.86C10.56,6.66 11.66,6.56 12.81,6.56C13.43,6.56 14,6.58 14.54,6.62C15.08,6.66 15.53,6.72 15.9,6.81V6.36C15.9,5.72 15.7,5.21 15.3,4.82C14.9,4.43 14.36,4.24 13.68,4.24C13.16,4.24 12.7,4.34 12.3,4.53C11.9,4.72 11.58,5 11.34,5.36L9.66,4.24C10.08,3.64 10.66,3.16 11.42,2.82C12.18,2.48 13.06,2.31 14.06,2.31C15.5,2.31 16.63,2.68 17.44,3.43C18.25,4.18 18.66,5.26 18.66,6.66V15H16.14L15.94,13.8L15.54,13.56M10.82,13.91C11.38,13.91 11.9,13.8 12.38,13.57C12.86,13.34 13.29,13.03 13.67,12.63C14.05,12.23 14.38,11.78 14.66,11.27C14.94,10.76 15.2,10.21 15.42,9.62C15.64,9.03 15.79,8.46 15.86,7.91C15.6,7.86 15.3,7.81 14.96,7.77C14.62,7.73 14.28,7.71 13.94,7.71C12.8,7.71 11.9,7.91 11.24,8.31C10.58,8.71 10.25,9.31 10.25,10.11C10.25,10.65 10.44,11.1 10.82,11.45C11.2,11.8 11.7,11.98 12.32,11.98C12.74,11.98 13.13,11.9 13.48,11.74L13.12,12.34C12.76,12.5 12.36,12.58 11.92,12.58C11.34,12.58 10.88,12.43 10.54,12.13C10.2,11.83 10.03,11.43 10.03,10.93C10.03,10.33 10.24,9.85 10.66,9.48C11.08,9.11 11.66,8.93 12.4,8.93C12.72,8.93 13.05,8.96 13.38,9.02V9.82C13.38,10.6 13.18,11.25 12.78,11.77C12.38,12.29 11.82,12.55 11.1,12.55C10.68,12.55 10.32,12.45 10.02,12.25L9.18,13.45C9.62,13.76 10.17,13.91 10.82,13.91M15.86,17.41C15.06,18.33 14.04,18.97 12.8,19.33C11.56,19.69 10.28,19.74 8.96,19.48C7.64,19.22 6.44,18.66 5.36,17.8L3.92,19.66C5.38,20.8 7,21.55 8.78,21.91C10.56,22.27 12.3,22.22 14,21.75C15.7,21.28 17.16,20.4 18.38,19.11L15.86,17.41Z"/></svg>
-        </div>
-
-        <!-- Google -->
-        <div class="signal signal-icon signal-14">
-            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M21.35,11.1H12.18V13.83H18.69C18.36,17.64 15.19,19.27 12.19,19.27C8.36,19.27 5,16.25 5,12C5,7.9 8.2,4.73 12.2,4.73C15.29,4.73 17.1,6.7 17.1,6.7L19,4.72C19,4.72 16.56,2 12.1,2C6.42,2 2.03,6.8 2.03,12C2.03,17.05 6.16,22 12.25,22C17.6,22 21.5,18.33 21.5,12.91C21.5,11.76 21.35,11.1 21.35,11.1V11.1Z"/></svg>
-        </div>
-
-        <!-- Claude (Anthropic - Hexagon abstract) -->
-        <div class="signal signal-icon signal-15">
-             <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
-        </div>
-
-        <!-- YouTube -->
-        <div class="signal signal-icon signal-16">
-            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/></svg>
-        </div>
-
-        <!-- Instagram -->
-        <div class="signal signal-icon signal-17">
-            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
-        </div>
-
-        <!-- Facebook -->
-        <div class="signal signal-icon signal-18">
-            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.791-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
-        </div>
-
-        <!-- Flag: KSA (Palm/Sword abstract) -->
-        <div class="signal signal-icon signal-19">
-            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17,14 L7,14 L7,16 L17,16 M12,4 C15,4 17,6 17,6 L15,12 L9,12 L7,6 C7,6 9,4 12,4 Z M13,16 L13,20 L11,20 L11,16 L13,16 Z"/></svg>
-        </div>
-
-        <!-- Flag: Egypt (Eagle abstract) -->
-        <div class="signal signal-icon signal-20">
-             <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12,2 L22,7 L22,17 L12,22 L2,17 L2,7 L12,2 Z M12,5 L12,19 M5,9 L19,9 M7,14 L17,14"/></svg>
-        </div>
-
-        <!-- Flag: UAE (Colors abstract) -->
-        <div class="signal signal-icon signal-21">
-             <svg viewBox="0 0 24 24" fill="currentColor"><rect x="2" y="2" width="6" height="20" rx="1"/><rect x="10" y="2" width="12" height="6" rx="1"/><rect x="10" y="10" width="12" height="4" rx="1"/><rect x="10" y="16" width="12" height="6" rx="1"/></svg>
-        </div>
-
-        <!-- Box (Logistics) -->
-        <div class="signal signal-icon signal-22">
-            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20,8 L12,13 L4,8 L12,3 L20,8 Z M21,10 L21,17 C21,17.55 20.55,18 20,18 L13,22.3 C12.69,22.48 12.31,22.48 12,22.3 L5,18 C4.45,18 4,17.55 4,17 L4,10 L12,15 L21,10 Z"/></svg>
-        </div>
-
-        <!-- Tag (E-commerce) -->
-        <div class="signal signal-icon signal-23">
-             <svg viewBox="0 0 24 24" fill="currentColor"><path d="M21.41 11.58l-9-9C12.05 2.22 11.55 2 11 2H4c-1.1 0-2 .9-2 2v7c0 .55.22 1.05.59 1.42l9 9c.36.36.86.58 1.41.58.55 0 1.05-.22 1.41-.59l7-7c.37-.36.59-.86.59-1.41 0-.55-.23-1.06-.59-1.42zM5.5 7C4.67 7 4 6.33 4 5.5S4.67 4 5.5 4 7 4.67 7 5.5 6.33 7 5.5 7z"/></svg>
-        </div>
-
-        <!-- Abstract Glows -->
-        <div class="signal signal-5"></div>
-        <div class="signal signal-6"></div>
+        <!-- National Tributes -->
+        <div class="signal wait-late ani-fade sig-sm" style="left:52%;"><img src="https://flagcdn.com/sa.svg"
+                style="filter:none; opacity:0.15;"></div>
+        <div class="signal wait-late ani-sway sig-md" style="left:18%;"><img src="https://flagcdn.com/eg.svg"
+                style="filter:none; opacity:0.15;"></div>
     </div>
-    <!-- Separate Floating Language Switch -->
-    <a href="index-ar.html" class="lang-switch-floating" aria-label="Switch to Arabic">
-        <span class="lang-code">AR</span>
-    </a>
+
 
     <!-- Premium Header (Nav Only) -->
     <header class="site-header">
@@ -156,6 +87,12 @@
                 <a href="/CV/achievements/" class="nav-link">Achievements</a>
             </nav>
 
+            <div class="header-divider"></div>
+
+            <a href="index-ar.html" class="lang-switch-compact" aria-label="Switch to Arabic">
+                <span class="lang-code">AR</span>
+            </a>
+
             <!-- Mobile Menu Toggle -->
             <button class="mobile-menu-toggle" aria-label="Toggle menu">
                 <span></span>
@@ -165,9 +102,8 @@
         </div>
     </header>
 
-    <!-- Ambient Background -->
-    <div class="ambient ambient-1"></div>
-    <div class="ambient ambient-2"></div>
+    <!-- Dynamic Background System (Ready for Rebuild) -->
+
 
     <!-- Progress Line -->
     <div class="progress-line" id="progressLine"></div>
@@ -175,43 +111,53 @@
     <main>
         <!-- Hero -->
         <section class="hero">
-            <div class="particles">
-                <div class="particle"></div>
-                <div class="particle"></div>
-                <div class="particle"></div>
-                <div class="particle"></div>
-                <div class="particle"></div>
-                <div class="particle"></div>
-            </div>
+            <!-- Surface Layer -->
+
             <div class="hero-grid content-wrap--wide">
                 <div class="hero-copy">
-                    <div class="hero-brand-logo reveal">
-                        <img src="assets/images/arabic-logo-mg.png" alt="Mohamed Gamal">
-                    </div>
-                    
                     <p class="hero-eyebrow reveal">Digital Growth Architect</p>
-            <p class="tagline gradient-text">I turn marketing into a sustainable growth engine</p>
-            
-            <div class="hero-tags">
-                <div class="hero-tag">
-                    <div class="tag-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+                    <p class="tagline gradient-text">I turn marketing into a sustainable growth engine</p>
+
+                    <div class="hero-tags">
+                        <div class="hero-tag">
+                            <div class="tag-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+                                </svg>
+                            </div>
+                            <span>Growth Architecture</span>
+                        </div>
+                        <div class="hero-tag">
+                            <div class="tag-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
+                                    <line x1="3" y1="6" x2="21" y2="6" />
+                                    <path d="M16 10a4 4 0 0 1-8 0" />
+                                </svg>
+                            </div>
+                            <span>E-commerce Systems</span>
+                        </div>
+                        <div class="hero-tag">
+                            <div class="tag-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <rect x="4" y="4" width="16" height="16" rx="2" ry="2" />
+                                    <rect x="9" y="9" width="6" height="6" />
+                                    <line x1="9" y1="1" x2="9" y2="4" />
+                                    <line x1="15" y1="1" x2="15" y2="4" />
+                                    <line x1="9" y1="20" x2="9" y2="23" />
+                                    <line x1="15" y1="20" x2="15" y2="23" />
+                                    <line x1="20" y1="9" x2="23" y2="9" />
+                                    <line x1="20" y1="14" x2="23" y2="14" />
+                                    <line x1="1" y1="9" x2="4" y2="9" />
+                                    <line x1="1" y1="14" x2="4" y2="14" />
+                                </svg>
+                            </div>
+                            <span>Digital Transformation</span>
+                        </div>
                     </div>
-                    <span>Growth Architecture</span>
-                </div>
-                <div class="hero-tag">
-                    <div class="tag-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
-                    </div>
-                    <span>E-commerce Systems</span>
-                </div>
-                <div class="hero-tag">
-                    <div class="tag-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2" ry="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/></svg>
-                    </div>
-                    <span>Digital Transformation</span>
-                </div>
-            </div>
 
                     <div class="hero-proof">
                         <div class="proof-item stagger-item">
@@ -229,23 +175,18 @@
                     </div>
                 </div>
                 <div class="hero-visual">
+                    <div class="hero-brand-logo reveal">
+                        <img src="assets/images/arabic-logo-mg.png" alt="Mohamed Gamal">
+                    </div>
                     <div class="avatar-wrap reveal">
                         <div class="avatar"></div>
-                    </div>
-                    <div class="hero-card tilt-3d reveal">
-                        <div class="hero-card-title">Signature Focus</div>
-                        <ul>
-                            <li>Growth systems over campaigns</li>
-                            <li>Performance + brand alignment</li>
-                            <li>Regional scaling playbooks</li>
-                        </ul>
-                        <div class="hero-card-foot">Riyadh base - MENA markets</div>
                     </div>
                 </div>
             </div>
 
             <div class="scroll-hint">
-                <div class="arrow"></div>
+                <div class="mouse-wheel"></div>
+                <div class="scroll-arrow"></div>
             </div>
         </section>
 
@@ -256,15 +197,20 @@
                     <p class="overline">The Story</p>
                     <h2>From Campaigns to Systems</h2>
                 </div>
-                <div class="story-text reveal">
-                    <p>
-                        In <span class="highlight">2020</span>, I was part of the team that broke a Guinness World Record — <span class="highlight">5 million orders</span> processed in a single Black Friday.
+                <div class="story-text">
+                    <p class="reveal">
+                        In <span class="highlight">2020</span>, I was part of the team that broke a Guinness World
+                        Record — <span class="highlight">5 million orders</span> processed in a single Black Friday.
                     </p>
-                    <p>
-                        But here's what that experience taught me: The record wasn't about running great ads. It was about <span class="highlight">building systems</span> that could handle the chaos when everything scaled 10x overnight.
+                    <p class="reveal">
+                        But here's what that experience taught me: The record wasn't about running great ads. It was
+                        about <span class="highlight">building systems</span> that could handle the chaos when
+                        everything scaled 10x overnight.
                     </p>
-                    <p>
-                        That's what I do now. I help companies move from "random campaigns that sometimes work" to <span class="highlight">repeatable growth engines</span> — across the <span class="highlight">MENA region</span>, with a deep focus on KSA and the unique dynamics of this market in 2026.
+                    <p class="reveal">
+                        That's what I do now. I help companies move from "random campaigns that sometimes work" to <span
+                            class="highlight">repeatable growth engines</span> — across the <span class="highlight">MENA
+                            region</span>, with a deep focus on KSA and the unique dynamics of this market in 2026.
                     </p>
                 </div>
             </div>
@@ -311,19 +257,36 @@
                     <h2>Brands I've Worked With</h2>
                 </div>
 
-                <div class="clients-grid reveal">
-                    <div class="client-item stagger-item">العربية للعود<span>Arabian Oud</span></div>
-                    <div class="client-item stagger-item">قيادات<span>Qyadat</span></div>
-                    <div class="client-item stagger-item">ديجيمورا<span>DigiMora</span></div>
-                    <div class="client-item stagger-item">مورا<span>Mora</span></div>
-                    <div class="client-item stagger-item">هواوي<span>Huawei</span></div>
-                    <div class="client-item stagger-item">مستشفيات الحياة<span>Al Hayat Hospitals</span></div>
-                    <div class="client-item stagger-item">مدارس صرح المستقبل<span>Sarh Schools</span></div>
-                    <div class="client-item stagger-item">الدار السعودية<span>Saudi Recruitment</span></div>
-                    <div class="client-item stagger-item">فينوفاي<span>Vinofy</span></div>
-                    <div class="client-item stagger-item">توليجور<span>Tolegor</span></div>
-                    <div class="client-item stagger-item">نخبة العود<span>Nokhbat Oud</span></div>
-                    <div class="client-item stagger-item">الخزائن المتحدة<span>United Safes</span></div>
+                <div class="marquee-container reveal">
+                    <div class="marquee-track">
+                        <!-- Group 1 -->
+                        <div class="client-item">Arabian Oud</div>
+                        <div class="client-item">Qyadat</div>
+                        <div class="client-item">DigiMora</div>
+                        <div class="client-item">Mora</div>
+                        <div class="client-item">Huawei</div>
+                        <div class="client-item">Al Hayat Hospitals</div>
+                        <div class="client-item">Sarh Schools</div>
+                        <div class="client-item">Saudi Recruitment</div>
+                        <div class="client-item">Vinofy</div>
+                        <div class="client-item">Tolegor</div>
+                        <div class="client-item">Nokhbat Oud</div>
+                        <div class="client-item">United Safes</div>
+
+                        <!-- Group 2 (Duplicate for Seamless Loop) -->
+                        <div class="client-item">Arabian Oud</div>
+                        <div class="client-item">Qyadat</div>
+                        <div class="client-item">DigiMora</div>
+                        <div class="client-item">Mora</div>
+                        <div class="client-item">Huawei</div>
+                        <div class="client-item">Al Hayat Hospitals</div>
+                        <div class="client-item">Sarh Schools</div>
+                        <div class="client-item">Saudi Recruitment</div>
+                        <div class="client-item">Vinofy</div>
+                        <div class="client-item">Tolegor</div>
+                        <div class="client-item">Nokhbat Oud</div>
+                        <div class="client-item">United Safes</div>
+                    </div>
                 </div>
             </div>
         </section>
@@ -369,6 +332,17 @@
 
                     <div class="timeline-item">
                         <div class="timeline-content magnetic-card spotlight-card">
+                            <div class="timeline-date">03/2021 - 12/2021</div>
+                            <div class="timeline-title">Digital Transformation Strategist</div>
+                            <div class="timeline-company">Kuwait Finance House</div>
+                            <div class="timeline-highlight">Streamlined banking workflows • Modern digital practices
+                            </div>
+                        </div>
+                        <div class="timeline-dot"></div>
+                    </div>
+
+                    <div class="timeline-item">
+                        <div class="timeline-content magnetic-card spotlight-card">
                             <div class="timeline-date">2014 - 2023</div>
                             <div class="timeline-title">Digital Marketing Supervisor</div>
                             <div class="timeline-company">Arabian Oud, Riyadh + 5 Markets</div>
@@ -383,6 +357,16 @@
                             <div class="timeline-title">Digital Transformation Specialist</div>
                             <div class="timeline-company">Iso-tec.com</div>
                             <div class="timeline-highlight">ISO digital readiness for ministries & universities</div>
+                        </div>
+                        <div class="timeline-dot"></div>
+                    </div>
+
+                    <div class="timeline-item">
+                        <div class="timeline-content magnetic-card spotlight-card">
+                            <div class="timeline-date">06/2019 - 06/2022</div>
+                            <div class="timeline-title">Junior Marketing Specialist</div>
+                            <div class="timeline-company">PeoplePerHour</div>
+                            <div class="timeline-highlight">Client acquisition • Market research & positioning</div>
                         </div>
                         <div class="timeline-dot"></div>
                     </div>
@@ -491,7 +475,7 @@
                     <p class="overline">Results</p>
                     <h2>Campaign Highlights</h2>
                     <div class="hero-cta reveal" style="justify-content: center; margin-top: 25px;">
-                        <a class="btn-glass-compact" href="/CV/portfolio/">View Full Portfolio</a>
+                        <a class="btn-glass-compact pulse-btn" href="/CV/portfolio/">View Full Portfolio</a>
                     </div>
                 </div>
 
@@ -516,22 +500,90 @@
 
         <!-- Skills -->
         <section class="skills-section">
-            <div class="content-wrap">
+            <div class="content-wrap content-wrap--wide">
                 <div class="section-header reveal">
                     <p class="overline">Expertise</p>
                     <h2>Core Skills</h2>
                 </div>
 
-                <div class="skills-grid">
-                    <div class="skill-item"><span>Digital Marketing Strategy</span></div>
-                    <div class="skill-item"><span>Creative Campaign Development</span></div>
-                    <div class="skill-item"><span>SEO & SEM Optimization</span></div>
-                    <div class="skill-item"><span>Social Media Management</span></div>
-                    <div class="skill-item"><span>E-commerce Marketing & Growth</span></div>
-                    <div class="skill-item"><span>Brand Positioning</span></div>
-                    <div class="skill-item"><span>Business Development</span></div>
-                    <div class="skill-item"><span>Marketing Analytics</span></div>
-                    <div class="skill-item"><span>Conversion Rate Optimization</span></div>
+                <div class="marquee-container reveal">
+                    <div class="marquee-track">
+                        <!-- Group 1 -->
+                        <div class="skill-chip">
+                            <div class="chip-glow"></div>
+                            <span>Digital Marketing Strategy</span>
+                        </div>
+                        <div class="skill-chip">
+                            <div class="chip-glow"></div>
+                            <span>Creative Campaigns</span>
+                        </div>
+                        <div class="skill-chip">
+                            <div class="chip-glow"></div>
+                            <span>SEO & SEM</span>
+                        </div>
+                        <div class="skill-chip">
+                            <div class="chip-glow"></div>
+                            <span>Social Media</span>
+                        </div>
+                        <div class="skill-chip">
+                            <div class="chip-glow"></div>
+                            <span>E-commerce Growth</span>
+                        </div>
+                        <div class="skill-chip">
+                            <div class="chip-glow"></div>
+                            <span>Brand Positioning</span>
+                        </div>
+                        <div class="skill-chip">
+                            <div class="chip-glow"></div>
+                            <span>Business Dev</span>
+                        </div>
+                        <div class="skill-chip">
+                            <div class="chip-glow"></div>
+                            <span>Marketing Analytics</span>
+                        </div>
+                        <div class="skill-chip">
+                            <div class="chip-glow"></div>
+                            <span>CRO Optimization</span>
+                        </div>
+
+                        <!-- Group 2 (Duplicate for Seamless Loop) -->
+                        <div class="skill-chip">
+                            <div class="chip-glow"></div>
+                            <span>Digital Marketing Strategy</span>
+                        </div>
+                        <div class="skill-chip">
+                            <div class="chip-glow"></div>
+                            <span>Creative Campaigns</span>
+                        </div>
+                        <div class="skill-chip">
+                            <div class="chip-glow"></div>
+                            <span>SEO & SEM</span>
+                        </div>
+                        <div class="skill-chip">
+                            <div class="chip-glow"></div>
+                            <span>Social Media</span>
+                        </div>
+                        <div class="skill-chip">
+                            <div class="chip-glow"></div>
+                            <span>E-commerce Growth</span>
+                        </div>
+                        <div class="skill-chip">
+                            <div class="chip-glow"></div>
+                            <span>Brand Positioning</span>
+                        </div>
+                        <div class="skill-chip">
+                            <div class="chip-glow"></div>
+                            <span>Business Dev</span>
+                        </div>
+                        <div class="skill-chip">
+                            <div class="chip-glow"></div>
+                            <span>Marketing Analytics</span>
+                        </div>
+                        <div class="skill-chip">
+                            <div class="chip-glow"></div>
+                            <span>CRO Optimization</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
@@ -539,100 +591,171 @@
         <!-- 2026 Insights (Redesigned) -->
         <section class="future-section">
             <div class="future-grid-bg"></div>
-            <div class="content-wrap">
+            <div class="content-wrap content-wrap--wide">
                 <div class="section-header reveal">
                     <p class="overline">Looking Ahead</p>
                     <h2>2026 Perspective</h2>
                 </div>
 
-                <div class="future-grid reveal">
-                    <div class="future-card stagger-item">
-                        <div class="card-glow"></div>
-                        <div class="card-icon">
-                            <svg class="skill-icon" width="28" height="28" viewBox="0 0 24 24" fill="none"
-                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <rect width="18" height="10" x="3" y="11" rx="2" />
-                                <circle cx="12" cy="5" r="2" />
-                                <path d="M12 7v4" />
-                                <line x1="8" x2="8" y1="16" y2="16" />
-                                <line x1="16" x2="16" y1="16" y2="16" />
-                            </svg>
-                        </div>
-                        <div class="card-content">
+                <div class="marquee-container reveal" data-speed="-0.3">
+                    <div class="marquee-track">
+                        <!-- Group 1 -->
+                        <div class="future-card">
+                            <div class="card-glow"></div>
+                            <div class="card-icon">
+                                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <rect width="18" height="10" x="3" y="11" rx="2" />
+                                    <circle cx="12" cy="5" r="2" />
+                                    <path d="M12 7v4" />
+                                    <line x1="8" x2="8" y1="16" y2="16" />
+                                    <line x1="16" x2="16" y1="16" y2="16" />
+                                </svg>
+                            </div>
                             <h3>AI Agents for Customer Service</h3>
                         </div>
-                    </div>
 
-                    <div class="future-card stagger-item">
-                        <div class="card-glow"></div>
-                        <div class="card-icon">
-                            <svg class="skill-icon" width="28" height="28" viewBox="0 0 24 24" fill="none"
-                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M3 3v18h18" />
-                                <path d="M18 17V9" />
-                                <path d="M13 17V5" />
-                                <path d="M8 17v-3" />
-                            </svg>
-                        </div>
-                        <div class="card-content">
+                        <div class="future-card">
+                            <div class="card-glow"></div>
+                            <div class="card-icon">
+                                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <path d="M3 3v18h18" />
+                                    <path d="M18 17V9" />
+                                    <path d="M13 17V5" />
+                                    <path d="M8 17v-3" />
+                                </svg>
+                            </div>
                             <h3>Predictive Inventory Systems</h3>
                         </div>
-                    </div>
 
-                    <div class="future-card stagger-item">
-                        <div class="card-glow"></div>
-                        <div class="card-icon">
-                            <svg class="skill-icon" width="28" height="28" viewBox="0 0 24 24" fill="none"
-                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
-                            </svg>
-                        </div>
-                        <div class="card-content">
+                        <div class="future-card">
+                            <div class="card-glow"></div>
+                            <div class="card-icon">
+                                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+                                </svg>
+                            </div>
                             <h3>No-Code Automation (n8n/Make)</h3>
                         </div>
-                    </div>
 
-                    <div class="future-card stagger-item">
-                        <div class="card-glow"></div>
-                        <div class="card-icon">
-                            <svg class="skill-icon" width="28" height="28" viewBox="0 0 24 24" fill="none"
-                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
-                                <circle cx="12" cy="10" r="3" />
-                            </svg>
-                        </div>
-                        <div class="card-content">
+                        <div class="future-card">
+                            <div class="card-glow"></div>
+                            <div class="card-icon">
+                                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
+                                    <circle cx="12" cy="10" r="3" />
+                                </svg>
+                            </div>
                             <h3>Saudi Vision 2030 Impact</h3>
                         </div>
-                    </div>
 
-                    <div class="future-card stagger-item">
-                        <div class="card-glow"></div>
-                        <div class="card-icon">
-                            <svg class="skill-icon" width="28" height="28" viewBox="0 0 24 24" fill="none"
-                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <rect width="20" height="14" x="2" y="5" rx="2" />
-                                <line x1="2" x2="22" y1="10" y2="10" />
-                            </svg>
-                        </div>
-                        <div class="card-content">
+                        <div class="future-card">
+                            <div class="card-glow"></div>
+                            <div class="card-icon">
+                                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <rect width="20" height="14" x="2" y="5" rx="2" />
+                                    <line x1="2" x2="22" y1="10" y2="10" />
+                                </svg>
+                            </div>
                             <h3>Local Payment Optimization</h3>
                         </div>
-                    </div>
 
-                    <div class="future-card stagger-item">
-                        <div class="card-glow"></div>
-                        <div class="card-icon">
-                            <svg class="skill-icon" width="28" height="28" viewBox="0 0 24 24" fill="none"
-                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M10 17h4V5H2v12h3" />
-                                <path d="M20 17h2v-3.34a4 4 0 0 0-1.17-2.83L19 9h-5" />
-                                <path d="M14 17h1" />
-                                <circle cx="7.5" cy="17.5" r="2.5" />
-                                <circle cx="17.5" cy="17.5" r="2.5" />
-                            </svg>
+                        <div class="future-card">
+                            <div class="card-glow"></div>
+                            <div class="card-icon">
+                                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <path d="M10 17h4V5H2v12h3" />
+                                    <path d="M20 17h2v-3.34a4 4 0 0 0-1.17-2.83L19 9h-5" />
+                                    <path d="M14 17h1" />
+                                    <circle cx="7.5" cy="17.5" r="2.5" />
+                                    <circle cx="17.5" cy="17.5" r="2.5" />
+                                </svg>
+                            </div>
+                            <h3>MENA Logistics Evolution</h3>
                         </div>
-                        <div class="card-content">
+
+                        <!-- Group 2 (Duplicate) -->
+                        <div class="future-card">
+                            <div class="card-glow"></div>
+                            <div class="card-icon">
+                                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <rect width="18" height="10" x="3" y="11" rx="2" />
+                                    <circle cx="12" cy="5" r="2" />
+                                    <path d="M12 7v4" />
+                                    <line x1="8" x2="8" y1="16" y2="16" />
+                                    <line x1="16" x2="16" y1="16" y2="16" />
+                                </svg>
+                            </div>
+                            <h3>AI Agents for Customer Service</h3>
+                        </div>
+
+                        <div class="future-card">
+                            <div class="card-glow"></div>
+                            <div class="card-icon">
+                                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <path d="M3 3v18h18" />
+                                    <path d="M18 17V9" />
+                                    <path d="M13 17V5" />
+                                    <path d="M8 17v-3" />
+                                </svg>
+                            </div>
+                            <h3>Predictive Inventory Systems</h3>
+                        </div>
+
+                        <div class="future-card">
+                            <div class="card-glow"></div>
+                            <div class="card-icon">
+                                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+                                </svg>
+                            </div>
+                            <h3>No-Code Automation (n8n/Make)</h3>
+                        </div>
+
+                        <div class="future-card">
+                            <div class="card-glow"></div>
+                            <div class="card-icon">
+                                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
+                                    <circle cx="12" cy="10" r="3" />
+                                </svg>
+                            </div>
+                            <h3>Saudi Vision 2030 Impact</h3>
+                        </div>
+
+                        <div class="future-card">
+                            <div class="card-glow"></div>
+                            <div class="card-icon">
+                                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <rect width="20" height="14" x="2" y="5" rx="2" />
+                                    <line x1="2" x2="22" y1="10" y2="10" />
+                                </svg>
+                            </div>
+                            <h3>Local Payment Optimization</h3>
+                        </div>
+
+                        <div class="future-card">
+                            <div class="card-glow"></div>
+                            <div class="card-icon">
+                                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <path d="M10 17h4V5H2v12h3" />
+                                    <path d="M20 17h2v-3.34a4 4 0 0 0-1.17-2.83L19 9h-5" />
+                                    <path d="M14 17h1" />
+                                    <circle cx="7.5" cy="17.5" r="2.5" />
+                                    <circle cx="17.5" cy="17.5" r="2.5" />
+                                </svg>
+                            </div>
                             <h3>MENA Logistics Evolution</h3>
                         </div>
                     </div>
@@ -642,124 +765,182 @@
 
         <!-- Tools -->
         <section class="tools-section">
-            <div class="content-wrap">
+            <div class="content-wrap content-wrap--wide">
                 <div class="section-header reveal">
                     <p class="overline">Tech Stack</p>
                     <h2>Tools & Platforms</h2>
                 </div>
 
-                <div class="tools-container reveal">
-                    <span class="tool-tag">Google Analytics</span>
-                    <span class="tool-tag">Google Ads</span>
-                    <span class="tool-tag">Meta Business Suite</span>
-                    <span class="tool-tag">TikTok Ads Manager</span>
-                    <span class="tool-tag">Magento</span>
-                    <span class="tool-tag">Ahrefs</span>
-                    <span class="tool-tag">ActiveCampaign</span>
-                    <span class="tool-tag">Zapier</span>
-                    <span class="tool-tag">Make</span>
-                    <span class="tool-tag">n8n</span>
-                    <span class="tool-tag">Trello</span>
-                    <span class="tool-tag">Jira</span>
-                    <span class="tool-tag">VS Code</span>
-                    <span class="tool-tag">Adobe Photoshop</span>
-                    <span class="tool-tag">Adobe Premiere</span>
-                    <span class="tool-tag">MidJourney</span>
-                    <span class="tool-tag">Runway</span>
+                <!-- Row 1: Left - Ultra Slow -->
+                <div class="marquee-container reveal" data-speed="-0.4">
+                    <div class="marquee-track">
+                        <span class="tool-tag">Google Analytics</span>
+                        <span class="tool-tag">Google Ads</span>
+                        <span class="tool-tag">Meta Business Suite</span>
+                        <span class="tool-tag">TikTok Ads Manager</span>
+                        <span class="tool-tag">Magento</span>
+                        <span class="tool-tag">Ahrefs</span>
+                        <!-- Duplicate -->
+                        <span class="tool-tag">Google Analytics</span>
+                        <span class="tool-tag">Google Ads</span>
+                        <span class="tool-tag">Meta Business Suite</span>
+                        <span class="tool-tag">TikTok Ads Manager</span>
+                        <span class="tool-tag">Magento</span>
+                        <span class="tool-tag">Ahrefs</span>
+                    </div>
+                </div>
+
+                <!-- Row 2: Right - Slow -->
+                <div class="marquee-container reveal" data-speed="0.6">
+                    <div class="marquee-track">
+                        <span class="tool-tag">ActiveCampaign</span>
+                        <span class="tool-tag">Zapier</span>
+                        <span class="tool-tag">Make</span>
+                        <span class="tool-tag">n8n</span>
+                        <span class="tool-tag">Trello</span>
+                        <span class="tool-tag">Jira</span>
+                        <!-- Duplicate -->
+                        <span class="tool-tag">ActiveCampaign</span>
+                        <span class="tool-tag">Zapier</span>
+                        <span class="tool-tag">Make</span>
+                        <span class="tool-tag">n8n</span>
+                        <span class="tool-tag">Trello</span>
+                        <span class="tool-tag">Jira</span>
+                    </div>
+                </div>
+
+                <!-- Row 3: Left - Very Slow -->
+                <div class="marquee-container reveal" data-speed="-0.5">
+                    <div class="marquee-track">
+                        <span class="tool-tag">VS Code</span>
+                        <span class="tool-tag">Adobe Photoshop</span>
+                        <span class="tool-tag">Adobe Premiere</span>
+                        <span class="tool-tag">MidJourney</span>
+                        <span class="tool-tag">Runway</span>
+                        <!-- Duplicate -->
+                        <span class="tool-tag">VS Code</span>
+                        <span class="tool-tag">Adobe Photoshop</span>
+                        <span class="tool-tag">Adobe Premiere</span>
+                        <span class="tool-tag">MidJourney</span>
+                        <span class="tool-tag">Runway</span>
+                    </div>
                 </div>
             </div>
         </section>
 
-        <!-- Education -->
+        <!-- Education & Certifications -->
         <section class="education-section">
-            <div class="content-wrap">
+            <div class="content-wrap content-wrap--wide">
                 <div class="section-header reveal">
                     <p class="overline">Background</p>
                     <h2>Education & Certifications</h2>
                 </div>
 
-                <div class="education-grid reveal">
-                    <div class="education-card">
-                        <h4>Computer & Information Sciences</h4>
-                        <p>Cairo University, 2003</p>
+                <div class="kinetic-list reveal">
+                    <div class="kinetic-item stagger-item">
+                        <div class="kinetic-header">
+                            <span class="kinetic-number">01</span>
+                            <span class="kinetic-title">Computer & Information Sciences</span>
+                            <span class="kinetic-arrow">→</span>
+                        </div>
+                        <div class="kinetic-body">
+                            <p>Tanta University • Faculty of Computers and Information • Class of 2003</p>
+                        </div>
                     </div>
-                    <div class="education-card">
-                        <h4>Social Media Marketing Specialization</h4>
-                        <p>Coursera</p>
+
+                    <div class="kinetic-item stagger-item">
+                        <div class="kinetic-header">
+                            <span class="kinetic-number">02</span>
+                            <span class="kinetic-title">Social Media Marketing Specialization</span>
+                            <span class="kinetic-arrow">→</span>
+                        </div>
+                        <div class="kinetic-body">
+                            <p>Coursera • Advanced strategy, analytics, and advertising across global platforms.</p>
+                        </div>
                     </div>
-                    <div class="education-card">
-                        <h4>Digital Marketing Nanodegree</h4>
-                        <p>Udacity</p>
+
+                    <div class="kinetic-item stagger-item">
+                        <div class="kinetic-header">
+                            <span class="kinetic-number">03</span>
+                            <span class="kinetic-title">Digital Marketing Nanodegree</span>
+                            <span class="kinetic-arrow">→</span>
+                        </div>
+                        <div class="kinetic-body">
+                            <p>Udacity • Performance marketing, technical SEO, and conversion-focused strategy.</p>
+                        </div>
                     </div>
-                    <div class="education-card">
-                        <h4>E-commerce Essentials</h4>
-                        <p>Shopify Academy</p>
+
+                    <div class="kinetic-item stagger-item">
+                        <div class="kinetic-header">
+                            <span class="kinetic-number">04</span>
+                            <span class="kinetic-title">E-commerce Essentials</span>
+                            <span class="kinetic-arrow">→</span>
+                        </div>
+                        <div class="kinetic-body">
+                            <p>Shopify Academy • Store operations, scaling systems, and conversion rate optimization.
+                            </p>
+                        </div>
                     </div>
-                    <div class="education-card">
-                        <h4>Fundamentals of Digital Marketing</h4>
-                        <p>Google Digital Garage</p>
-                    </div>
-                    <div class="education-card">
-                        <h4>Dropshipping 101</h4>
-                        <p>Oberlo</p>
+
+                    <div class="kinetic-item stagger-item">
+                        <div class="kinetic-header">
+                            <span class="kinetic-number">05</span>
+                            <span class="kinetic-title">Fundamentals of Digital Marketing</span>
+                            <span class="kinetic-arrow">→</span>
+                        </div>
+                        <div class="kinetic-body">
+                            <p>Google Digital Garage • Essential digital marketing skills and search engine mechanics.
+                            </p>
+                        </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Contact -->
-        <section class="contact-section" id="contact">
-            <div class="content-wrap">
-                <div class="section-header reveal">
-                    <p class="overline">Get In Touch</p>
-                    <h2>Let's Connect</h2>
-                </div>
-
-                <div class="contact-cta reveal">
-                    <a href="https://www.linkedin.com/in/mohamadgamal/" target="_blank" rel="noopener">LinkedIn
-                        Profile</a>
-                </div>
-            </div>
-        </section>
     </main>
 
-    <footer class="site-footer">
-        <div class="footer-container">
-            <div class="footer-content">
-                <div class="footer-brand">
-                    <a href="/CV/" class="footer-logo">
-                        <img src="assets/images/arabic-logo-mg.png" alt="Mohamed Gamal Logo" class="logo-img">
-                    </a>
-                    <p class="brand-tagline">Digital Growth Architect building scalable systems across the MENA region.</p>
-                </div>
-
-                <div class="footer-nav-group">
-                    <h5 class="footer-title">Explore</h5>
-                    <ul class="footer-links">
-                        <li><a href="/CV/" class="footer-link">Home</a></li>
-                        <li><a href="/CV/portfolio/" class="footer-link">Portfolio</a></li>
-                        <li><a href="/CV/achievements/" class="footer-link">Achievements</a></li>
-                    </ul>
-                </div>
-
-                <div class="footer-nav-group">
-                    <h5 class="footer-title">Connect</h5>
-                    <ul class="footer-links">
-                        <li><a href="https://www.linkedin.com/in/mohamadgamal/" target="_blank" rel="noopener" class="footer-link">LinkedIn</a></li>
-                        <li><a href="https://wa.me/201555141282" target="_blank" rel="noopener" class="footer-link">WhatsApp</a></li>
-                    </ul>
+    <footer class="site-footer-2026">
+        <div class="footer-glass-bar content-wrap--wide reveal">
+            <!-- Brand & Tagline -->
+            <div class="footer-brand-zone">
+                <a href="/CV/" class="footer-logo">
+                    <img src="assets/images/arabic-logo-mg.png" alt="Mohamed Gamal" class="logo-img">
+                </a>
+                <div class="brand-slogan-wrap">
+                    <p class="brand-micro-tag">Scaling Performance, Sustaining Impact</p>
                 </div>
             </div>
+
+            <!-- Social/Contact Actions -->
+            <div class="footer-action-zone">
+                <a href="/CV/portfolio/" class="btn-connect-mini">
+                    <span>Portfolio</span>
+                </a>
+                <a href="/CV/achievements/" class="btn-connect-mini">
+                    <span>Achievements</span>
+                </a>
+                <a href="https://www.linkedin.com/in/mohamadgamal/" target="_blank" rel="noopener"
+                    class="btn-connect-mini highlight">
+                    <span>LinkedIn</span>
+                </a>
+                <a href="https://wa.me/201555141282" target="_blank" rel="noopener" class="btn-whatsapp-footer"
+                    aria-label="Chat on WhatsApp">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path
+                            d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+                    </svg>
+                </a>
+            </div>
+        </div>
+
+        <div class="footer-casual-msg reveal">
+            <p>I fix the marketing mess so you can actually enjoy your weekend</p>
+            <p class="secondary">Your competitors hope you never actually call me ツ</p>
         </div>
     </footer>
+    <!-- Side Floating WhatsApp (Appears on Footer Scroll) removed - integrated in footer -->
 
-    <!-- Contact Floating Button -->
-    <button class="contact-fab" type="button" aria-label="Open contact options">
-        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-            <path
-                d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" />
-        </svg>
-    </button>
+    <!-- Contact Floating Action Button (Mobile Only - Call) -->
 
     <!-- Contact Modal -->
     <div class="contact-modal-overlay" id="contactModal" aria-hidden="true">
@@ -785,6 +966,30 @@
             </div>
         </div>
     </div>
+    <!-- Back to Top Button (Ultra Modern) -->
+    <button class="back-to-top" id="backToTop" aria-label="Back to Top">
+        <i class="ri-arrow-up-s-line"></i>
+    </button>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const backToTop = document.getElementById('backToTop');
+
+            // Show button when user scrolls down 400px
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 400) {
+                    backToTop.classList.add('visible');
+                } else {
+                    backToTop.classList.remove('visible');
+                }
+            });
+
+            // Smooth scroll to top
+            backToTop.addEventListener('click', () => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        });
+    </script>
 </body>
 
 
