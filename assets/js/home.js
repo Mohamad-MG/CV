@@ -239,6 +239,47 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    /* --- STORY SECTION: SCRUB TEXT & GHOST METRICS --- */
+    const scrubTexts = document.querySelectorAll('.scrub-text');
+    const ghostMetrics = document.querySelectorAll('.ghost-metric');
+    
+    // 1. Text Scrubbing (Illumination)
+    const scrubObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('in-view');
+            } else {
+                entry.target.classList.remove('in-view');
+            }
+        });
+    }, { threshold: 0.5 });
+
+    scrubTexts.forEach(text => scrubObserver.observe(text));
+
+    window.addEventListener('scroll', () => {
+        const scrollY = window.scrollY;
+        const vh = window.innerHeight;
+
+        scrubTexts.forEach(text => {
+            const rect = text.getBoundingClientRect();
+            const centerPoint = rect.top + rect.height / 2;
+            
+            // If the text is near the center of the viewport, illuminate it
+            if (centerPoint > vh * 0.3 && centerPoint < vh * 0.7) {
+                text.classList.add('active');
+            } else {
+                text.classList.remove('active');
+            }
+        });
+
+        // 2. Ghost Metrics Parallax
+        ghostMetrics.forEach(metric => {
+            const speed = parseFloat(metric.getAttribute('data-speed')) || 0.1;
+            const yOffset = (scrollY * speed);
+            metric.style.transform = `translateY(${yOffset}px)`;
+        });
+    });
+
     /* --- SPOTLIGHT EFFECT LOGIC --- */
     const spotlightCards = document.querySelectorAll('.stat-card, .future-card, .industry-card, .client-item, .hero-card, .proof-item, .edu-row, .skill-chip, .cert-badge');
     

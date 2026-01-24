@@ -47,7 +47,34 @@
     text-shadow: 0 0 20px rgba(43, 155, 155, 0.6);
 }
 
-/* Scrambling state specific styles */
-.scrambling {
-    letter-spacing: 0.05em;
+/* Ultra Modern - Kinetic Typography */
+.char-flash {
+    animation: textFlash 0.4s ease-out forwards;
+}
+
+@keyframes textFlash {
+    0% {
+        color: var(--teal-primary);
+        filter: brightness(2) blur(5px);
+        text-shadow: 0 0 20px var(--teal-primary);
+        transform: scale(1.2);
+    }
+    100% {
+        color: var(--blueprint-fill);
+        filter: brightness(1) blur(0);
+        text-shadow: 0 0 10px rgba(43, 155, 155, 0.3);
+        transform: scale(1);
+    }
+}
+
+.scrambling-char {
+    display: inline-block;
+    opacity: 0.7;
+    filter: blur(1px);
+    font-family: 'Space Grotesk', monospace;
+    color: var(--teal-primary);
+}
+
+.hero-eyebrow {
+    perspective: 500px;
 }

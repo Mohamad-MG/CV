@@ -88,6 +88,17 @@ section {
     padding-bottom: 50px !important;
 }
 
+/* 🛡️ Section Protection Shield - High Blur & Darkening */
+.tools-protection {
+    background: rgba(3, 3, 5, 0.85) !important;
+    backdrop-filter: blur(40px) saturate(150%) !important;
+    -webkit-backdrop-filter: blur(40px) saturate(150%) !important;
+    position: relative;
+    z-index: 20; /* Elevate above nebula icons */
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
 .hero-proof {
     margin-top: 25px !important;
     gap: 15px !important;
