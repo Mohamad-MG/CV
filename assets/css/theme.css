@@ -5,55 +5,68 @@
 */
 
 :root {
-    /* --- 🎨 PALETTE: DEEP SPACE ECHO --- */
-    --bg-deep: #050507;       /* The Void */
-    --bg-surface: #0a0a12;    /* Near Objects */
-    --bg-overlay: rgba(10, 10, 18, 0.7);
+    /* --- 🎨 PALETTE: DEEP SPACE ECHO (Refined) --- */
+    --bg-deep: #030305;       /* True Void */
+    --bg-surface: #08080c;    /* Deep Object */
+    --bg-overlay: rgba(8, 8, 12, 0.8);
     
-    /* Accents: The Energy Source */
-    --teal-primary: #00f0ff;  /* Cyber Teal */
-    --teal-dim: rgba(0, 240, 255, 0.1);
-    --purple-primary: #7000ff; /* Electric Violet */
-    --purple-dim: rgba(112, 0, 255, 0.1);
+    /* Accents: The Energy Source (Vibrant & Clean) */
+    --teal-primary: #00f2ff;  /* Cyber Teal */
+    --teal-dim: rgba(0, 242, 255, 0.08);
+    --purple-primary: #7b2cbf; /* Deep Electric Violet */
+    --purple-dim: rgba(123, 44, 191, 0.08);
     
     /* Text Hierarchy */
-    --text-primary: #ffffff;
+    --text-primary: #f8fafc;
     --text-secondary: #94a3b8; /* Cool Gray */
-    --text-muted: #64748b;     /* Slate */
+    --text-muted: #475569;     /* Deep Slate */
     
-    /* --- 💎 GLASSMORPHISM ENGINE --- */
-    /* Level 1: Subtle (Cards) */
-    --glass-surface: rgba(255, 255, 255, 0.03);
-    --glass-border: rgba(255, 255, 255, 0.06);
-    --glass-blur: blur(12px);
+    /* --- 💎 GLASSMORPHISM ENGINE 2.0 --- */
+    /* Level 1: Subtle (Cards) - "Breathable Glass" */
+    --glass-surface: rgba(255, 255, 255, 0.02);
+    --glass-border: rgba(255, 255, 255, 0.05);
+    --glass-highlight: rgba(255, 255, 255, 0.03); /* Top edge highlight */
+    --glass-blur: blur(16px);
     
     /* Level 2: Medium (Floating Elements) */
-    --glass-medium-bg: rgba(15, 20, 30, 0.6);
-    --glass-medium-border: rgba(255, 255, 255, 0.1);
-    --glass-medium-blur: blur(20px) saturate(180%);
+    --glass-medium-bg: rgba(10, 12, 18, 0.7);
+    --glass-medium-border: rgba(255, 255, 255, 0.08);
+    --glass-medium-blur: blur(24px) saturate(180%);
     
-    /* Level 3: Strong (Nav/Footer) */
-    --glass-strong-bg: rgba(5, 5, 10, 0.85);
-    --glass-strong-border: rgba(255, 255, 255, 0.12);
-    --glass-strong-blur: blur(30px) saturate(200%);
+    /* Level 3: Strong (Nav/Footer) - "Frosted Obsidian" */
+    --glass-strong-bg: rgba(5, 5, 8, 0.9);
+    --glass-strong-border: rgba(255, 255, 255, 0.1);
+    --glass-strong-blur: blur(40px) saturate(210%);
 
-    /* --- 🔦 LIGHTING & DEPTH --- */
-    --shadow-subtle: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
-    --shadow-glow-teal: 0 0 40px rgba(0, 240, 255, 0.15);
-    --shadow-glow-purple: 0 0 40px rgba(112, 0, 255, 0.15);
-    --inner-glow: inset 0 0 20px rgba(255, 255, 255, 0.02);
+    /* --- 🔦 LIGHTING & DEPTH (Multi-Layered) --- */
+    /* Soft ambient shadow for depth */
+    --shadow-subtle: 
+        0 4px 20px -5px rgba(0, 0, 0, 0.4),
+        0 1px 3px rgba(0,0,0,0.2);
+        
+    /* The "Hover" Lift - crisp and deep */
+    --shadow-lifted: 
+        0 20px 40px -10px rgba(0, 0, 0, 0.6),
+        0 0 20px rgba(0, 242, 255, 0.05); /* Subtle colored bleed */
+
+    --shadow-glow-teal: 0 0 60px -10px rgba(0, 242, 255, 0.25);
+    --shadow-glow-purple: 0 0 60px -10px rgba(123, 44, 191, 0.25);
+    
+    --inner-glow: inset 0 1px 0 0 rgba(255, 255, 255, 0.05); /* Bevel effect */
     
     /* --- 📐 FOUNDATIONS --- */
     --radius-sm: 8px;
-    --radius-md: 16px;
-    --radius-lg: 24px;
+    --radius-md: 18px; /* Slightly softer */
+    --radius-lg: 28px;
     --radius-pill: 100px;
     
     --font-display: 'Space Grotesk', sans-serif;
     --font-body: 'Outfit', sans-serif;
     
-    --ease-elastic: cubic-bezier(0.34, 1.56, 0.64, 1);
-    --ease-smooth: cubic-bezier(0.16, 1, 0.3, 1);
+    /* Premium "Apple-esque" Smoothing */
+    --ease-elastic: cubic-bezier(0.34, 1.3, 0.64, 1);
+    --ease-smooth: cubic-bezier(0.2, 0.8, 0.2, 1); /* Snappy start, soft landing */
+    --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
 }
 
 /* Base Reset & Setup */
@@ -68,31 +81,33 @@ body {
     color: var(--text-primary);
     font-family: var(--font-body);
     overflow-x: hidden;
-    line-height: 1.6;
+    line-height: 1.65; /* More breathable */
 }
 
 h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-display);
     font-weight: 700;
     line-height: 1.1;
-    margin: 0 0 1rem 0;
-    letter-spacing: -0.02em;
+    margin: 0 0 1.2rem 0;
+    letter-spacing: -0.03em; /* Tighter headers */
 }
 
 /* --- 🧊 UTILITY CLASSES (The Building Blocks) --- */
 
-/* The "Bento" Card Base */
+/* The "Bento" Card Base - REFINED */
 .ultra-card {
     background: var(--glass-surface);
     border: 1px solid var(--glass-border);
+    border-top-color: var(--glass-highlight); /* Subtle 3D effect */
     backdrop-filter: var(--glass-blur);
     -webkit-backdrop-filter: var(--glass-blur);
     border-radius: var(--radius-md);
     box-shadow: var(--shadow-subtle);
-    transition: transform 0.4s var(--ease-smooth), 
-                background 0.4s ease, 
-                border-color 0.4s ease, 
-                box-shadow 0.4s ease;
+    transition: 
+        transform 0.4s var(--ease-smooth), 
+        background 0.4s ease, 
+        border-color 0.4s ease, 
+        box-shadow 0.4s ease;
     position: relative;
     overflow: hidden;
 }
@@ -101,7 +116,8 @@ h1, h2, h3, h4, h5, h6 {
     content: '';
     position: absolute;
     inset: 0;
-    background: radial-gradient(800px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255,255,255,0.06), transparent 40%);
+    /* Smoother, larger gradient for mouse follow */
+    background: radial-gradient(1000px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255,255,255,0.04), transparent 50%);
     opacity: 0;
     transition: opacity 0.5s ease;
     pointer-events: none;
@@ -113,10 +129,10 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .ultra-card:hover {
-    transform: translateY(-5px) scale(1.005);
-    background: rgba(255, 255, 255, 0.05);
-    border-color: rgba(255, 255, 255, 0.15);
-    box-shadow: 0 20px 40px -10px rgba(0,0,0,0.6), var(--shadow-glow-teal);
+    transform: translateY(-4px) scale(1.002); /* More subtle movement */
+    background: rgba(255, 255, 255, 0.04);
+    border-color: rgba(255, 255, 255, 0.1);
+    box-shadow: var(--shadow-lifted);
 }
 
 /* Text Gradients */

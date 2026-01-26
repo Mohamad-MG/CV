@@ -1,271 +1,371 @@
+/* 
+   🌌 ULTRA MODERN 2026 - Holographic Neural Interface
+   Vision: Deep Glass, Fluid Motion, Iridescent Glow
+*/
+
 :root {
+    /* Core Palette - Cyberpunk/Neo-Future */
     --ai-primary: #00F0FF;
     --ai-secondary: #7000FF;
-    --ai-bg: rgba(8, 10, 15, 0.85); /* More transparent for glass feel */
-    --ai-glass: rgba(255, 255, 255, 0.03);
-    --ai-border: rgba(255, 255, 255, 0.15);
+    --ai-accent: #FF0055;
+
+    /* Holographic Backgrounds */
+    --ai-glass-bg: rgba(10, 10, 12, 0.50);
+    /* Ultra transparent for glass feel */
+    --ai-glass-border: rgba(255, 255, 255, 0.1);
+    --ai-glass-highlight: rgba(255, 255, 255, 0.15);
+
+    /* Text */
+    --ai-text-main: #FFFFFF;
+    --ai-text-muted: rgba(255, 255, 255, 0.7);
+
+    /* Motion */
+    --ease-elastic: cubic-bezier(0.34, 1.56, 0.64, 1);
+    --ease-smooth: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* --- Neural Core Trigger (Launcher) --- */
+/* --- Launcher: The Neural Core --- */
 .ai-core-trigger {
     position: fixed;
     bottom: 30px;
-    right: 30px; /* ALWAYS RIGHT */
-    left: auto !important; /* Force override any RTL flips */
-    width: 65px; /* Slightly larger */
-    height: 65px;
+    right: 30px;
+    left: auto !important;
+    width: 70px;
+    height: 70px;
     z-index: 10005;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    perspective: 1000px;
 }
 
 .core-node {
-    position: relative;
     width: 100%;
     height: 100%;
-    background: rgba(10, 10, 15, 0.8);
     border-radius: 50%;
+    background: rgba(10, 10, 15, 0.4);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     display: flex;
     align-items: center;
     justify-content: center;
-    color: var(--ai-primary);
-    font-size: 1.4rem;
-    z-index: 2;
-    border: 1px solid var(--ai-border);
-    transition: all 0.4s ease;
-    box-shadow: 
-        0 10px 30px rgba(0, 0, 0, 0.5),
-        0 0 0 1px rgba(0, 240, 255, 0.1),
-        inset 0 0 20px rgba(0, 240, 255, 0.1);
-    backdrop-filter: blur(10px);
+    transition: all 0.5s var(--ease-elastic);
+    box-shadow:
+        0 8px 32px rgba(0, 0, 0, 0.3),
+        inset 0 0 20px rgba(0, 240, 255, 0.05);
     overflow: hidden;
+    position: relative;
 }
 
-/* Agent Avatar Image in Launcher */
+/* Iridescent Ring */
+.core-node::after {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border-radius: 50%;
+    padding: 2px;
+    background: linear-gradient(135deg, var(--ai-primary), transparent, var(--ai-secondary));
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0.6;
+    animation: spinSlow 8s linear infinite;
+}
+
 .core-node img {
-    width: 90%;
-    height: 90%;
+    width: 85%;
+    height: 85%;
     object-fit: contain;
-    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    transition: transform 0.4s var(--ease-smooth);
+    filter: drop-shadow(0 0 8px rgba(0, 240, 255, 0.2));
+}
+
+.ai-core-trigger:hover .core-node {
+    transform: scale(1.1);
+    box-shadow: 0 0 40px rgba(0, 240, 255, 0.4);
+    background: rgba(10, 12, 20, 0.8);
 }
 
 .ai-core-trigger:hover .core-node img {
-    transform: scale(1.1) translateY(-2px);
+    transform: scale(1.15) translateY(-2px);
 }
 
+/* Orbit Rings */
 .core-orbit {
     position: absolute;
-    inset: -6px;
-    border: 1px dashed var(--ai-primary);
+    inset: -8px;
+    border: 1px dashed rgba(0, 240, 255, 0.3);
     border-radius: 50%;
-    opacity: 0.4;
     animation: rotateOrbit 20s linear infinite;
     pointer-events: none;
 }
 
-.core-pulse {
-    position: absolute;
-    inset: 0;
-    background: var(--ai-primary);
-    border-radius: 50%;
-    opacity: 0;
-    filter: blur(20px);
-    transition: all 0.4s ease;
-    z-index: -1;
+@keyframes rotateOrbit {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
 }
 
-.ai-core-trigger:hover .core-node {
-    border-color: var(--ai-primary);
-    box-shadow: 0 0 40px rgba(0, 240, 255, 0.4);
+@keyframes spinSlow {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
 }
 
-.ai-core-trigger:hover .core-pulse {
-    opacity: 0.4;
-    transform: scale(1.4);
-}
 
-/* --- Chat Container --- */
+/* --- The Holographic Window --- */
 .ai-chat-container {
     position: fixed;
-    bottom: 110px;
-    right: 30px; /* ALWAYS RIGHT */
+    bottom: 120px;
+    right: 30px;
     left: auto !important;
-    width: 380px;
-    max-width: calc(100vw - 60px);
-    height: 600px;
-    max-height: calc(100vh - 140px);
-    background: var(--ai-bg);
+    width: 400px;
+    max-width: calc(100vw - 40px);
+    height: 650px;
+    max-height: calc(100vh - 150px);
+
+    /* Glassmorphism Extreme */
+    background: var(--ai-glass-bg);
     backdrop-filter: blur(40px) saturate(180%);
     -webkit-backdrop-filter: blur(40px) saturate(180%);
-    border-radius: 24px;
-    border: 1px solid var(--ai-border);
+
+    /* Borderless Feel with Lighting */
+    border-radius: 30px;
+    border: 1px solid var(--ai-glass-border);
+    box-shadow:
+        0 40px 100px -20px rgba(0, 0, 0, 0.8),
+        /* Deep shadow */
+        inset 0 1px 0 rgba(255, 255, 255, 0.15);
+    /* Top light highlight */
+
     z-index: 10004;
     display: flex;
     flex-direction: column;
-    transform: translateY(20px) scale(0.95);
+
+    /* Entrance Animation state */
+    transform: translateY(30px) scale(0.9) rotateX(5deg);
     opacity: 0;
     visibility: hidden;
-    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); /* Bouncy enter */
-    box-shadow: 
-        0 30px 80px rgba(0, 0, 0, 0.8),
-        0 0 0 1px rgba(255, 255, 255, 0.1);
+    transition:
+        transform 0.5s var(--ease-elastic),
+        opacity 0.4s ease,
+        visibility 0.4s ease;
+
     overflow: hidden;
 }
 
 .ai-chat-container.active {
-    transform: translateY(0) scale(1);
+    transform: translateY(0) scale(1) rotateX(0);
     opacity: 1;
     visibility: visible;
 }
 
-/* Header */
+/* --- Header: "The Cockpit" --- */
 .ai-chat-header {
-    padding: 15px 20px;
-    position: relative;
+    padding: 20px 24px;
     display: flex;
     align-items: center;
-    gap: 15px;
-    border-bottom: 1px solid rgba(255,255,255,0.05);
-    background: rgba(255,255,255,0.02);
+    gap: 16px;
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0.03), transparent);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+    position: relative;
+    z-index: 2;
 }
 
+/* Avatar Ring */
 .ai-avatar-wrap {
     position: relative;
-    width: 44px;
-    height: 44px;
+    width: 48px;
+    height: 48px;
 }
 
 .ai-avatar-inner {
     width: 100%;
     height: 100%;
-    border-radius: 50%; /* Circle avatar */
-    overflow: hidden;
-    border: 2px solid rgba(0, 240, 255, 0.3);
-    box-shadow: 0 0 15px rgba(0, 240, 255, 0.2);
+    border-radius: 50%;
+    position: relative;
+    z-index: 2;
     background: #000;
+    border: 2px solid transparent;
+    box-shadow: 0 0 20px rgba(0, 240, 255, 0.15);
+}
+
+/* Pulse Ring behind avatar */
+.ai-avatar-wrap::before {
+    content: '';
+    position: absolute;
+    inset: -3px;
+    border-radius: 50%;
+    background: conic-gradient(from 180deg, transparent, var(--ai-primary), transparent);
+    animation: rotateOrbit 4s linear infinite;
+    opacity: 0.5;
 }
 
 .ai-avatar-inner img {
     width: 100%;
     height: 100%;
-    object-fit: contain;
+    object-fit: cover;
+    border-radius: 50%;
 }
 
 .ai-status-dot {
     position: absolute;
-    bottom: 0;
-    right: 0;
-    width: 12px;
-    height: 12px;
-    background: #00FF66;
-    border: 2px solid var(--ai-bg);
+    bottom: 2px;
+    right: 0px;
+    width: 10px;
+    height: 10px;
+    background: #00FF9D;
     border-radius: 50%;
-    box-shadow: 0 0 5px #00FF66;
+    border: 2px solid #1a1a20;
+    z-index: 3;
+    box-shadow: 0 0 8px #00FF9D;
+    animation: pulseGreen 2s infinite;
+}
+
+@keyframes pulseGreen {
+    0% {
+        box-shadow: 0 0 0 0 rgba(0, 255, 157, 0.4);
+    }
+
+    70% {
+        box-shadow: 0 0 0 6px rgba(0, 255, 157, 0);
+    }
+
+    100% {
+        box-shadow: 0 0 0 0 rgba(0, 255, 157, 0);
+    }
+}
+
+/* Text Info */
+.ai-info {
+    flex: 1;
 }
 
 .ai-info h3 {
     margin: 0;
-    font-size: 1rem;
+    font-size: 1.1rem;
     font-weight: 700;
     color: #fff;
-    font-family: 'Outfit', sans-serif;
+    font-family: 'Space Grotesk', sans-serif;
+    letter-spacing: -0.02em;
+    background: linear-gradient(90deg, #fff, #bffffc);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
 .ai-info span {
     font-size: 0.75rem;
-    color: var(--ai-primary);
+    color: var(--ai-text-muted);
     font-weight: 500;
-    letter-spacing: 0.5px;
-    text-shadow: 0 0 10px rgba(0, 240, 255, 0.3);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    display: block;
+    margin-top: 2px;
 }
 
+/* Close Button (Magnetic feel) */
 .ai-close {
-    margin-left: auto;
-    background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(255,255,255,0.1);
-    color: #fff;
-    width: 32px;
-    height: 32px;
-    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.05);
+    border: none;
+    color: rgba(255, 255, 255, 0.7);
+    width: 36px;
+    height: 36px;
+    border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.3s var(--ease-smooth);
 }
 
 .ai-close:hover {
-    background: rgba(255, 50, 50, 0.2);
-    border-color: rgba(255, 50, 50, 0.4);
-    transform: rotate(90deg);
+    background: rgba(255, 50, 80, 0.2);
+    color: #ff4d6d;
+    transform: rotate(90deg) scale(1.1);
 }
 
-/* Messages */
+/* --- Message Area --- */
 .ai-chat-messages {
     flex: 1;
-    padding: 20px;
+    padding: 24px;
     overflow-y: auto;
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 18px;
     scroll-behavior: smooth;
+    mask-image: linear-gradient(to bottom, transparent, #000 20px);
 }
 
+/* Message Base */
 .message {
     display: flex;
     flex-direction: column;
-    gap: 4px;
-    max-width: 85%;
-    animation: msgPop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    max-width: 88%;
+    animation: msgSlideIn 0.4s var(--ease-smooth) forwards;
+    opacity: 0;
+    transform: translateY(15px);
 }
 
-@keyframes msgPop {
-    from { opacity: 0; transform: translateY(10px) scale(0.95); }
-    to { opacity: 1; transform: translateY(0) scale(1); }
+@keyframes msgSlideIn {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .msg-content {
-    padding: 12px 16px;
-    font-size: 0.92rem;
-    line-height: 1.5;
+    padding: 14px 18px;
+    font-size: 0.95rem;
+    line-height: 1.6;
     position: relative;
+    backdrop-filter: blur(10px);
 }
 
-/* AI Message Bubble */
+/* AI Bubbles */
 .ai-msg .msg-content {
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    color: #e0e0e0;
-    border-radius: 16px 16px 16px 4px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    color: #e0e6ed;
+    border-radius: 20px 20px 20px 4px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
 
-/* User Message Bubble */
+/* User Bubbles */
 .user-msg {
     align-self: flex-end;
 }
 
 .user-msg .msg-content {
     background: linear-gradient(135deg, var(--ai-primary), #00A3FF);
-    color: #000;
+    color: #050a14;
     font-weight: 600;
-    border-radius: 16px 16px 4px 16px;
-    box-shadow: 0 5px 15px rgba(0, 240, 255, 0.2);
+    border-radius: 20px 20px 4px 20px;
+    box-shadow: 0 8px 25px rgba(0, 240, 255, 0.25);
+    border: none;
 }
 
 .msg-time {
     font-size: 0.65rem;
-    color: rgba(255, 255, 255, 0.3);
-    margin-left: 5px;
+    color: rgba(255, 255, 255, 0.25);
+    margin-top: 4px;
+    margin-left: 6px;
 }
 
-/* Input Area */
+/* --- Input Area: Floating Capsule --- */
 .ai-chat-input-area {
-    padding: 15px 20px;
-    background: rgba(0, 0, 0, 0.3);
-    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 20px;
+    position: relative;
+    z-index: 10;
 }
 
 .ai-input-wrapper {
@@ -273,30 +373,37 @@
     display: flex;
     align-items: center;
     gap: 10px;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--ai-glass-border);
+    padding: 6px;
+    border-radius: 99px;
+    /* Capsule shape */
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+}
+
+.ai-input-wrapper:focus-within {
+    border-color: rgba(0, 240, 255, 0.4);
+    box-shadow: 0 0 25px rgba(0, 240, 255, 0.1);
+    background: rgba(0, 0, 0, 0.5);
 }
 
 .ai-input-wrapper input {
     flex: 1;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    padding: 12px 15px;
-    border-radius: 12px;
+    background: transparent;
+    border: none;
+    padding: 12px 18px;
     color: #fff;
-    font-size: 0.9rem;
+    font-size: 0.95rem;
     outline: none;
-    transition: all 0.3s;
+    font-family: inherit;
 }
 
-.ai-input-wrapper input:focus {
-    background: rgba(255, 255, 255, 0.08);
-    border-color: var(--ai-primary);
-    box-shadow: 0 0 15px rgba(0, 240, 255, 0.1);
-}
-
+/* Send Button: Glowing Orb */
 .ai-input-wrapper button {
     width: 44px;
     height: 44px;
-    border-radius: 12px;
+    border-radius: 50%;
     border: none;
     background: var(--ai-primary);
     color: #000;
@@ -305,69 +412,106 @@
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: all 0.2s;
-    box-shadow: 0 0 10px rgba(0, 240, 255, 0.2);
+    transition: all 0.3s var(--ease-elastic);
+    box-shadow: 0 0 15px rgba(0, 240, 255, 0.4);
 }
 
 .ai-input-wrapper button:hover {
-    transform: scale(1.05);
+    transform: scale(1.1);
     background: #fff;
-    box-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
+    box-shadow: 0 0 30px rgba(255, 255, 255, 0.6);
 }
 
-/* Scrollbar */
-.ai-chat-messages::-webkit-scrollbar {
-    width: 4px;
-}
-.ai-chat-messages::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 4px;
+.ai-input-wrapper button:active {
+    transform: scale(0.9);
 }
 
-/* Typing Indicator Animation */
+/* --- Typing Dots (Improved) --- */
 .ai-msg .typing-dots {
     display: flex;
-    gap: 4px;
-    padding: 10px 14px;
+    gap: 6px;
+    padding: 12px 18px;
     align-items: center;
+    justify-content: center;
+    height: 24px;
 }
 
 .ai-msg .typing-dots span {
     width: 6px;
     height: 6px;
-    background: var(--ai-primary);
+    background: #fff;
     border-radius: 50%;
-    display: block;
-    animation: typingBounce 1.4s infinite ease-in-out both;
+    opacity: 0.4;
+    animation: bounce 1.4s infinite ease-in-out both;
 }
 
-.ai-msg .typing-dots span:nth-child(1) { animation-delay: -0.32s; }
-.ai-msg .typing-dots span:nth-child(2) { animation-delay: -0.16s; }
-
-@keyframes typingBounce {
-    0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
-    40% { transform: scale(1); opacity: 1; }
+.ai-msg .typing-dots span:nth-child(1) {
+    animation-delay: -0.32s;
 }
 
-/* Reset for RTL pages to keep it on the Right */
+.ai-msg .typing-dots span:nth-child(2) {
+    animation-delay: -0.16s;
+}
+
+@keyframes bounce {
+
+    0%,
+    80%,
+    100% {
+        transform: scale(0.6);
+        opacity: 0.4;
+    }
+
+    40% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* Scrollbar styling */
+.ai-chat-messages::-webkit-scrollbar {
+    width: 4px;
+}
+
+.ai-chat-messages::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.ai-chat-messages::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+}
+
+/* RTL Adjustments */
 html[lang="ar"] .ai-chat-container,
 html[lang="ar"] .ai-core-trigger {
     right: 30px !important;
     left: auto !important;
 }
 
-/* If the close button needs to be on left in RTL header, we can allow that, 
-   but usually consistency is better. Let's keep close on right for now or flip it. 
-   Actually, standard is start or end. Let's force LTR layout for the header to keep controls consistent 
-   OR let flexbox handle it but ensure the container stays right. */
-   
-html[lang="ar"] .ai-chat-header {
-    flex-direction: row; /* Keep standard direction even in AR? 
-                            No, better to let it flip content but keep container position right. */
+html[lang="ar"] .message {
+    direction: rtl;
+    text-align: right;
 }
 
-/* Override close button margin for RTL if direction is rtl */
-html[lang="ar"] .ai-close {
-    margin-right: auto;
-    margin-left: 0;
+/* Mobile Fixes */
+@media (max-width: 480px) {
+    .ai-chat-container {
+        width: 100%;
+        max-width: 100%;
+        height: 100vh;
+        max-height: 100%;
+        bottom: 0;
+        right: 0;
+        border-radius: 0;
+        border: none;
+    }
+
+    .ai-chat-header {
+        padding-top: 50px;
+    }
+
+    .ai-chat-input-area {
+        padding-bottom: 30px;
+    }
 }

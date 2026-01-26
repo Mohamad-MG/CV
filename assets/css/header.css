@@ -1,18 +1,22 @@
 /* ============================================
    ULTRA-MODERN MINIMAL HEADER (NAV ONLY)
+   Refined for 2026 Premium Feel
    ============================================ */
 
 .site-header {
     position: fixed;
-    top: 25px;
+    top: 30px;
     left: 0;
     right: 0;
     z-index: 10005 !important;
-    /* Promoted above Social Nebula */
     display: flex;
     justify-content: center;
-    pointer-events: none;
-    /* Let clicks pass through empty space */
+    pointer-events: none; /* Pass clicks through outside pill */
+    transition: top 0.4s ease;
+}
+
+.site-header.scrolled {
+    top: 20px;
 }
 
 /* The Navigation Pill */
@@ -21,136 +25,113 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: rgba(10, 15, 25, 0.7);
-    /* More transparent base */
-    backdrop-filter: var(--glass-blur);
-    -webkit-backdrop-filter: var(--glass-blur);
+    background: var(--glass-strong-bg);
+    backdrop-filter: var(--glass-strong-blur);
+    -webkit-backdrop-filter: var(--glass-strong-blur);
+    border: 1px solid var(--glass-strong-border);
     border-radius: 100px;
-    padding: 6px 10px;
-    box-shadow:
-        var(--shadow-deep),
-        inset 0 0 0 1px rgba(255, 255, 255, 0.08);
-    /* Inner light border */
-    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    padding: 8px 12px;
+    box-shadow: 
+        0 10px 40px -10px rgba(0,0,0,0.5),
+        inset 0 1px 0 rgba(255,255,255,0.1); /* Bevel */
+    transition: all 0.4s var(--ease-smooth);
     position: relative;
     overflow: hidden;
 }
 
-/* Subtle Gradient Glow Border Effect */
-.header-container::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: 100px;
-    padding: 1px;
-    background: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0) 100%);
-    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    -webkit-mask-composite: xor;
-    mask-composite: exclude;
-    pointer-events: none;
-}
-
+/* Scrolled State Enhancement */
 .site-header.scrolled .header-container {
-    background: rgba(8, 10, 16, 0.9);
-    box-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.7);
+    background: rgba(5, 5, 8, 0.95);
+    box-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.8);
+    border-color: rgba(255, 255, 255, 0.08);
 }
 
-/* Hide Logo in Header */
-.header-logo {
-    display: none;
-}
-
-/* Hide Controls in Main Container (Moved to Absolute) */
-.header-controls {
-    display: none;
-}
+/* Hide Logo & Controls (Visual Cleanup) */
+.header-logo, .header-controls { display: none; }
 
 /* --- NAVIGATION --- */
 .header-nav {
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: 6px;
 }
 
 .nav-link {
     color: var(--text-secondary);
     text-decoration: none;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     font-weight: 500;
     padding: 10px 24px;
     border-radius: 100px;
     transition: all 0.3s ease;
+    letter-spacing: 0.5px;
+    position: relative;
+    overflow: hidden;
 }
 
 .nav-link:hover {
     color: #fff;
-    background: rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.06);
+    text-shadow: 0 0 10px rgba(255,255,255,0.5);
 }
 
 .nav-link.active {
     color: #fff;
-    background: rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.12);
     font-weight: 600;
-}
-
-.nav-indicator {
-    display: none;
+    box-shadow: inset 0 0 15px rgba(255,255,255,0.02);
 }
 
 /* --- INTEGRATED LANG SWITCH --- */
 .header-divider {
     width: 1px;
-    height: 18px;
-    background: rgba(255, 255, 255, 0.15);
-    margin: 0 8px;
+    height: 16px;
+    background: rgba(255, 255, 255, 0.1);
+    margin: 0 10px;
 }
 
 .lang-switch-compact {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 34px;
-    height: 34px;
+    width: 36px;
+    height: 36px;
     border-radius: 50%;
     color: var(--text-secondary);
     text-decoration: none;
     transition: all 0.3s ease;
-    border: 1px solid transparent;
     background: transparent;
 }
 
 .lang-switch-compact:hover {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.08);
     color: #fff;
-    transform: scale(1.05);
 }
 
 .lang-code {
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     font-weight: 700;
-    letter-spacing: 0.5px;
-    font-family: var(--font-body);
+    letter-spacing: 1px;
+    font-family: var(--font-display);
 }
 
-/* Floating switch removed/hidden */
-.lang-switch-floating {
-    display: none !important;
-}
+.lang-switch-floating { display: none !important; }
 
 /* --- MOBILE TOGGLE --- */
 .mobile-menu-toggle {
     display: none;
     background: transparent;
     border: none;
-    width: 40px;
-    height: 40px;
+    width: 44px;
+    height: 44px;
     position: relative;
     cursor: pointer;
+    margin-left: 10px;
 }
 
 .mobile-menu-toggle span {
     display: block;
-    width: 24px;
+    width: 22px;
     height: 2px;
     background: #fff;
     margin: 5px auto;
@@ -160,46 +141,36 @@
 
 /* --- RESPONSIVE --- */
 @media (max-width: 900px) {
-    .site-header {
-        top: 15px;
-        padding: 0 15px;
-    }
-
-    .header-container {
-        padding: 8px 15px;
-    }
+    .site-header { top: 20px; padding: 0 20px; }
+    .header-container { padding: 8px 16px; width: 100%; justify-content: space-between; }
 
     .header-nav {
         position: fixed;
-        top: 80px;
-        left: 15px;
-        right: 15px;
-        background: rgba(20, 25, 35, 0.95);
-        backdrop-filter: blur(20px);
+        top: 90px;
+        left: 20px;
+        right: 20px;
+        background: rgba(10, 12, 18, 0.98);
+        backdrop-filter: blur(25px);
         flex-direction: column;
-        padding: 20px;
-        border-radius: 20px;
+        padding: 30px;
+        border-radius: 24px;
         border: 1px solid rgba(255, 255, 255, 0.1);
-        gap: 10px;
+        gap: 15px;
         opacity: 0;
         visibility: hidden;
-        transform: translateY(-10px);
-        transition: all 0.3s ease;
+        transform: translateY(-10px) scale(0.98);
+        transition: all 0.4s var(--ease-elastic);
+        box-shadow: 0 40px 80px -20px rgba(0,0,0,0.8);
     }
 
     .header-nav.mobile-open {
         opacity: 1;
         visibility: visible;
-        transform: translateY(0);
+        transform: translateY(0) scale(1);
     }
 
-    .nav-link {
-        width: 100%;
-        text-align: center;
-        padding: 12px;
-    }
-
-    .mobile-menu-toggle {
-        display: block;
-    }
+    .nav-link { width: 100%; text-align: center; padding: 16px; font-size: 1.1rem; }
+    .mobile-menu-toggle { display: block; }
+    .header-divider { display: none; }
+    .lang-switch-compact { width: auto; height: auto; padding: 10px; border-radius: 8px; }
 }
