@@ -4,7 +4,7 @@
  */
 
 const AGENT_CONFIG = {
-    workerUrl: 'https://mg-ai-proxy.emarketbank.workers.dev/',
+    workerUrl: 'https://mg-ai-proxy.emarketbank.workers.dev/chat',
     timeoutMs: 9000,
     maxHistory: 12,
     typingText: {

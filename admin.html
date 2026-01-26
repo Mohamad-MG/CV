@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jimmy Control</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f7f3ef;
+      --ink: #121417;
+      --muted: #5b646d;
+      --accent: #1c8c7a;
+      --accent-strong: #0f6b5d;
+      --card: #ffffff;
+      --border: rgba(18, 20, 23, 0.12);
+      --shadow: 0 20px 60px rgba(18, 20, 23, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Space Grotesk", sans-serif;
+      background:
+        radial-gradient(circle at 10% 20%, rgba(28, 140, 122, 0.15), transparent 40%),
+        radial-gradient(circle at 90% 10%, rgba(18, 20, 23, 0.08), transparent 40%),
+        var(--bg);
+      color: var(--ink);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 32px 18px;
+    }
+
+    .panel {
+      width: min(960px, 100%);
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 32px;
+      box-shadow: var(--shadow);
+    }
+
+    .header {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 24px;
+    }
+
+    .header h1 {
+      margin: 0;
+      font-size: clamp(1.6rem, 2.5vw, 2.3rem);
+      font-weight: 700;
+    }
+
+    .header p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 18px;
+      margin-bottom: 18px;
+    }
+
+    label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      display: block;
+      margin-bottom: 10px;
+    }
+
+    textarea,
+    select {
+      width: 100%;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      padding: 14px 16px;
+      font-size: 0.95rem;
+      font-family: inherit;
+      background: #fff;
+      color: var(--ink);
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    textarea {
+      min-height: 220px;
+      resize: vertical;
+      line-height: 1.6;
+    }
+
+    textarea:focus,
+    select:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 4px rgba(28, 140, 122, 0.12);
+    }
+
+    .model-row {
+      margin-top: 8px;
+    }
+
+    .footer {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 10px;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+    }
+
+    button {
+      border: none;
+      border-radius: 999px;
+      padding: 12px 24px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #fff;
+      background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 10px 20px rgba(28, 140, 122, 0.2);
+    }
+
+    button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .status {
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    .status.ok {
+      color: var(--accent-strong);
+    }
+
+    .hint {
+      font-size: 0.85rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    @media (max-width: 640px) {
+      .panel {
+        padding: 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="panel">
+    <div class="header">
+      <h1>Jimmy Control Center</h1>
+      <p>Update Jimmy behavior instantly. No deploys, no code changes.</p>
+    </div>
+
+    <div class="grid">
+      <div>
+        <label for="systemRole">System Role / Instructions</label>
+        <textarea id="systemRole" placeholder="Paste the full system role here..."></textarea>
+      </div>
+      <div>
+        <label for="knowledgeBase">Knowledge Base</label>
+        <textarea id="knowledgeBase" placeholder="Paste Mohamed knowledge base here..."></textarea>
+      </div>
+    </div>
+
+    <div class="model-row">
+      <label for="activeModel">Active Model (optional)</label>
+      <select id="activeModel">
+        <option value="">Auto (PRIMARY_AI)</option>
+        <option value="gemini:gemini-2.5-flash">Gemini 2.5 Flash</option>
+        <option value="gemini:gemini-1.5-flash">Gemini 1.5 Flash</option>
+        <option value="openai:gpt-4o-mini">OpenAI GPT-4o mini</option>
+      </select>
+    </div>
+
+    <div class="footer">
+      <div class="actions">
+        <button id="saveBtn">Save Changes</button>
+        <div class="status" id="status">Ready.</div>
+      </div>
+      <div class="hint">
+        Admin endpoint: <code>/admin</code> (CORS locked to GitHub Pages). Add
+        <code>?endpoint=YOUR_WORKER_URL</code> and optional <code>&token=ADMIN_TOKEN</code>.
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const qs = new URLSearchParams(window.location.search);
+    const endpointFromQuery = qs.get("endpoint");
+    const tokenFromQuery = qs.get("token");
+
+    const storedEndpoint = localStorage.getItem("jimmy_admin_endpoint");
+    const storedToken = localStorage.getItem("jimmy_admin_token");
+
+    const ENDPOINT = endpointFromQuery || storedEndpoint || "https://mg-ai-proxy.emarketbank.workers.dev";
+
+    if (endpointFromQuery) localStorage.setItem("jimmy_admin_endpoint", endpointFromQuery);
+    if (tokenFromQuery) localStorage.setItem("jimmy_admin_token", tokenFromQuery);
+
+    const AUTH_TOKEN = tokenFromQuery || storedToken || "";
+    const CONFIG_URL = `${ENDPOINT.replace(/\/$/, "")}/admin`;
+
+    const systemRoleEl = document.getElementById("systemRole");
+    const knowledgeBaseEl = document.getElementById("knowledgeBase");
+    const activeModelEl = document.getElementById("activeModel");
+    const statusEl = document.getElementById("status");
+    const saveBtn = document.getElementById("saveBtn");
+
+    function setStatus(message, ok = false) {
+      statusEl.textContent = message;
+      statusEl.classList.toggle("ok", ok);
+    }
+
+    function buildHeaders() {
+      const headers = { "Content-Type": "application/json" };
+      if (AUTH_TOKEN) {
+        headers.Authorization = `Bearer ${AUTH_TOKEN}`;
+      }
+      return headers;
+    }
+
+    async function loadConfig() {
+      try {
+        const res = await fetch(CONFIG_URL, { headers: buildHeaders() });
+        const data = await res.json();
+
+        if (!res.ok) {
+          setStatus(data?.error || "Failed to load config.");
+          return;
+        }
+
+        const config = data?.config || {};
+        systemRoleEl.value = config.system_role || "";
+        knowledgeBaseEl.value = config.knowledge_base || "";
+        activeModelEl.value = config.active_model || "";
+        setStatus("Loaded.", true);
+      } catch (err) {
+        setStatus("Failed to load config.");
+      }
+    }
+
+    async function saveConfig() {
+      setStatus("Saving...");
+      saveBtn.disabled = true;
+
+      try {
+        const payload = {
+          system_role: systemRoleEl.value.trim(),
+          knowledge_base: knowledgeBaseEl.value.trim(),
+          active_model: activeModelEl.value,
+        };
+
+        const res = await fetch(CONFIG_URL, {
+          method: "POST",
+          headers: buildHeaders(),
+          body: JSON.stringify(payload),
+        });
+
+        const data = await res.json();
+        if (!res.ok) {
+          setStatus(data?.error || "Save failed.");
+          return;
+        }
+
+        if (data?.ignored_active_model) {
+          setStatus("Saved (active model ignored).", true);
+          return;
+        }
+
+        setStatus("Saved.", true);
+      } catch (err) {
+        setStatus("Save failed.");
+      } finally {
+        saveBtn.disabled = false;
+      }
+    }
+
+    saveBtn.addEventListener("click", saveConfig);
+    loadConfig();
+  </script>
+</body>
+</html>
