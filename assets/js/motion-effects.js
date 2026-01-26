@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // 3. ENHANCED REVEAL ON SCROLL (BIO-FLOW)
     // ============================================
 
-    const revealElements = document.querySelectorAll('.reveal, .stagger-item');
+    const revealElements = document.querySelectorAll('.reveal, .reveal-modern, .stagger-item');
 
     const revealObserver = new IntersectionObserver((entries) => {
         entries.forEach((entry) => {

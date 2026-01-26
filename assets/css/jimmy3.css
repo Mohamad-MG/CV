@@ -261,6 +261,7 @@ h1, h2, h3, h4 {
 .hero-identity {
     perspective: 1000px;
     display: flex; justify-content: center; position: relative;
+    transform: translate(40px, -60px); /* Moved up and right */
 }
 
 .identity-card {
@@ -314,18 +315,37 @@ h1, h2, h3, h4 {
 }
 @keyframes scan { 0% { top: 0; opacity: 0; } 10% { opacity: 1; } 90% { opacity: 1; } 100% { top: 100%; opacity: 0; } }
 
-/* Floating Data Points around Card */
+/* Floating HUD Data Overlays (Outer Perimeter) */
+
 .float-data {
+
     position: absolute;
-    padding: 4px 10px; background: #000; border: 1px solid rgba(255,255,255,0.2);
-    border-radius: 6px; font-size: 0.75rem; font-family: monospace; color: var(--highlight);
-    box-shadow: 0 5px 15px rgba(0,0,0,0.5);
-    z-index: 10;
+
+    padding: 4px 12px; background: rgba(0, 0, 0, 0.9); border: 1px solid var(--highlight);
+
+    border-radius: 4px; font-size: 0.75rem; font-family: monospace; color: var(--highlight);
+
+    backdrop-filter: blur(10px);
+
+    z-index: 30;
+
+    pointer-events: none;
+
+    letter-spacing: 1px;
+
+    font-weight: 700;
+
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.8), 0 0 10px rgba(59, 130, 246, 0.3);
+
+    transition: 0.3s;
+
 }
-.d1 { top: 10%; right: -15px; animation: float 6s ease-in-out infinite; }
-.d2 { bottom: 15%; left: -20px; animation: float 7s ease-in-out infinite 1s; }
-.d3 { top: -12px; right: 10px; animation: float 8s ease-in-out infinite 0.5s; }
-@keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+
+.d1 { top: -10px; right: -15px; transform: rotate(5deg); } /* Floating off top-right */
+
+.d2 { bottom: 40%; right: -25px; transform: rotate(-90deg); } /* Pinned to right side, rotated */
+
+.d3 { top: 20px; left: -20px; transform: rotate(-5deg); } /* Floating off left side */
 
 
 /* --- 📜 STORY SECTION --- */

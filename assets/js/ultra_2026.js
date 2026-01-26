@@ -202,12 +202,21 @@ class DraggableMarquee {
     }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+// Robust Initialization
+const initUltra = () => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     
+    console.log("Ultra 2026: Starting System...");
     new ArchitectMotion();
 
     // Initialize Marquees
     const marquees = document.querySelectorAll('.marquee-container');
     marquees.forEach(m => new DraggableMarquee(m));
-});
+};
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initUltra);
+} else {
+    initUltra();
+}
+/* Cache Buster: v2026.1.2 */
