@@ -431,26 +431,56 @@ h1, h2, h3, h4 {
 .story-text .highlight { color: #fff; text-shadow: 0 0 20px rgba(255,255,255,0.2); }
 
 
-/* --- 📊 STATS GRID (Bento) --- */
+/* --- 📊 STATS GRID (Bento with Spotlight & Pulse) --- */
 .stats-grid {
-    display: grid; grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(2, 220px); gap: 30px;
+    display: grid; grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(2, 220px); gap: 20px;
 }
 
 .stat-card {
-    background: var(--bg-panel); border: var(--glass-border); padding: 30px;
+    background: rgba(255, 255, 255, 0.02); 
+    border: 1px solid rgba(255, 255, 255, 0.05); 
+    padding: 30px;
     display: flex; flex-direction: column; justify-content: flex-end;
-    border-radius: 16px; position: relative; overflow: hidden; transition: 0.4s;
+    border-radius: 20px; position: relative; overflow: hidden; 
+    transition: background 0.3s, border-color 0.3s;
 }
-.stat-card:hover { border-color: rgba(255,255,255,0.2); transform: translateY(-5px); }
-.stat-card:nth-child(1) { 
-    grid-column: span 2; grid-row: span 2; 
-    background: radial-gradient(circle at top right, rgba(59, 130, 246, 0.15), rgba(20,20,25,0.6) 50%);
+
+/* Spotlight Effect Layer */
+.stat-card::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(59, 130, 246, 0.1), transparent 40%);
+    opacity: 0; transition: opacity 0.5s;
+    pointer-events: none; z-index: 1;
 }
+.stat-card:hover::before { opacity: 1; }
+
+/* Effect 2: Data Pulse Graph (Abstract) */
+.pulse-graph {
+    position: absolute; top: 50%; right: 20px; left: 20px; height: 80px;
+    transform: translateY(-50%);
+    opacity: 0.15; pointer-events: none; z-index: 0;
+}
+.pulse-graph svg { width: 100%; height: 100%; stroke: var(--highlight); stroke-width: 1.5; fill: none; }
+.pulse-path {
+    stroke-dasharray: 1000; stroke-dashoffset: 1000;
+    animation: drawPulse 4s linear infinite;
+}
+@keyframes drawPulse {
+    0% { stroke-dashoffset: 1000; opacity: 0; }
+    20% { opacity: 1; }
+    80% { opacity: 1; }
+    100% { stroke-dashoffset: 0; opacity: 0; }
+}
+
+.stat-card:hover { border-color: rgba(59, 130, 246, 0.3); }
+.stat-card:nth-child(1) { grid-column: span 2; grid-row: span 2; }
 .stat-card:nth-child(2) { grid-column: span 2; }
-.stat-number { font-size: 3.5rem; color: #fff; margin-bottom: 8px; line-height: 1; }
+
+.stat-number { font-size: 3.5rem; color: #fff; margin-bottom: 8px; line-height: 1; position: relative; z-index: 2; }
 .stat-card:nth-child(1) .stat-number { font-size: 5rem; }
-.stat-label { font-size: 1rem; color: #fff; font-weight: 600; margin-bottom: 4px; }
-.stat-context { font-size: 0.85rem; color: var(--text-faint); }
+.stat-label { font-size: 1rem; color: #fff; font-weight: 600; margin-bottom: 4px; position: relative; z-index: 2; }
+.stat-context { font-size: 0.85rem; color: var(--text-faint); position: relative; z-index: 2; }
 
 
 /* --- 🛠️ MARQUEE --- */

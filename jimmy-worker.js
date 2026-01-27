@@ -1,6 +1,6 @@
 /**
  * Jimmy — Cloudflare Worker (Clean + KV Admin)
- * - Routes: GET /, GET /health, POST /chat, GET/POST /admin
+ * - Routes: GET /, GET /health, POST /chat, GET/POST /admin/config
  * - Contact/Identity intents handled BEFORE AI (exact templates)
  * - KV-backed config with short cache + fallback defaults
  */
@@ -435,7 +435,7 @@ export default {
 
     // Preflight
     if (request.method === "OPTIONS") {
-      if (url.pathname === "/admin") {
+      if (url.pathname === "/admin/config") {
         const allowedOrigins = parseAllowedOrigins(env);
         const headers = getAdminHeaders(origin, allowedOrigins);
         if (origin && !allowedOrigins.includes(origin)) {
@@ -449,7 +449,7 @@ export default {
     // GET /
     if (request.method === "GET" && url.pathname === "/") {
       return json(
-        { ok: true, service: "jimmy-worker", routes: ["GET /", "GET /health", "POST /chat", "GET /admin", "POST /admin"] },
+        { ok: true, service: "jimmy-worker", routes: ["GET /", "GET /health", "POST /chat", "GET /admin/config", "POST /admin/config"] },
         200,
         buildCorsHeaders("*")
       );
@@ -469,7 +469,7 @@ export default {
     }
 
     // Admin endpoint
-    if (url.pathname === "/admin") {
+    if (url.pathname === "/admin/config") {
       const allowedOrigins = parseAllowedOrigins(env);
       const headers = getAdminHeaders(origin, allowedOrigins);
 

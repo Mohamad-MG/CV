@@ -185,27 +185,34 @@ class DraggableMarquee {
     }
 }
 
-// --- 4. 3D TILT EFFECT (Identity Card) ---
-const initTilt = () => {
-    const card = document.querySelector('.tilt-3d');
-    if (!card) return;
+// --- 4. 3D TILT & SPOTLIGHT EFFECT ---
+const initInteractions = () => {
+    // 3D Tilt for Identity Card
+    const tiltCard = document.querySelector('.tilt-3d');
+    if (tiltCard) {
+        tiltCard.addEventListener('mousemove', (e) => {
+            const rect = tiltCard.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            const rotateX = ((y - rect.height / 2) / (rect.height / 2)) * -10;
+            const rotateY = ((x - rect.width / 2) / (rect.width / 2)) * 10;
+            tiltCard.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
+        });
+        tiltCard.addEventListener('mouseleave', () => {
+            tiltCard.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)';
+        });
+    }
 
-    card.addEventListener('mousemove', (e) => {
-        const rect = card.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-        const centerX = rect.width / 2;
-        const centerY = rect.height / 2;
-        
-        // Calculate rotation (Max 15deg)
-        const rotateX = ((y - centerY) / centerY) * -10;
-        const rotateY = ((x - centerX) / centerX) * 10;
-
-        card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
-    });
-
-    card.addEventListener('mouseleave', () => {
-        card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)';
+    // Spotlight for Stat Cards
+    const statCards = document.querySelectorAll('.stat-card');
+    statCards.forEach(card => {
+        card.addEventListener('mousemove', (e) => {
+            const rect = card.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            card.style.setProperty('--mouse-x', `${x}px`);
+            card.style.setProperty('--mouse-y', `${y}px`);
+        });
     });
 };
 
@@ -216,6 +223,9 @@ const initScrollReveal = () => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
                 entry.target.classList.add('visible');
+                // Auto-play pulse paths when in view
+                const path = entry.target.querySelector('.pulse-path');
+                if (path) path.style.animationPlayState = 'running';
                 observer.unobserve(entry.target);
             }
         });
@@ -226,7 +236,7 @@ const initScrollReveal = () => {
 
 // --- 6. VIDEO PLAYER ---
 const initVideo = () => {
-    const videoScreen = document.querySelector('.ipad-screen'); // Using class for safety
+    const videoScreen = document.querySelector('.ipad-screen'); 
     const video = document.getElementById('showreelVideo');
     if (!videoScreen || !video) return;
 
@@ -248,7 +258,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.marquee-container').forEach(m => new DraggableMarquee(m));
     
     // Interaction
-    initTilt();
+    initInteractions();
     initScrollReveal();
     initVideo();
 });
