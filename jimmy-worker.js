@@ -1,8 +1,8 @@
 /**
- * Jimmy — Cloudflare Worker (Clean + KV Admin)
+ * Jimmy — Cloudflare Worker (Engine + Admin MVP)
  * - Routes: GET /, GET /health, POST /chat, GET/POST /admin/config
- * - Contact/Identity intents handled BEFORE AI (exact templates)
- * - KV-backed config with short cache + fallback defaults
+ * - Contact + Identity intents handled BEFORE AI
+ * - KV-backed config with fallback defaults
  */
 
 const MAX_RETRIES = 3;

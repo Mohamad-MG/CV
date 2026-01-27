@@ -455,21 +455,28 @@ h1, h2, h3, h4 {
 }
 .stat-card:hover::before { opacity: 1; }
 
-/* Effect 2: Data Pulse Graph (Abstract) */
+/* Effect 2: Data Pulse Graph (Abstract - Full Containment) */
 .pulse-graph {
-    position: absolute; top: 50%; right: 20px; left: 20px; height: 80px;
-    transform: translateY(-50%);
-    opacity: 0.15; pointer-events: none; z-index: 0;
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    padding: 60px; /* Increased padding to shrink chart size */
+    opacity: 0.12; pointer-events: none; z-index: 0;
 }
-.pulse-graph svg { width: 100%; height: 100%; stroke: var(--highlight); stroke-width: 1.5; fill: none; }
+.pulse-graph svg { 
+    width: 100%; height: 100%; 
+    stroke: var(--highlight); stroke-width: 1; /* Thinner line (not bold) */
+    fill: none; 
+    overflow: visible; 
+}
 .pulse-path {
     stroke-dasharray: 1000; stroke-dashoffset: 1000;
-    animation: drawPulse 4s linear infinite;
+    animation: drawPulse 10s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    will-change: stroke-dashoffset, opacity; /* GPU Hint */
 }
 @keyframes drawPulse {
     0% { stroke-dashoffset: 1000; opacity: 0; }
-    20% { opacity: 1; }
-    80% { opacity: 1; }
+    15% { opacity: 0.15; }
+    85% { opacity: 0.15; }
     100% { stroke-dashoffset: 0; opacity: 0; }
 }
 
