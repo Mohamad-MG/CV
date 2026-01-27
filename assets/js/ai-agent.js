@@ -13,13 +13,15 @@ const PRISM_CONFIG = {
             status: "SYSTEM READY",
             placeholder: "Ask Jimmy...",
             welcome: "Command Line Active. Accessing Mohamed's neural database...",
-            error: "ERR_CONNECTION_LOST"
+            error: "ERR_CONNECTION_LOST",
+            timeout: "REQUEST_TIMEOUT"
         },
         ar: {
             status: "النظام جاهز",
             placeholder: "اسأل جيمي...",
             welcome: "تم تفعيل سطر الأوامر. جاري استدعاء بيانات محمد...",
-            error: "خطأ في الاتصال"
+            error: "خطأ في الاتصال",
+            timeout: "انتهت مهلة الطلب"
         }
     }
 };
@@ -275,12 +277,19 @@ class PrismAgent {
                 signal: controller.signal
             });
 
+            const isJson = (res.headers.get('content-type') || '').includes('application/json');
+            const data = isJson ? await res.json().catch(() => null) : null;
+
             if (!res.ok) {
-                throw new Error(`HTTP ${res.status}`);
+                if (data && data.response) {
+                    this.addMessage('ai', data.response);
+                } else {
+                    this.addMessage('ai', `${PRISM_CONFIG.texts[this.lang].error} (${res.status})`);
+                }
+                return;
             }
 
-            const data = await res.json();
-            if (data.response) {
+            if (data && data.response) {
                 this.addMessage('ai', data.response);
             } else {
                 throw new Error('empty_response');
@@ -288,7 +297,11 @@ class PrismAgent {
 
         } catch (e) {
             console.error('[Jimmy] Fetch error:', e);
-            this.addMessage('ai', PRISM_CONFIG.texts[this.lang].error);
+            if (e && e.name === 'AbortError') {
+                this.addMessage('ai', PRISM_CONFIG.texts[this.lang].timeout);
+            } else {
+                this.addMessage('ai', PRISM_CONFIG.texts[this.lang].error);
+            }
         } finally {
             clearTimeout(timeoutId);
             this.setSending(false);

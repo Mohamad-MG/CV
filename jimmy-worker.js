@@ -10,6 +10,14 @@ function buildCorsHeaders() {
   };
 }
 
+function jsonResponse(body, status, headers) {
+  return new Response(JSON.stringify(body), { status, headers });
+}
+
+function isDebug(env) {
+  return String(env.DEBUG || "").toLowerCase() === "true";
+}
+
 /**
  * 🧠 هوية المساعد (ثابتة)
  */
@@ -43,6 +51,10 @@ function toGeminiContents(messages) {
 }
 
 async function callGemini(env, body) {
+  if (!env.GEMINI_API_KEY) {
+    throw new Error("MISSING_GEMINI_API_KEY");
+  }
+
   // استخدام gemini-1.5-flash لأنه الأسرع والأحدث حالياً للردود القصيرة
   const model = env.GEMINI_MODEL || "gemini-1.5-flash";
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${env.GEMINI_API_KEY}`;
@@ -88,29 +100,61 @@ export default {
     }
 
     if (request.method !== "POST") {
-      return new Response(
-        JSON.stringify({ response: "Method Not Allowed" }),
-        { status: 405, headers: corsHeaders }
-      );
+      return jsonResponse({ response: "Method Not Allowed" }, 405, corsHeaders);
     }
 
     try {
-      const body = await request.json();
+      let body;
+      try {
+        body = await request.json();
+      } catch (e) {
+        return jsonResponse(
+          { response: "طلب غير صالح (JSON غير صحيح)" },
+          400,
+          corsHeaders
+        );
+      }
+
+      if (!Array.isArray(body?.messages)) {
+        return jsonResponse(
+          { response: "طلب غير صالح (messages مفقودة)" },
+          400,
+          corsHeaders
+        );
+      }
       
       // ✅ استدعاء مباشر لـ Gemini فقط
       const responseText = await callGemini(env, body);
 
-      return new Response(JSON.stringify({ response: responseText }), {
-        status: 200,
-        headers: corsHeaders,
-      });
+      return jsonResponse({ response: responseText }, 200, corsHeaders);
 
     } catch (err) {
       console.error("Worker Error:", err);
-      // رسالة خطأ لطيفة للمستخدم
-      return new Response(
-        JSON.stringify({ response: "معلش، في مشكلة تقنية صغيرة دلوقتي. ممكن تجرب تاني كمان شوية؟" }),
-        { status: 500, headers: corsHeaders }
+      const debug = isDebug(env);
+      const errorId = (crypto && crypto.randomUUID) ? crypto.randomUUID() : `err_${Date.now()}`;
+
+      if (err && err.message === "MISSING_GEMINI_API_KEY") {
+        return jsonResponse(
+          {
+            response: "الخدمة غير مفعلة حالياً. برجاء التواصل عبر واتساب.",
+            errorCode: "MISSING_GEMINI_API_KEY",
+            errorId
+          },
+          503,
+          corsHeaders
+        );
+      }
+
+      // رسالة خطأ لطيفة للمستخدم + تفاصيل اختيارية في وضع DEBUG
+      return jsonResponse(
+        {
+          response: debug
+            ? `خطأ داخلي (${errorId}): ${(err && err.message) || "Unknown"}`
+            : "معلش، في مشكلة تقنية صغيرة دلوقتي. ممكن تجرب تاني كمان شوية؟",
+          errorId
+        },
+        500,
+        corsHeaders
       );
     }
   },
