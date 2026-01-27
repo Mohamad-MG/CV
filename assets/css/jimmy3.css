@@ -459,12 +459,13 @@ h1, h2, h3, h4 {
 .pulse-graph {
     position: absolute; inset: 0;
     display: flex; align-items: center; justify-content: center;
-    padding: 60px; /* Increased padding to shrink chart size */
-    opacity: 0.12; pointer-events: none; z-index: 0;
+    padding: 40px; /* Reduced padding to enlarge chart */
+    opacity: 0.25; /* Increased opacity for visibility */
+    pointer-events: none; z-index: 0;
 }
 .pulse-graph svg { 
     width: 100%; height: 100%; 
-    stroke: var(--highlight); stroke-width: 1; /* Thinner line (not bold) */
+    stroke: var(--highlight); stroke-width: 1.5; /* Slightly thicker */
     fill: none; 
     overflow: visible; 
 }

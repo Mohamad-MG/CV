@@ -41,7 +41,6 @@ Schema (JSON):
 - `contact_templates` (object with `ar`, `en`)
 - `default_language` (`ar` or `en`)
 - `primary_provider` (`gemini` or `openai`)
-- `models` (object with `gemini`, `openai`)
 - `rules` (object with `max_lines`, `followup_questions`)
 
 ## Admin panel

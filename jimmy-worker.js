@@ -12,6 +12,9 @@ const DEFAULT_OPENAI_TIMEOUT_MS = 15000;
 const DEFAULT_CONFIG_CACHE_TTL_MS = 90000;
 const CONFIG_KEY = "jimmy:config";
 
+const OPENAI_MODEL_WATERFALL = ["gpt-5.2", "gpt-5.1"];
+const GEMINI_MODEL_WATERFALL = ["gemini-3-flash", "gemini-2.5-flash", "gemini-2.5-pro"];
+
 const DEFAULT_CONFIG = {
   system_prompt: `أنت "كابتن جيمي" — المساعد الرسمي لمحمد جمال.
 أنت مش محمد، وما ينفعش تدّعي إنك هو.
@@ -49,11 +52,7 @@ const DEFAULT_CONFIG = {
     en: "Mohamed will be happy to hear from you.\nCall or WhatsApp — whatever works best.\n\n📞 Call: 00201555141282\n💬 WhatsApp: https://wa.me/201555141282",
   },
   default_language: "ar",
-  primary_provider: "gemini",
-  models: {
-    gemini: "gemini-2.5-flash",
-    openai: "gpt-4o-mini",
-  },
+  primary_provider: "openai",
   rules: {
     max_lines: 3,
     followup_questions: 1,
@@ -120,11 +119,6 @@ function mergeConfig(raw) {
   config.contact_templates = {
     ...DEFAULT_CONFIG.contact_templates,
     ...(raw?.contact_templates || {}),
-  };
-
-  config.models = {
-    ...DEFAULT_CONFIG.models,
-    ...(raw?.models || {}),
   };
 
   config.rules = {
@@ -259,17 +253,14 @@ function buildSystemPrompt(config, lang) {
 }
 
 function selectPrimaryProvider(config, env) {
-  const primary = (config?.primary_provider || env.PRIMARY_AI || DEFAULT_CONFIG.primary_provider || "gemini").toLowerCase();
+  const primary = (config?.primary_provider || env.PRIMARY_AI || DEFAULT_CONFIG.primary_provider || "openai").toLowerCase();
   return primary === "openai" ? "openai" : "gemini";
 }
 
-function selectModel(config, provider, env) {
-  const model = config?.models?.[provider];
-  if (typeof model === "string" && model.trim().length) return model.trim();
-
-  if (provider === "gemini") return env.GEMINI_MODEL || DEFAULT_CONFIG.models.gemini;
-  if (provider === "openai") return env.OPENAI_MODEL || DEFAULT_CONFIG.models.openai;
-  return null;
+function getProviderModels(provider) {
+  if (provider === "openai") return OPENAI_MODEL_WATERFALL;
+  if (provider === "gemini") return GEMINI_MODEL_WATERFALL;
+  return [];
 }
 
 function getServiceError(lang) {
@@ -377,17 +368,26 @@ async function routeAI(env, config, messages, system, temperature, rid) {
   const order = primary === "openai" ? ["openai", "gemini"] : ["gemini", "openai"];
 
   for (const provider of order) {
-    try {
-      if (provider === "gemini" && env.GEMINI_API_KEY) {
-        const model = selectModel(config, "gemini", env);
-        return await callGemini(env, model, messages, system, temperature, rid);
+    const models = getProviderModels(provider);
+
+    if (provider === "gemini" && !env.GEMINI_API_KEY) continue;
+    if (provider === "openai" && !env.OPENAI_API_KEY) continue;
+
+    for (const model of models) {
+      try {
+        if (provider === "gemini") {
+          const out = await callGemini(env, model, messages, system, temperature, rid);
+          if (out && out.trim()) return out;
+          throw new Error("Empty response");
+        }
+        if (provider === "openai") {
+          const out = await callOpenAI(env, model, messages, system, temperature, rid);
+          if (out && out.trim()) return out;
+          throw new Error("Empty response");
+        }
+      } catch (e) {
+        console.warn(`[${rid}] ${provider}:${model} failed`);
       }
-      if (provider === "openai" && env.OPENAI_API_KEY) {
-        const model = selectModel(config, "openai", env);
-        return await callOpenAI(env, model, messages, system, temperature, rid);
-      }
-    } catch (e) {
-      console.warn(`[${rid}] ${provider} failed`);
     }
   }
 
@@ -404,11 +404,6 @@ function sanitizeConfigInput(input) {
   const defaultLanguage = input?.default_language === "en" ? "en" : "ar";
   const primaryProvider = input?.primary_provider === "openai" ? "openai" : "gemini";
 
-  const models = {
-    gemini: typeof input?.models?.gemini === "string" ? input.models.gemini.trim() : "",
-    openai: typeof input?.models?.openai === "string" ? input.models.openai.trim() : "",
-  };
-
   const rules = {
     max_lines: clampNumber(input?.rules?.max_lines, 1, 12, DEFAULT_CONFIG.rules.max_lines),
     followup_questions: clampNumber(input?.rules?.followup_questions, 0, 3, DEFAULT_CONFIG.rules.followup_questions),
@@ -423,7 +418,6 @@ function sanitizeConfigInput(input) {
     },
     default_language: defaultLanguage,
     primary_provider: primaryProvider,
-    models,
     rules,
   };
 }
