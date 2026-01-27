@@ -34,6 +34,10 @@ class PrismAgent {
     }
 
     init() {
+        // Dev warning for file:// protocol
+        if (location.protocol === 'file:' || location.origin === 'null') {
+            console.warn('[Jimmy] ⚠️ Running from file:// — Chat API blocked (CORS). Use a local server: npx serve');
+        }
         this.render();
         this.cacheDOM();
         this.bindEvents();
@@ -42,7 +46,7 @@ class PrismAgent {
 
     render() {
         const txt = PRISM_CONFIG.texts[this.lang];
-        
+
         const html = `
             <div id="mg-neural-backdrop"></div>
             
@@ -99,7 +103,7 @@ class PrismAgent {
         this.ui.trigger.addEventListener('click', () => this.toggle(true));
         this.ui.close.addEventListener('click', () => this.toggle(false));
         this.ui.backdrop.addEventListener('click', () => this.toggle(false));
-        
+
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape' && this.isOpen) this.toggle(false);
         });
@@ -133,7 +137,7 @@ class PrismAgent {
             if (this.messages.length === 0) {
                 this.addMessage('ai', PRISM_CONFIG.texts[this.lang].welcome);
             }
-            
+
             setTimeout(() => input.focus(), 100);
 
         } else {
@@ -207,7 +211,7 @@ class PrismAgent {
 
         const isUser = role === 'user';
         const icon = isUser ? '<i class="ri-user-smile-line"></i>' : '<i class="ri-cpu-line"></i>';
-        
+
         const html = `
             <div class="console-msg msg-${role}">
                 <div class="msg-avatar ${isUser ? 'icon-user' : 'icon-ai'}">${icon}</div>
@@ -257,10 +261,8 @@ class PrismAgent {
         }
 
         const controller = new AbortController();
-        const timeoutMs = PRISM_CONFIG.requestTimeoutMs || 12000;
+        const timeoutMs = PRISM_CONFIG.requestTimeoutMs || 25000;
         const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
-
-        let data;
 
         try {
             const res = await fetch(PRISM_CONFIG.workerUrl, {
@@ -273,21 +275,49 @@ class PrismAgent {
                 signal: controller.signal
             });
 
-            const contentType = res.headers.get('content-type') || '';
-            if (contentType.includes('application/json')) {
-                data = await res.json();
-            } else {
-                throw new Error('bad_response');
+            if (!res.ok) {
+                throw new Error(`HTTP ${res.status}`);
             }
 
-            if (data && data.response) {
-                this.addMessage('ai', data.response);
-            } else {
-                throw new Error('no_response');
+            // SSE Stream consumption
+            const reader = res.body.getReader();
+            const decoder = new TextDecoder();
+            let buffer = '';
+            let fullText = '';
+
+            while (true) {
+                const { done, value } = await reader.read();
+                if (done) break;
+
+                buffer += decoder.decode(value, { stream: true });
+                const lines = buffer.split('\n');
+                buffer = lines.pop() || '';
+
+                for (const line of lines) {
+                    if (line.startsWith('event:')) continue;
+                    if (line.startsWith(':')) continue; // ping/comment
+                    if (line.startsWith('data: ')) {
+                        const data = line.slice(6);
+                        if (data === '{}') continue; // done event
+                        try {
+                            const parsed = JSON.parse(data);
+                            if (typeof parsed === 'string') {
+                                fullText += parsed;
+                            }
+                        } catch { }
+                    }
+                }
             }
+
+            if (fullText.trim()) {
+                this.addMessage('ai', fullText.trim());
+            } else {
+                throw new Error('empty_response');
+            }
+
         } catch (e) {
-            const fallback = data && data.response ? data.response : PRISM_CONFIG.texts[this.lang].error;
-            this.addMessage('ai', fallback);
+            console.error('[Jimmy] Fetch error:', e);
+            this.addMessage('ai', PRISM_CONFIG.texts[this.lang].error);
         } finally {
             clearTimeout(timeoutId);
             this.setSending(false);
