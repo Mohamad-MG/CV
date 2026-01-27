@@ -1,293 +1,230 @@
 /**
- * 🌌 ULTRA MODERN AGENT 2026 - Two-Stage Neural Interface
- * Stage 1: Invitation (The Hook)
- * Stage 2: Focus (The Immersion)
+ * 🌌 ULTRA MODERN AGENT 2026 - Direct & Compact
+ * No fuss, just instant access.
  */
 
 const AGENT_CONFIG = {
     workerUrl: 'https://mg-ai-proxy.emarketbank.workers.dev/chat',
-    typingSpeed: 30, // ms per char for streaming effect
     texts: {
         en: {
-            inviteTitle: "System Online",
-            inviteBody: "I've analyzed the portfolio. Ready to debrief?",
-            btnInit: "Initialize Interface",
-            hudTitle: "Neural Link // Captain Jimmy",
-            placeholder: "Accessing database... Ask me anything.",
-            welcome: "Neural link established. I have full access to Mohamed's career data. What is your directive?"
+            title: "Captain Jimmy // AI",
+            placeholder: "Ask about experience...",
+            welcome: "Systems online. Accessing Mohamed's career database. How can I help?",
+            error: "Connection lost. Please try again."
         },
         ar: {
-            inviteTitle: "النظام متصل",
-            inviteBody: "جمعت كل البيانات عن الخبرات. جاهز للعرض؟",
-            btnInit: "بدء الاتصال",
-            hudTitle: "غرفة القيادة // كابتن جيمي",
-            placeholder: "جاري الاتصال بقاعدة البيانات... اسألني.",
-            welcome: "تم تأمين الاتصال. عندي صلاحية كاملة لملفات محمد جمال. تحب نبدأ بإيه؟"
+            title: "كابتن جيمي // AI",
+            placeholder: "اسأل عن الخبرات...",
+            welcome: "النظام متصل. جاهز للإجابة عن أي تفاصيل تخص خبرات محمد.",
+            error: "فقدنا الاتصال. حاول مرة تانية."
         }
     }
 };
 
-class NeuralAgent {
+class DirectAgent {
     constructor() {
-        this.state = 'idle'; // idle | invite | focus
+        this.isOpen = false;
         this.lang = document.documentElement.lang === 'ar' ? 'ar' : 'en';
         this.messages = [];
-        this.elements = {};
-        
         this.init();
     }
 
     init() {
-        this.injectHTML();
+        this.render();
         this.cacheDOM();
         this.bindEvents();
         this.loadHistory();
     }
 
-    injectHTML() {
+    render() {
         const txt = AGENT_CONFIG.texts[this.lang];
+        
         const html = `
-            <!-- Background Blocker -->
-            <div id="aiBackdrop" class="ai-backdrop"></div>
-
-            <!-- The Interface Container (Morphs between Invite/Focus) -->
-            <div id="aiInterface" class="ai-interface-container">
-                
-                <!-- LAYER 1: INVITATION -->
-                <div id="viewInvite" class="view-layer view-invite">
-                    <div class="invite-header">
-                        <div class="invite-status-dot"></div>
-                        <span class="invite-title">${txt.inviteTitle}</span>
-                    </div>
-                    <p class="invite-text">${txt.inviteBody}</p>
-                    <div class="invite-actions">
-                        <button id="btnInit" class="btn-initialize">${txt.btnInit}</button>
-                        <button id="btnDismiss" class="btn-dismiss"><i class="ri-close-line"></i></button>
-                    </div>
-                </div>
-
-                <!-- LAYER 2: FOCUS HUD -->
-                <div id="viewFocus" class="view-layer view-focus">
-                    <div class="focus-header">
-                        <div class="focus-title">
-                            <i class="ri-cpu-line"></i>
-                            <span>${txt.hudTitle}</span>
-                        </div>
-                        <button id="btnCloseFocus" class="focus-close">
-                            <i class="ri-close-line"></i>
-                        </button>
-                    </div>
-                    
-                    <div id="chatMessages" class="focus-messages">
-                        <!-- Messages go here -->
-                    </div>
-
-                    <div class="focus-input-area">
-                        <div class="focus-input-wrapper">
-                            <input type="text" id="chatInput" class="focus-input" placeholder="${txt.placeholder}" autocomplete="off">
-                            <button id="btnSend" class="focus-send-btn">
-                                <i class="ri-arrow-up-line"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-
-            <!-- Trigger Orb -->
             <div id="aiTrigger" class="ai-trigger-orb">
                 <div class="orb-core">
                     <img src="assets/images/Cjimmy.png" alt="AI">
                     <div class="orb-ring"></div>
                 </div>
             </div>
+
+            <div id="aiInterface" class="ai-interface-container">
+                <div class="focus-header">
+                    <div class="focus-title">
+                        <i class="ri-robot-2-fill"></i>
+                        <span>${txt.title}</span>
+                    </div>
+                    <button id="btnClose" class="focus-close">
+                        <i class="ri-arrow-down-s-line"></i>
+                    </button>
+                </div>
+                
+                <div id="chatMessages" class="focus-messages"></div>
+
+                <div class="focus-input-area">
+                    <div class="focus-input-wrapper">
+                        <input type="text" id="chatInput" class="focus-input" placeholder="${txt.placeholder}" autocomplete="off">
+                        <button id="btnSend" class="focus-send-btn">
+                            <i class="ri-send-plane-fill"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
         `;
 
-        const wrapper = document.createElement('div');
-        wrapper.id = 'mg-neural-root';
-        wrapper.innerHTML = html;
-        document.body.appendChild(wrapper);
+        const root = document.createElement('div');
+        root.id = 'mg-neural-root';
+        root.innerHTML = html;
+        document.body.appendChild(root);
     }
 
     cacheDOM() {
-        this.elements = {
-            backdrop: document.getElementById('aiBackdrop'),
-            interface: document.getElementById('aiInterface'),
+        this.ui = {
             trigger: document.getElementById('aiTrigger'),
-            viewInvite: document.getElementById('viewInvite'),
-            viewFocus: document.getElementById('viewFocus'),
-            btnInit: document.getElementById('btnInit'),
-            btnDismiss: document.getElementById('btnDismiss'),
-            btnCloseFocus: document.getElementById('btnCloseFocus'),
-            chatInput: document.getElementById('chatInput'),
-            btnSend: document.getElementById('btnSend'),
-            messages: document.getElementById('chatMessages')
+            window: document.getElementById('aiInterface'),
+            close: document.getElementById('btnClose'),
+            input: document.getElementById('chatInput'),
+            send: document.getElementById('btnSend'),
+            msgs: document.getElementById('chatMessages')
         };
     }
 
     bindEvents() {
-        // Trigger Click -> Open Invite (Stage 1)
-        this.elements.trigger.addEventListener('click', () => this.setStage('invite'));
-
-        // Init Click -> Open Focus (Stage 2)
-        this.elements.btnInit.addEventListener('click', () => this.setStage('focus'));
-
-        // Dismiss Click -> Back to Idle
-        this.elements.btnDismiss.addEventListener('click', () => this.setStage('idle'));
-
-        // Close Focus -> Back to Idle (Full Reset)
-        this.elements.btnCloseFocus.addEventListener('click', () => this.setStage('idle'));
-        this.elements.backdrop.addEventListener('click', () => this.setStage('idle'));
+        // Toggle Logic
+        this.ui.trigger.addEventListener('click', () => this.toggle(true));
+        this.ui.close.addEventListener('click', () => this.toggle(false));
 
         // Input Logic
-        this.elements.chatInput.addEventListener('input', (e) => {
-            const hasText = e.target.value.trim().length > 0;
-            this.elements.btnSend.classList.toggle('ready', hasText);
+        this.ui.input.addEventListener('input', (e) => {
+            const valid = e.target.value.trim().length > 0;
+            this.ui.send.classList.toggle('ready', valid);
         });
 
-        this.elements.chatInput.addEventListener('keydown', (e) => {
+        this.ui.input.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') this.sendMessage();
         });
 
-        this.elements.btnSend.addEventListener('click', () => this.sendMessage());
+        this.ui.send.addEventListener('click', () => this.sendMessage());
     }
 
-    setStage(stage) {
-        const { interface: ui, trigger, backdrop, viewInvite, viewFocus } = this.elements;
-        this.state = stage;
-
-        // Reset classes
-        ui.classList.remove('mode-invite', 'mode-focus');
-        viewInvite.classList.remove('active');
-        viewFocus.classList.remove('active');
-        backdrop.classList.remove('active');
-        trigger.classList.remove('hidden');
-
-        // Unlock scroll by default
-        document.body.style.overflow = '';
-
-        if (stage === 'invite') {
-            ui.classList.add('mode-invite');
-            trigger.classList.add('hidden');
+    toggle(open) {
+        this.isOpen = open;
+        
+        if (open) {
+            this.ui.window.classList.add('active');
+            this.ui.trigger.classList.add('hidden');
             
-            // Delay content slightly for morph animation
-            setTimeout(() => viewInvite.classList.add('active'), 200);
+            // Focus input after animation
+            setTimeout(() => this.ui.input.focus(), 300);
 
-        } else if (stage === 'focus') {
-            ui.classList.add('mode-focus');
-            trigger.classList.add('hidden');
-            backdrop.classList.add('active');
-            
-            // Lock Scroll
-            document.body.style.overflow = 'hidden';
-
-            setTimeout(() => viewFocus.classList.add('active'), 300);
-            
-            // Focus input
-            setTimeout(() => this.elements.chatInput.focus(), 500);
-
-            // Send welcome if empty
+            // First time welcome
             if (this.messages.length === 0) {
                 this.addMessage(AGENT_CONFIG.texts[this.lang].welcome, 'ai');
             }
+        } else {
+            this.ui.window.classList.remove('active');
+            this.ui.trigger.classList.remove('hidden');
         }
     }
 
-    addMessage(text, sender) {
-        const msgDiv = document.createElement('div');
-        msgDiv.className = `chat-bubble bubble-${sender}`;
-        msgDiv.textContent = text;
-        
-        this.elements.messages.appendChild(msgDiv);
-        this.elements.messages.scrollTop = this.elements.messages.scrollHeight;
+    sendMessage() {
+        const text = this.ui.input.value.trim();
+        if (!text) return;
 
-        this.messages.push({ role: sender, content: text });
+        // UI Reset
+        this.ui.input.value = '';
+        this.ui.send.classList.remove('ready');
+        
+        // Add User Message
+        this.addMessage(text, 'user');
+        
+        // AI Thinking
+        const loadingId = this.showLoading();
+
+        // Network Request
+        this.fetchReply(text)
+            .then(reply => {
+                this.removeLoading(loadingId);
+                this.addMessage(reply, 'ai');
+            })
+            .catch(() => {
+                this.removeLoading(loadingId);
+                this.addMessage(AGENT_CONFIG.texts[this.lang].error, 'ai');
+            });
+    }
+
+    addMessage(text, role) {
+        const div = document.createElement('div');
+        div.className = `chat-bubble bubble-${role}`;
+        div.textContent = text;
+        this.ui.msgs.appendChild(div);
+        this.scrollToBottom();
+
+        this.messages.push({ role, content: text });
         this.saveHistory();
     }
 
-    async sendMessage() {
-        const input = this.elements.chatInput;
-        const text = input.value.trim();
-        if (!text) return;
-
-        // UI Updates
-        this.addMessage(text, 'user');
-        input.value = '';
-        this.elements.btnSend.classList.remove('ready');
-
-        // Show Typing Indicator
-        const typingId = this.showTyping();
-
-        try {
-            // Simulated API Call (Replace with real worker)
-            const response = await this.fetchResponse(text);
-            this.removeTyping(typingId);
-            this.addMessage(response, 'ai');
-        } catch (err) {
-            this.removeTyping(typingId);
-            this.addMessage("Connection interference. Re-aligning satellites... Try again.", 'ai');
-        }
-    }
-
-    showTyping() {
-        const id = 'typing-' + Date.now();
+    showLoading() {
+        const id = 'load-' + Date.now();
         const div = document.createElement('div');
         div.id = id;
-        div.className = 'chat-bubble bubble-ai';
-        div.innerHTML = '<span class="typing-dots">...</span>'; // You can animate this in CSS
-        this.elements.messages.appendChild(div);
-        this.elements.messages.scrollTop = this.elements.messages.scrollHeight;
+        div.className = 'chat-bubble bubble-ai typing-dots';
+        div.textContent = '...';
+        this.ui.msgs.appendChild(div);
+        this.scrollToBottom();
         return id;
     }
 
-    removeTyping(id) {
+    removeLoading(id) {
         const el = document.getElementById(id);
         if (el) el.remove();
     }
 
-    async fetchResponse(userText) {
-        // Construct payload
+    scrollToBottom() {
+        this.ui.msgs.scrollTop = this.ui.msgs.scrollHeight;
+    }
+
+    async fetchReply(text) {
+        // Format for API
         const history = this.messages.map(m => ({
             role: m.role === 'user' ? 'user' : 'assistant',
             content: m.content
         }));
 
-        try {
-            const res = await fetch(AGENT_CONFIG.workerUrl, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    messages: history,
-                    language: this.lang
-                })
-            });
-            const data = await res.json();
-            return data.response || "No data received.";
-        } catch (e) {
-            console.error(e);
-            throw e;
-        }
+        const res = await fetch(AGENT_CONFIG.workerUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                messages: history,
+                language: this.lang
+            })
+        });
+
+        const data = await res.json();
+        return data.response;
     }
 
     saveHistory() {
-        localStorage.setItem('mg_neural_history', JSON.stringify(this.messages));
+        try {
+            localStorage.setItem('jimmy_direct_history', JSON.stringify(this.messages));
+        } catch (e) {}
     }
 
     loadHistory() {
-        const saved = localStorage.getItem('mg_neural_history');
-        if (saved) {
-            this.messages = JSON.parse(saved);
-            this.messages.forEach(m => {
-                const div = document.createElement('div');
-                div.className = `chat-bubble bubble-${m.role === 'user' ? 'user' : 'ai'}`;
-                div.textContent = m.content;
-                this.elements.messages.appendChild(div);
-            });
-        }
+        try {
+            const saved = localStorage.getItem('jimmy_direct_history');
+            if (saved) {
+                this.messages = JSON.parse(saved);
+                this.messages.forEach(m => {
+                    const div = document.createElement('div');
+                    div.className = `chat-bubble bubble-${m.role}`;
+                    div.textContent = m.content;
+                    this.ui.msgs.appendChild(div);
+                });
+            }
+        } catch (e) {}
     }
 }
 
-// Initialize on Load
 document.addEventListener('DOMContentLoaded', () => {
-    window.neuralAgent = new NeuralAgent();
+    window.directAgent = new DirectAgent();
 });

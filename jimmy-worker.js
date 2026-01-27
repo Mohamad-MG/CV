@@ -68,6 +68,8 @@ const CONFIG = {
       "introduce yourself",
     ],
   },
+  // للمطور: نفّذ Waterfall بالموديلات بالترتيب ده بدون retries وبمهلة إجمالية ثابتة CONFIG.timeouts.total_ms.
+  // للمطور: الوقت يتوزع حسب المتبقي، وأول موديل يرجّع نص صالح يوقف السلسلة ويرجع الرد.
   model_waterfall: [
     { provider: "openai", model: "gpt-5.2" },
     { provider: "openai", model: "gpt-5.1" },
