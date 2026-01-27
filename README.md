@@ -7,46 +7,31 @@
 - `assets/js/` - shared scripts (including the chat widget)
 - `assets/docs/mohamed-gamal-cv.pdf` - downloadable CV
 - `about-mo.gamal.md` - long-form bio copy
-- `jimmy-worker.js` - Cloudflare Worker (engine + policy + admin API)
-- `admin.html` - control panel (GitHub Pages)
+- `jimmy-worker.js` - Cloudflare Worker (engine + config in code)
 
-## Architecture (Rebuild 2026)
-- **Single Source of Truth**: Worker uses KV config only. No embedded behavior defaults.
-- **Draft → Publish → Rollback**: Admin edits draft, publishes to active, and can roll back.
+## Architecture (Code-Configured)
+- **Single Source of Truth**: All behavior lives inside `jimmy-worker.js`.
+- **No Admin panel, no KV**: Fewer layers and fewer moving parts.
 - **Policy Engine**: Enforces max lines + blocks AI mentions + emojis after the model responds.
-- **Predictable Latency**: Single model per request, no retries.
+- **Predictable Latency**: Waterfall with a fixed total timeout and no per-model retries.
 
 ## Endpoints
 Public:
 - `POST /chat`
   - CORS: `*`
-  - Uses **active** config only
+  - Returns: `{ response, request_id }` even on errors
 
 Health:
 - `GET /health`
-  - KV status, active config presence, provider key availability
+  - `config_loaded`
+  - `provider_key_present` (booleans only)
+  - `provider_in_use`
 
-Admin (private, CORS allowlist + Bearer token):
-- `GET /admin/config?state=active|draft`
-- `POST /admin/config/draft` (alias: `POST /admin/config`)
-- `POST /admin/publish`
-- `POST /admin/rollback`
-- `POST /admin/preview`
-- `POST /admin/token/rotate`
-- `GET /admin/audit`
+## Config Location
+Edit the `CONFIG` object inside:
+- `jimmy-worker.js`
 
-## KV Keys
-- Binding: `JIMMY_KV`
-- Keys:
-  - `jimmy:config:active`
-  - `jimmy:config:draft`
-  - `jimmy:config:history`
-  - `jimmy:admin`
-  - `jimmy:audit`
-
-## Config Schema (JSON)
-Required fields:
-- `default_language` (`ar` or `en`)
+Key fields:
 - `system_prompt` (`{ ar, en }`)
 - `verified_facts` (`{ ar, en }`)
 - `contact_templates` (`{ ar, en }`)
@@ -54,33 +39,23 @@ Required fields:
 - `fallback_messages` (`{ ar, en }`)
 - `rules` (`{ max_lines, followup_questions, block_ai_mentions, block_emojis }`)
 - `intent_rules` (`{ contact_keywords[], identity_keywords[] }`)
-- `model_policy` (`{ provider, model, timeout_ms, temperature? }`)
+- `model_waterfall` (ordered list of `{ provider, model }`)
+- `timeouts` (`{ total_ms }`)
+- `temperature` (number)
 - `limits` (`{ max_history, max_input_chars }`)
 
-Optional metadata:
-- `version`, `updated_at`, `updated_by`, `published_at`
-
-## Admin Panel
-- Hosted at: `https://emarketbank.github.io/CV/admin.html`
-- Features:
-  - Draft → Publish → Rollback
-  - AR / EN separated 100%
-  - Playground testing against Draft
-  - Token rotation
-  - Audit log
-
 ## Notes
-- No defaults: If no active config exists, `/chat` returns “Service not configured.”
-- Update behavior only through Admin.
-- Logs are JSON with latency and request ID.
+- If provider key is missing, `/chat` returns the fallback message.
+- Contact templates should not include emojis.
+- Policy enforcement runs after the model response.
+
+## Testing (post-deploy)
+1) Run 3 requests (AR / EN / Contact).
+2) Verify line limits, no AI mentions, no emojis.
+3) Check `/health`.
 
 ## Repo hygiene (later)
 - There are unrelated deletions/asset diffs in the repo. We will ignore them for now and run a cleanup sprint after the chat system stabilizes.
-
-## Testing (post-deploy)
-1) Create Draft from Admin.
-2) Publish.
-3) Run 3 requests (AR / EN / Contact) and verify logs + response rules.
 
 ## Language notes
 - Arabic pages: `portfolio/index-ar.html`, `achievements/index-ar.html`
