@@ -10,17 +10,7 @@
 const CONFIG = {
   default_language: "ar",
   allowed_origins: [
-    // Production
-    "https://mo-gamal.com",
-    "https://www.mo-gamal.com",
     "https://emarketbank.github.io",
-    // Development
-    "http://localhost:3000",
-    "http://localhost:5173",
-    "http://localhost:8080",
-    "http://127.0.0.1:3000",
-    "http://127.0.0.1:5173",
-    "http://127.0.0.1:8080",
   ],
 
   // NOTE: Keep prompts short, directive, and stable.
