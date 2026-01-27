@@ -238,12 +238,41 @@
         <div>
           <label for="systemPrompt">تعليمات سلوك جيمي</label>
           <p class="field-hint">كيف يتكلم؟ كيف يرد؟ متى يسأل؟ متى يعرض التواصل؟</p>
-          <textarea id="systemPrompt" placeholder="اكتب تعليمات جيمي هنا..."></textarea>
+          <textarea id="systemPrompt">أنت "كابتن جيمي" — المساعد الرسمي لمحمد جمال.
+أنت مش محمد، وما ينفعش تدّعي إنك هو.
+دورك توصل الناس لمحمد بسرعة وبوضوح.
+
+قواعد اللغة:
+- لو المستخدم عربي: رد مصري مهني مختصر.
+- لو المستخدم إنجليزي: رد أمريكي مباشر.
+- خلي اللغة ثابتة طول المحادثة.
+
+قواعد الرد:
+- أول رد ≤ 2 سطر، بعد كده ≤ 3 سطور.
+- سؤال متابعة واحد فقط (لو محتاج).
+- بدون أي ذكر لـ AI/مزود/موديل.
+- بدون إيموجيز.
+
+التواصل:
+- ما تعرضش التواصل إلا لو المستخدم طلب صراحة.
+- لو طلب تواصل: استخدم نص التواصل الثابت بالحرف.
+
+خارج النطاق:
+- لو طلب خطة/محتوى/بحث: قول إن محمد هو الأنسب وسأله لو يحب يتواصل.
+
+ممنوعات:
+- نصايح عامة طويلة.
+- أي أرقام أو إنجازات غير مؤكدة.</textarea>
         </div>
         <div>
           <label for="verifiedFacts">حقائق مؤكدة فقط</label>
           <p class="field-hint">أرقام، إنجازات، وخبرات مثبتة. يُمنع كتابة أي ادعاءات غير مؤكدة.</p>
-          <textarea id="verifiedFacts" placeholder="ضع الحقائق المؤكدة هنا..."></textarea>
+          <textarea id="verifiedFacts">حقائق مؤكدة فقط (استخدمها عند الارتباط بالسؤال):
+- خبرة 10+ سنين في النمو الرقمي والتحول الرقمي في MENA مع تركيز قوي على السعودية.
+- 6× نمو مبيعات/إيراد عضوي تقريبًا في Arabian Oud خلال ~24 شهر.
+- إدارة إنفاق إعلاني يومي تقريبًا $12k–$20k عبر 6 أسواق.
+- 7× نمو تعاقدات في DigiMora خلال حوالي سنة.
+- مشاركة في Guinness World Record (5M orders، Black Friday 2020).</textarea>
         </div>
       </div>
     </div>
@@ -253,7 +282,11 @@
       <div>
         <label for="contactTemplate">نص التواصل الثابت</label>
         <p class="field-hint">هذا النص يظهر حرفيًا عند طلب التواصل. لا يتم تعديله بواسطة الذكاء الاصطناعي.</p>
-        <textarea id="contactTemplate" placeholder="اكتب نص التواصل هنا..."></textarea>
+        <textarea id="contactTemplate">محمد هيكون سعيد يسمع منك.
+تحب مكالمة سريعة ولا واتساب؟
+
+📞 مكالمة: 00201555141282
+💬 واتساب: https://wa.me/201555141282</textarea>
       </div>
     </div>
 
@@ -264,7 +297,7 @@
           <label for="primaryProvider">المزوّد الأساسي</label>
           <p class="field-hint">اختر المزوّد الذي يعمل به جيمي. الموديل يتم اختياره تلقائيًا.</p>
           <select id="primaryProvider">
-            <option value="gemini">Gemini</option>
+            <option value="gemini" selected>Gemini</option>
             <option value="openai">OpenAI</option>
           </select>
         </div>
@@ -272,7 +305,7 @@
           <label for="defaultLanguage">اللغة الافتراضية</label>
           <p class="field-hint">تُستخدم فقط في حال تعذّر تحديد لغة المستخدم.</p>
           <select id="defaultLanguage">
-            <option value="ar">عربي</option>
+            <option value="ar" selected>عربي</option>
             <option value="en">English</option>
           </select>
         </div>
@@ -286,11 +319,11 @@
         <div class="inline-grid">
           <div>
             <label for="maxLines">أقصى عدد سطور</label>
-            <input id="maxLines" type="number" min="1" max="12" step="1">
+            <input id="maxLines" type="number" min="1" max="12" step="1" value="3">
           </div>
           <div>
             <label for="followupQuestions">قواعد أسئلة المتابعة</label>
-            <input id="followupQuestions" type="number" min="0" max="3" step="1">
+            <input id="followupQuestions" type="number" min="0" max="3" step="1" value="1">
           </div>
         </div>
       </details>
@@ -388,13 +421,13 @@
         }
 
         const config = data?.config || {};
-        systemPromptEl.value = config.system_prompt || "";
-        verifiedFactsEl.value = config.verified_facts || "";
-        contactTemplateEl.value = config.contact_templates?.ar || config.contact_templates?.en || "";
-        defaultLanguageEl.value = config.default_language || "ar";
-        primaryProviderEl.value = config.primary_provider || "gemini";
-        maxLinesEl.value = config.rules?.max_lines ?? 6;
-        followupQuestionsEl.value = config.rules?.followup_questions ?? 1;
+        systemPromptEl.value = config.system_prompt || systemPromptEl.value;
+        verifiedFactsEl.value = config.verified_facts || verifiedFactsEl.value;
+        contactTemplateEl.value = config.contact_templates?.ar || contactTemplateEl.value;
+        defaultLanguageEl.value = config.default_language || defaultLanguageEl.value;
+        primaryProviderEl.value = config.primary_provider || primaryProviderEl.value;
+        maxLinesEl.value = config.rules?.max_lines ?? maxLinesEl.value;
+        followupQuestionsEl.value = config.rules?.followup_questions ?? followupQuestionsEl.value;
         setStatus("تم تحميل الإعدادات.", true);
       } catch (err) {
         setStatus("فشل تحميل الإعدادات.");

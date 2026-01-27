@@ -1,20 +1,21 @@
 /**
- * ULTRA 2026 - ARCHITECTURAL MOTION 2.0
- * Kinetic Character Morphing + Cybernetic Flash
+ * ULTRA 2026 - ARCHITECTURAL MOTION 3.0
+ * Features: Data Decrypt Headline + Engine Ignition Metrics
  */
 
-class ArchitectMotion {
+/* --- 1. DATA DECRYPT (Matrix Style Reveal) --- */
+class DataDecrypt {
     constructor() {
-        // Cleaner, more "system" like characters
-        this.scrambleChars = '/>_-\|[]{}'; 
-        this.eyebrow = document.querySelector('.hero-eyebrow');
+        this.scrambleChars = '/>_-\|[]{}*&^%$#@!~';
         this.tagline = document.querySelector('.tagline');
+        this.eyebrow = document.querySelector('.hero-eyebrow');
         
-        if (this.eyebrow) this.initElement(this.eyebrow, 500);
-        if (this.tagline) this.initElement(this.tagline, 800);
+        if (this.eyebrow) this.initElement(this.eyebrow, 200, 30);
+        if (this.tagline) this.initElement(this.tagline, 600, 10);
     }
 
-    initElement(el, startDelay) {
+    initElement(el, startDelay, speed) {
+        // Keep original HTML structure if needed, but for text nodes:
         const originalText = el.innerText;
         el.innerText = '';
         el.style.opacity = '1';
@@ -24,132 +25,122 @@ class ArchitectMotion {
         const charSpans = originalText.split('').map(char => {
             const span = document.createElement('span');
             span.style.display = 'inline-block';
-            span.style.minWidth = char === ' ' ? '0.25em' : 'auto'; // Tighter spaces
-            span.innerText = char;
+            span.style.minWidth = char === ' ' ? '0.3em' : 'auto';
+            span.innerText = char; // Set initial char
             span.style.opacity = '0';
+            span.dataset.char = char; // Store target char
             el.appendChild(span);
-            return {
-                span: span,
-                char: char,
-                revealed: false
-            };
+            return span;
         });
 
+        // Start animation loop
         setTimeout(() => {
-            charSpans.forEach((obj, index) => {
-                // Wave effect: characters start scrambling in a sequence
-                const delay = (index * 25); 
-                this.animateChar(obj, delay);
+            charSpans.forEach((span, index) => {
+                const charDelay = index * speed;
+                setTimeout(() => this.animateChar(span), charDelay);
             });
         }, startDelay);
     }
 
-    animateChar(obj, delay) {
-        const duration = 800; // Time spent scrambling
-        let start = null;
+    animateChar(span) {
+        const targetChar = span.dataset.char;
+        let frame = 0;
+        const maxFrames = 12; // How long to scramble each char
 
-        // Start invisible
-        obj.span.style.opacity = '0';
+        span.style.opacity = '1';
+        span.style.color = '#3B82F6'; // Tech Blue during scramble
+        span.style.fontFamily = 'monospace';
 
-        const step = (timestamp) => {
-            if (!start) start = timestamp;
-            const elapsed = timestamp - start;
-
-            if (elapsed < delay) {
-                requestAnimationFrame(step);
-                return;
-            }
-
-            // Reveal and start scrambling
-            if (obj.span.style.opacity === '0') {
-                obj.span.style.opacity = '1';
-                obj.span.classList.add('scrambling-char');
-            }
-
-            const progress = (elapsed - delay) / duration;
-
-            if (progress < 1) {
-                // Scramble logic: change char every few frames
-                if (Math.floor(elapsed / 50) % 2 === 0) {
-                     obj.span.innerText = this.scrambleChars[Math.floor(Math.random() * this.scrambleChars.length)];
-                     // Tech accent color during scramble
-                     obj.span.style.fontFamily = 'monospace';
-                     obj.span.style.color = 'var(--teal-primary)';
-                     // FORCE VISIBILITY against parent's gradient text fill
-                     obj.span.style.webkitTextFillColor = 'var(--teal-primary)';
-                }
-                requestAnimationFrame(step);
+        const scrambleInterval = setInterval(() => {
+            frame++;
+            if (frame < maxFrames) {
+                // Show random char
+                span.innerText = this.scrambleChars[Math.floor(Math.random() * this.scrambleChars.length)];
             } else {
-                // Final reveal
-                obj.span.innerText = obj.char;
-                obj.span.classList.remove('scrambling-char');
-                obj.span.classList.add('char-flash'); // Optional final flash
-                
-                // Revert to original styles to allow Gradient to shine through
-                obj.span.style.color = ''; 
-                obj.span.style.fontFamily = ''; 
-                obj.span.style.webkitTextFillColor = ''; // Return to transparent for gradient
-                
-                obj.revealed = true;
+                // Final Resolve
+                clearInterval(scrambleInterval);
+                span.innerText = targetChar;
+                span.style.color = ''; // Inherit parent gradient
+                span.style.fontFamily = ''; // Inherit parent font
+                span.style.webkitTextFillColor = ''; // Reset for gradients
             }
-        };
-
-        requestAnimationFrame(step);
+        }, 40); // Fast flicker speed
     }
 }
 
-/**
- * 🌀 INFINITE DRAGGABLE MARQUEE ENGINE
- * Supports: Touch, Mouse, Velocity, Inertia
- */
+/* --- 2. ENGINE IGNITION (Impact Metrics) --- */
+class IgnitionMetrics {
+    constructor() {
+        this.metrics = document.querySelectorAll('.metric-block');
+        if (this.metrics.length > 0) {
+            this.init(2000); // Start after headline
+        }
+    }
+
+    init(startDelay) {
+        this.metrics.forEach((el, index) => {
+            // Prepare State: Invisible & Huge
+            el.style.opacity = '0';
+            el.style.transform = 'scale(2)';
+            el.style.filter = 'blur(10px)';
+            
+            // Staggered Impact
+            setTimeout(() => {
+                this.ignite(el);
+            }, startDelay + (index * 300));
+        });
+    }
+
+    ignite(el) {
+        // Impact Frame
+        el.style.transition = 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+        el.style.opacity = '1';
+        el.style.transform = 'scale(1)';
+        el.style.filter = 'blur(0px) brightness(2)'; // Flash Bright
+
+        // Cool down frame
+        setTimeout(() => {
+            el.style.transition = 'filter 0.6s ease-out';
+            el.style.filter = 'blur(0px) brightness(1)'; // Normal
+        }, 400);
+    }
+}
+
+/* --- 3. DRAGGABLE MARQUEE (Preserved) --- */
 class DraggableMarquee {
     constructor(element) {
         this.container = element;
         this.track = element.querySelector('.marquee-track');
         if (!this.track) return;
 
-        // Config
-        this.baseSpeed = parseFloat(element.dataset.speed) || -0.5; // Negative = left, Positive = right
+        this.baseSpeed = parseFloat(element.dataset.speed) || -0.5;
         this.speed = this.baseSpeed;
         this.pos = 0;
         this.isDragging = false;
         this.startX = 0;
         this.lastX = 0;
         this.velocity = 0;
-        this.rafId = null;
-
-        // Clone content for seamless loop if not already duplicated enough
+        
         this.ensureContentWidth();
-
         this.initEvents();
         this.animate();
     }
 
     ensureContentWidth() {
-        // Simple duplication to ensure we have enough width to scroll
-        // In a production app, we might measure and clone dynamically until fill
-        // For now, assuming HTML has at least 1 set of duplicates (Group 1 + Group 2)
         const trackWidth = this.track.scrollWidth;
         const containerWidth = this.container.offsetWidth;
-        
         if (trackWidth < containerWidth * 2) {
             this.track.innerHTML += this.track.innerHTML;
         }
     }
 
     initEvents() {
-        // Mouse Events
         this.container.addEventListener('mousedown', (e) => this.startDrag(e.clientX));
         window.addEventListener('mousemove', (e) => this.onDrag(e.clientX));
         window.addEventListener('mouseup', () => this.endDrag());
-
-        // Touch Events
         this.container.addEventListener('touchstart', (e) => this.startDrag(e.touches[0].clientX));
         window.addEventListener('touchmove', (e) => this.onDrag(e.touches[0].clientX));
         window.addEventListener('touchend', () => this.endDrag());
-        
-        // Pause animation on CSS side to let JS take over full control?
-        // Actually, we will use transform in JS, so we should disable CSS animation if it exists
         this.track.style.animation = 'none';
     }
 
@@ -166,7 +157,7 @@ class DraggableMarquee {
         const delta = x - this.lastX;
         this.lastX = x;
         this.pos += delta;
-        this.velocity = delta; // Capture instant velocity
+        this.velocity = delta;
     }
 
     endDrag() {
@@ -176,47 +167,29 @@ class DraggableMarquee {
 
     animate() {
         if (!this.isDragging) {
-            // Apply friction/inertia to return to base speed
-            this.velocity *= 0.95; // Decay
-            
-            // Blend velocity back to base speed
+            this.velocity *= 0.95; 
             if (Math.abs(this.velocity) < Math.abs(this.baseSpeed)) {
                this.velocity = this.velocity * 0.95 + this.baseSpeed * 0.05;
             }
-            
             this.pos += this.velocity;
         }
-
-        // Infinite Loop Logic (Wrap Around)
-        const trackWidth = this.track.scrollWidth / 2; // Assuming content is doubled
-        
-        // Normalize position
-        if (this.pos <= -trackWidth) {
-            this.pos += trackWidth;
-        } else if (this.pos > 0) {
-            this.pos -= trackWidth;
-        }
+        const trackWidth = this.track.scrollWidth / 2;
+        if (this.pos <= -trackWidth) this.pos += trackWidth;
+        else if (this.pos > 0) this.pos -= trackWidth;
 
         this.track.style.transform = `translateX(${this.pos}px)`;
-        this.rafId = requestAnimationFrame(() => this.animate());
+        requestAnimationFrame(() => this.animate());
     }
 }
 
-// Robust Initialization
-const initUltra = () => {
+// System Boot
+document.addEventListener('DOMContentLoaded', () => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     
-    console.log("Ultra 2026: Starting System...");
-    new ArchitectMotion();
+    console.log("System 3.0: Online");
+    new DataDecrypt();
+    new IgnitionMetrics();
 
-    // Initialize Marquees
     const marquees = document.querySelectorAll('.marquee-container');
     marquees.forEach(m => new DraggableMarquee(m));
-};
-
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initUltra);
-} else {
-    initUltra();
-}
-/* Cache Buster: v2026.1.2 */
+});
