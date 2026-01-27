@@ -29,9 +29,8 @@
       margin: 0;
       font-family: "Cairo", sans-serif;
       background:
-        radial-gradient(circle at 12% 15%, rgba(15, 126, 108, 0.14), transparent 45%),
-        radial-gradient(circle at 88% 8%, rgba(15, 20, 25, 0.08), transparent 40%),
-        var(--bg);
+        radial-gradient(circle at 12% 18%, rgba(15, 126, 108, 0.08), transparent 55%),
+        linear-gradient(180deg, #f7f3ef 0%, #f1ede9 100%);
       color: var(--ink);
       min-height: 100vh;
       padding: 32px 18px 80px;
@@ -83,6 +82,13 @@
       margin-bottom: 12px;
     }
 
+    .section-note {
+      margin: -6px 0 14px;
+      font-size: 0.86rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
     .grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
@@ -110,10 +116,10 @@
     }
 
     .field-hint {
-      margin: 0 0 10px;
-      font-size: 0.84rem;
+      margin: 8px 0 0;
+      font-size: 0.82rem;
       color: var(--muted);
-      line-height: 1.6;
+      line-height: 1.5;
     }
 
     textarea,
@@ -248,6 +254,41 @@
       font-weight: 700;
     }
 
+    .checkbox-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: #fff;
+    }
+
+    .checkbox-row input {
+      width: auto;
+      transform: translateY(1px);
+    }
+
+    details.section {
+      border: 1px dashed var(--border);
+      border-radius: 18px;
+      padding: 16px;
+      background: rgba(15, 20, 25, 0.02);
+      margin-bottom: 26px;
+    }
+
+    details.section summary {
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 0.98rem;
+      list-style: none;
+      margin-bottom: 10px;
+    }
+
+    details.section summary::-webkit-details-marker {
+      display: none;
+    }
+
     @media (max-width: 640px) {
       .panel {
         padding: 22px;
@@ -259,21 +300,22 @@
   <div class="panel">
     <div class="header">
       <h1>لوحة تحكم كابتن جيمي</h1>
-      <p>تحكم كامل في السلوك والقواعد من مكان واحد — بدون أي تضارب أو تعقيد.</p>
+      <p>لوحة تشغيل واضحة: اكتب، اختبر، انشر. المسودة لا تؤثر على الزوار حتى النشر.</p>
     </div>
 
     <div class="section">
-      <div class="section-title">الاتصال الآمن</div>
+      <div class="section-title">الاتصال والأمان</div>
+      <p class="section-note">هذه البيانات مطلوبة للتحكم في الإعدادات وحماية التعديلات.</p>
       <div class="grid">
         <div>
-          <label for="endpointInput">رابط الـ Worker</label>
-          <p class="field-hint">اكتب رابط السيرفر الخاص بـ Jimmy.</p>
+          <label for="endpointInput">رابط الخادم</label>
           <input id="endpointInput" type="text" placeholder="https://mg-ai-proxy.emarketbank.workers.dev">
+          <p class="field-hint">الرابط الذي يستقبل مسارات /chat و /admin.</p>
         </div>
         <div>
           <label for="tokenInput">رمز الإدارة</label>
-          <p class="field-hint">يُستخدم لحماية التعديلات. يتم حفظه على جهازك.</p>
           <input id="tokenInput" type="password" autocomplete="off" placeholder="اكتب الرمز">
+          <p class="field-hint">يوضع مرة واحدة ويُستخدم مع كل حفظ أو نشر.</p>
         </div>
       </div>
       <div class="actions" style="margin-top:12px;">
@@ -285,6 +327,7 @@
 
     <div class="section">
       <div class="section-title">الإصدارات والنشر</div>
+      <p class="section-note">احفظ مسودة، جرّبها في ساحة التجربة، ثم انشر.</p>
       <div class="split">
         <div class="card-lite">
           <div class="row">
@@ -295,145 +338,170 @@
         </div>
         <div class="card-lite">
           <div class="row">
-            <span class="tag">مسودة العمل</span>
+            <span class="tag">المسودة الحالية</span>
             <span class="pill" id="draftVersion">—</span>
           </div>
           <p class="field-hint" id="draftMeta">—</p>
         </div>
       </div>
       <div class="actions" style="margin-top:12px;">
-        <button class="ghost" id="loadActive">تحميل Active</button>
-        <button class="ghost" id="loadDraft">تحميل Draft</button>
+        <button id="saveDraft">حفظ مسودة</button>
+        <div class="status" id="mainStatus">جاهز.</div>
+      </div>
+      <div class="actions" style="margin-top:10px;">
+        <button class="ghost" id="loadActive">تحميل الحالي</button>
+        <button class="ghost" id="loadDraft">تحميل المسودة</button>
         <button id="publishDraft">نشر</button>
-        <button class="secondary" id="rollback">Rollback</button>
+        <button class="secondary" id="rollback">رجوع</button>
         <div class="status" id="versionStatus">—</div>
       </div>
     </div>
 
     <div class="section">
-      <div class="section-title">اللغة + التعليمات الأساسية</div>
+      <div class="section-title">لغة وسلوك جيمي</div>
+      <p class="section-note">التعليمات هنا هي المرجع الرئيسي للسلوك.</p>
       <div class="grid">
         <div>
           <label for="defaultLanguage">اللغة الافتراضية</label>
           <select id="defaultLanguage">
             <option value="ar">عربي</option>
-            <option value="en">English</option>
+            <option value="en">إنجليزي</option>
           </select>
+          <p class="field-hint">تُستخدم فقط عند عدم القدرة على تحديد لغة المستخدم.</p>
         </div>
         <div>
-          <label for="versionInput">Version ID</label>
-          <input id="versionInput" type="text" placeholder="سيتم توليده تلقائياً" readonly>
+          <label for="versionInput">معرّف الإصدار</label>
+          <input id="versionInput" type="text" placeholder="يتولد تلقائياً عند حفظ المسودة" readonly>
+          <p class="field-hint">لا يلزم تعديله يدويًا.</p>
         </div>
       </div>
       <div class="grid-2" style="margin-top:14px;">
         <div>
-          <label for="systemPromptAr">System Prompt (AR)</label>
+          <label for="systemPromptAr">تعليمات جيمي (عربي)</label>
           <textarea id="systemPromptAr"></textarea>
+          <p class="field-hint">أسلوب الكلام والقواعد العامة، بصياغة مختصرة وحاسمة.</p>
         </div>
         <div>
-          <label for="systemPromptEn">System Prompt (EN)</label>
+          <label for="systemPromptEn">تعليمات جيمي (إنجليزي)</label>
           <textarea id="systemPromptEn"></textarea>
+          <p class="field-hint">نفس المعنى لكن باللغة الإنجليزية وبأسلوب مباشر.</p>
         </div>
       </div>
       <div class="grid-2" style="margin-top:14px;">
         <div>
-          <label for="verifiedFactsAr">Verified Facts (AR)</label>
+          <label for="verifiedFactsAr">حقائق مؤكدة (عربي)</label>
           <textarea id="verifiedFactsAr" class="small"></textarea>
+          <p class="field-hint">نقاط قصيرة مؤكدة فقط، بدون مبالغات.</p>
         </div>
         <div>
-          <label for="verifiedFactsEn">Verified Facts (EN)</label>
+          <label for="verifiedFactsEn">حقائق مؤكدة (إنجليزي)</label>
           <textarea id="verifiedFactsEn" class="small"></textarea>
+          <p class="field-hint">ترجمة واضحة لنفس الحقائق بدون توسّع.</p>
         </div>
       </div>
     </div>
 
     <div class="section">
       <div class="section-title">القوالب الثابتة</div>
+      <p class="section-note">هذه النصوص تظهر حرفيًا بدون تعديل.</p>
       <div class="grid-2">
         <div>
-          <label for="contactTemplateAr">Contact Template (AR)</label>
+          <label for="contactTemplateAr">نص التواصل (عربي)</label>
           <textarea id="contactTemplateAr" class="small"></textarea>
+          <p class="field-hint">يظهر عند طلب التواصل فقط.</p>
         </div>
         <div>
-          <label for="contactTemplateEn">Contact Template (EN)</label>
+          <label for="contactTemplateEn">نص التواصل (إنجليزي)</label>
           <textarea id="contactTemplateEn" class="small"></textarea>
+          <p class="field-hint">نص مطابق للنسخة العربية لكن بالإنجليزية.</p>
         </div>
       </div>
       <div class="grid-2" style="margin-top:14px;">
         <div>
-          <label for="identityTemplateAr">Identity Template (AR)</label>
+          <label for="identityTemplateAr">التعريف (عربي)</label>
           <textarea id="identityTemplateAr" class="small"></textarea>
+          <p class="field-hint">تعريف قصير بدون ادّعاء أنك محمد.</p>
         </div>
         <div>
-          <label for="identityTemplateEn">Identity Template (EN)</label>
+          <label for="identityTemplateEn">التعريف (إنجليزي)</label>
           <textarea id="identityTemplateEn" class="small"></textarea>
+          <p class="field-hint">مختصر ومباشر، بدون أي ذكر للذكاء الاصطناعي.</p>
         </div>
       </div>
       <div class="grid-2" style="margin-top:14px;">
         <div>
-          <label for="fallbackAr">Fallback Message (AR)</label>
+          <label for="fallbackAr">رسالة التعطل (عربي)</label>
           <textarea id="fallbackAr" class="small"></textarea>
+          <p class="field-hint">تظهر عند أي فشل أو خطأ مزود.</p>
         </div>
         <div>
-          <label for="fallbackEn">Fallback Message (EN)</label>
+          <label for="fallbackEn">رسالة التعطل (إنجليزي)</label>
           <textarea id="fallbackEn" class="small"></textarea>
+          <p class="field-hint">نسخة إنجليزية بسيطة وواضحة.</p>
         </div>
       </div>
     </div>
 
     <div class="section">
-      <div class="section-title">قواعد النوايا</div>
-      <div class="grid-2">
-        <div>
-          <label for="contactKeywords">كلمات نية التواصل</label>
-          <p class="field-hint">سطر لكل كلمة أو عبارة. يمكن الفصل بفاصلة أيضًا.</p>
-          <textarea id="contactKeywords" class="small"></textarea>
-        </div>
-        <div>
-          <label for="identityKeywords">كلمات نية التعريف</label>
-          <p class="field-hint">سطر لكل كلمة أو عبارة. يمكن الفصل بفاصلة أيضًا.</p>
-          <textarea id="identityKeywords" class="small"></textarea>
-        </div>
-      </div>
-    </div>
-
-    <div class="section">
-      <div class="section-title">قواعد التنفيذ (Policy Engine)</div>
+      <div class="section-title">قواعد التنفيذ</div>
+      <p class="section-note">هذه القواعد تُطبّق بعد رد الموديل لضمان الالتزام.</p>
       <div class="grid">
         <div>
           <label for="maxLines">أقصى عدد سطور</label>
           <input id="maxLines" type="number" min="1" max="12" step="1">
+          <p class="field-hint">الحد النهائي لأسطر الرد.</p>
         </div>
         <div>
           <label for="followupQuestions">عدد أسئلة المتابعة</label>
           <input id="followupQuestions" type="number" min="0" max="3" step="1">
+          <p class="field-hint">يتم ذكره في التعليمات للموديل.</p>
         </div>
         <div>
-          <label>منع ذكر AI أو المزوّد</label>
-          <select id="blockAi">
-            <option value="true">مفعل</option>
-            <option value="false">غير مفعل</option>
-          </select>
+          <label for="blockAi">منع ذكر الذكاء الاصطناعي أو المزوّد</label>
+          <div class="checkbox-row">
+            <input id="blockAi" type="checkbox">
+            <span>مفعل</span>
+          </div>
+          <p class="field-hint">أي ذكر يتم حذفه من الرد النهائي.</p>
         </div>
         <div>
-          <label>منع الإيموجي</label>
-          <select id="blockEmojis">
-            <option value="true">مفعل</option>
-            <option value="false">غير مفعل</option>
-          </select>
+          <label for="blockEmojis">منع الإيموجي</label>
+          <div class="checkbox-row">
+            <input id="blockEmojis" type="checkbox">
+            <span>مفعل</span>
+          </div>
+          <p class="field-hint">يحذف أي رموز تعبيرية تلقائياً.</p>
         </div>
       </div>
     </div>
 
-    <div class="section">
-      <div class="section-title">سياسة الموديل (Single Model)</div>
+    <details class="section">
+      <summary>إعدادات متقدمة (اختياري)</summary>
+      <p class="section-note">تخصيص أدق للنوايا والموديل وحدود الرسائل.</p>
+
+      <div class="section-title">قواعد النوايا</div>
+      <div class="grid-2">
+        <div>
+          <label for="contactKeywords">كلمات نية التواصل</label>
+          <textarea id="contactKeywords" class="small"></textarea>
+          <p class="field-hint">سطر لكل عبارة. تجنّب كلمات عامة مثل “رقم” وحدها.</p>
+        </div>
+        <div>
+          <label for="identityKeywords">كلمات نية التعريف</label>
+          <textarea id="identityKeywords" class="small"></textarea>
+          <p class="field-hint">سطر لكل عبارة تعريف، مثل: “مين انت”.</p>
+        </div>
+      </div>
+
+      <div class="section-title" style="margin-top:18px;">سياسة الموديل</div>
       <div class="grid">
         <div>
           <label for="provider">المزوّد</label>
           <select id="provider">
-            <option value="openai">OpenAI</option>
-            <option value="gemini">Gemini</option>
+            <option value="openai">أوبن إي آي</option>
+            <option value="gemini">جيميني</option>
           </select>
+          <p class="field-hint">اختيار مزوّد واحد لكل الطلبات.</p>
         </div>
         <div>
           <label for="model">اسم الموديل</label>
@@ -445,46 +513,52 @@
             <option value="gemini-2.5-flash"></option>
             <option value="gemini-2.5-pro"></option>
           </datalist>
+          <p class="field-hint">اكتب الاسم كما هو عند المزوّد.</p>
         </div>
         <div>
-          <label for="timeoutMs">Timeout (ms)</label>
+          <label for="timeoutMs">مهلة الرد (مللي ثانية)</label>
           <input id="timeoutMs" type="number" min="2000" max="20000" step="500">
+          <p class="field-hint">اقتراح عملي: 8000.</p>
         </div>
         <div>
-          <label for="temperature">Temperature (اختياري)</label>
+          <label for="temperature">درجة العشوائية (اختياري)</label>
           <input id="temperature" type="number" min="0" max="1.2" step="0.1" placeholder="0.5">
+          <p class="field-hint">قلّلها للحفاظ على الاتساق.</p>
         </div>
       </div>
-    </div>
 
-    <div class="section">
-      <div class="section-title">Limits (التاريخ والنص)</div>
+      <div class="section-title" style="margin-top:18px;">حدود الرسائل</div>
       <div class="grid">
         <div>
-          <label for="maxHistory">Max History</label>
+          <label for="maxHistory">أقصى سجل محادثة</label>
           <input id="maxHistory" type="number" min="1" max="30" step="1">
+          <p class="field-hint">عدد الرسائل التي تُرسل للموديل.</p>
         </div>
         <div>
-          <label for="maxInputChars">Max Input Chars</label>
+          <label for="maxInputChars">أقصى طول للنص</label>
           <input id="maxInputChars" type="number" min="200" max="8000" step="100">
+          <p class="field-hint">يحمي من رسائل طويلة جدًا.</p>
         </div>
       </div>
-    </div>
+    </details>
 
     <div class="section">
-      <div class="section-title">Playground</div>
+      <div class="section-title">ساحة التجربة</div>
+      <p class="section-note">اختبر المسودة بدون تأثير على الزوار.</p>
       <div class="grid">
         <div>
           <label for="previewMessage">رسالة اختبار</label>
           <textarea id="previewMessage" class="small" placeholder="اكتب سؤالًا للتجربة..."></textarea>
+          <p class="field-hint">تُستخدم المسودة الحالية في الاختبار.</p>
         </div>
         <div>
           <label for="previewLanguage">لغة الرسالة</label>
           <select id="previewLanguage">
             <option value="auto">تلقائي</option>
             <option value="ar">عربي</option>
-            <option value="en">English</option>
+            <option value="en">إنجليزي</option>
           </select>
+          <p class="field-hint">اختياري. لو سيبتها تلقائي، سيتم اكتشاف اللغة من النص.</p>
           <div class="actions" style="margin-top:12px;">
             <button id="runPreview">تشغيل الاختبار</button>
           </div>
@@ -497,21 +571,15 @@
       </div>
     </div>
 
-    <div class="section">
-      <div class="section-title">Audit Log</div>
+    <details class="section">
+      <summary>سجل التغييرات</summary>
+      <p class="section-note">يعرض آخر عمليات الحفظ والنشر وتدوير الرمز.</p>
       <div class="actions" style="margin-bottom:10px;">
         <button class="ghost" id="loadAudit">تحميل السجل</button>
         <div class="status" id="auditStatus">—</div>
       </div>
       <div class="audit-list" id="auditList">لا يوجد بيانات بعد.</div>
-    </div>
-
-    <div class="section">
-      <div class="actions">
-        <button id="saveDraft">حفظ Draft</button>
-        <div class="status" id="mainStatus">جاهز.</div>
-      </div>
-    </div>
+    </details>
   </div>
 
   <script>
@@ -667,8 +735,8 @@
 
       maxLinesEl.value = config.rules?.max_lines ?? "";
       followupQuestionsEl.value = config.rules?.followup_questions ?? "";
-      blockAiEl.value = config.rules?.block_ai_mentions ? "true" : "false";
-      blockEmojisEl.value = config.rules?.block_emojis ? "true" : "false";
+      blockAiEl.checked = !!config.rules?.block_ai_mentions;
+      blockEmojisEl.checked = !!config.rules?.block_emojis;
 
       providerEl.value = config.model_policy?.provider || "openai";
       modelEl.value = config.model_policy?.model || "";
@@ -709,8 +777,8 @@
         rules: {
           max_lines: Number(maxLinesEl.value),
           followup_questions: Number(followupQuestionsEl.value),
-          block_ai_mentions: blockAiEl.value === "true",
-          block_emojis: blockEmojisEl.value === "true"
+          block_ai_mentions: !!blockAiEl.checked,
+          block_emojis: !!blockEmojisEl.checked
         },
         intent_rules: {
           contact_keywords: listFromText(contactKeywordsEl.value),
@@ -731,7 +799,7 @@
 
     async function bootstrap() {
       if (!ENDPOINT) {
-        setStatus(mainStatusEl, "اكتب رابط الـ Worker أولاً.", false, true);
+        setStatus(mainStatusEl, "اكتب رابط الخادم أولاً.", false, true);
         return;
       }
 
@@ -747,10 +815,10 @@
 
         if (state.draft) {
           fillForm(state.draft, true);
-          setStatus(versionStatusEl, "تم تحميل Draft.", true);
+          setStatus(versionStatusEl, "تم تحميل المسودة.", true);
         } else if (state.active) {
           fillForm(state.active, false);
-          setStatus(versionStatusEl, "تم تحميل Active (لا يوجد Draft).", true);
+          setStatus(versionStatusEl, "تم تحميل الحالي (لا توجد مسودة).", true);
         } else {
           setStatus(versionStatusEl, "لا يوجد إعدادات بعد.", false, true);
         }
@@ -782,7 +850,7 @@
 
     async function rotateToken() {
       if (!ENDPOINT) {
-        setStatus(connectionStatus, "اكتب رابط الـ Worker أولاً.", false, true);
+        setStatus(connectionStatus, "اكتب رابط الخادم أولاً.", false, true);
         return;
       }
 
@@ -811,11 +879,12 @@
       try {
         const config = await fetchConfig(stateName);
         if (!config) {
-          setStatus(versionStatusEl, stateName === "draft" ? "لا يوجد Draft." : "لا يوجد Active.", false, true);
+          setStatus(versionStatusEl, stateName === "draft" ? "لا توجد مسودة." : "لا يوجد إصدار حالي.", false, true);
           return;
         }
         fillForm(config, stateName === "draft");
-        setStatus(versionStatusEl, `تم تحميل ${stateName}.`, true);
+        const label = stateName === "draft" ? "المسودة" : "الحالي";
+        setStatus(versionStatusEl, `تم تحميل ${label}.`, true);
       } catch (err) {
         setStatus(versionStatusEl, err.message || "فشل التحميل.", false, true);
       }
@@ -839,7 +908,7 @@
         versionInputEl.value = state.currentVersion;
         draftVersionEl.textContent = state.currentVersion || "—";
         draftMetaEl.textContent = formatMeta(state.draft, "draft");
-        setStatus(mainStatusEl, "تم حفظ Draft.", true);
+        setStatus(mainStatusEl, "تم حفظ المسودة.", true);
       } catch (err) {
         const message = err.message || "فشل الحفظ.";
         setStatus(mainStatusEl, message, false, true);
@@ -849,7 +918,7 @@
     }
 
     async function publishDraft() {
-      if (!confirm("هل تريد نشر الـ Draft الآن؟")) return;
+      if (!confirm("هل تريد نشر المسودة الآن؟")) return;
       setStatus(versionStatusEl, "جارٍ النشر...");
       try {
         const res = await fetch(apiUrl("/admin/publish"), {
@@ -915,7 +984,7 @@
         const data = await res.json();
         if (!res.ok) throw new Error(data?.error || "فشل الاختبار.");
         previewOutputEl.textContent = data?.response || "";
-        const latency = data?.latency_ms ? ` (${data.latency_ms}ms)` : "";
+        const latency = data?.latency_ms ? ` (${data.latency_ms} مللي ثانية)` : "";
         setStatus(previewStatusEl, `تم الاختبار${latency}.`, true);
       } catch (err) {
         previewOutputEl.textContent = "";
@@ -934,9 +1003,15 @@
         if (!entries.length) {
           auditListEl.textContent = "لا يوجد بيانات بعد.";
         } else {
+          const actionMap = {
+            draft_saved: "حفظ مسودة",
+            published: "نشر",
+            rollback: "رجوع",
+            token_rotated: "تدوير الرمز"
+          };
           auditListEl.innerHTML = entries
             .map(item => {
-              const action = item.action || "action";
+              const action = actionMap[item.action] || "تحديث";
               const time = item.at || "";
               const version = item.version ? ` | ${item.version}` : "";
               return `<div class="audit-item">${action}${version} — ${time}</div>`;
