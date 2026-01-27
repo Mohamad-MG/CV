@@ -502,65 +502,77 @@ h1, h2, h3, h4 {
 }
 
 
-/* --- 💼 TIMELINE (Smart File Stack) --- */
-.timeline {
-    border-left: none; /* Remove traditional line */
-    margin-left: 0; padding-left: 0;
-    display: flex; flex-direction: column;
-    padding-bottom: 40px;
-    max-width: 900px; margin: 0 auto;
-}
-
-.timeline-item {
+/* --- 🎞️ EXPERIENCE CAROUSEL (Apple Style) --- */
+.carousel-container {
     position: relative;
-    margin-bottom: -20px; /* Overlap effect */
-    transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), z-index 0s;
-    z-index: 1;
+    width: 100%;
+    padding-bottom: 40px;
 }
 
-.timeline-item:hover {
-    transform: translateX(30px) scale(1.02); /* Slide out & scale */
-    z-index: 10; /* Bring to front */
+/* Scroll Container */
+.horizontal-scroll {
+    display: flex;
+    gap: 24px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    padding: 20px 5vw; /* Start/End padding */
+    scrollbar-width: none; /* Hide scrollbar Firefox */
+    -ms-overflow-style: none;  /* Hide scrollbar IE */
+}
+.horizontal-scroll::-webkit-scrollbar { display: none; }
+
+/* The Card */
+.exp-card {
+    min-width: 280px;
+    height: 400px; /* Portrait Ratio */
+    background: linear-gradient(180deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.01) 100%);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 24px;
+    padding: 32px;
+    display: flex; flex-direction: column; justify-content: flex-end;
+    scroll-snap-align: center;
+    transition: transform 0.4s ease;
+    cursor: grab;
 }
 
-/* Remove old dot */
-.timeline-dot { display: none; }
-
-.timeline-content {
-    background: linear-gradient(90deg, rgba(20,20,25,0.9) 0%, rgba(20,20,25,0.6) 100%);
-    backdrop-filter: blur(12px);
-    border: 1px solid rgba(255,255,255,0.08);
-    border-left: 4px solid var(--highlight); /* File Tab Look */
-    border-radius: 12px;
-    padding: 24px 32px;
-    box-shadow: 0 -10px 30px rgba(0,0,0,0.5); /* Shadow creates depth between files */
-    transition: all 0.3s;
-    cursor: pointer;
-}
-
-.timeline-item:hover .timeline-content {
-    background: linear-gradient(90deg, rgba(59, 130, 246, 0.15) 0%, rgba(20,20,25,0.8) 100%);
+.exp-card:hover {
+    background: linear-gradient(180deg, rgba(59, 130, 246, 0.1) 0%, rgba(20,20,25,0.8) 100%);
     border-color: var(--highlight);
-    box-shadow: 0 10px 40px rgba(0,0,0,0.8), 0 0 20px rgba(59, 130, 246, 0.2);
+    transform: translateY(-10px);
 }
 
-.timeline-date {
-    display: inline-block; font-size: 0.75rem; font-weight: 700; 
-    color: var(--highlight); margin-bottom: 6px; letter-spacing: 1px;
-    text-transform: uppercase; opacity: 0.8;
+.exp-year {
+    font-size: 0.8rem; font-weight: 700; color: var(--highlight);
+    text-transform: uppercase; letter-spacing: 1px; margin-bottom: auto; /* Push to top */
 }
 
-.timeline-title { font-size: 1.4rem; color: #fff; margin-bottom: 2px; }
-.timeline-company { font-size: 0.95rem; color: var(--text-muted); margin-bottom: 12px; }
+.exp-card h3 { font-size: 1.5rem; color: #fff; margin-bottom: 8px; line-height: 1.2; }
+.exp-card h4 { font-size: 1rem; color: var(--text-muted); margin-bottom: 16px; font-weight: 400; }
+.exp-card p { font-size: 0.9rem; color: var(--text-faint); line-height: 1.5; }
 
-.timeline-highlight {
-    font-size: 0.9rem; color: var(--text-faint); line-height: 1.5; 
-    padding-left: 0; border-left: none;
-    transition: color 0.3s;
+/* Timeline Scrubber (Bottom Bar) */
+.timeline-scrubber {
+    position: relative;
+    max-width: 600px;
+    margin: 40px auto 0;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255,255,255,0.1);
 }
 
-.timeline-item:hover .timeline-highlight {
-    color: #ddd; /* Brighten text on hover */
+.scrub-track {
+    display: flex; justify-content: space-between;
+    font-size: 0.75rem; color: var(--text-faint);
+    font-family: monospace;
+}
+
+/* The Moving Indicator */
+.scrub-indicator {
+    position: absolute; top: -3px; left: 0;
+    width: 6px; height: 6px;
+    background: var(--highlight);
+    border-radius: 50%;
+    box-shadow: 0 0 10px var(--highlight);
+    transition: left 0.1s linear; /* Smooth drag follow */
 }
 
 
