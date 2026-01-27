@@ -359,7 +359,7 @@
       sanitizeEndpoint(storedEndpoint) ||
       "https://mg-ai-proxy.emarketbank.workers.dev";
     let AUTH_TOKEN = tokenFromQuery || storedToken || "";
-    let CONFIG_URL = `${ENDPOINT.replace(/\/$/, "")}/admin`;
+    let CONFIG_URL = `${ENDPOINT.replace(/\/$/, "")}/admin/config`;
 
     if (endpointFromQuery) localStorage.setItem("jimmy_admin_endpoint", sanitizeEndpoint(endpointFromQuery));
     if (tokenFromQuery) localStorage.setItem("jimmy_admin_token", tokenFromQuery);
@@ -422,7 +422,7 @@
       AUTH_TOKEN = tokenValue;
       localStorage.setItem("jimmy_admin_token", AUTH_TOKEN);
 
-      CONFIG_URL = `${ENDPOINT.replace(/\/$/, "")}/admin`;
+      CONFIG_URL = `${ENDPOINT.replace(/\/$/, "")}/admin/config`;
       setConnectionStatus("تم حفظ الاتصال.", true);
       loadConfig();
     }

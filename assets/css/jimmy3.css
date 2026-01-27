@@ -34,7 +34,7 @@
     
     /* --- 📏 SPACING SYSTEM --- */
     --container-padding: clamp(24px, 5vw, 60px); 
-    --section-gap: clamp(100px, 15vh, 180px);
+    --section-gap: clamp(60px, 10vh, 100px);
 }
 
 /* --- RESET & BASE --- */
@@ -426,7 +426,7 @@ h1, h2, h3, h4 {
 
 /* --- 📜 STORY SECTION --- */
 .story-text p {
-    font-size: clamp(1.2rem, 2vw, 1.8rem); line-height: 1.6; color: var(--text-muted); margin-bottom: 2.5rem; max-width: 900px;
+    font-size: clamp(1.1rem, 1.6vw, 1.4rem); line-height: 1.6; color: var(--text-muted); margin-bottom: 2.5rem; max-width: 900px;
 }
 .story-text .highlight { color: #fff; text-shadow: 0 0 20px rgba(255,255,255,0.2); }
 
