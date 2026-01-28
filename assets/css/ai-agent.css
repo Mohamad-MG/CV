@@ -42,7 +42,7 @@
 .ai-console-container {
     position: fixed;
     top: 50%; left: 50%;
-    transform: translate(-50%, -48%) scale(0.98); 
+    transform: translate(-50%, -46%) scale(0.95); 
     
     width: 800px;
     height: 600px;
@@ -57,16 +57,32 @@
 
     display: flex; flex-direction: column;
     z-index: 9999;
-    opacity: 0; visibility: hidden; overflow: hidden;
+    
+    /* Initial State */
+    opacity: 0; 
+    visibility: hidden; 
+    
+    /* Optimize Painting */
     will-change: transform, opacity;
-    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), 
-                opacity 0.3s ease, 
-                visibility 0.3s;
+    backface-visibility: hidden;
+
+    /* Closing Transition: Fade out, shrink, then hide visibility after done */
+    transition: 
+        transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+        opacity 0.3s ease,
+        visibility 0s linear 0.3s;
 }
 
 .ai-console-container.active {
     transform: translate(-50%, -50%) scale(1);
-    opacity: 1; visibility: visible;
+    opacity: 1; 
+    visibility: visible;
+    
+    /* Opening Transition: Pop in smoothly, show visibility immediately */
+    transition: 
+        transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+        opacity 0.4s ease,
+        visibility 0s linear 0s;
 }
 
 /* --- Header --- */
@@ -247,7 +263,7 @@
 
 /* Hover: Pure Zoom & Detail */
 .console-trigger:hover { 
-    transform: scale(1.15); 
+    transform: scale(1.35); 
 }
 .console-trigger:hover img { 
     filter: drop-shadow(0 8px 25px rgba(0,0,0,0.4)); /* Deeper shadow on hover */
