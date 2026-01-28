@@ -75,10 +75,11 @@ class PrismAgent {
                 </div>
 
                 <div class="console-input-area">
-                    <div class="input-capsule">
-                        <span class="input-prompt">->_</span>
+                    <div class="input-wrapper">
                         <input type="text" id="consoleInput" class="console-input" placeholder="${txt.placeholder}" autocomplete="off">
-                        <span class="return-hint">↵ Enter</span>
+                        <button id="btnSend" class="send-btn">
+                            <i class="ri-send-plane-fill"></i>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -97,6 +98,7 @@ class PrismAgent {
             console: document.getElementById('aiConsole'),
             close: document.getElementById('btnClose'),
             input: document.getElementById('consoleInput'),
+            sendBtn: document.getElementById('btnSend'),
             msgs: document.getElementById('consoleMsgs')
         };
     }
@@ -105,6 +107,7 @@ class PrismAgent {
         this.ui.trigger.addEventListener('click', () => this.toggle(true));
         this.ui.close.addEventListener('click', () => this.toggle(false));
         this.ui.backdrop.addEventListener('click', () => this.toggle(false));
+        this.ui.sendBtn.addEventListener('click', () => this.handleSubmit());
 
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape' && this.isOpen) this.toggle(false);
@@ -114,14 +117,17 @@ class PrismAgent {
             if (e.key === 'Enter') this.handleSubmit();
         });
 
-        // Focus Trap: Keep input focused unless closing
+        // 🎯 Focus Guard: Keep cursor inside while open
         this.ui.input.addEventListener('blur', () => {
             if (this.isOpen) {
+                // Short delay to allow clicking the close button or send button
                 setTimeout(() => {
-                    if (this.isOpen && document.activeElement !== this.ui.close) {
+                    if (this.isOpen && 
+                        document.activeElement !== this.ui.close && 
+                        document.activeElement !== this.ui.sendBtn) {
                         this.ui.input.focus();
                     }
-                }, 150);
+                }, 10);
             }
         });
     }
@@ -133,7 +139,7 @@ class PrismAgent {
         if (open) {
             win.classList.add('active');
             backdrop.classList.add('active');
-            trigger.classList.add('hidden');
+            // trigger.classList.add('hidden'); // REMOVED: Keep icon visible
             document.body.style.overflow = 'hidden';
 
             if (this.messages.length === 0) {
@@ -145,7 +151,7 @@ class PrismAgent {
         } else {
             win.classList.remove('active');
             backdrop.classList.remove('active');
-            trigger.classList.remove('hidden');
+            // trigger.classList.remove('hidden'); // REMOVED
             document.body.style.overflow = '';
         }
     }

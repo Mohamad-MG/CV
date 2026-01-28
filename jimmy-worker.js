@@ -14,6 +14,8 @@
 ======================= */
 
 const CACHE_TTL_MS = 60_000;
+const WORKER_VERSION = "2026.1";
+const MIN_FALLBACK_MS = 1500;
 
 const DEFAULT_LIMITS = {
   rulesChars: 2500,
@@ -118,7 +120,7 @@ function parseStyle(text) {
     try {
       return JSON.parse(trimmed);
     } catch {
-      // Fall through to plain-text parsing for resilience.
+      throw new Error("STYLE_INVALID_JSON");
     }
   }
 
@@ -126,6 +128,7 @@ function parseStyle(text) {
   let inLimits = false;
   const limits = {};
   let mode = "default";
+  let brainsForce = false;
   const rulesLines = [];
 
   for (const line of lines) {
@@ -150,6 +153,7 @@ function parseStyle(text) {
         const key = match[1].toLowerCase();
         const value = match[2].trim();
         if (key === "mode") mode = value;
+        if (key === "brains_force") brainsForce = value === "true" || value === "1";
         if (key === "rules_chars") limits.rules_chars = Number(value) || limits.rules_chars;
         if (key === "user_chars") limits.user_chars = Number(value) || limits.user_chars;
         if (key === "market_chars") limits.market_chars = Number(value) || limits.market_chars;
@@ -167,7 +171,25 @@ function parseStyle(text) {
     rules_text: rulesText,
     limits,
     mode,
+    brains_force: brainsForce,
   };
+}
+
+function validateStyle(style) {
+  if (!style || !style.rules_text) {
+    throw new Error("STYLE_MISSING_RULES");
+  }
+
+  const limits = style.limits || {};
+  const keys = ["rules_chars", "user_chars", "market_chars"];
+  for (const key of keys) {
+    if (Object.prototype.hasOwnProperty.call(limits, key)) {
+      const value = Number(limits[key]);
+      if (!Number.isFinite(value) || value <= 0) {
+        throw new Error("LIMITS_INVALID");
+      }
+    }
+  }
 }
 
 /* =======================
@@ -218,7 +240,7 @@ function detectIntent(lastMessage) {
    SYSTEM PROMPT BUILDER
 ======================= */
 
-function buildSystemPrompt({ style, userBrain, marketBrain, locale, intent }) {
+function buildSystemPrompt({ style, userBrain, marketBrain, locale, intent, forceBrains }) {
   if (!style?.rules_text) throw new Error("MISSING_STYLE_RULES");
 
   const limits = style.limits || {};
@@ -233,13 +255,13 @@ function buildSystemPrompt({ style, userBrain, marketBrain, locale, intent }) {
   ];
 
   // Conditional brain injection
-  if (intent === "user" || style.mode === "hiring") {
+  if (forceBrains || intent === "user" || style.mode === "hiring") {
     if (userBrain) {
       parts.push(`USER_BRAIN:\n${trimText(userBrain, userChars)}`);
     }
   }
 
-  if (intent === "market" || style.mode === "diagnose") {
+  if (forceBrains || intent === "market" || style.mode === "diagnose") {
     if (marketBrain) {
       parts.push(`MARKET_BRAIN:\n${trimText(marketBrain, marketChars)}`);
     }
@@ -253,16 +275,31 @@ function buildSystemPrompt({ style, userBrain, marketBrain, locale, intent }) {
 ======================= */
 
 function normalizeMessages(messages, maxHistory, maxMsgChars) {
-  return (messages || [])
+  const cleaned = (messages || [])
     .map((m) => {
       if (!m?.content) return null;
       return {
         role: m.role === "user" ? "user" : "model",
         parts: [{ text: trimText(String(m.content), maxMsgChars) }],
+        _trimmed: String(m.content).length > maxMsgChars,
       };
     })
-    .filter(Boolean)
-    .slice(-maxHistory);
+    .filter(Boolean);
+
+  const truncatedHistory = cleaned.length > maxHistory;
+  const trimmedAny = cleaned.some((m) => m._trimmed);
+  const sliced = cleaned.slice(-maxHistory).map(({ _trimmed, ...rest }) => rest);
+
+  return {
+    messages: sliced,
+    meta: {
+      truncated: truncatedHistory || trimmedAny,
+      truncated_history: truncatedHistory,
+      truncated_message: trimmedAny,
+      max_chars_used: maxMsgChars,
+      max_messages_used: maxHistory,
+    },
+  };
 }
 
 /* =======================
@@ -276,14 +313,22 @@ function buildModelPriority(env) {
     : GEMINI_MODELS_PRIORITY;
 }
 
-async function callGemini(env, payload, timeoutMs) {
+async function callGemini(env, payload, totalBudgetMs, perModelCapMs) {
   if (!env.GEMINI_API_KEY) throw new Error("MISSING_GEMINI_API_KEY");
 
   const models = buildModelPriority(env);
+  const startedAt = nowMs();
 
   for (const model of models) {
+    const elapsed = nowMs() - startedAt;
+    const remaining = totalBudgetMs - elapsed;
+    if (remaining < MIN_FALLBACK_MS) {
+      break;
+    }
+
+    const attemptTimeout = Math.min(perModelCapMs, remaining);
     const controller = new AbortController();
-    const t = setTimeout(() => controller.abort(), timeoutMs);
+    const t = setTimeout(() => controller.abort(), attemptTimeout);
 
     try {
       const res = await fetch(
@@ -334,6 +379,59 @@ export default {
       return jsonResponse({ ok: true, cache: "cleared" }, 200, cors);
     }
 
+    if (request.method === "GET" && url.pathname === "/health") {
+      const hasKV = Boolean(getKv(env));
+      let style = null;
+      let activeMode = null;
+      let limitsSnapshot = {
+        rules_chars: DEFAULT_LIMITS.rulesChars,
+        user_chars: DEFAULT_LIMITS.userChars,
+        market_chars: DEFAULT_LIMITS.marketChars,
+      };
+      let keysPresence = { user: false, market: false, style: false };
+
+      if (hasKV) {
+        const styleRaw = await getBrain(env, "jimmy:style");
+        keysPresence.style = styleRaw != null;
+        try {
+          style = parseStyle(styleRaw);
+          if (style) {
+            validateStyle(style);
+            activeMode = style.mode || "default";
+            const limits = style.limits || {};
+            limitsSnapshot = {
+              rules_chars: Number(limits.rules_chars) || DEFAULT_LIMITS.rulesChars,
+              user_chars: Number(limits.user_chars) || DEFAULT_LIMITS.userChars,
+              market_chars: Number(limits.market_chars) || DEFAULT_LIMITS.marketChars,
+            };
+          }
+        } catch {
+          // Keep health lightweight; signal invalid via activeMode.
+          activeMode = "invalid_style";
+        }
+
+        const [userRaw, marketRaw] = await Promise.all([
+          getBrain(env, "jimmy:kb:user"),
+          getBrain(env, "jimmy:kb:market"),
+        ]);
+        keysPresence.user = userRaw != null;
+        keysPresence.market = marketRaw != null;
+      }
+
+      return jsonResponse(
+        {
+          ok: true,
+          version: WORKER_VERSION,
+          hasKV,
+          keys: keysPresence,
+          active_mode: activeMode,
+          limits: limitsSnapshot,
+        },
+        200,
+        cors
+      );
+    }
+
     /* -------- CHAT -------- */
 
     if (request.method !== "POST" || url.pathname !== "/chat") {
@@ -355,9 +453,10 @@ export default {
       const locale = getLocale(request, body);
       const maxHistory = Number(env.MAX_HISTORY || DEFAULT_LIMITS.maxHistory);
       const maxMsgChars = Number(env.MAX_MSG_CHARS || DEFAULT_LIMITS.maxMsgChars);
-      const timeoutMs = Number(env.PROVIDER_TIMEOUT_MS || 12000);
+      const totalBudgetMs = Number(env.PROVIDER_TIMEOUT_MS || 12000);
+      const perModelCapMs = Number(env.PER_MODEL_TIMEOUT_MS || totalBudgetMs);
 
-      const messages = normalizeMessages(body.messages, maxHistory, maxMsgChars);
+      const { messages, meta } = normalizeMessages(body.messages, maxHistory, maxMsgChars);
       if (!messages.length) {
         return jsonResponse({ response: "الرسالة فارغة" }, 400, cors);
       }
@@ -368,8 +467,12 @@ export default {
       const intent = detectIntent(lastUserMsg);
 
       const style = parseStyle(await getBrain(env, "jimmy:style"));
-      const userBrain = intent === "user" ? await getBrain(env, "jimmy:kb:user") : "";
-      const marketBrain = intent === "market" ? await getBrain(env, "jimmy:kb:market") : "";
+      validateStyle(style);
+      const forceBrains = Boolean(style?.brains_force);
+      const includeUserBrain = forceBrains || intent === "user" || style?.mode === "hiring";
+      const includeMarketBrain = forceBrains || intent === "market" || style?.mode === "diagnose";
+      const userBrain = includeUserBrain ? await getBrain(env, "jimmy:kb:user") : "";
+      const marketBrain = includeMarketBrain ? await getBrain(env, "jimmy:kb:market") : "";
 
       const systemPrompt = buildSystemPrompt({
         style,
@@ -377,6 +480,7 @@ export default {
         marketBrain,
         locale,
         intent,
+        forceBrains,
       });
 
       const payload = {
@@ -388,16 +492,36 @@ export default {
         },
       };
 
-      const text = await callGemini(env, payload, timeoutMs);
-      return jsonResponse({ response: text }, 200, cors);
+      const text = await callGemini(env, payload, totalBudgetMs, perModelCapMs);
+      return jsonResponse(
+        {
+          response: text,
+          meta: {
+            truncated: meta.truncated,
+            truncated_history: meta.truncated_history,
+            truncated_message: meta.truncated_message,
+            max_chars_used: meta.max_chars_used,
+            max_messages_used: meta.max_messages_used,
+          },
+        },
+        200,
+        cors
+      );
     } catch (err) {
       console.error("Worker Error:", err);
 
+      if (err?.message === "STYLE_INVALID_JSON") {
+        return jsonResponse({ response: "STYLE_INVALID_JSON" }, 400, cors);
+      }
+      if (err?.message === "STYLE_MISSING_RULES") {
+        return jsonResponse({ response: "STYLE_MISSING_RULES" }, 400, cors);
+      }
+      if (err?.message === "LIMITS_INVALID") {
+        return jsonResponse({ response: "LIMITS_INVALID" }, 400, cors);
+      }
+
       return jsonResponse(
-        {
-          response:
-            "معلش، في مشكلة تقنية صغيرة دلوقتي. جرّب تاني بعد شوية.",
-        },
+        { response: "معلش، في مشكلة تقنية صغيرة دلوقتي. جرّب تاني بعد شوية." },
         500,
         cors
       );

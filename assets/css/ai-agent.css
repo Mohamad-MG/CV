@@ -1,20 +1,24 @@
 /* 
-   🌌 ULTRA MODERN 2026 - LUMINOUS DEPTH EDITION
-   Concept: Volumetric Light, Cyber Grid, Deep Glass
+   🌌 ULTRA MODERN 2026 - LIGHTSPEED EDITION
+   Concept: Hyper-fast, Clean Glass, Neon Precision
 */
 
 :root {
-    /* Palette: Luminous Dark */
-    --glass-surface: #0a0a0f; /* Base deep dark */
-    --glass-highlight: rgba(255, 255, 255, 0.03);
-    --neon-cyan: #00F0FF;
-    --neon-blue: #2E86DE;
-    --text-primary: #ffffff;
-    --text-secondary: #94a3b8;
+    /* Palette: Void & Neon */
+    --agent-bg: #050508;
+    --agent-surface: #0f1115;
+    --agent-border: rgba(255, 255, 255, 0.08);
+    --agent-highlight: rgba(255, 255, 255, 0.03);
     
-    /* Depth Layers */
-    --depth-shadow: 0 40px 80px -20px rgba(0, 0, 0, 0.9);
-    --ambient-glow: 0 0 100px -20px rgba(0, 240, 255, 0.05);
+    --neon-cyan: #00F0FF;
+    --neon-purple: #BC13FE;
+    --text-primary: #ffffff;
+    --text-muted: #8b9bb4;
+    
+    /* Optimized Effects */
+    --glow-strong: 0 0 12px rgba(0, 240, 255, 0.12);
+    --glow-subtle: 0 0 6px rgba(0, 240, 255, 0.04);
+    --glass-blur: blur(16px); /* Reduced from 40px for performance */
     
     /* Fonts */
     --font-ui: 'Outfit', sans-serif;
@@ -25,196 +29,234 @@
 #mg-neural-backdrop {
     position: fixed;
     inset: 0;
-    background: rgba(5, 5, 8, 0.8);
-    backdrop-filter: blur(12px) grayscale(50%);
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(2px); /* Very light blur */
     z-index: 9998;
     opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.5s ease;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
 }
-#mg-neural-backdrop.active { opacity: 1; visibility: visible; }
+#mg-neural-backdrop.active { opacity: 1; pointer-events: auto; }
 
 /* --- The Main Console Window --- */
 .ai-console-container {
     position: fixed;
     top: 50%; left: 50%;
-    transform: translate(-50%, -48%) scale(0.95) rotateX(2deg); /* 3D Start */
+    transform: translate(-50%, -48%) scale(0.98); 
     
-    width: 850px;
-    height: 650px;
-    max-width: 92vw; max-height: 88vh;
+    width: 800px;
+    height: 600px;
+    max-width: 90vw; max-height: 85vh;
     
-    /* 1. Volumetric Background (The Light Source) */
-    background: 
-        radial-gradient(circle at 50% 0%, rgba(30, 35, 50, 0.4) 0%, rgba(10, 10, 12, 0.95) 70%),
-        var(--glass-surface);
-        
-    /* 2. The Cyber Grid (Depth Texture) */
-    background-image: 
-        linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-        radial-gradient(circle at 50% 0%, rgba(30, 35, 50, 0.4) 0%, rgba(10, 10, 12, 0.95) 70%); /* Re-apply gradient over grid slightly if needed, or just grid */
+    /* Performance Optimized Background */
+    background: var(--agent-bg);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
     
-    background-size: 40px 40px, 40px 40px, 100% 100%;
-    background-blend-mode: overlay, overlay, normal;
+    box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.9);
 
-    backdrop-filter: blur(40px);
-    -webkit-backdrop-filter: blur(40px);
-    
-    /* 3. Prismatic Borders (Edge Light) */
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-top: 1px solid rgba(255, 255, 255, 0.15); /* Top light catches edge */
-    border-radius: 24px;
-    
-    box-shadow: 
-        var(--depth-shadow),
-        var(--ambient-glow),
-        inset 0 1px 0 rgba(255, 255, 255, 0.1);
-        
     display: flex; flex-direction: column;
     z-index: 9999;
     opacity: 0; visibility: hidden; overflow: hidden;
-    transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+    will-change: transform, opacity;
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), 
+                opacity 0.3s ease, 
+                visibility 0.3s;
 }
 
 .ai-console-container.active {
-    transform: translate(-50%, -50%) scale(1) rotateX(0);
+    transform: translate(-50%, -50%) scale(1);
     opacity: 1; visibility: visible;
 }
 
 /* --- Header --- */
 .console-header {
     display: flex; justify-content: space-between; align-items: center;
-    padding: 24px 32px;
-    background: linear-gradient(to bottom, rgba(255,255,255,0.03), transparent);
-    border-bottom: 1px solid rgba(255,255,255,0.05);
+    padding: 12px 24px;
+    background: rgba(255, 255, 255, 0.01);
+    border-bottom: 1px solid var(--agent-border);
+    height: 60px;
+    flex-shrink: 0;
 }
 
-.console-brand-wrapper { display: flex; align-items: center; gap: 14px; }
+.console-brand-wrapper { display: flex; align-items: center; gap: 10px; }
 
 .header-avatar {
-    width: 40px; height: 40px; object-fit: contain;
-    filter: drop-shadow(0 0 8px rgba(0, 240, 255, 0.2)); /* Subtle inner glow */
+    width: 28px; height: 28px; object-fit: contain;
+    filter: drop-shadow(0 0 3px rgba(0, 240, 255, 0.2));
 }
 
-.header-info { display: flex; flex-direction: column; line-height: 1.1; }
+.header-info { display: flex; flex-direction: column; }
 
 .header-name {
-    font-family: var(--font-code); font-weight: 700; color: #fff;
-    font-size: 1rem; letter-spacing: 1px;
-    text-shadow: 0 0 20px rgba(0,0,0,0.5);
+    font-family: var(--font-ui); font-weight: 600; color: #fff;
+    font-size: 0.9rem; letter-spacing: 0.3px;
 }
 
 .header-status {
-    font-size: 0.7rem; color: var(--neon-cyan);
-    text-transform: uppercase; display: flex; align-items: center; gap: 6px; margin-top: 4px;
-    font-weight: 600; letter-spacing: 0.5px;
+    font-size: 0.6rem; color: var(--neon-cyan);
+    text-transform: uppercase; display: flex; align-items: center; gap: 5px;
+    font-weight: 500; letter-spacing: 0.5px;
 }
 
 .status-beacon {
-    width: 6px; height: 6px; background: var(--neon-cyan); border-radius: 50%;
-    box-shadow: 0 0 8px var(--neon-cyan);
-    animation: pulseBeacon 3s infinite;
+    width: 4px; height: 4px; background: var(--neon-cyan); border-radius: 50%;
+    box-shadow: 0 0 4px var(--neon-cyan);
+    animation: pulseBeacon 2.5s infinite;
 }
-@keyframes pulseBeacon { 0%,100%{opacity:1;} 50%{opacity:0.4;} }
+@keyframes pulseBeacon { 0%,100%{opacity:1;} 50%{opacity:0.3;} }
 
 .console-close {
-    width: 32px; height: 32px;
-    background: rgba(255,255,255,0.05); border: none; border-radius: 8px;
-    color: rgba(255,255,255,0.6); cursor: pointer;
+    width: 28px; height: 28px;
+    background: transparent; border: none; border-radius: 6px;
+    color: rgba(255,255,255,0.3); cursor: pointer;
     display: flex; align-items: center; justify-content: center;
     transition: 0.2s;
 }
-.console-close:hover { background: rgba(255, 50, 80, 0.2); color: #ff4d6d; }
+.console-close:hover { 
+    background: rgba(255, 255, 255, 0.05); 
+    color: #fff;
+}
 
 
-/* --- Messages Area (Luminous Stream) --- */
+/* --- Messages Area --- */
 .console-messages {
-    flex: 1; padding: 20px 40px;
-    overflow-y: auto; display: flex; flex-direction: column; gap: 24px;
+    flex: 1; padding: 20px 24px;
+    overflow-y: auto; display: flex; flex-direction: column; gap: 16px;
+    scroll-behavior: smooth;
     scrollbar-width: thin;
-    mask-image: linear-gradient(to bottom, transparent, black 30px); /* Smooth top fade */
+    scrollbar-color: rgba(255, 255, 255, 0.08) transparent;
+}
+
+.console-messages::-webkit-scrollbar {
+    width: 4px;
+}
+.console-messages::-webkit-scrollbar-track {
+    background: transparent;
+}
+.console-messages::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+}
+.console-messages::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.2);
 }
 
 .console-msg {
-    display: grid; grid-template-columns: 32px 1fr; gap: 18px;
-    animation: fadeInMsg 0.4s ease-out;
+    display: flex; gap: 14px;
+    max-width: 90%;
+    animation: slideIn 0.3s ease-out;
 }
-@keyframes fadeInMsg { from{opacity:0;transform:translateY(10px);} to{opacity:1;transform:translateY(0);} }
+@keyframes slideIn { from{opacity:0;transform:translateY(4px);} to{opacity:1;transform:translateY(0);} }
+
+/* AI Layout */
+.msg-ai { align-self: flex-start; }
+.msg-ai .msg-content { 
+    background: rgba(255, 255, 255, 0.02); 
+    border: 1px solid rgba(255, 255, 255, 0.04);
+    border-radius: 4px 12px 12px 12px;
+    color: #cbd5e1;
+}
+
+/* User Layout */
+.msg-user { align-self: flex-end; flex-direction: row-reverse; }
+.msg-user .msg-content { 
+    background: rgba(0, 240, 255, 0.05); 
+    border: 1px solid rgba(0, 240, 255, 0.1);
+    border-radius: 12px 4px 12px 12px;
+    color: #fff;
+}
 
 .msg-avatar {
-    width: 32px; height: 32px; border-radius: 8px;
+    width: 24px; height: 24px; border-radius: 5px; flex-shrink: 0;
     display: flex; align-items: center; justify-content: center;
-    font-size: 1.1rem;
+    font-size: 0.9rem; margin-top: 3px;
+}
+.icon-ai { color: rgba(0, 240, 255, 0.6); }
+.icon-user { color: #fff; background: rgba(255, 255, 255, 0.05); }
+
+.msg-content { 
+    padding: 10px 14px; 
+    font-size: 0.95rem; line-height: 1.5; 
 }
 
-/* AI Msg Style */
-.icon-ai { color: var(--neon-cyan); background: rgba(0, 240, 255, 0.08); box-shadow: 0 0 15px rgba(0, 240, 255, 0.05); }
-.msg-ai .msg-content { color: #d1d5db; font-weight: 300; font-size: 1.05rem; line-height: 1.6; }
 
-/* User Msg Style */
-.icon-user { color: #fff; background: rgba(255, 255, 255, 0.1); }
-.msg-user .msg-content { color: #fff; font-weight: 500; font-size: 1.15rem; }
-
-
-/* --- Input Area (Floating Deck) --- */
+/* --- Input Area --- */
 .console-input-area {
-    padding: 30px 40px 40px;
+    padding: 16px 24px 20px;
+    background: var(--agent-bg);
+    border-top: 1px solid rgba(255, 255, 255, 0.03);
     position: relative;
-    /* Light wash at bottom */
-    background: linear-gradient(to top, rgba(0, 240, 255, 0.03), transparent 80%);
+    z-index: 2;
 }
 
-.input-capsule {
-    display: flex; align-items: center; gap: 16px;
-    background: rgba(15, 15, 20, 0.6);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    padding: 18px 24px;
-    border-radius: 18px;
-    box-shadow: 0 10px 40px -10px rgba(0,0,0,0.5);
-    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+.input-wrapper {
+    display: flex; align-items: center; gap: 10px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    padding: 6px 10px;
+    border-radius: 8px;
+    transition: all 0.25s ease;
 }
 
-.input-capsule:focus-within {
-    border-color: var(--neon-cyan);
-    box-shadow: 0 0 30px rgba(0, 240, 255, 0.15);
-    background: rgba(20, 20, 25, 0.8);
-    transform: translateY(-2px);
+.input-wrapper:focus-within {
+    border-color: rgba(0, 240, 255, 0.3);
+    background: rgba(255, 255, 255, 0.03);
+    /* Shadow removed for minimal feel */
 }
-
-.input-prompt { color: var(--neon-cyan); font-family: var(--font-code); font-weight: 700; }
 
 .console-input {
-    flex: 1; background: none; border: none; outline: none;
-    font-family: var(--font-ui); font-size: 1.1rem; color: #fff;
+    flex: 1; background: none; border: none; outline: none !important;
+    font-family: var(--font-ui); font-size: 0.95rem; color: #fff;
+    padding: 8px;
+    min-height: 24px;
 }
-.console-input::placeholder { color: rgba(255, 255, 255, 0.25); }
+.console-input::placeholder { color: rgba(255, 255, 255, 0.15); transition: 0.2s; }
 
-.return-hint {
-    font-size: 0.7rem; color: rgba(255, 255, 255, 0.3); font-family: var(--font-code);
-    border: 1px solid rgba(255,255,255,0.1); padding: 4px 8px; border-radius: 4px;
-    opacity: 0; transform: translateX(10px); transition: 0.3s;
+.send-btn {
+    width: 34px; height: 34px;
+    border-radius: 6px; border: none;
+    background: rgba(255, 255, 255, 0.03);
+    color: rgba(255, 255, 255, 0.2);
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s;
 }
-.input-capsule:focus-within .return-hint { opacity: 1; transform: translateX(0); }
 
+.console-input:not(:placeholder-shown) ~ .send-btn,
+.send-btn:hover {
+    background: rgba(0, 240, 255, 0.15);
+    color: var(--neon-cyan);
+    box-shadow: 0 0 10px rgba(0, 240, 255, 0.1);
+}
 
-/* --- Trigger (Refined & Tactile) --- */
+/* --- Trigger Button --- */
 .console-trigger {
     position: fixed; bottom: 30px; right: 30px;
-    width: 85px; height: 85px; /* Slightly more compact */
+    width: 70px; height: 70px;
     border: none; background: none; cursor: pointer; z-index: 9990;
     display: flex; align-items: center; justify-content: center;
+    transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
 }
 .console-trigger img {
-    width: 80px; height: 80px; 
+    width: 100%; height: 100%; 
     object-fit: contain;
-    filter: brightness(0.9) contrast(1.05); /* Calmed the raw intensity */
-    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    /* Soft, natural shadow only. No neon. */
+    filter: drop-shadow(0 5px 15px rgba(0,0,0,0.3)); 
+    transition: all 0.3s ease;
+}
+
+/* Hover: Pure Zoom & Detail */
+.console-trigger:hover { 
+    transform: scale(1.15); 
 }
 .console-trigger:hover img { 
-    transform: scale(1.25); /* More pronounced zoom */
+    filter: drop-shadow(0 8px 25px rgba(0,0,0,0.4)); /* Deeper shadow on hover */
 }
-.console-trigger.hidden { transform: scale(0); opacity: 0; pointer-events: none; }
+
+/* Hidden state removed/neutralized as requested */
+.console-trigger.hidden { 
+    opacity: 1; pointer-events: auto; transform: none;
+}
 
 
 /* --- Mobile --- */
@@ -222,17 +264,39 @@
     .ai-console-container {
         width: 100%; height: 100%; border-radius: 0; border: none;
         top: 0; left: 0; transform: none !important;
-        background-size: 20px 20px; /* Smaller grid */
+        max-width: 100vw; max-height: 100dvh;
     }
-    .console-messages { padding: 20px; }
-    .console-input-area { padding: 20px; }
+    .console-messages { padding: 16px; }
+    .console-input-area { padding: 16px; padding-bottom: max(16px, env(safe-area-inset-bottom)); }
 }
 
-/* RTL */
+/* RTL Support */
 html[lang="ar"] .console-trigger { left: 30px; right: auto; }
 html[lang="ar"] .console-header { flex-direction: row-reverse; }
-html[lang="ar"] .console-msg { grid-template-columns: 1fr 32px; text-align: right; }
-html[lang="ar"] .msg-avatar { grid-column: 2; }
-html[lang="ar"] .msg-content { grid-column: 1; }
-html[lang="ar"] .input-capsule { flex-direction: row-reverse; }
+html[lang="ar"] .msg-user { flex-direction: row; } 
+html[lang="ar"] .msg-ai { flex-direction: row-reverse; } 
+html[lang="ar"] .console-msg { flex-direction: row; }
 html[lang="ar"] .console-input { text-align: right; }
+html[lang="ar"] .input-wrapper { flex-direction: row-reverse; }
+html[lang="ar"] .msg-user .msg-content { text-align: right; border-radius: 0 12px 12px 12px; }
+html[lang="ar"] .msg-ai .msg-content { text-align: right; border-radius: 12px 0 12px 12px; }
+
+/* --- Typing Animation --- */
+.typing-block {
+    display: flex; gap: 4px; padding: 4px 0;
+    align-items: center; justify-content: center;
+    min-width: 40px;
+}
+.typing-block span {
+    width: 6px; height: 6px;
+    background: var(--neon-cyan);
+    border-radius: 50%;
+    animation: typingBounce 1.4s infinite ease-in-out both;
+}
+.typing-block span:nth-child(1) { animation-delay: -0.32s; }
+.typing-block span:nth-child(2) { animation-delay: -0.16s; }
+
+@keyframes typingBounce {
+    0%, 80%, 100% { transform: scale(0); opacity: 0.5; }
+    40% { transform: scale(1); opacity: 1; }
+}
