@@ -38,7 +38,7 @@ function jsonResponse(body, status, headers) {
 }
 
 function getKv(env) {
-  return env.JIMMY_KV || env.JIMMY_BRAINS || env.KV || null;
+  return env.JIMMY_KV || null;
 }
 
 function trimText(text, maxChars) {
@@ -290,7 +290,6 @@ export default {
       }
 
       const payload = {
-        systemInstruction: { parts: [{ text: systemPrompt }] },
         system_instruction: { parts: [{ text: systemPrompt }] },
         contents,
         generationConfig: {
