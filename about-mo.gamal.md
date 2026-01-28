@@ -6,7 +6,7 @@ Cairo, Egypt • +20 155 514 1282 • emarketbank@gmail.com • LinkedIn: linked
 
 ## The Short Version
 
-> "In 2020, I was part of the team that broke a Guinness World Record — 5 million orders processed in a single Black Friday campaign. But the real story isn't the record. It's the system we built that made it possible."
+> "Guinness World Records recognized Arabian Oud in January 2020 as the world's largest premium unisex fragrance brand, based on estimated annual retail sales value. The assessment covered a full 12-month fiscal year and reflects 2019 sales. Estimated Retail Sales Value ≈ $478M."
 
 I've spent 10+ years figuring out one thing: **how to turn marketing chaos into growth machines that run without burning teams out.**
 
@@ -142,8 +142,8 @@ This is where I learned scale for real: multi-market growth, high daily spend, a
   **Result:** A more stable delivery engine that shipped faster and cleaner.
 
 **Notable moment**
-- Arabian Oud got a Guinness World Records recognition (official record page).  
-  I was part of the growth machine during that era — where scale, brand credibility, and performance all had to work together.
+- Guinness World Records recognized Arabian Oud in January 2020 as the world's largest premium unisex fragrance brand, based on estimated annual retail sales value (FY2019).  
+  Estimated Retail Sales Value ≈ $478M. Source: Guinness World Records – January 2020.
 
 ---
 
@@ -268,7 +268,7 @@ The game is changing fast. Here's what I'm paying attention to:
 ---
 
 ## Proof Links
-- Guinness World Records (Arabian Oud):  
+- Source: Guinness World Records – January 2020  
   https://www.guinnessworldrecords.ae/news/commercial/2020/1/arabian-oud-gets-crowned-as-the-largest-premium-unisex-fragrance-brand-in-the-wor-607327
 - Iso-tec Clients / Projects:  
   https://www.iso-tec.com/%D9%85%D8%B4%D8%B1%D9%88%D8%B9%D8%A7%D8%AA-%D8%A3%D9%8A%D8%B2%D9%88%D8%AA%D9%83/
