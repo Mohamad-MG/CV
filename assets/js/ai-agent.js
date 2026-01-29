@@ -122,8 +122,8 @@ class PrismAgent {
             if (this.isOpen) {
                 // Short delay to allow clicking the close button or send button
                 setTimeout(() => {
-                    if (this.isOpen && 
-                        document.activeElement !== this.ui.close && 
+                    if (this.isOpen &&
+                        document.activeElement !== this.ui.close &&
                         document.activeElement !== this.ui.sendBtn) {
                         this.ui.input.focus();
                     }
@@ -142,17 +142,25 @@ class PrismAgent {
             // trigger.classList.add('hidden'); // REMOVED: Keep icon visible
             document.body.style.overflow = 'hidden';
 
+            const wrapper = input.closest('.input-wrapper');
+            if (wrapper) wrapper.classList.add('active-glow');
+
             if (this.messages.length === 0) {
                 this.addMessage('ai', PRISM_CONFIG.texts[this.lang].welcome);
             }
 
-            setTimeout(() => input.focus(), 100);
+            // 🎯 Sharp Auto-Focus: Hit it immediately AND after animation
+            input.focus();
+            setTimeout(() => input.focus(), 400);
 
         } else {
             win.classList.remove('active');
             backdrop.classList.remove('active');
             // trigger.classList.remove('hidden'); // REMOVED
             document.body.style.overflow = '';
+
+            const wrapper = input.closest('.input-wrapper');
+            if (wrapper) wrapper.classList.remove('active-glow');
         }
     }
 
@@ -206,8 +214,10 @@ class PrismAgent {
 
     setSending(isSending) {
         this.isSending = isSending;
+        // 🧠 UX Fix: Don't disable input field, so the browser doesn't drop focus.
         if (this.ui && this.ui.input) {
-            this.ui.input.disabled = isSending;
+            const wrapper = this.ui.input.closest('.input-wrapper');
+            if (wrapper) wrapper.classList.toggle('is-sending', isSending);
         }
     }
 
@@ -233,6 +243,9 @@ class PrismAgent {
         this.messages.push({ role, content: text });
         this.trimHistory();
         this.saveHistory();
+
+        // 🎯 Focus persistence
+        if (this.isOpen) this.ui.input.focus();
     }
 
     showTyping() {
@@ -311,6 +324,7 @@ class PrismAgent {
         } finally {
             clearTimeout(timeoutId);
             this.setSending(false);
+            if (this.isOpen) this.ui.input.focus();
         }
     }
 

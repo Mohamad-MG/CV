@@ -275,26 +275,7 @@ function normalizeMessages(messages, maxHistory = 10, maxMsgChars = 1200) {
         .slice(-maxHistory);
 }
 
-function isSimpleFollowUp(message) {
-    const text = (message || "").trim();
-    if (text.length > 50) return false;
-    const simplePatterns = [
-        /^(طيب|تمام|ماشي|ok|okay)\s*(و|and)?/i,
-        /نبدأ\s*(منين|إزاي|من فين)/i,
-        /إيه\s*أول\s*حاجة/i,
-    ];
-    return simplePatterns.some(p => p.test(text));
-}
-
-function needsAdvancedMode(message) {
-    const text = (message || "").trim();
-    if (text.length < 10) return false;
-    return DECISION_TRIGGERS_AR.some(p => p.test(text));
-}
-
-function hasImplicitConsent(message) {
-    return CONSENT_PATTERNS.some(p => p.test((message || "").trim()));
-}
+// Utility functions removed from top-level to prevent scope issues
 
 /* ============================================================
    HELPERS
@@ -508,6 +489,24 @@ export default {
         }
 
         try {
+            // Internal Helper Functions (Local Scope)
+            const isSimpleFollowUp = (message) => {
+                const text = (message || "").trim();
+                if (text.length > 50) return false;
+                const simplePatterns = [
+                    /^(طيب|تمام|ماشي|ok|okay)\s*(و|and)?/i,
+                    /نبدأ\s*(منين|إزاي|من فين)/i,
+                    /إيه\s*أول\s*حاجة/i,
+                ];
+                return simplePatterns.some(p => p.test(text));
+            };
+
+            const needsAdvancedMode = (message) => {
+                const text = (message || "").trim();
+                if (text.length < 10) return false;
+                return DECISION_TRIGGERS_AR.some(p => p.test(text));
+            };
+
             const body = await request.json();
             const locale = getLocale(request);
             const expertOnInput = Boolean(body.meta?.expert_on);
