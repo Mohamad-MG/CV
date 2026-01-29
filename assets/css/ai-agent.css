@@ -41,16 +41,23 @@
     max-width: 95vw;
     max-height: 90vh;
     background: var(--q-bg);
-    border: 1px solid rgba(255,255,255,0.05); /* Finer border */
+    border: 1px solid rgba(255, 255, 255, 0.05);
     border-radius: 24px;
-    box-shadow: 0 40px 100px -10px rgba(0, 0, 0, 0.95), 0 0 0 1px rgba(255,255,255,0.03); /* Deep depth */
+    box-shadow: 0 40px 100px -10px rgba(0, 0, 0, 0.9);
+    /* Simplified shadow */
     display: flex;
     flex-direction: column;
     z-index: 9999;
     opacity: 0;
     visibility: hidden;
-    transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-    backdrop-filter: blur(30px);
+    transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1), opacity 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+    /* Faster, specific transitions */
+    backdrop-filter: blur(15px);
+    /* Reduced blur for performance */
+    will-change: transform, opacity;
+    /* Hardware acceleration */
+    transform: translate(-50%, -50%) scale(0.95) translateZ(0);
+    /* Force GPU */
 }
 
 .ai-console-quantum.active {
@@ -61,7 +68,8 @@
 
 /* Header */
 .header-quantum {
-    height: 70px; /* Slimmer header */
+    height: 70px;
+    /* Slimmer header */
     padding: 0 24px;
     display: flex;
     justify-content: space-between;
@@ -77,7 +85,8 @@
 }
 
 .quantum-orb {
-    width: 32px; /* Smaller orb */
+    width: 32px;
+    /* Smaller orb */
     height: 32px;
     position: relative;
     display: flex;
@@ -203,11 +212,13 @@
 /* Messages */
 .messages-quantum {
     flex: 1;
-    padding: 24px; /* Reduced padding */
+    padding: 24px;
+    /* Reduced padding */
     overflow-y: auto;
     display: flex;
     flex-direction: column;
-    gap: 16px; /* Tighter gap */
+    gap: 16px;
+    /* Tighter gap */
 }
 
 .msg-quantum {
@@ -227,7 +238,8 @@
 }
 
 .msg-avatar-quantum {
-    width: 28px; /* Compact avatar */
+    width: 28px;
+    /* Compact avatar */
     height: 28px;
     border-radius: 8px;
     flex-shrink: 0;
@@ -250,7 +262,8 @@
 }
 
 .msg-bubble-quantum {
-    padding: 12px 16px; /* Compact bubbles */
+    padding: 12px 16px;
+    /* Compact bubbles */
     border-radius: 16px;
     font-size: 0.9rem;
     line-height: 1.5;
@@ -260,7 +273,10 @@
     background: rgba(255, 255, 255, 0.02);
     border: 1px solid var(--q-border);
     color: #e4e4e7;
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    /* Optimized shadow */
+    will-change: transform;
+    transform: translateZ(0);
 }
 
 .user-msg .msg-bubble-quantum {
@@ -268,7 +284,10 @@
     color: #fff;
     font-weight: 500;
     border-radius: 18px 4px 18px 18px;
-    box-shadow: 0 15px 30px rgba(59, 130, 246, 0.3);
+    box-shadow: 0 10px 20px rgba(59, 130, 246, 0.2);
+    /* Optimized shadow */
+    will-change: transform;
+    transform: translateZ(0);
 }
 
 /* Input Area */
@@ -310,7 +329,8 @@
 }
 
 .input-container-quantum {
-    height: 48px; /* Slimmer input */
+    height: 48px;
+    /* Slimmer input */
     background: rgba(0, 0, 0, 0.4);
     border: 1px solid var(--q-border);
     border-radius: 14px;
