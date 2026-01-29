@@ -234,6 +234,16 @@ export default {
         const headers = cors(req.headers.get("Origin"));
         if (req.method === "OPTIONS") return new Response(null, { status: 204, headers });
 
+        // Health Check / Browser Visit Handler
+        if (req.method === "GET") {
+            return json({ status: `Jimmy Worker v${WORKER_VERSION} Online`, mode: "ready" }, 200, headers);
+        }
+
+        // Enforce POST for actual interactions
+        if (req.method !== "POST") {
+            return json({ error: "Method Not Allowed", message: "Use POST" }, 405, headers);
+        }
+
         try {
             const { messages = [], meta = {} } = await req.json();
             if (!messages.length) return json({ error: "Empty" }, 400, headers);
