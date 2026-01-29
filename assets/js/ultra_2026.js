@@ -507,7 +507,7 @@ const initStoryInteractives = () => {
     counterElements.forEach(el => counterObserver.observe(el));
 
     // B) Calm Text Reveal (Blur Fade)
-    const storyElements = document.querySelectorAll('.story-text p, .source-note, .text-divider');
+    const storyElements = document.querySelectorAll('.story-text p, .text-divider');
     const storyObserver = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {

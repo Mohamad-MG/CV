@@ -749,78 +749,56 @@ h4 {
 
 /* --- 📜 STORY SECTION (CALM & ELEGANT) --- */
 .story-text {
-    text-align: left;
-    /* Left align for a professional feel */
+    text-align: left; /* Left align for a professional feel */
 }
 
 .story-text p {
-    font-size: clamp(1.1rem, 1.5vw, 1.3rem);
-    line-height: 1.8;
-    color: var(--text-muted);
-    margin-bottom: 2.5rem;
-    max-width: 950px;
+    font-size: clamp(0.95rem, 1.2vw, 1.1rem); /* Reduced size for high-end look */
+    line-height: 1.8; 
+    color: var(--text-muted); 
+    margin-bottom: 2rem; 
+    max-width: 900px; 
     margin-left: 0;
-    /* Align left */
     margin-right: auto;
-
-    /* Modern Text Balancing */
     text-wrap: pretty;
-    /* Better for left-aligned text than 'balance' */
-
+    
     /* Calm Blur Reveal Effect */
     opacity: 0;
-    filter: blur(8px);
-    /* Reduced from 12px */
+    filter: blur(12px);
     transform: translateY(20px);
-    transition: opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1), transform 1.2s cubic-bezier(0.16, 1, 0.3, 1), filter 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: all 1.2s cubic-bezier(0.16, 1, 0.3, 1);
     will-change: opacity, filter, transform;
 }
 
-.story-text p.visible,
-.source-note.visible,
-.text-divider.visible {
-    opacity: 1;
-    filter: blur(0);
-    transform: translateY(0);
+.story-text p.visible, 
+.text-divider.visible { 
+    opacity: 1; 
+    filter: blur(0); 
+    transform: translateY(0); 
 }
 
-.story-text .highlight {
-    color: #fff;
+.story-text .highlight { 
+    color: #fff; 
     font-weight: 500;
 }
 
-/* Source Note (Micro Typography) */
-.source-note {
-    font-size: 0.85rem;
-    margin-top: -1rem;
-    margin-bottom: 3rem;
-    opacity: 0;
-    transform: translateY(10px);
-    transition: 1s ease 0.2s;
-    text-align: left;
-}
-
-.source-note a {
-    color: var(--text-faint);
+/* Stealth Link for the 'M' */
+.stealth-link {
+    color: inherit;
     text-decoration: none;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    transition: 0.2s;
+    font-weight: 800;
+    transition: color 0.3s ease;
+    cursor: pointer;
 }
-
-.source-note a:hover {
+.stealth-link:hover {
     color: var(--highlight);
-    border-color: var(--highlight);
 }
 
 /* Visual Divider */
 .text-divider {
-    width: 80px;
-    height: 1px;
-    background: linear-gradient(90deg, rgba(255, 255, 255, 0.3), transparent);
-    margin: 3rem 0;
-    /* Align left */
-    opacity: 0;
-    transition: 1s ease;
+    width: 40px; height: 1px; background: linear-gradient(90deg, rgba(255,255,255,0.3), transparent);
+    margin: 2.5rem 0; 
+    opacity: 0; transition: 1s ease;
 }
 
 /* Counter Style */
