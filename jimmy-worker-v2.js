@@ -1,14 +1,14 @@
 /**
- * Jimmy AI Worker v2.2.3 – Gemini First / Key Pooling Architecture (2026)
- * =======================================================================
- * Optimized for: Resilience, Speed, and Model Authority.
- * Features: 7-Key Pool, Shuffle/Retry, Latency-Based Failover.
+ * Jimmy AI Worker v2.5.0 – Zero-Bureaucracy Flash-First Architecture
+ * ==================================================================
+ * Philosophy: Flash tries first. If it needs help, it asks. No counters. No routers.
+ * Features: 7-Key Pool, Reactive Upscaling, Latency-Based Failover.
  */
 
 /* ============================================================
    CONFIG
 ============================================================ */
-const WORKER_VERSION = "2.4.0";
+const WORKER_VERSION = "2.5.1";
 
 const ALLOWED_ORIGINS = [
     "https://mo-gamal.com",
@@ -17,7 +17,7 @@ const ALLOWED_ORIGINS = [
     "http://127.0.0.1:5173",
 ];
 
-// Gemini Key Pool Secrets (Cloudflare Worker Secrets)
+// Gemini Key Pool Secrets
 const GEMINI_KEY_POOL = [
     "arabian", "arabw", "Cartonya", "Digimora", "digimoraeg", "mogamal", "qyadat"
 ];
@@ -60,19 +60,14 @@ const CORE_STYLE = `
 هيكل الرد:
 - سؤال واحد كحد أقصى بـ 2-3 اختيارات قصيرة.
 
-*** REACTIVE HELP LOGIC ***
-أنت الديفولت (Flash). جاوب بذكاء وسرعة.
-لكن، لو وجدت السؤال "استشارة بيزنس معقدة" (Pricing, Funnel Strategy, Growth) وأنت لا تملك تفاصيل كافية للرد بمستوى "خبير":
-توقف واطلب المساعدة فوراً بكتابة الكلمة دي بس:
+*** REACTIVE HELP SIGNAL ***
+أنت (Flash) الآن. جاوب فوراً بذكاء.
+ولكن.. لو السؤال يتطلب "استشارة عميقة" أو "تحليل بيانات" وأنت لا تملك تفاصيل كافية:
+توقف واطلب الترقية بكتابة هذا الكود فقط:
 <<NEEDS_EXPERT>>
 `.trim();
 
-const WARM_UP_INSTRUCTION = `
-Warm-Up Protocol (للتنفيذ في أول رد فقط):
-1) ترحيب دافئ غير رسمي.
-2) Insight ذكي مرتبط بكلام المستخدم.
-3) Options ناعمة لتحديد زاوية الحديث.
-`.trim();
+const FIRST_MSG_INSTRUCTION = "ابدأ بترحيب دافئ وقل أنا جيمي شريكك في التفكير.";
 
 const CORE_USER = `
 جيمي الأشطر من محمد..بس إحنا هنا بنعرف الناس على محمد أكتر.
@@ -103,10 +98,6 @@ const CORE_INDUSTRY = `
    GLOBAL HELPERS
 ============================================================ */
 
-const DECISION_TRIGGERS_AR = [
-    /\bROAS\b/i, /\bCAC\b/i, /\bLTV\b/i, /أعمل\s*إيه/i, /اختار\s*إزاي/i, /قرار/i, /ميزانية/i, /خسارة/i,
-];
-
 function trimText(text, max = 1200) {
     return text?.length > max ? text.slice(0, max) : text;
 }
@@ -128,11 +119,6 @@ function normalizeMessages(messages, maxHistory = 10, maxMsgChars = 1200) {
             parts: [{ text: trimText(String(m.content), maxMsgChars) }],
         }))
         .slice(-maxHistory);
-}
-
-// Legacy Function (Kept for reference, logic moved to Smart Router)
-function needsAdvancedMode(message) {
-    return false;
 }
 
 function buildCorsHeaders(origin) {
@@ -172,24 +158,22 @@ function buildCorePrompt(locale, isFirstMessage = true) {
     ];
 
     if (isFirstMessage) {
-        parts.push(WARM_UP_INSTRUCTION);
+        parts.push(FIRST_MSG_INSTRUCTION);
     } else {
-        parts.push("⚠️ التعليمات الهامة: لقد تجاوزنا مرحلة الترحيب. ادخل في حوار ذكي مباشر مع المستخدم وممنوع تكرار أي صيغ ترحيبية سابقة.");
+        parts.push("⚠️ تجاوزنا الترحيب. ادخل في صلب الموضوع مباشرة.");
     }
 
     return parts.join("\n\n");
 }
 
-function buildExpertPrompt(advancedKB, locale, expertMsgCount = 0) {
+function buildExpertPrompt(advancedKB, locale) {
     let expertRules = `
---- Shadow Expert Mode-- -
-    أنت الآن في وضع تشخيص متقدم.تأكد من استخدام المعلومات المتوفرة في الـ Knowledge Base.
-ركّز على(لماذا / ماذا) قبل(كيف).
+--- Shadow Expert Mode ---
+الآن تم استدعاء (Gemini Pro).
+أنت هنا لأن (Flash) طلب المساعدة.
+استخدم الـ Knowledge Base المرفقة لتقديم إجابة عميقة، عملية، واستراتيجية.
+ركّز على (لماذا) و (ماذا) قبل (كيف).
 `.trim();
-
-    if (expertMsgCount >= 2) {
-        expertRules += `\n - جيمي: قلل التحليل، ركز على "تلخيص + اتجاه عملي واحد".خليك أقصر وأجرأ.`;
-    }
 
     return [
         buildCorePrompt(locale, false),
@@ -245,32 +229,30 @@ async function executeAIRequest(env, model, prompt, messages, { maxTries = 7, al
         const apiKey = env[keyName];
         if (!apiKey) continue;
 
-        // Try request (dynamic timeout)
+        // Try request
         const result = await callGemini(apiKey, model, prompt, messages, timeoutMs);
 
         if (!result.error && result.response) {
             return { response: result.response, model, keyName };
         }
 
-        // Logging specific error types
-        console.warn(`[JIMMY_RETRY] try=${tryCount}/${maxTries} key=${keyName} model=${model} error=${result.type || result.status}`);
+        console.warn(`[JIMMY_RETRY] try=${tryCount} key=${keyName} model=${model} err=${result.type || result.status}`);
         lastError = result;
 
-        // 1) Timeout -> Fast Failover (ONLY if allowed)
+        // Fast Failover: 6s timeout trigger
         if (result.type === 'TIMEOUT' && allowFastFailover) {
             const err = new Error("FAST_FAILOVER_TIMEOUT");
             err.details = result;
             throw err;
         }
 
-        // 2) 400 Bad Request -> Break immediately (don't retry, don't failover)
+        // 400 Bad Request -> Fatal
         if (result.status === 400) {
             const err = new Error("BAD_REQUEST_400");
             err.details = result;
             throw err;
         }
 
-        // 3) For 429/Network errors, continue trying other keys up to maxTries
         if (tryCount >= maxTries) break;
     }
 
@@ -298,93 +280,80 @@ export default {
             const locale = (request.headers.get("accept-language") || "ar-eg").toLowerCase().startsWith("en") ? "en-us" :
                 (/(sa|ae|kw|qa|bh|om)/.test(request.headers.get("accept-language") || "")) ? "ar-gulf" : "ar-eg";
 
-            const expertOnInput = Boolean(body.meta?.expert_on);
-            const expertMsgCount = Number(body.meta?.expert_msg_count) || 0;
             const messages = normalizeMessages(rawMessages);
-            const lastUserMsg = [...rawMessages].reverse().find(m => m.role === "user")?.content || "";
             const isFirstInteraction = rawMessages.filter(m => m.role === "assistant" || m.role === "model").length === 0;
 
             let mode = "core";
             let prompt = buildCorePrompt(locale, isFirstInteraction);
-            let finalExpertOn = expertOnInput;
-            let finalModel = MODELS.DEFAULT;
-
-            // 1) STRICT WARM-UP (First 5 User Requests = ALWAYS Flash)
-            const userMsgCount = rawMessages.filter(m => m.role === "user").length;
-            const isWarmupPhase = userMsgCount <= 5;
-
-            // 2) EXECUTE FLASH (Default)
             let ai;
+
+            // 1) PHASE 1: FLASH ATTEMPT (Default)
             try {
-                // Flash uses standard timeout (6000ms) for speed
+                // High speed timeout (6000ms)
                 ai = await executeAIRequest(env, MODELS.DEFAULT, prompt, messages, {
                     maxTries: 7,
                     allowFastFailover: true,
                     timeoutMs: 6000
                 });
 
-                // 3) REACTIVE UPSCALING (Only outside warmup)
-                // If Flash screams that it needs help (<<NEEDS_EXPERT>>) AND we are allowed to switch
-                // Note: We check if Upscale is needed
-                if (!isWarmupPhase && !expertOnInput && ai.response.includes("<<NEEDS_EXPERT>>")) {
-                    console.log("⚡ Reactive Upscale Triggered: Flash requested Expert help.");
+                // 2) PHASE 2: REACTIVE SELF-ASSESSMENT
+                if (ai.response.trim() === "<<NEEDS_EXPERT>>") {
+                    console.log("⚡ Reactive Upscale: Flash asked for Expert help.");
 
                     const kb = await env.JIMMY_KV?.get("jimmy:kb:advanced");
                     if (kb) {
                         mode = "expert";
-                        finalExpertOn = true;
-                        finalModel = MODELS.ADVANCED; // Switch to Pro
-                        prompt = buildExpertPrompt(kb, locale, expertMsgCount);
+                        const expertPrompt = buildExpertPrompt(kb, locale);
 
-                        // Re-execute with Pro (Longer timeout 9000ms)
-                        ai = await executeAIRequest(env, finalModel, prompt, messages, {
+                        // Silent Upgrade to Pro (Longer timeout: 9000ms)
+                        ai = await executeAIRequest(env, MODELS.ADVANCED, expertPrompt, messages, {
                             maxTries: 7,
                             allowFastFailover: true,
                             timeoutMs: 9000
                         });
                     } else {
-                        // KB Fail-safe: Polite fallback if KB is missing or error
-                        ai.response = "عفواً، النقطة دي محتاجة تفاصيل أكتر عن إطار العمل عشان أقدر أفيدك بدقة. ممكن توضح أكتر؟";
+                        // KB Safe Fallback
+                        ai.response = "محتاج تفاصيل أكتر عن نشاطك عشان أقدر أدي إجابة دقيقة.";
                     }
                 }
 
             } catch (err) {
-                // 1) Trap: 400 Bad Request -> Return error to client, DO NOT Failover
+                // Logic Trap Area
                 if (err.message === "BAD_REQUEST_400") {
-                    console.error("Critical 400 Error:", err.details);
-                    return json({ error: "Bad Request to Provider", details: err.details }, 400, cors);
+                    return json({ error: "Bad Request", details: err.details }, 400, cors);
                 }
 
-                // 2) Check eligibility for failover
+                // 3) PHASE 3: FAILOVER (If Flash Died)
                 const isTimeout = err.message === "FAST_FAILOVER_TIMEOUT";
-                const isExecutionFailed = err.message && err.message.startsWith("EXECUTION_FAILED");
+                const isFailed = err.message && err.message.startsWith("EXECUTION_FAILED");
 
-                if (isTimeout || isExecutionFailed) {
-                    console.warn(isTimeout ? "Fast Failover triggered by Timeout" : "All Keys Failed, using Failover model");
+                if (isTimeout || isFailed) {
+                    console.warn("⚠️ Failover Triggered");
 
-                    // Failover Attempt: Disable Fast Failover (try harder), standard maxTries, Timeout 9s (Give it time to work)
-                    ai = await executeAIRequest(env, MODELS.FAILOVER, prompt, messages, { maxTries: 7, allowFastFailover: false, timeoutMs: 9000 });
+                    // Failover: Use Lighter Prompt (Style + Industry Only) to reduce load
+                    const failoverPrompt = [getStyleForLocale(locale), CORE_INDUSTRY].join("\n\n");
+
+                    // Failover to Gemini-3 Preview (Last Resort)
+                    ai = await executeAIRequest(env, MODELS.FAILOVER, failoverPrompt, messages, {
+                        maxTries: 7,
+                        allowFastFailover: false,
+                        timeoutMs: 9000
+                    });
                 } else {
-                    // Logic error or unhandled case -> Re-throw to outer catch
                     throw err;
                 }
             }
 
-            console.log(`[JIMMY_SUCCESS] model=${ai.model} key=${ai.keyName} upscale=${finalModel === MODELS.ADVANCED}`);
+            console.log(`[JIMMY_SUCCESS] model=${ai.model} key=${ai.keyName}`);
 
             return json({
                 response: ai.response,
-                meta: {
-                    mode,
-                    model: ai.model,
-                    expert_on: finalExpertOn,
-                    expert_msg_count: finalExpertOn ? expertMsgCount + 1 : 0
-                },
+                meta: { mode, model: ai.model }, // Minimal meta
             }, 200, cors);
 
         } catch (err) {
-            console.error("Worker Critical Failure:", err);
-            return json({ response: "تمام… اديني تفاصيل أكتر وأنا أديك اتجاه عملي.", meta: { error: err.message } }, 200, cors);
+            console.error("Critical:", err);
+            return json({ response: "لحظة واحدة.. خليني أرتب أفكاري وأرجع لك.", meta: { error: err.message } }, 200, cors);
         }
     }
 };
