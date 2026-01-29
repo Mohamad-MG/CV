@@ -8,6 +8,8 @@ const PRISM_CONFIG = {
     requestTimeoutMs: 12000,
     maxHistory: 12,
     maxInputChars: 2500,
+    typingDelayMs: 100,
+    firstReplyDelayMs: 100,
     texts: {
         en: {
             status: "SYSTEM READY",
@@ -32,6 +34,8 @@ class PrismAgent {
         this.lang = document.documentElement.lang === 'ar' ? 'ar' : 'en';
         this.messages = [];
         this.isSending = false;
+        this.typingTimer = null;
+        this.hasFirstReply = false;
         this.init();
     }
 
@@ -137,6 +141,8 @@ class PrismAgent {
         const { console: win, backdrop, trigger, input } = this.ui;
 
         if (open) {
+            document.body.classList.add('ai-open');
+            window.dispatchEvent(new CustomEvent('jimmy:toggle', { detail: { open: true } }));
             win.classList.add('active');
             backdrop.classList.add('active');
             // trigger.classList.add('hidden'); // REMOVED: Keep icon visible
@@ -154,6 +160,8 @@ class PrismAgent {
             setTimeout(() => input.focus(), 400);
 
         } else {
+            document.body.classList.remove('ai-open');
+            window.dispatchEvent(new CustomEvent('jimmy:toggle', { detail: { open: false } }));
             win.classList.remove('active');
             backdrop.classList.remove('active');
             // trigger.classList.remove('hidden'); // REMOVED
@@ -172,7 +180,8 @@ class PrismAgent {
 
         this.ui.input.value = '';
         this.addMessage('user', text);
-        this.showTyping();
+        if (this.typingTimer) clearTimeout(this.typingTimer);
+        this.typingTimer = setTimeout(() => this.showTyping(), PRISM_CONFIG.typingDelayMs || 90);
         this.fetchResponse();
     }
 
@@ -309,7 +318,10 @@ class PrismAgent {
             }
 
             if (data && data.response) {
+                const delay = this.hasFirstReply ? 0 : (PRISM_CONFIG.firstReplyDelayMs || 100);
+                if (delay) await new Promise(r => setTimeout(r, delay));
                 this.addMessage('ai', data.response);
+                this.hasFirstReply = true;
             } else {
                 throw new Error('empty_response');
             }
@@ -323,6 +335,10 @@ class PrismAgent {
             }
         } finally {
             clearTimeout(timeoutId);
+            if (this.typingTimer) {
+                clearTimeout(this.typingTimer);
+                this.typingTimer = null;
+            }
             this.setSending(false);
             if (this.isOpen) this.ui.input.focus();
         }

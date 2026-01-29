@@ -118,9 +118,12 @@ class DraggableMarquee {
         this.startX = 0;
         this.lastX = 0;
         this.velocity = 0;
+        this.paused = false;
+        this.rafId = null;
         
         this.ensureContentWidth();
         this.initEvents();
+        this.animate = this.animate.bind(this);
         this.animate();
     }
 
@@ -165,7 +168,21 @@ class DraggableMarquee {
         this.container.style.cursor = 'grab';
     }
 
+    setPaused(paused) {
+        if (this.paused === paused) return;
+        this.paused = paused;
+        if (this.paused) {
+            if (this.rafId) {
+                cancelAnimationFrame(this.rafId);
+                this.rafId = null;
+            }
+            return;
+        }
+        this.animate();
+    }
+
     animate() {
+        if (this.paused) return;
         if (!this.isDragging) {
             // Return to base speed
             this.velocity *= 0.95; 
@@ -181,7 +198,7 @@ class DraggableMarquee {
         else if (this.pos > 0) this.pos -= trackWidth;
 
         this.track.style.transform = `translateX(${this.pos}px)`;
-        requestAnimationFrame(() => this.animate());
+        this.rafId = requestAnimationFrame(this.animate);
     }
 }
 
@@ -327,7 +344,16 @@ document.addEventListener('DOMContentLoaded', () => {
     new IgnitionMetrics();
     
     // Marquees
-    document.querySelectorAll('.marquee-container').forEach(m => new DraggableMarquee(m));
+    const marqueeInstances = [];
+    document.querySelectorAll('.marquee-container').forEach(m => marqueeInstances.push(new DraggableMarquee(m)));
+    const applyPauseState = () => {
+        const isPaused = document.body.classList.contains('ai-open');
+        marqueeInstances.forEach(instance => instance && instance.setPaused(isPaused));
+    };
+    applyPauseState();
+    const bodyObserver = new MutationObserver(applyPauseState);
+    bodyObserver.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+    window.addEventListener('jimmy:toggle', applyPauseState);
     
     // Interaction
     initInteractions();

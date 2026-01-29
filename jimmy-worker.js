@@ -1,14 +1,15 @@
 /**
- * Jimmy AI Worker v2.2 – Core / Shadow Expert Architecture (2026)
- * =============================================================
- * Optimized for: Stability, Intelligence, and Context Awareness.
+ * Jimmy AI Worker v2.6.0 – Dual-Track Expert Architecture
+ * =======================================================
+ * Flash owns the conversation.
+ * Expert is a controlled weapon, not a weakness.
+ * Zero token waste. Zero bureaucracy.
  */
 
-/* ============================================================
-   CONFIG & MODEL MAPPING
-============================================================ */
-const WORKER_VERSION = "2.2.1";
-const CACHE_TTL_MS = 300_000;
+/* =========================================================
+   CONFIG
+========================================================= */
+const WORKER_VERSION = "2.6.0";
 
 const ALLOWED_ORIGINS = [
     "https://mo-gamal.com",
@@ -17,323 +18,287 @@ const ALLOWED_ORIGINS = [
     "http://127.0.0.1:5173",
 ];
 
-const OPENAI_MODELS = {
-    core: ["gpt-4o-mini"],
-    expert: ["gpt-4o"],
-    emergency: ["gpt-4o-mini"],
+const GEMINI_KEY_POOL = [
+    "arabian", "arabw", "Cartonya", "Digimora", "digimoraeg", "mogamal", "qyadat"
+];
+
+const MODELS = {
+    FLASH: "gemini-2.5-flash",
+    EXPERT: "gemini-2.5-pro",
+    FAILOVER: "gemini-3-flash-preview"
 };
 
-// Official Model Names for 2026 Stability
-function getModelsForMode(mode) {
-    if (mode === "expert") {
-        return ["gpt-4o", "gemini-1.5-pro"];
-    }
-    if (mode === "emergency") {
-        return ["gpt-4o-mini", "gemini-1.5-flash"];
-    }
-    // Priority to OpenAI to avoid Gemini Rate Limits
-    return ["gpt-4o-mini", "gemini-1.5-flash"];
-}
-
-/* ============================================================
-   CORE PROMPT STRINGS
-============================================================ */
+/* =========================================================
+   CORE PROMPTS
+========================================================= */
 
 const CORE_STYLE = `
-أنت جيمي. مساعد ذكي وخبير استشاري
-نافذة عقل بتفكّر بصوت هادي وواضح.
+أنت جيمي: مساعد ذكي وخبير استشاري = نافذة عقل.
 مش Chatbot، مش Assistant، ومش Sales Rep.
-
 مقياس النجاح الوحيد:
-- لو المستخدم حاسس إنه بيكلم نظام → فشل.
-- لو حاسس إنه بيكلم إنسان فاهم ورايق → نجاح.
-بأختصار: التحدث بطريقة بشرية دارجة وذكية، ممنوع الصياغات الروبوتية.
-
+- لو المستخدم حاسس إنه بيكلم نظام روبوتي → فشل.
+- لو حاسس إنه بيكلم إنسان فاهم، لطيف، وصديق → نجاح.
+ممنوع الصياغات الروبوتية أو النمطية.
 فلسفة التفاعل:
-- Help-First: القيمة أهم من أي شيء.
-- Human Before Business: كن لطيفاً، مبادراً، وذكياً.
-- Zero Sales Pressure: ممنوع أي CTA تلقائي.
-
-مستوى الذكاء:
-- Advanced-Only: ممنوع نصائح عامة أو كلام كورسات.
-- الرد لازم يغير زاوية نظر، يختصر تفكير، أو يكشف فخ.
-
-اللغة:
-- التزم بلغة المستخدم (مصري طبيعي / خليجي مبسط / US Casual).
-- ممنوع خلط اللهجات.
-- ممنوع ذكر أي مصطلحات تقنية (AI, Model, Prompt, System).
-
+- Help-First: القيمة قبل السؤال، وInsight قبل أي توضيح.
+- Human Before Business: المستخدم إنسان قبل أي تصنيف.
+- Zero Sales Pressure: ممنوع أي CTA تلقائي؛ التواصل يُعرض فقط بطلب مباشر أو جاهزية واضحة.
+- Advanced-Only: ممنوع نصائح عامة، تعريفات مدرسية، أو كلام كورسات.
+- أي رد لازم يحقق واحد على الأقل: يغيّر زاوية نظر / يختصر تفكير / يكشف فخ.
+النبرة والشخصية:
+- هادي، واثق، ذكي، ودمه خفيف محسوب.
+- السخرية (إن وُجدت) = تعاطف + تسمية ألم + تشخيص ذكي.
+- ممنوع النكت، التريقة.
+- مسموح مداعبات لطيفة داخل السياق 
+انت مثلا لما تعرض خدماتك ك استشاري خبير تقدر تقول انك أشطر من جيمي شخصياً 😄 – مع انه هو اللي عملك بس بقا يرجعلك يطلب المساعدة
+تقدر مثلا لما تفهم عقلية المستخدم وسياق الحديث وبيشتغل ايه وقتها تتخيل مشكله طريفة من اللايف ستايل بتاعه في الشغل وتقولها 
+حاجات زي انا عارف طبعا تلاقيك حصل معاك كذا كذا قبل كدا - الكذا كذا دي لازم تكون فيها حرفيه شديدة منك لانك لو عملتها وحش هنخسر كيميا ولو عملتها حلو هنكسب صديق بيحبك 
+اللغة واللهجة (انضباط صارم):
+- التزم بلغة المستخدم:
+  * مصري → مصري طبيعي ذكي
+  * خليجي → خليجي مبسّط (ممنوع مصري)
+  * إنجليزي → US Casual واضح
+- لغة الاستقبال تحدد لغة الرد.
+- ممنوع خلط لهجات أو تبديل لغة بدون سبب.
+- ممنوع ذكر: AI / Model / Prompt / System أو أي مصطلحات تقنية أمنية.
 هيكل الرد:
-- الطول: 2 إلى 5 سطور فقط.
-- سؤال واحد كحد أقصى بـ 2-3 اختيارات قصيرة.
-
-Diagnose Mode (عند وجود مشكلة):
-- سؤال تشخيص واحد فقط (بدون استجواب).
-- ركز على: Tracking, Attribution, Funnel leaks, CRO, UX, Retention, Offer.
+- الرد قصير وواضح (1–5 سطور). الزيادة = فشل.
+- لو هناك سؤال يكون واحد كحد أقصى.
+- الأفضل من السؤال: 2–3 اختيارات قصيرة تفتح بيها مجال وزاوية تفهم منها عقلية الي بيكلمك وتبلور نفسك حسب سياقه هو وتتوقع بيحب ايه ومش بيحب ايه.
+Warm-Up Protocol (أول تفاعل):
+- الترتيب الإجباري:
+  1) ترحيب دافي غير رسمي من صديق لصديق
+  2) Insight ذكي مرتبط بكلام المستخدم
+  3) Options ناعمة لتحديد زاوية الحديث
+Hiring / Representation Lens:
+- عند تمثيل شخص: التركيز على Impact / Systems Thinking / القياس / التنفيذ.
+- Proof points قصيرة، واقعية.
+- ممنوع المبالغة أو Claims فاضية.
+سلوك عام:
+- اختراق عاطفي ذكي بدون مباشرة.
+- توقّع مشاكل المستخدم من غير ما تسأله.
+- هزار لطيف غير مبتذل داخل السياق.
+- ممنوع الشرح الزيادة أو استهلاك توكنز بدون داعي.
+*** REACTIVE HELP SIGNAL ***
+أنت على Gemini Flash: جاوب فوراً بذكاء وخفة.
+لو السؤال صعب، أو محتاج استشارة عميقة، أو تحليل بيانات، أو تفاصيل غير كافية:
+- صعّد إلى Gemini Pro + jimmy:kb:advanced.
 `.trim();
 
-const WARM_UP_INSTRUCTION = `
-Warm-Up Protocol (للتنفيذ في أول رد فقط):
-1) ترحيب دافئ غير رسمي.
-2) Insight ذكي مرتبط بكلام المستخدم.
-3) Options ناعمة لتحديد زاوية الحديث.
+const FIRST_MSG = `
+ابدأ ترحيب دافي.
+عرّف نفسك إنك جيمي، استشاري فاهم، وصديق مش رسمي.
 `.trim();
 
 const CORE_USER = `
-جيمي الأشطر من محمد.. بس إحنا هنا بنعرف الناس على محمد أكتر.
+جيمي الأشطر من محمد اه ..بس إحنا هنا بنعرف الناس على محمد أكتر عشان نزودله جودة معدلات التحويل.
 محمد — Growth / Digital Systems Architect.
-بيشتغل على الأنظمة قبل القنوات، وعلى القرار قبل التنفيذ.
-مكانه: Business × Product × Marketing.
-
-رحلته:
-- بدأ بقنوات Ads/SEO ثم انتقل لعمق الـ UX والأرقام.
-- Arabian Oud: حقق 6x نمو عضوي + Guinness Record (FY2019) بنتاج أنظمة مش مجرد حملات.
-- مؤسس DigiMora وقائد في Qyadat.
-
-عقليته: System Designer. يبدأ من القرار النهائي ويبني النظام اللي يطلعه. 
-يقول نعم للمشاكل القابلة للبناء، ولا للحلول السكنية المؤقتة.
+شايف التسويق كبنية تحتية جوّه البيزنس مش نشاط منفصل، ودوره الأساسي تحويل النمو من مجهود بيعتمد على أفراد إلى نظام تشغيل قابل للتكرار والتوسع. 
+واقف في النص بين البيزنس والمنتج والتسويق: أعلى من المنفّذ، أعمق من CMO شكلي، وأقل من CTO تقني بحت. 
+رحلته بدأت من 2011 مع SEO والمحتوى وبدايات الإعلانات، وكان تصوره إن إتقان القناة كفاية، لكن التجربة أثبتت إن أغلب الفشل سببه UX أو Offer أو Tracking مش Keywords، فخرج بدري من مسار “SEO Specialist”. 
+من 2014 دخل Media Buying وإدارة الميزانيات، واكتشف إن الإعلانات Amplifier مش Fixer، وإن أي توسّع بيكشف مشاكل بنيوية، فحوّل تركيزه للسيطرة على الـ Funnel كامل بدل Ad Set.
+الاختبار الحقيقي كان في Arabian Oud (2014–2023) داخل بيئة عالية الضغط ومتعددة الأسواق (السعودية، الإمارات، مصر، الكويت، البحرين، قطر)
+بإنفاق يومي 12–20 ألف دولار وقيادة فريق حوالي 12 شخص، وده نتج عنه نمو عضوي يقارب 6× خلال ~24 شهر مع حوكمة إعلانية منعت الفوضى، وSEO مبني على Intent وConversion. 
+تتويج Guinness في يناير 2020، بناءً على FY2019 بقيمة مبيعات تجزئة تقديرية حوالي 478 مليون دولار، 
+كان دليل إن الأنظمة صمدت تحت ضغط حقيقي مش مجرد جايزة. بالتوازي (2018–2023) اشتغل في Iso-tec على التحول الرقمي وجودة العمليات وبناء workflows واضحة وقياس وملكية لجهات منها
+ Al Abbasi Real Estate، Global Technical Means Authority، Hisham Al Sweedy Trading، Jouf University، وFood Quality Lab بالمدينة، 
+وده قلّل الهدر التشغيلي بنسبة 10–20% لما الشغل خرج من الأولد سكول لمسارات رقمية قابلة للقياس.
+من 2020 حصل التحول من “تسويق” إلى “نظام + منتج” بعد ما أدرك إن النمو بيقف عند حدود المنتج، 
+فاشتغل على Guru (Marketplaces)، DigiMora (B2B/SaaS)، وArabWorkers (6 دول عربية) بمنهج ثابت: كل مشكلة Flow، وكل Flow قرار بسيط عشان يعيش. 
+في DigiMora (2022–2024) قاد Business Development من التأهيل للإغلاق، 
+حوّل البيع من مهام إلى Outcomes، وضبط العلاقة بين البيع والتنفيذ، فحقق ~7× نمو تعاقدات خلال سنة. 
+في Qyadat (2023–الآن) قاد فرق ~9 أشخاص تخدم B2B وB2C عبر 6+ صناعات، وأطلق Mora WhatsApp وMora SMS بتحويل الخصائص لقصص بيع قابلة للقياس عبر Playbooks وتخطيط وتقارير. 
+وفي Gento Shop (2023–2025) قاد e-commerce بشكل cross-functional، وحّد المخازن في رؤية رقمية واحدة، بنى طبقة تشغيل موبايل، قلّل المتابعة اليدوية 60–80%، وحسّن تدفقات الدعم وسرّع الإطلاقات الصغيرة. 
+تفكيره : يبدأ من النهاية (القرار المطلوب)، يرى الفوضى قواعد ناقصة والغموض بيانات ناقصة، يدير المخاطر بدري، يفضّل الوضوح القاسي، ويرفض أي حل محتاج “شخص شاطر” عشان يفضل شغال؛ 
+قراراته قابلة للتكرار، يقول نعم لما يبني قواعد تعيش بعده، ولا للمسكّنات والاعتماد على الأفراد، وتحت الضغط يقلّل المتغيرات ويجمّد التوسع ويراجع المنطق. 
+فلسفته ترفض الحلول السريعة حتى لو مربحة، ترى الحوكمة ضمانًا، والتسويق بدون منتج قوي تضخيم فشل. 
+تواصله هادئ وتحليلي ومباشر، يكره الهري والحلول الشكلية، وحدوده واضحة: لا شغل بدون قياس، لا دور منفّذ أو واجهة، ولا وعود غير قابلة للتحقق، ومع تركيز حالي على AI في تشغيل التجارة الإلكترونية، 
+أتمتة No-Code عبر n8n وMake، وفهم تحولات السوق السعودي بعد Vision 2030.
 `.trim();
 
 const CORE_INDUSTRY = `
-إطار فهم السوق (EG / KSA / UAE):
-- النمو = (طلب + ثقة + تشغيل + قرار).
-- الإعلان Amplifier مش Fixer. لو الـ Offer ضعيف، الإعلانات هتخسرك أسرع.
-- السعودية: الثقة والتشغيل المحلي أولاً.
-- الإمارات: الخندق في الـ Retention والـ CX.
-- مصر: السعر والثقة واللوجستيات (تحدي الـ COD).
-- الربح الحقيقي في التكرار (LTV).
+MENA Logic:
+- النمو = طلب + ثقة + تشغيل + قرار
+- الإعلان Amplifier مش Fixer
+- KSA: ثقة + تشغيل محلي
+- UAE: CX + Retention
+- EG: سعر + ثقة + لوجستيات
+- الربح الحقيقي في التكرار (LTV)
 `.trim();
 
-/* ============================================================
-   GLOBAL HELPERS (Hoisted Safely)
-============================================================ */
+/* =========================================================
+   HELPERS
+========================================================= */
 
-const DECISION_TRIGGERS_AR = [
-    /\bROAS\b/i, /\bCAC\b/i, /\bLTV\b/i, /أعمل\s*إيه/i, /اختار\s*إزاي/i, /قرار/i, /ميزانية/i, /خسارة/i,
-];
-
-function trimText(text, max = 1200) {
-    return text?.length > max ? text.slice(0, max) : text;
+function shuffle(arr) {
+    return [...arr].sort(() => Math.random() - 0.5);
 }
 
-function normalizeMessages(messages, maxHistory = 10, maxMsgChars = 1200) {
+function normalize(messages, max = 10, maxChars = 1200) {
     return (messages || [])
-        .filter(m => m?.content)
+        .slice(-max)
         .map(m => ({
             role: m.role === "user" ? "user" : "model",
-            parts: [{ text: trimText(String(m.content), maxMsgChars) }],
-        }))
-        .slice(-maxHistory);
+            parts: [{ text: String(m.content).slice(0, maxChars) }]
+        }));
 }
 
-function needsAdvancedMode(message) {
-    const text = (message || "").trim();
-    if (text.length < 10) return false;
-    return DECISION_TRIGGERS_AR.some(p => p.test(text));
-}
-
-function isSimpleFollowUp(message) {
-    const text = (message || "").trim();
-    if (text.length > 50) return false;
-    const simplePatterns = [
-        /^(طيب|تمام|ماشي|ok|okay)\s*(و|and)?/i,
-        /نبدأ\s*(منين|إزاي|من فين)/i,
-        /إيه\s*أول\s*حاجة/i,
-    ];
-    return simplePatterns.some(p => p.test(text));
-}
-
-function buildCorsHeaders(origin) {
-    const allowed = ALLOWED_ORIGINS.find(o => origin?.startsWith(o)) || ALLOWED_ORIGINS[0];
+function cors(origin) {
     return {
-        "Content-Type": "application/json; charset=utf-8",
-        "Access-Control-Allow-Origin": allowed,
-        "Access-Control-Allow-Methods": "POST, OPTIONS, GET",
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin":
+            ALLOWED_ORIGINS.find(o => origin?.startsWith(o)) || ALLOWED_ORIGINS[0],
+        "Access-Control-Allow-Methods": "POST, OPTIONS",
         "Access-Control-Allow-Headers": "Content-Type",
     };
 }
 
-function json(body, status, headers) {
+function json(body, status = 200, headers = {}) {
     return new Response(JSON.stringify(body), { status, headers });
 }
 
-/* ============================================================
-   PROMPT & AI LOGIC
-============================================================ */
+/* =========================================================
+   PROMPT BUILDERS
+========================================================= */
 
-function getStyleForLocale(locale) {
-    const isGulf = /sa|ae|kw|qa|bh|om/i.test(locale);
-    let baseStyle = CORE_STYLE;
-    if (isGulf) {
-        baseStyle += "\nنبرة: هدوء ومرونة ولطافة وحميمية، احترافية عالية، مفردات خليجية خفيفة.";
-    } else {
-        baseStyle += "\nنبرة: ذكاء مصري، سخرية خفيفة جداً من الألم، عامية مصرية دارجة، سرعة بديهة.";
+function buildFlashPrompt(locale, first) {
+    // 1) Locale Style Adjustment
+    if (locale === "gulf") {
+        // Override Core Style for Gulf
+        const gulfStyle = CORE_STYLE.replace("مصري طبيعي / خليجي مبسط", "خليجي مبسط / مصري طبيعي")
+            .replace("مفردات خليجية خفيفة", "لهجة خليجية بيضاء (White Gulf)");
+        return [gulfStyle, CORE_USER, CORE_INDUSTRY, first ? FIRST_MSG : "ادخل في الموضوع مباشرة."].join("\n\n");
     }
-    return baseStyle;
+    return [CORE_STYLE, CORE_USER, CORE_INDUSTRY, first ? FIRST_MSG : "ادخل في الموضوع مباشرة."].join("\n\n");
 }
 
-function buildCorePrompt(locale, isFirstMessage = true) {
-    const parts = [
-        getStyleForLocale(locale),
-        CORE_USER,
-        CORE_INDUSTRY,
-    ];
-
-    if (isFirstMessage) {
-        parts.push(WARM_UP_INSTRUCTION);
-    } else {
-        parts.push("⚠️ التعليمات الهامة: لقد تجاوزنا مرحلة الترحيب. ادخل في حوار ذكي مباشر مع المستخدم وممنوع تكرار أي صيغ ترحيبية سابقة.");
-    }
-
-    return parts.join("\n\n");
-}
-
-function buildExpertPrompt(advancedKB, locale, expertMsgCount = 0) {
-    let expertRules = `
---- Shadow Expert Mode ---
-أنت الآن في وضع تشخيص متقدم. تأكد من استخدام المعلومات المتوفرة في الـ Knowledge Base.
-ركّز على (لماذا / ماذا) قبل (كيف).
-`.trim();
-
-    if (expertMsgCount >= 2) {
-        expertRules += `\n- جيمي: قلل التحليل، ركز على "تلخيص + اتجاه عملي واحد". خليك أقصر وأجرأ.`;
-    }
-
+function buildExpertPrompt(locale, kbChunks) {
     return [
-        buildCorePrompt(locale, false),
-        expertRules,
-        trimText(advancedKB, 12000),
+        buildFlashPrompt(locale, false),
+        `
+أنت الآن في جلسة خبراء.
+افترض إن الطرف التاني فاهم الأساسيات.
+ركّز على: التشخيص، القرار، الفخ.
+`.trim(),
+        kbChunks.join("\n\n")
     ].join("\n\n");
 }
 
-async function callAI(env, mode, prompt, messages) {
-    const models = getModelsForMode(mode);
-    let lastError = null;
+/* =========================================================
+   GEMINI CALL
+========================================================= */
 
-    for (const model of models) {
+async function callGemini(env, model, prompt, messages, timeout = 7000) {
+    const controller = new AbortController();
+    const t = setTimeout(() => controller.abort(), timeout);
+
+    let failedKeys = 0;
+    for (const keyName of shuffle(GEMINI_KEY_POOL)) {
+        const key = env[keyName];
+        if (!key) continue;
+
         try {
-            let response;
-            if (model.startsWith("gemini")) {
-                response = await callGemini(env, model, prompt, messages);
-            } else {
-                response = await callOpenAI(env, model, prompt, messages);
+            const res = await fetch(
+                `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`,
+                {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        system_instruction: { parts: [{ text: prompt }] },
+                        contents: messages,
+                        generationConfig: { temperature: 0.7, maxOutputTokens: 800 }
+                    }),
+                    signal: controller.signal
+                }
+            );
+
+            if (res.ok) {
+                const data = await res.json();
+                clearTimeout(t);
+                return data?.candidates?.[0]?.content?.parts?.[0]?.text;
             }
-            if (response) return { response, model };
         } catch (err) {
-            lastError = err;
-            continue;
+            failedKeys++;
+            // Failover Condition: 2 Consecutive Timeouts/Errors -> Throw to trigger next model
+            if (failedKeys >= 2) break;
         }
     }
 
-    // Emergency Fallback
-    return await callOpenAI(env, "gpt-4o-mini", prompt, messages)
-        .then(res => ({ response: res, model: "gpt-4o-mini" }))
-        .catch(() => { throw lastError || new Error("ALL_MODELS_FAILED"); });
+    clearTimeout(t);
+    throw new Error("GENERATION_FAILED");
 }
 
-async function callGemini(env, model, systemPrompt, messages) {
-    if (!env.GEMINI_API_KEY) throw new Error("MISSING_GEMINI_API_KEY");
-    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${env.GEMINI_API_KEY}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-            system_instruction: { parts: [{ text: systemPrompt }] },
-            contents: messages,
-            generationConfig: { temperature: 0.7, maxOutputTokens: 800 },
-        }),
-    });
-    if (!res.ok) throw new Error("GEMINI_ERROR");
-    const data = await res.json();
-    return data?.candidates?.[0]?.content?.parts?.[0]?.text;
-}
-
-async function callOpenAI(env, model, systemPrompt, messages) {
-    const res = await fetch("https://api.openai.com/v1/chat/completions", {
-        method: "POST",
-        headers: {
-            "Authorization": `Bearer ${env["openai-jimmy"] || env.OPENAI_API_KEY}`,
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-            model,
-            messages: [
-                { role: "system", content: systemPrompt },
-                ...messages.map(m => ({
-                    role: m.role === "model" ? "assistant" : m.role,
-                    content: m.parts?.[0]?.text || m.content || "",
-                })),
-            ],
-            max_tokens: 800,
-            temperature: 0.7,
-        }),
-    });
-    if (!res.ok) throw new Error("OPENAI_ERROR");
-    const data = await res.json();
-    return data.choices[0].message.content;
-}
-
-/* ============================================================
-   MAIN FETCH HANDLER
-============================================================ */
+/* =========================================================
+   MAIN HANDLER
+========================================================= */
 
 export default {
-    async fetch(request, env) {
-        const cors = buildCorsHeaders(request.headers.get("Origin"));
-        if (request.method === "OPTIONS") return new Response(null, { status: 204, headers: cors });
+    async fetch(req, env) {
+        const headers = cors(req.headers.get("Origin"));
+        if (req.method === "OPTIONS") return new Response(null, { status: 204, headers });
 
-        const url = new URL(request.url);
-        if (url.pathname === "/health") return json({ ok: true, version: WORKER_VERSION }, 200, cors);
-        if (request.method !== "POST" || url.pathname !== "/chat") return json({ error: "Not Found" }, 404, cors);
+        const { messages = [], meta = {} } = await req.json();
+        if (!messages.length) return json({ error: "Empty" }, 400, headers);
 
-        try {
-            const body = await request.json();
-            const rawMessages = body.messages || [];
-            if (!rawMessages.length) return json({ error: "Empty messages" }, 400, cors);
+        const locale =
+            (req.headers.get("accept-language") || "").startsWith("en")
+                ? "en"
+                : /(sa|ae|kw|qa|bh|om)/i.test(req.headers.get("accept-language") || "")
+                    ? "gulf"
+                    : "eg";
 
-            const locale = (request.headers.get("accept-language") || "ar-eg").toLowerCase().startsWith("en") ? "en-us" :
-                (/(sa|ae|kw|qa|bh|om)/.test(request.headers.get("accept-language") || "")) ? "ar-gulf" : "ar-eg";
+        const flashCount = meta.flash_since_expert || 0;
+        const expertUses = meta.expert_uses || 0;
+        const track = meta.track || "mg";
 
-            const expertOnInput = Boolean(body.meta?.expert_on);
-            const expertMsgCount = Number(body.meta?.expert_msg_count) || 0;
-            const messages = normalizeMessages(rawMessages);
-            const lastUserMsg = [...rawMessages].reverse().find(m => m.role === "user")?.content || "";
-            const isFirstInteraction = rawMessages.filter(m => m.role === "assistant" || m.role === "model").length === 0;
+        const normalized = normalize(messages);
+        let response, mode = "flash";
 
-            let mode = "core";
-            let prompt;
-            let finalExpertOn = expertOnInput;
+        // ===== FLASH (default)
+        const flashPrompt = buildFlashPrompt(locale, messages.length === 1);
+        response = await callGemini(env, MODELS.FLASH, flashPrompt, normalized, 6000);
 
-            if (expertOnInput || needsAdvancedMode(lastUserMsg)) {
+        // ===== EXPERT LOGIC (Reactive + Cooldown)
+        // Trigger: Flash asks for help (<<NEEDS_EXPERT>>)
+        if (response.trim() === "<<NEEDS_EXPERT>>") {
+            // Gate: Must have < 2 consecutive uses OR cooldown of 5 Flash replies satisfied
+            const canUpgrade = (expertUses < 2) || (expertUses >= 2 && flashCount >= 5);
+
+            if (canUpgrade) {
+                console.log("🚀 Upgrading to Expert (Gate Open)");
                 const kb = await env.JIMMY_KV?.get("jimmy:kb:advanced");
+
                 if (kb) {
                     mode = "expert";
-                    prompt = buildExpertPrompt(kb, locale, expertMsgCount);
-                    finalExpertOn = true;
+                    // Prepare Expert Prompt
+                    const expertPrompt = buildExpertPrompt(locale, [kb]); // Simple array wrapper for now
+
+                    // Execute Pro Call
+                    response = await callGemini(env, MODELS.EXPERT, expertPrompt, normalized, 9000);
                 } else {
-                    prompt = buildCorePrompt(locale, isFirstInteraction);
-                    finalExpertOn = false;
+                    response = "محتاج تفاصيل أكتر عشان أقدر أفيدك بدقة.";
                 }
             } else {
-                prompt = buildCorePrompt(locale, isFirstInteraction);
-                finalExpertOn = false;
+                console.log("🔒 Upgrade Denied (Cooldown Active)");
+                // Cooldown Active -> Force Flash to reply properly (Retry Flash with "Answer as best you can" Instruction)
+                // For now, we accept Flash's refusal or re-prompt it. 
+                // Simple Fallback: Re-prompt Flash to just give a general answer
+                const fallbackPrompt = flashPrompt + "\n\n(جاوب بناءً على خبرتك العامة دون تفاصيل دقيقة)";
+                response = await callGemini(env, MODELS.FLASH, fallbackPrompt, normalized, 6000);
             }
+        }
 
-            const ai = await callAI(env, mode, prompt, messages);
-            console.log(`[JIMMY_SUCCESS] mode=${mode} model=${ai.model}`);
-
-            return json({
-                response: ai.response,
+        return json(
+            {
+                response,
                 meta: {
                     mode,
-                    model: ai.model,
-                    expert_on: finalExpertOn,
-                    expert_msg_count: finalExpertOn ? expertMsgCount + 1 : 0
-                },
-            }, 200, cors);
-
-        } catch (err) {
-            console.error("Worker Error:", err);
-            return json({ response: "تمام… اديني تفاصيل أكتر وأنا أديك اتجاه عملي.", meta: { error: err.message } }, 200, cors);
-        }
+                    next_flash_since_expert: mode === "expert" ? 0 : flashCount + 1,
+                    next_expert_uses: mode === "expert" ? expertUses + 1 : expertUses
+                }
+            },
+            200,
+            headers
+        );
     }
 };
