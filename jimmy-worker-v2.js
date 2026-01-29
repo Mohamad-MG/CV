@@ -235,7 +235,7 @@ async function callGemini(apiKey, model, systemPrompt, messages, timeoutMs = 700
     }
 }
 
-async function executeAIRequest(env, model, prompt, messages, maxTries = 7) {
+async function executeAIRequest(env, model, prompt, messages, { maxTries = 7, allowFastFailover = true } = {}) {
     const keyPool = shuffleArray(GEMINI_KEY_POOL);
     let lastError = null;
     let tryCount = 0;
@@ -256,18 +256,22 @@ async function executeAIRequest(env, model, prompt, messages, maxTries = 7) {
         console.warn(`[JIMMY_RETRY] try=${tryCount}/${maxTries} key=${keyName} model=${model} error=${result.type || result.status}`);
         lastError = result;
 
-        // 1) Timeout determines "Latency Issue" -> Fast Failover immediately
-        if (result.type === 'TIMEOUT') {
+        // 1) Timeout -> Fast Failover (ONLY if allowed)
+        if (result.type === 'TIMEOUT' && allowFastFailover) {
             const err = new Error("FAST_FAILOVER_TIMEOUT");
             err.details = result;
             throw err;
         }
 
-        // 2) For 429/Network errors, continue trying other keys up to maxTries
-        if (tryCount >= maxTries) break;
+        // 2) 400 Bad Request -> Break immediately (don't retry, don't failover)
+        if (result.status === 400) {
+            const err = new Error("BAD_REQUEST_400");
+            err.details = result;
+            throw err;
+        }
 
-        // 3) 400 Bad Request usually means payload issue, so stop
-        if (result.status === 400) break;
+        // 3) For 429/Network errors, continue trying other keys up to maxTries
+        if (tryCount >= maxTries) break;
     }
 
     throw new Error(`EXECUTION_FAILED: ${JSON.stringify(lastError)}`);
@@ -324,14 +328,28 @@ export default {
 
             let ai;
             try {
-                // Primary Try: Fast Failover on Timeout, but try all keys for 429s (maxTries=7)
-                ai = await executeAIRequest(env, targetModel, prompt, messages, 7);
+                // Primary Try: Fast Failover enabled, maxTries 7 (for 429 resiliency)
+                ai = await executeAIRequest(env, targetModel, prompt, messages, { maxTries: 7, allowFastFailover: true });
             } catch (err) {
-                const isTimeout = err.message === "FAST_FAILOVER_TIMEOUT";
-                console.warn(isTimeout ? "Fast Failover triggered by Timeout" : "Primary Route Failed, using Failover model:", err.message);
+                // 1) Trap: 400 Bad Request -> Return error to client, DO NOT Failover
+                if (err.message === "BAD_REQUEST_400") {
+                    console.error("Critical 400 Error:", err.details);
+                    return json({ error: "Bad Request to Provider", details: err.details }, 400, cors);
+                }
 
-                // Failover attempt: Can try all keys if necessary as this is the "last resort"
-                ai = await executeAIRequest(env, MODELS.FAILOVER, prompt, messages, 7);
+                // 2) Check eligibility for failover
+                const isTimeout = err.message === "FAST_FAILOVER_TIMEOUT";
+                const isExecutionFailed = err.message.startsWith("EXECUTION_FAILED"); // All keys failed (429s/Network)
+
+                if (isTimeout || isExecutionFailed) {
+                    console.warn(isTimeout ? "Fast Failover triggered by Timeout" : "All Keys Failed, using Failover model");
+
+                    // Failover Attempt: Disable Fast Failover (try harder), standard maxTries
+                    ai = await executeAIRequest(env, MODELS.FAILOVER, prompt, messages, { maxTries: 7, allowFastFailover: false });
+                } else {
+                    // Logic error or unhandled case -> Re-throw to outer catch
+                    throw err;
+                }
             }
 
             console.log(`[JIMMY_SUCCESS] model=${ai.model} key_name=${ai.keyName}`);
