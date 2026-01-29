@@ -1,29 +1,35 @@
 /**
  * 🌌 THE DARK PRISM AGENT - 2026 EDITION
  * Logic for the Ultra-Modern Console
+ * 
+ * Features:
+ * - Smart Latency Masking
+ * - State Persistence (LocalStorage)
+ * - Motion Budget Controller
+ * - Suggestion Chips
  */
 
 const PRISM_CONFIG = {
     workerUrl: 'https://mg-ai-proxy.emarketbank.workers.dev/chat',
-    requestTimeoutMs: 12000,
+    requestTimeoutMs: 15000,
     maxHistory: 12,
     maxInputChars: 2500,
-    typingDelayMs: 100,
-    firstReplyDelayMs: 100,
     texts: {
         en: {
             status: "SYSTEM READY",
             placeholder: "Ask Jimmy...",
             welcome: "Command Line Active. Accessing Mohamed's neural database...",
             error: "ERR_CONNECTION_LOST",
-            timeout: "REQUEST_TIMEOUT"
+            timeout: "REQUEST_TIMEOUT",
+            chips: ["Growth Strategy?", "KSA Market?", "Automation Tools?", "Contact Info"]
         },
         ar: {
             status: "النظام جاهز",
             placeholder: "اسأل جيمي...",
             welcome: "تم تفعيل سطر الأوامر. جاري استدعاء بيانات محمد...",
             error: "خطأ في الاتصال",
-            timeout: "انتهت مهلة الطلب"
+            timeout: "انتهت مهلة الطلب",
+            chips: ["استراتيجيات النمو؟", "السوق السعودي؟", "أدوات الأتمتة؟", "طرق التواصل"]
         }
     }
 };
@@ -35,23 +41,37 @@ class PrismAgent {
         this.messages = [];
         this.isSending = false;
         this.typingTimer = null;
-        this.hasFirstReply = false;
+        this.motionMode = localStorage.getItem('mg_motion_mode') || 'cinematic';
+
         this.init();
     }
 
     init() {
-        // Dev warning for file:// protocol
         if (location.protocol === 'file:' || location.origin === 'null') {
-            console.warn('[Jimmy] ⚠️ Running from file:// — Chat API blocked (CORS). Use a local server: npx serve');
+            console.warn('[Jimmy] ⚠️ Running from file:// — Chat API blocked (CORS).');
         }
+
+        this.applyMotionMode();
         this.render();
         this.cacheDOM();
         this.bindEvents();
         this.loadHistory();
+
+        // Restore State if previously open
+        const wasOpen = localStorage.getItem('mg_prism_open') === 'true';
+        if (wasOpen) setTimeout(() => this.toggle(true), 500);
+    }
+
+    applyMotionMode() {
+        document.body.setAttribute('data-motion', this.motionMode);
     }
 
     render() {
         const txt = PRISM_CONFIG.texts[this.lang];
+
+        const chipsHtml = txt.chips.map(chip =>
+            `<button class="chip" onclick="window.prismAgent.useChip('${chip}')">${chip}</button>`
+        ).join('');
 
         const html = `
             <div id="mg-neural-backdrop"></div>
@@ -69,9 +89,14 @@ class PrismAgent {
                             <span class="header-status"><span class="status-beacon"></span>AI ASSISTANT</span>
                         </div>
                     </div>
-                    <button id="btnClose" class="console-close">
-                        <i class="ri-close-line"></i>
-                    </button>
+                    <div class="header-controls">
+                        <button id="btnMotion" class="motion-toggle ${this.motionMode === 'lite' ? 'active' : ''}" title="Toggle Motion">
+                            <i class="ri-speed-line"></i>
+                        </button>
+                        <button id="btnClose" class="console-close">
+                            <i class="ri-close-line"></i>
+                        </button>
+                    </div>
                 </div>
 
                 <div id="consoleMsgs" class="console-messages">
@@ -79,6 +104,9 @@ class PrismAgent {
                 </div>
 
                 <div class="console-input-area">
+                    <div class="suggestion-row">
+                        ${chipsHtml}
+                    </div>
                     <div class="input-wrapper">
                         <input type="text" id="consoleInput" class="console-input" placeholder="${txt.placeholder}" autocomplete="off">
                         <button id="btnSend" class="send-btn">
@@ -101,6 +129,7 @@ class PrismAgent {
             trigger: document.getElementById('aiTrigger'),
             console: document.getElementById('aiConsole'),
             close: document.getElementById('btnClose'),
+            motionBtn: document.getElementById('btnMotion'),
             input: document.getElementById('consoleInput'),
             sendBtn: document.getElementById('btnSend'),
             msgs: document.getElementById('consoleMsgs')
@@ -113,6 +142,14 @@ class PrismAgent {
         this.ui.backdrop.addEventListener('click', () => this.toggle(false));
         this.ui.sendBtn.addEventListener('click', () => this.handleSubmit());
 
+        // Motion Toggle
+        this.ui.motionBtn.addEventListener('click', () => {
+            this.motionMode = this.motionMode === 'cinematic' ? 'lite' : 'cinematic';
+            localStorage.setItem('mg_motion_mode', this.motionMode);
+            this.applyMotionMode();
+            this.ui.motionBtn.classList.toggle('active', this.motionMode === 'lite');
+        });
+
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape' && this.isOpen) this.toggle(false);
         });
@@ -121,14 +158,14 @@ class PrismAgent {
             if (e.key === 'Enter') this.handleSubmit();
         });
 
-        // 🎯 Focus Guard: Keep cursor inside while open
         this.ui.input.addEventListener('blur', () => {
             if (this.isOpen) {
-                // Short delay to allow clicking the close button or send button
                 setTimeout(() => {
                     if (this.isOpen &&
                         document.activeElement !== this.ui.close &&
-                        document.activeElement !== this.ui.sendBtn) {
+                        document.activeElement !== this.ui.sendBtn &&
+                        document.activeElement !== this.ui.motionBtn &&
+                        !document.activeElement.classList.contains('chip')) {
                         this.ui.input.focus();
                     }
                 }, 10);
@@ -136,26 +173,31 @@ class PrismAgent {
         });
     }
 
+    useChip(text) {
+        this.ui.input.value = text;
+        this.handleSubmit();
+    }
+
     toggle(open) {
         this.isOpen = open;
-        const { console: win, backdrop, trigger, input } = this.ui;
+        localStorage.setItem('mg_prism_open', open);
+
+        const { console: win, backdrop, input } = this.ui;
 
         if (open) {
             document.body.classList.add('ai-open');
             window.dispatchEvent(new CustomEvent('jimmy:toggle', { detail: { open: true } }));
             win.classList.add('active');
             backdrop.classList.add('active');
-            // trigger.classList.add('hidden'); // REMOVED: Keep icon visible
             document.body.style.overflow = 'hidden';
-
-            const wrapper = input.closest('.input-wrapper');
-            if (wrapper) wrapper.classList.add('active-glow');
 
             if (this.messages.length === 0) {
                 this.addMessage('ai', PRISM_CONFIG.texts[this.lang].welcome);
+            } else {
+                // Restore scroll position
+                setTimeout(() => this.scrollToBottom(), 50);
             }
 
-            // 🎯 Sharp Auto-Focus: Hit it immediately AND after animation
             input.focus();
             setTimeout(() => input.focus(), 400);
 
@@ -164,11 +206,7 @@ class PrismAgent {
             window.dispatchEvent(new CustomEvent('jimmy:toggle', { detail: { open: false } }));
             win.classList.remove('active');
             backdrop.classList.remove('active');
-            // trigger.classList.remove('hidden'); // REMOVED
             document.body.style.overflow = '';
-
-            const wrapper = input.closest('.input-wrapper');
-            if (wrapper) wrapper.classList.remove('active-glow');
         }
     }
 
@@ -180,9 +218,21 @@ class PrismAgent {
 
         this.ui.input.value = '';
         this.addMessage('user', text);
+
+        // Smart Latency Simulation
+        const thinkingTime = this.calculateThinkingTime(text);
+
         if (this.typingTimer) clearTimeout(this.typingTimer);
-        this.typingTimer = setTimeout(() => this.showTyping(), PRISM_CONFIG.typingDelayMs || 90);
-        this.fetchResponse();
+        this.typingTimer = setTimeout(() => this.showTyping(), 50);
+
+        this.fetchResponse(thinkingTime);
+    }
+
+    calculateThinkingTime(text) {
+        // Turbo Logic: much faster base delay (200ms) for snappy feel
+        const base = 200;
+        const complexity = Math.min(text.length * 5, 600);
+        return base + complexity;
     }
 
     trimInput(text) {
@@ -220,19 +270,15 @@ class PrismAgent {
         return cleaned.slice(-maxHistory);
     }
 
-
     setSending(isSending) {
         this.isSending = isSending;
-        // 🧠 UX Fix: Don't disable input field, so the browser doesn't drop focus.
         if (this.ui && this.ui.input) {
             const wrapper = this.ui.input.closest('.input-wrapper');
             if (wrapper) wrapper.classList.toggle('is-sending', isSending);
         }
     }
 
-
     addMessage(role, text) {
-        // Remove typing if exists
         const typing = document.getElementById('consoleTyping');
         if (typing) typing.remove();
 
@@ -253,7 +299,6 @@ class PrismAgent {
         this.trimHistory();
         this.saveHistory();
 
-        // 🎯 Focus persistence
         if (this.isOpen) this.ui.input.focus();
     }
 
@@ -275,11 +320,10 @@ class PrismAgent {
     }
 
     formatText(text) {
-        // Basic formatting for nice text blocks
         return text.replace(/\n/g, '<br>');
     }
 
-    async fetchResponse() {
+    async fetchResponse(thinkingTime) {
         if (this.isSending) return;
         this.setSending(true);
 
@@ -291,48 +335,51 @@ class PrismAgent {
         }
 
         const controller = new AbortController();
-        const timeoutMs = PRISM_CONFIG.requestTimeoutMs || 25000;
+        const timeoutMs = PRISM_CONFIG.requestTimeoutMs;
         const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
 
+        // Start Fetching immediately (parallel with thinking time)
+        const fetchPromise = fetch(PRISM_CONFIG.workerUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                messages: payload,
+                language: this.lang
+            }),
+            signal: controller.signal
+        }).then(res => {
+            if (!res.ok) throw new Error(res.statusText);
+            return res.json();
+        }).catch(err => ({ error: true, details: err }));
+
+        // Wait for BOTH: Thinking Time AND Fetch
+        const startTime = Date.now();
+
         try {
-            const res = await fetch(PRISM_CONFIG.workerUrl, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    messages: payload,
-                    language: this.lang
-                }),
-                signal: controller.signal
-            });
+            const result = await fetchPromise;
 
-            const isJson = (res.headers.get('content-type') || '').includes('application/json');
-            const data = isJson ? await res.json().catch(() => null) : null;
+            // Calculate remaining delay needed
+            const elapsed = Date.now() - startTime;
+            const remaining = Math.max(0, thinkingTime - elapsed);
 
-            if (!res.ok) {
-                if (data && data.response) {
-                    this.addMessage('ai', data.response);
+            if (remaining > 0) {
+                await new Promise(r => setTimeout(r, remaining));
+            }
+
+            if (result.error) {
+                if (result.details.name === 'AbortError') {
+                    this.addMessage('ai', PRISM_CONFIG.texts[this.lang].timeout);
                 } else {
-                    this.addMessage('ai', `${PRISM_CONFIG.texts[this.lang].error} (${res.status})`);
+                    this.addMessage('ai', PRISM_CONFIG.texts[this.lang].error);
                 }
-                return;
-            }
-
-            if (data && data.response) {
-                const delay = this.hasFirstReply ? 0 : (PRISM_CONFIG.firstReplyDelayMs || 100);
-                if (delay) await new Promise(r => setTimeout(r, delay));
-                this.addMessage('ai', data.response);
-                this.hasFirstReply = true;
-            } else {
-                throw new Error('empty_response');
-            }
-
-        } catch (e) {
-            console.error('[Jimmy] Fetch error:', e);
-            if (e && e.name === 'AbortError') {
-                this.addMessage('ai', PRISM_CONFIG.texts[this.lang].timeout);
+            } else if (result.response) {
+                this.addMessage('ai', result.response);
             } else {
                 this.addMessage('ai', PRISM_CONFIG.texts[this.lang].error);
             }
+
+        } catch (e) {
+            this.addMessage('ai', PRISM_CONFIG.texts[this.lang].error);
         } finally {
             clearTimeout(timeoutId);
             if (this.typingTimer) {
@@ -343,7 +390,6 @@ class PrismAgent {
             if (this.isOpen) this.ui.input.focus();
         }
     }
-
 
     saveHistory() {
         localStorage.setItem('mg_prism_history', JSON.stringify(this.messages));
@@ -357,6 +403,20 @@ class PrismAgent {
             if (Array.isArray(parsed)) {
                 this.messages = parsed;
                 this.trimHistory();
+                // Re-render history
+                this.ui.msgs.innerHTML = ''; // Clear stream
+                this.messages.forEach(m => {
+                    // Manually add without pushing to array again
+                    const isUser = m.role === 'user';
+                    const icon = isUser ? '<i class="ri-user-smile-line"></i>' : '<i class="ri-cpu-line"></i>';
+                    const html = `
+                        <div class="console-msg msg-${m.role}">
+                            <div class="msg-avatar ${isUser ? 'icon-user' : 'icon-ai'}">${icon}</div>
+                            <div class="msg-content">${this.formatText(m.content)}</div>
+                        </div>
+                    `;
+                    this.ui.msgs.insertAdjacentHTML('beforeend', html);
+                });
             }
         } catch (e) {
             localStorage.removeItem('mg_prism_history');

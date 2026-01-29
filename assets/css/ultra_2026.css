@@ -58,6 +58,10 @@ body {
     -webkit-font-smoothing: antialiased;
 }
 
+body.nav-open {
+    overflow: hidden;
+}
+
 /* --- 🧊 LAYOUT UTILS --- */
 .content-wrap, .content-wrap--wide {
     width: 100%;
@@ -195,6 +199,7 @@ h1, h2, h3, h4 {
 /* --- 🚀 HERO SECTION (GLASS COCKPIT) --- */
 .hero {
     min-height: 100vh;
+    min-height: 100svh;
     padding-top: 120px;
     display: flex;
     align-items: center;
@@ -311,19 +316,6 @@ h1, h2, h3, h4 {
     z-index: 3;
     will-change: transform;
 }
-
-/* Visual: Taller Vertical Window (Optimized) */
-.id-visual {
-    width: 100%;
-    height: 270px;
-    background: rgba(0,0,0,0.8); 
-    border-radius: 12px; 
-    overflow: hidden; 
-    position: relative;
-    border: 1px solid rgba(255,255,255,0.1);
-    box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
-}
-.avatar-frame { width: 100%; height: 100%; position: relative; }
 
 /* Visual: Liquid Container Window */
 .id-visual {
@@ -462,7 +454,7 @@ h1, h2, h3, h4 {
 
 /* --- 📊 STATS GRID (Bento with Spotlight & Pulse) --- */
 .stats-grid {
-    display: grid; grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(2, 220px); gap: 20px;
+    display: grid; grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(2, minmax(200px, auto)); gap: 20px;
 }
 
 .stat-card {
@@ -832,6 +824,7 @@ h1, h2, h3, h4 {
     .hero-badge-row { justify-content: center; }
     .mission-metrics { justify-content: center; }
     .hero-signature-badges { justify-content: center; }
+    .hero-identity { transform: none; }
     
     .stats-grid { grid-template-columns: 1fr; grid-template-rows: auto; }
     .stat-card:nth-child(1) { grid-column: auto; grid-row: auto; }
@@ -845,8 +838,48 @@ h1, h2, h3, h4 {
 
 @media (max-width: 600px) {
     .tagline { font-size: 2.5rem; }
-    .hero-identity { transform: scale(0.9); }
+    .hero-identity { transform: none; }
     .header-nav { display: none; }
+    .mobile-menu-toggle { display: inline-flex; }
+}
+
+@media (max-width: 768px) {
+    .header-container { backdrop-filter: blur(10px); }
+    .identity-card { backdrop-filter: blur(16px); }
+    .hero-orb { width: 90vw; height: 90vw; filter: blur(50px); }
+    .footer-dock { box-shadow: 0 12px 28px -12px rgba(0,0,0,0.7); }
+}
+
+/* --- 📱 MOBILE NAV --- */
+.mobile-menu-toggle {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.1);
+    background: rgba(255,255,255,0.04);
+    color: #fff;
+    cursor: pointer;
+    transition: 0.2s;
+}
+.mobile-menu-toggle:hover { background: rgba(255,255,255,0.08); }
+.header-container.nav-open {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+    border-radius: 18px;
+}
+.header-container.nav-open .header-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    align-items: flex-start;
+}
+.header-container.nav-open .header-divider {
+    width: 100%;
+    height: 1px;
 }
 
 /* --- JS HOOKS --- */
@@ -854,215 +887,6 @@ h1, h2, h3, h4 {
 .reveal.visible { opacity: 1; transform: translateY(0); }
 .cursor-dot, .cursor-outline, .back-to-top { display: none !important; }
 
-
-/* ==========================================================================
-   🤖 MG AGENT 2026 (AI WIDGET STYLES)
-   Prevents unstyled blob at bottom of page
-   ========================================================================== */
-
-#mg-ai-root {
-    position: fixed;
-    z-index: 9999;
-    bottom: 0;
-    right: 0;
-}
-
-/* 🟢 Trigger Button (Floating Orb) */
-.ai-core-trigger {
-    position: fixed;
-    bottom: 30px;
-    right: 30px;
-    width: 64px;
-    height: 64px;
-    cursor: pointer;
-    z-index: 10000;
-    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-
-.ai-core-trigger:hover {
-    transform: scale(1.1);
-}
-
-.core-node {
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.6);
-    backdrop-filter: blur(10px);
-    border-radius: 50%;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    z-index: 2;
-    overflow: hidden;
-    box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.5);
-}
-
-.core-node img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transform: scale(1.1); /* Eliminate gaps */
-}
-
-/* Pulsing Orbit */
-.core-orbit {
-    position: absolute;
-    inset: -4px;
-    border-radius: 50%;
-    border: 1px dashed rgba(59, 130, 246, 0.5);
-    animation: spinOrbit 10s linear infinite;
-    z-index: 1;
-}
-
-@keyframes spinOrbit { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-
-/* 🟢 Chat Window (Glass Panel) */
-.ai-chat-container {
-    position: fixed;
-    bottom: 110px;
-    right: 30px;
-    width: 380px;
-    height: 600px;
-    max-height: 70vh;
-    background: rgba(10, 10, 15, 0.95);
-    backdrop-filter: blur(40px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 24px;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    box-shadow: 0 40px 80px -20px rgba(0, 0, 0, 0.8);
-    transform-origin: bottom right;
-    transform: scale(0.9) translateY(20px);
-    opacity: 0;
-    pointer-events: none;
-    transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    z-index: 10000;
-}
-
-.ai-chat-container.active {
-    transform: scale(1) translateY(0);
-    opacity: 1;
-    pointer-events: auto;
-}
-
-/* Header */
-.ai-chat-header {
-    padding: 20px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    background: rgba(255, 255, 255, 0.02);
-}
-
-.ai-avatar-wrap {
-    width: 48px; height: 48px; position: relative;
-}
-.ai-avatar-inner {
-    width: 100%; height: 100%; border-radius: 50%; overflow: hidden;
-    border: 2px solid rgba(255, 255, 255, 0.1);
-}
-.ai-avatar-inner img { width: 100%; height: 100%; object-fit: cover; }
-
-.ai-info h3 { font-size: 1rem; color: #fff; margin: 0; }
-.ai-info span { font-size: 0.75rem; color: var(--highlight); }
-
-.ai-close {
-    margin-left: auto; background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 1.2rem;
-}
-
-/* Messages */
-.ai-chat-messages {
-    flex: 1;
-    padding: 20px;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-}
-
-.message {
-    max-width: 85%;
-    display: flex;
-    flex-direction: column;
-    font-size: 0.9rem;
-    line-height: 1.5;
-}
-
-.ai-msg { align-self: flex-start; }
-.ai-msg .msg-content {
-    background: rgba(255, 255, 255, 0.05);
-    color: #e2e8f0;
-    border-radius: 16px 16px 16px 4px;
-    padding: 12px 16px;
-}
-
-.user-msg { align-self: flex-end; }
-.user-msg .msg-content {
-    background: var(--highlight);
-    color: #fff;
-    border-radius: 16px 16px 4px 16px;
-    padding: 12px 16px;
-}
-
-/* Input Area */
-.ai-chat-input-area {
-    padding: 16px;
-    border-top: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-.ai-input-wrapper {
-    display: flex;
-    gap: 10px;
-    background: rgba(0, 0, 0, 0.4);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 100px;
-    padding: 6px 6px 6px 20px;
-}
-
-.ai-input-wrapper input {
-    flex: 1;
-    background: none;
-    border: none;
-    color: #fff;
-    outline: none;
-    font-size: 0.9rem;
-    font-family: var(--font-body);
-}
-
-.ai-input-wrapper button {
-    width: 36px; height: 36px;
-    border-radius: 50%;
-    background: var(--highlight);
-    border: none;
-    color: #fff;
-    display: flex; align-items: center; justify-content: center;
-    cursor: pointer;
-    transition: 0.2s;
-}
-
-.ai-input-wrapper button:hover {
-    transform: scale(1.05);
-}
-
-/* Mobile Adjustments for Chat */
-@media (max-width: 480px) {
-    .ai-chat-container {
-        width: 100%;
-        height: 100%;
-        max-height: 100%;
-        bottom: 0;
-        right: 0;
-        border-radius: 0;
-    }
-    .ai-core-trigger {
-        bottom: 20px;
-        right: 20px;
-    }
-}
 
 /* --- 🎓 EDUCATION CAROUSEL VARIANT --- */
 .edu-card .exp-year {

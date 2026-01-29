@@ -61,7 +61,7 @@
     <header class="site-header">
         <div class="header-container">
             <!-- Navigation -->
-            <nav class="header-nav">
+            <nav id="primaryNav" class="header-nav">
                 <a href="/CV/" class="nav-link active">Home</a>
                 <a href="/CV/portfolio/" class="nav-link">Portfolio</a>
                 <a href="/CV/achievements/" class="nav-link">Achievements</a>
@@ -72,6 +72,10 @@
             <a href="/CV/portfolio/index-ar.html" class="lang-switch-compact" aria-label="Switch to Arabic pages">
                 <span class="lang-code">AR</span>
             </a>
+
+            <button class="mobile-menu-toggle" aria-label="Open menu" aria-expanded="false" aria-controls="primaryNav">
+                <i class="ri-menu-3-line"></i>
+            </button>
         </div>
     </header>
 
@@ -118,7 +122,7 @@
                 <div class="hero-identity reveal" style="transition-delay: 0.2s;">
                     <div class="identity-card glass-panel tilt-3d">
                         <div class="id-header">
-                            <img src="assets/images/arabic-logo-mg.png" alt="Logo" class="id-logo-large">
+                            <img src="assets/images/arabic-logo-mg.png" alt="Logo" class="id-logo-large" decoding="async">
                         </div>
                         <div class="id-visual">
                             <div class="avatar-frame">
@@ -744,7 +748,7 @@
         <div class="footer-dock content-wrap reveal">
             <!-- Left: Brand -->
             <div class="footer-brand">
-                <img src="assets/images/arabic-logo-mg.png" alt="Mohamed Gamal" class="footer-logo-img">
+                <img src="assets/images/arabic-logo-mg.png" alt="Mohamed Gamal" class="footer-logo-img" loading="lazy" decoding="async">
             </div>
 
             <!-- Center: Actions -->

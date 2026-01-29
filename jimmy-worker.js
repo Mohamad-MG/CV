@@ -234,12 +234,10 @@ export default {
         const headers = cors(req.headers.get("Origin"));
         if (req.method === "OPTIONS") return new Response(null, { status: 204, headers });
 
-        // Health Check / Browser Visit Handler
         if (req.method === "GET") {
             return json({ status: `Jimmy Worker v${WORKER_VERSION} Online`, mode: "ready" }, 200, headers);
         }
 
-        // Enforce POST for actual interactions
         if (req.method !== "POST") {
             return json({ error: "Method Not Allowed", message: "Use POST" }, 405, headers);
         }
@@ -248,49 +246,77 @@ export default {
             const { messages = [], meta = {} } = await req.json();
             if (!messages.length) return json({ error: "Empty" }, 400, headers);
 
-            const locale =
-                (req.headers.get("accept-language") || "").startsWith("en")
-                    ? "en"
-                    : /(sa|ae|kw|qa|bh|om)/i.test(req.headers.get("accept-language") || "")
-                        ? "gulf"
-                        : "eg";
+            // 1) Robust Locale Detection
+            const country = (req.headers.get("cf-ipcountry") || "").toUpperCase();
+            const acceptLang = (req.headers.get("accept-language") || "").toLowerCase();
+
+            let locale = "eg"; // Default
+            if (/(SA|AE|KW|QA|BH|OM)/.test(country)) {
+                locale = "gulf";
+            } else if (acceptLang.includes("ar-sa") || acceptLang.includes("ar-ae") || acceptLang.includes("ar-kw")) {
+                locale = "gulf";
+            } else if (acceptLang.startsWith("en") && !acceptLang.includes("ar")) {
+                locale = "en";
+            }
 
             const flashCount = meta.flash_since_expert || 0;
             const expertUses = meta.expert_uses || 0;
-            const track = meta.track || "mg";
 
             const normalized = normalize(messages);
             let response, mode = "flash";
 
-            // ===== FLASH (default)
+            // ===== FLASH (default) with FAILOVER
             const flashPrompt = buildFlashPrompt(locale, messages.length === 1);
-            response = await callGemini(env, MODELS.FLASH, flashPrompt, normalized, 6000);
+
+            try {
+                response = await callGemini(env, MODELS.FLASH, flashPrompt, normalized, 6000);
+            } catch (flashError) {
+                console.warn("⚠️ Flash Failed, engaging Failover:", flashError);
+                // Failover Mechanism
+                try {
+                    response = await callGemini(env, MODELS.FAILOVER, flashPrompt, normalized, 8000);
+                } catch (failoverError) {
+                    throw new Error("ALL_MODELS_BUSY");
+                }
+            }
 
             // ===== EXPERT LOGIC (Reactive + Cooldown)
             // Trigger: Flash asks for help (<<NEEDS_EXPERT>>)
-            if (response.trim() === "<<NEEDS_EXPERT>>") {
+            if (response && response.trim() === "<<NEEDS_EXPERT>>") {
                 // Gate: Must have < 2 consecutive uses OR cooldown of 5 Flash replies satisfied
                 const canUpgrade = (expertUses < 2) || (expertUses >= 2 && flashCount >= 5);
 
                 if (canUpgrade) {
                     console.log("🚀 Upgrading to Expert (Gate Open)");
-                    const kb = await env.JIMMY_KV?.get("jimmy:kb:advanced");
+
+                    // KV Retry Logic (Simple 2-attempt fetch)
+                    let kb = null;
+                    try {
+                        kb = await env.JIMMY_KV?.get("jimmy:kb:advanced");
+                    } catch (e) {
+                        // First retry
+                        try { kb = await env.JIMMY_KV?.get("jimmy:kb:advanced"); } catch (e2) { }
+                    }
 
                     if (kb) {
                         mode = "expert";
-                        // Prepare Expert Prompt
-                        const expertPrompt = buildExpertPrompt(locale, [kb]); // Simple array wrapper for now
-
-                        // Execute Pro Call
-                        response = await callGemini(env, MODELS.EXPERT, expertPrompt, normalized, 9000);
+                        const expertPrompt = buildExpertPrompt(locale, [kb]);
+                        // Expert Call (Longer Timeout)
+                        try {
+                            response = await callGemini(env, MODELS.EXPERT, expertPrompt, normalized, 12000);
+                        } catch (expertError) {
+                            // If Expert fails, fallback to Flash's general wisdom logic
+                            console.error("Expert Failed, falling back to Flash");
+                            const fallbackPrompt = flashPrompt + "\n\n(تعذر الوصول للخبير، جاوب بناءً على خبرتك العامة)";
+                            response = await callGemini(env, MODELS.FLASH, fallbackPrompt, normalized, 6000);
+                            mode = "flash"; // Revert mode since expert failed
+                        }
                     } else {
+                        // KV Failed completely -> Soft landing
                         response = "محتاج تفاصيل أكتر عشان أقدر أفيدك بدقة.";
                     }
                 } else {
                     console.log("🔒 Upgrade Denied (Cooldown Active)");
-                    // Cooldown Active -> Force Flash to reply properly (Retry Flash with "Answer as best you can" Instruction)
-                    // For now, we accept Flash's refusal or re-prompt it. 
-                    // Simple Fallback: Re-prompt Flash to just give a general answer
                     const fallbackPrompt = flashPrompt + "\n\n(جاوب بناءً على خبرتك العامة دون تفاصيل دقيقة)";
                     response = await callGemini(env, MODELS.FLASH, fallbackPrompt, normalized, 6000);
                 }
@@ -310,7 +336,11 @@ export default {
             );
         } catch (err) {
             console.error("Worker Error:", err);
-            return json({ error: "Invalid Request", details: err.message }, 400, headers);
+            // Friendly Error for User
+            const errorMsg = req.headers.get("accept-language")?.includes("ar")
+                ? "معلش الشبكة تقيلة شوية، ممكن تجرب تاني؟"
+                : "Network is busy, please try again.";
+            return json({ error: "System Error", message: errorMsg }, 500, headers);
         }
     }
 };
