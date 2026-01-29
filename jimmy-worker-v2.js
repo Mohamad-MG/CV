@@ -17,15 +17,15 @@ const ALLOWED_ORIGINS = [
     "http://127.0.0.1:5173",
 ];
 
-// Official Model Names for 2026 Stability
+// Dynamic Model Routing (2026 Ultra-Modern Edition)
 function getModelsForMode(mode) {
     if (mode === "expert") {
-        return ["gpt-4o", "gemini-1.5-pro", "gpt-4-turbo"];
+        return ["gpt-4o", "gemini-1.5-pro", "gpt-4-turbo-preview"];
     }
     if (mode === "emergency") {
-        return ["gpt-4o-mini"];
+        return ["gpt-4o-mini", "gemini-1.5-flash"];
     }
-    // Core Mode
+    // Priority to OpenAI to avoid Gemini Rate Limits shown in user logs
     return ["gpt-4o-mini", "gemini-1.5-flash", "gpt-3.5-turbo"];
 }
 
@@ -61,15 +61,16 @@ const CORE_STYLE = `
 - الطول: 2 إلى 5 سطور فقط.
 - سؤال واحد كحد أقصى بـ 2-3 اختيارات قصيرة.
 
-Warm-Up Protocol (أول تفاعل فقط):
+Diagnose Mode (عند وجود مشكلة):
+- سؤال تشخيص واحد فقط (بدون استجواب).
+- ركز على: Tracking, Attribution, Funnel leaks, CRO, UX, Retention, Offer.
+`.trim();
+
+const WARM_UP_INSTRUCTION = `
+Warm-Up Protocol (للتنفيذ في أول رد فقط):
 1) ترحيب دافئ غير رسمي.
 2) Insight ذكي مرتبط بكلام المستخدم.
 3) Options ناعمة لتحديد زاوية الحديث.
-نبه: لو ده مش أول رد ليك في المحادثة، تخطى الـ Warm-Up وادخل في صلب الموضوع فوراً.
-
-Diagnose Mode:
-- سؤال تشخيص واحد فقط (بدون استجواب).
-- ركز على: Tracking, Attribution, Funnel leaks, CRO, UX, Retention, Offer.
 `.trim();
 
 const CORE_USER = `
@@ -166,16 +167,19 @@ function getStyleForLocale(locale) {
 }
 
 function buildCorePrompt(locale, isFirstMessage = true) {
-    let prompt = [
+    const parts = [
         getStyleForLocale(locale),
         CORE_USER,
         CORE_INDUSTRY,
-    ].join("\n\n");
+    ];
 
-    if (!isFirstMessage) {
-        prompt += "\n\n⚠️ تم تنفيذ الـ Warm-Up Protocol سابقاً. ادخل في حوار ذكي ومباشر وتجنب تكرار الترحيب.";
+    if (isFirstMessage) {
+        parts.push(WARM_UP_INSTRUCTION);
+    } else {
+        parts.push("⚠️ التعليمات الهامة: لقد تجاوزنا مرحلة الترحيب. ادخل في حوار ذكي مباشر مع المستخدم وممنوع تكرار أي صيغ ترحيبية سابقة.");
     }
-    return prompt;
+
+    return parts.join("\n\n");
 }
 
 function buildExpertPrompt(advancedKB, locale, expertMsgCount = 0) {
