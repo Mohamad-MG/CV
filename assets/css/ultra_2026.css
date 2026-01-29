@@ -782,16 +782,35 @@ h4 {
     font-weight: 500;
 }
 
-/* Stealth Link for the 'M' */
+/* Shimmer Link for the 'M' */
 .stealth-link {
-    color: inherit;
+    color: var(--highlight);
     text-decoration: none;
     font-weight: 800;
-    transition: color 0.3s ease;
+    display: inline-block;
+    
+    /* Glint Effect */
+    background: linear-gradient(
+        120deg, 
+        #3B82F6 30%, 
+        #ffffff 50%, 
+        #3B82F6 70%
+    );
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: glint 4s linear infinite;
     cursor: pointer;
+    transition: transform 0.3s ease;
 }
+
 .stealth-link:hover {
-    color: var(--highlight);
+    transform: scale(1.2);
+}
+
+@keyframes glint {
+    0% { background-position: -200% center; }
+    100% { background-position: 200% center; }
 }
 
 /* Visual Divider */
