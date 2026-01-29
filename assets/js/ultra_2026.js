@@ -119,10 +119,12 @@ class DraggableMarquee {
         this.lastX = 0;
         this.velocity = 0;
         this.paused = false;
+        this.offScreen = false;
         this.rafId = null;
         
         this.ensureContentWidth();
         this.initEvents();
+        this.initObserver();
         this.animate = this.animate.bind(this);
         this.animate();
     }
@@ -145,6 +147,23 @@ class DraggableMarquee {
         window.addEventListener('touchmove', (e) => this.onDrag(e.touches[0].clientX));
         window.addEventListener('touchend', () => this.endDrag());
         this.track.style.animation = 'none'; // Disable CSS animation
+    }
+
+    initObserver() {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                this.offScreen = !entry.isIntersecting;
+                if (!this.offScreen && !this.paused) {
+                    if (!this.rafId) this.animate();
+                } else {
+                    if (this.rafId) {
+                        cancelAnimationFrame(this.rafId);
+                        this.rafId = null;
+                    }
+                }
+            });
+        }, { threshold: 0.05 });
+        observer.observe(this.container);
     }
 
     startDrag(x) {
@@ -171,7 +190,7 @@ class DraggableMarquee {
     setPaused(paused) {
         if (this.paused === paused) return;
         this.paused = paused;
-        if (this.paused) {
+        if (this.paused || this.offScreen) {
             if (this.rafId) {
                 cancelAnimationFrame(this.rafId);
                 this.rafId = null;
@@ -182,7 +201,10 @@ class DraggableMarquee {
     }
 
     animate() {
-        if (this.paused) return;
+        if (this.paused || this.offScreen) {
+            this.rafId = null;
+            return;
+        }
         if (!this.isDragging) {
             // Return to base speed
             this.velocity *= 0.95; 
@@ -197,28 +219,27 @@ class DraggableMarquee {
         if (this.pos <= -trackWidth) this.pos += trackWidth;
         else if (this.pos > 0) this.pos -= trackWidth;
 
-        this.track.style.transform = `translateX(${this.pos}px)`;
+        this.track.style.transform = `translate3d(${this.pos}px, 0, 0)`;
         this.rafId = requestAnimationFrame(this.animate);
     }
 }
 
 // --- 4. 3D TILT & SPOTLIGHT EFFECT ---
 const initInteractions = () => {
-    // 3D Tilt for Identity Card - DISABLED (Kept empty for consistency)
-    /* 
-    const tiltCard = document.querySelector('.tilt-3d');
-    if (tiltCard) { ... }
-    */
-
     // Spotlight for Stat Cards
     const statCards = document.querySelectorAll('.stat-card');
     statCards.forEach(card => {
+        let rafId = null;
         card.addEventListener('mousemove', (e) => {
-            const rect = card.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
-            card.style.setProperty('--mouse-x', `${x}px`);
-            card.style.setProperty('--mouse-y', `${y}px`);
+            if (rafId) return;
+            rafId = requestAnimationFrame(() => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                card.style.setProperty('--mouse-x', `${x}px`);
+                card.style.setProperty('--mouse-y', `${y}px`);
+                rafId = null;
+            });
         });
     });
 };
@@ -280,12 +301,14 @@ const initCarousel = () => {
         // Optional Scrubber Sync
         if (indicator) {
             container.addEventListener('scroll', () => {
-                const scrollL = container.scrollLeft;
-                const maxScroll = container.scrollWidth - container.clientWidth;
-                const progress = maxScroll > 0 ? scrollL / maxScroll : 0;
-                const trackWidth = indicator.parentElement.offsetWidth;
-                const indicatorPos = progress * (trackWidth - 8);
-                indicator.style.left = `${indicatorPos}px`;
+                requestAnimationFrame(() => {
+                    const scrollL = container.scrollLeft;
+                    const maxScroll = container.scrollWidth - container.clientWidth;
+                    const progress = maxScroll > 0 ? scrollL / maxScroll : 0;
+                    const trackWidth = indicator.parentElement.offsetWidth;
+                    const indicatorPos = progress * (trackWidth - 8);
+                    indicator.style.transform = `translate3d(${indicatorPos}px, 0, 0)`;
+                });
             }, { passive: true });
             
             // Clickable Years Logic

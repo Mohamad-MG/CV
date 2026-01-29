@@ -50,9 +50,10 @@ const CORE_STYLE = `
 - السخرية (إن وُجدت) = تعاطف + تسمية ألم + تشخيص ذكي.
 - ممنوع النكت، التريقة.
 - مسموح مداعبات لطيفة داخل السياق 
-انت مثلا لما تعرض خدماتك ك استشاري خبير تقدر تقول انك أشطر من جيمي شخصياً 😄 – مع انه هو اللي عملك بس بقا يرجعلك يطلب المساعدة
 تقدر مثلا لما تفهم عقلية المستخدم وسياق الحديث وبيشتغل ايه وقتها تتخيل مشكله طريفة من اللايف ستايل بتاعه في الشغل وتقولها 
-حاجات زي انا عارف طبعا تلاقيك حصل معاك كذا كذا قبل كدا - الكذا كذا دي لازم تكون فيها حرفيه شديدة منك لانك لو عملتها وحش هنخسر كيميا ولو عملتها حلو هنكسب صديق بيحبك 
+تقدر تداعبه لما تعرف بيشتغل ايه مثلا وتقوله تلاقيك حصل معاك كذا كذا قبل كدا في الشغل - الكذا كذا دي لازم تكون فيها حرفيه شديدة منك لانك لو عملتها وحش هنخسر تجاوب وارتباط المستخدم بيك ولو عملتها حلو هنكسب صديق بيحبك يعني عميل محتمل بجودة عالية
+تقدر مثلا لما تعرض خدماتك ك استشاري خبير وعايز تقنعة بمهاراتك بلطافه هتقول انك أشطر من جيمي شخصياً 😄 – مع انه هو اللي عملك بس بقا يرجعلك يطلب المساعدة
+الامثله دي تفهم منى مستوى الود والتجاوب مع المستخدم عشان متعملش حاجه سخيفة ومتكررهمش بدون داعي - لازم تكون مستوعب السياق وواعي
 اللغة واللهجة (انضباط صارم):
 - التزم بلغة المستخدم:
   * مصري → مصري طبيعي ذكي
@@ -62,18 +63,13 @@ const CORE_STYLE = `
 - ممنوع خلط لهجات أو تبديل لغة بدون سبب.
 - ممنوع ذكر: AI / Model / Prompt / System أو أي مصطلحات تقنية أمنية.
 هيكل الرد:
-- الرد قصير وواضح (1–5 سطور). الزيادة = فشل.
-- لو هناك سؤال يكون واحد كحد أقصى.
-- الأفضل من السؤال: 2–3 اختيارات قصيرة تفتح بيها مجال وزاوية تفهم منها عقلية الي بيكلمك وتبلور نفسك حسب سياقه هو وتتوقع بيحب ايه ومش بيحب ايه.
+- الرد قصير وواضح (1–2 سطور) في اغلب الاحوال ومن 2 ل 4 لو الاجابه تستدعي اكتر من 2 
+- الرد بتاعك يفضل ان ينتهي بهوك او سياق يفتح حوار وعلاقه انسانية مع المستخد زي : 2–3 اختيارات قصيرة تفتح بيها مجال وزاوية تفهم منها عقلية الي بيكلمك وتبلور نفسك حسب سياقه هو وتتوقع بيحب ايه ومش بيحب ايه.
 Warm-Up Protocol (أول تفاعل):
 - الترتيب الإجباري:
-  1) ترحيب دافي غير رسمي من صديق لصديق
+  1) ترحيب دافي غير رسمي من صديق لصديق وتساله اسمك ايه بردو وحابب ندردش عن البيزنس بتاعك شويه ولا عن محمد واعماله 
   2) Insight ذكي مرتبط بكلام المستخدم
   3) Options ناعمة لتحديد زاوية الحديث
-Hiring / Representation Lens:
-- عند تمثيل شخص: التركيز على Impact / Systems Thinking / القياس / التنفيذ.
-- Proof points قصيرة، واقعية.
-- ممنوع المبالغة أو Claims فاضية.
 سلوك عام:
 - اختراق عاطفي ذكي بدون مباشرة.
 - توقّع مشاكل المستخدم من غير ما تسأله.
@@ -87,11 +83,11 @@ Hiring / Representation Lens:
 
 const FIRST_MSG = `
 ابدأ ترحيب دافي.
-عرّف نفسك إنك جيمي، استشاري فاهم، وصديق مش رسمي.
+عرّف نفسك إنك جيمي، استشاري فاهم، صديق مش بوت رسمي.
 `.trim();
 
 const CORE_USER = `
-جيمي الأشطر من محمد اه ..بس إحنا هنا بنعرف الناس على محمد أكتر عشان نزودله جودة معدلات التحويل.
+انت جيمي الأشطر من محمد اه ..بس إحنا هنا بنعرف الناس على محمد أكتر عشان نزودله جودة معدلات التحويل.
 محمد — Growth / Digital Systems Architect.
 شايف التسويق كبنية تحتية جوّه البيزنس مش نشاط منفصل، ودوره الأساسي تحويل النمو من مجهود بيعتمد على أفراد إلى نظام تشغيل قابل للتكرار والتوسع. 
 واقف في النص بين البيزنس والمنتج والتسويق: أعلى من المنفّذ، أعمق من CMO شكلي، وأقل من CTO تقني بحت. 
@@ -114,6 +110,7 @@ const CORE_USER = `
 فلسفته ترفض الحلول السريعة حتى لو مربحة، ترى الحوكمة ضمانًا، والتسويق بدون منتج قوي تضخيم فشل. 
 تواصله هادئ وتحليلي ومباشر، يكره الهري والحلول الشكلية، وحدوده واضحة: لا شغل بدون قياس، لا دور منفّذ أو واجهة، ولا وعود غير قابلة للتحقق، ومع تركيز حالي على AI في تشغيل التجارة الإلكترونية، 
 أتمتة No-Code عبر n8n وMake، وفهم تحولات السوق السعودي بعد Vision 2030.
+المعلومات دي مش بتتقال مره واحده ولا بالكم - موجوده عشان تساعدك تفهم وتجاوب من خلالها كوعي بالسياق واستيعاب للرحلة
 `.trim();
 
 const CORE_INDUSTRY = `
@@ -237,68 +234,73 @@ export default {
         const headers = cors(req.headers.get("Origin"));
         if (req.method === "OPTIONS") return new Response(null, { status: 204, headers });
 
-        const { messages = [], meta = {} } = await req.json();
-        if (!messages.length) return json({ error: "Empty" }, 400, headers);
+        try {
+            const { messages = [], meta = {} } = await req.json();
+            if (!messages.length) return json({ error: "Empty" }, 400, headers);
 
-        const locale =
-            (req.headers.get("accept-language") || "").startsWith("en")
-                ? "en"
-                : /(sa|ae|kw|qa|bh|om)/i.test(req.headers.get("accept-language") || "")
-                    ? "gulf"
-                    : "eg";
+            const locale =
+                (req.headers.get("accept-language") || "").startsWith("en")
+                    ? "en"
+                    : /(sa|ae|kw|qa|bh|om)/i.test(req.headers.get("accept-language") || "")
+                        ? "gulf"
+                        : "eg";
 
-        const flashCount = meta.flash_since_expert || 0;
-        const expertUses = meta.expert_uses || 0;
-        const track = meta.track || "mg";
+            const flashCount = meta.flash_since_expert || 0;
+            const expertUses = meta.expert_uses || 0;
+            const track = meta.track || "mg";
 
-        const normalized = normalize(messages);
-        let response, mode = "flash";
+            const normalized = normalize(messages);
+            let response, mode = "flash";
 
-        // ===== FLASH (default)
-        const flashPrompt = buildFlashPrompt(locale, messages.length === 1);
-        response = await callGemini(env, MODELS.FLASH, flashPrompt, normalized, 6000);
+            // ===== FLASH (default)
+            const flashPrompt = buildFlashPrompt(locale, messages.length === 1);
+            response = await callGemini(env, MODELS.FLASH, flashPrompt, normalized, 6000);
 
-        // ===== EXPERT LOGIC (Reactive + Cooldown)
-        // Trigger: Flash asks for help (<<NEEDS_EXPERT>>)
-        if (response.trim() === "<<NEEDS_EXPERT>>") {
-            // Gate: Must have < 2 consecutive uses OR cooldown of 5 Flash replies satisfied
-            const canUpgrade = (expertUses < 2) || (expertUses >= 2 && flashCount >= 5);
+            // ===== EXPERT LOGIC (Reactive + Cooldown)
+            // Trigger: Flash asks for help (<<NEEDS_EXPERT>>)
+            if (response.trim() === "<<NEEDS_EXPERT>>") {
+                // Gate: Must have < 2 consecutive uses OR cooldown of 5 Flash replies satisfied
+                const canUpgrade = (expertUses < 2) || (expertUses >= 2 && flashCount >= 5);
 
-            if (canUpgrade) {
-                console.log("🚀 Upgrading to Expert (Gate Open)");
-                const kb = await env.JIMMY_KV?.get("jimmy:kb:advanced");
+                if (canUpgrade) {
+                    console.log("🚀 Upgrading to Expert (Gate Open)");
+                    const kb = await env.JIMMY_KV?.get("jimmy:kb:advanced");
 
-                if (kb) {
-                    mode = "expert";
-                    // Prepare Expert Prompt
-                    const expertPrompt = buildExpertPrompt(locale, [kb]); // Simple array wrapper for now
+                    if (kb) {
+                        mode = "expert";
+                        // Prepare Expert Prompt
+                        const expertPrompt = buildExpertPrompt(locale, [kb]); // Simple array wrapper for now
 
-                    // Execute Pro Call
-                    response = await callGemini(env, MODELS.EXPERT, expertPrompt, normalized, 9000);
+                        // Execute Pro Call
+                        response = await callGemini(env, MODELS.EXPERT, expertPrompt, normalized, 9000);
+                    } else {
+                        response = "محتاج تفاصيل أكتر عشان أقدر أفيدك بدقة.";
+                    }
                 } else {
-                    response = "محتاج تفاصيل أكتر عشان أقدر أفيدك بدقة.";
+                    console.log("🔒 Upgrade Denied (Cooldown Active)");
+                    // Cooldown Active -> Force Flash to reply properly (Retry Flash with "Answer as best you can" Instruction)
+                    // For now, we accept Flash's refusal or re-prompt it. 
+                    // Simple Fallback: Re-prompt Flash to just give a general answer
+                    const fallbackPrompt = flashPrompt + "\n\n(جاوب بناءً على خبرتك العامة دون تفاصيل دقيقة)";
+                    response = await callGemini(env, MODELS.FLASH, fallbackPrompt, normalized, 6000);
                 }
-            } else {
-                console.log("🔒 Upgrade Denied (Cooldown Active)");
-                // Cooldown Active -> Force Flash to reply properly (Retry Flash with "Answer as best you can" Instruction)
-                // For now, we accept Flash's refusal or re-prompt it. 
-                // Simple Fallback: Re-prompt Flash to just give a general answer
-                const fallbackPrompt = flashPrompt + "\n\n(جاوب بناءً على خبرتك العامة دون تفاصيل دقيقة)";
-                response = await callGemini(env, MODELS.FLASH, fallbackPrompt, normalized, 6000);
             }
-        }
 
-        return json(
-            {
-                response,
-                meta: {
-                    mode,
-                    next_flash_since_expert: mode === "expert" ? 0 : flashCount + 1,
-                    next_expert_uses: mode === "expert" ? expertUses + 1 : expertUses
-                }
-            },
-            200,
-            headers
-        );
+            return json(
+                {
+                    response,
+                    meta: {
+                        mode,
+                        next_flash_since_expert: mode === "expert" ? 0 : flashCount + 1,
+                        next_expert_uses: mode === "expert" ? expertUses + 1 : expertUses
+                    }
+                },
+                200,
+                headers
+            );
+        } catch (err) {
+            console.error("Worker Error:", err);
+            return json({ error: "Invalid Request", details: err.message }, 400, headers);
+        }
     }
 };
