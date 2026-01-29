@@ -8,7 +8,7 @@
 /* ============================================================
    CONFIG
 ============================================================ */
-const WORKER_VERSION = "2.3.1";
+const WORKER_VERSION = "2.3.2";
 
 const ALLOWED_ORIGINS = [
     "https://mo-gamal.com",
@@ -290,14 +290,11 @@ async function executeAIRequest(env, model, prompt, messages, { maxTries = 7, al
     throw new Error(`EXECUTION_FAILED: ${JSON.stringify(lastError)}`);
 }
 
-async function classifyRequest(env, messages) {
+async function classifyRequest(env, routerMessages) {
     try {
-        // Optimization: Route based on last 2 messages only to reduce context cost/noise
-        const recentContext = messages.slice(-2);
-
-        // Use Flash with strict constraints for Routing
+        // Router now receives specific context (Last 2 USER messages) from main handler
         // allowFastFailover = false (Router is a decision, let it retry a bit if needed)
-        const response = await executeAIRequest(env, MODELS.DEFAULT, ROUTER_SYSTEM_PROMPT, recentContext, {
+        const response = await executeAIRequest(env, MODELS.DEFAULT, ROUTER_SYSTEM_PROMPT, routerMessages, {
             maxTries: 2,
             allowFastFailover: false,
             timeoutMs: 3500
@@ -311,7 +308,8 @@ async function classifyRequest(env, messages) {
             // Strict Validation
             const isValid = decision &&
                 (decision.route === "core" || decision.route === "expert") &&
-                typeof decision.confidence === "number";
+                typeof decision.confidence === "number" &&
+                decision.confidence >= 0 && decision.confidence <= 1;
 
             if (!isValid) return { route: "core", confidence: 1.0, reason: "InvalidSchema" };
             return decision;
@@ -362,14 +360,17 @@ export default {
             let routerDecision = { route: "core", confidence: 0.0, reason: "Warmup" };
 
             // Warm-up Lock: First 3 interactions (USER messages) always Core
-            // We count rawMessages filtering for user.
             const userMsgCount = rawMessages.filter(m => m.role === "user").length;
-            const isWarmupPhase = userMsgCount <= 3 && expertMsgCount === 0;
+            const isWarmupPhase = userMsgCount <= 3;
 
             if (!isWarmupPhase && !expertOnInput && !needsAdvancedMode(lastUserMsg)) {
-                // If regex didn't explicitly block it (Mohamed filter), ask the Router
+                // Prepare specific context for Router: Last 2 USER messages only
+                // This prevents Model replies from confusing the intent classifier
+                const recentUserMsgs = rawMessages.filter(m => m.role === "user").slice(-2);
+                const routerContext = normalizeMessages(recentUserMsgs);
+
                 console.log("🤔 Asking Router...");
-                routerDecision = await classifyRequest(env, messages);
+                routerDecision = await classifyRequest(env, routerContext);
             }
 
             // 2) APPLY DECISION (Threshold 0.7)
