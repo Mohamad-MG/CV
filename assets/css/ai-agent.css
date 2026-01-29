@@ -1,45 +1,29 @@
 /* 
-   🌌 ULTRA MODERN 2026 - DEEP OBSIDIAN EDITION
-   Concept: Luxurious Depth, Subtle Gradients, High-End Glass
+   🌌 ULTRA MODERN 2026 - QUANTUM REDESIGN 
+   Status: Premium | Specialized Product Experience
 */
 
 :root {
-    /* Palette: Deep Cosmic Tones */
-    --agent-bg-start: rgba(12, 12, 16, 0.95);
-    --agent-bg-end: rgba(5, 5, 8, 0.98);
-    
-    --agent-border: rgba(255, 255, 255, 0.08);
-    --agent-highlight: rgba(255, 255, 255, 0.05);
-    
-    /* Elegant Accents (No more shouting blue) */
-    --accent-gradient: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
-    --accent-glow: rgba(59, 130, 246, 0.15);
-
-    --text-primary: #ffffff;
-    --text-secondary: #a1a1aa;
-
-    /* Optimized Depth */
-    --glass-blur: blur(12px); /* Slightly increased for richness */
-    --depth-shadow: 
-        0 20px 40px -10px rgba(0, 0, 0, 0.8),
-        inset 0 1px 0 rgba(255, 255, 255, 0.1); /* Top Highlight */
-
-    /* Fonts */
-    --font-ui: 'Outfit', sans-serif;
-    --font-code: 'Space Grotesk', monospace;
+    --q-bg: #0d0d12;
+    --q-glass: rgba(18, 18, 28, 0.9);
+    --q-border: rgba(255, 255, 255, 0.08);
+    --q-cyan: #22d3ee;
+    --q-violet: #8b5cf6;
+    --q-text: #f4f4f5;
+    --q-text-dim: #71717a;
+    --q-depth-shadow: 0 50px 100px -20px rgba(0, 0, 0, 0.9);
+    --q-accent: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
 }
 
-/* --- Backdrop (Focus) --- */
 #mg-neural-backdrop {
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.6); /* Darker for focus */
-    backdrop-filter: blur(2px);
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(10px);
     z-index: 9998;
     opacity: 0;
     pointer-events: none;
-    transition: opacity 0.3s ease;
-    will-change: opacity;
+    transition: 0.5s cubic-bezier(0.2, 0, 0, 1);
 }
 
 #mg-neural-backdrop.active {
@@ -47,445 +31,403 @@
     pointer-events: auto;
 }
 
-/* --- The Main Console Window (The Monolith) --- */
-.ai-console-container {
+.ai-console-quantum {
     position: fixed;
     top: 50%;
     left: 50%;
-    /* Start State: Centered, slightly smaller, fully GPU promoted */
-    transform: translate(-50%, -50%) scale(0.95) translateZ(0); 
-    
-    width: 800px;
-    height: 600px;
-    max-width: 90vw;
-    max-height: 85vh;
-
-    /* Rich Background with Gradient */
-    background: linear-gradient(180deg, var(--agent-bg-start) 0%, var(--agent-bg-end) 100%);
-    border: 1px solid var(--agent-border);
-    border-radius: 20px;
-    
-    /* The Depth Secret */
-    box-shadow: var(--depth-shadow);
-    backdrop-filter: var(--glass-blur);
-
+    width: 750px;
+    height: 580px;
+    transform: translate(-50%, -50%) scale(0.9) translateZ(0);
+    max-width: 95vw;
+    max-height: 90vh;
+    background: var(--q-bg);
+    border: 1px solid rgba(255,255,255,0.05); /* Finer border */
+    border-radius: 24px;
+    box-shadow: 0 40px 100px -10px rgba(0, 0, 0, 0.95), 0 0 0 1px rgba(255,255,255,0.03); /* Deep depth */
     display: flex;
     flex-direction: column;
     z-index: 9999;
-
-    /* Hidden State */
     opacity: 0;
     visibility: hidden;
-    pointer-events: none;
-
-    /* GPU Layers */
-    will-change: transform, opacity;
-    backface-visibility: hidden;
-
-    /* CLOSING ANIMATION: Fast fade out, no bounce */
-    transition: 
-        transform 0.15s ease-in,
-        opacity 0.15s ease-out,
-        visibility 0s linear 0.15s; /* Delay visibility hidden until opacity is done */
+    transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    backdrop-filter: blur(30px);
 }
 
-.ai-console-container.active {
-    /* OPEN STATE: Full scale */
-    transform: translate(-50%, -50%) scale(1) translateZ(0);
+.ai-console-quantum.active {
     opacity: 1;
     visibility: visible;
-    pointer-events: auto;
-
-    /* OPENING ANIMATION: Snappy Spring (Back-Out) */
-    transition: 
-        transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), /* THE BOUNCE */
-        opacity 0.2s ease-out,
-        visibility 0s linear 0s; /* Show instantly */
+    transform: translate(-50%, -50%) scale(1) translateZ(0);
 }
 
-/* --- Header (Polished) --- */
-.console-header {
+/* Header */
+.header-quantum {
+    height: 70px; /* Slimmer header */
+    padding: 0 24px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 16px 24px;
-    background: linear-gradient(to bottom, rgba(255,255,255,0.03), rgba(255,255,255,0));
-    border-bottom: 1px solid var(--agent-border);
-    height: 70px;
-    flex-shrink: 0;
+    border-bottom: 1px solid var(--q-border);
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.02) 0%, transparent 100%);
 }
 
-.console-brand-wrapper {
+.brand-quantum {
     display: flex;
     align-items: center;
-    gap: 14px;
+    gap: 16px;
 }
 
-.header-avatar {
-    width: 36px;
-    height: 36px;
-    border-radius: 10px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-}
-
-.header-info {
+.quantum-orb {
+    width: 32px; /* Smaller orb */
+    height: 32px;
+    position: relative;
     display: flex;
-    flex-direction: column;
+    align-items: center;
     justify-content: center;
 }
 
-.header-name {
-    font-family: var(--font-ui);
-    font-weight: 600;
-    color: #fff;
-    font-size: 0.95rem;
-    letter-spacing: 0.5px;
+.orb-core {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--q-cyan);
+    box-shadow: 0 0 15px var(--q-cyan);
+    animation: q-pulse 2s infinite;
 }
 
-.header-status {
-    font-size: 0.7rem;
-    color: #8b5cf6; /* Soft Purple */
-    text-transform: uppercase;
+.orb-ring {
+    position: absolute;
+    inset: 0;
+    border: 1.5px solid var(--q-violet);
+    border-radius: 50%;
+    opacity: 0.4;
+    border-top-color: transparent;
+    animation: q-spin 3s linear infinite;
+}
+
+@keyframes q-pulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+        opacity: 0.8;
+    }
+
+    50% {
+        transform: scale(1.3);
+        opacity: 1;
+    }
+}
+
+@keyframes q-spin {
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.brand-info {
     display: flex;
-    align-items: center;
-    gap: 6px;
-    font-weight: 500;
+    flex-direction: column;
+}
+
+.brand-name {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: 1.5px;
+    font-size: 0.95rem;
+}
+
+.brand-status {
+    font-size: 0.65rem;
+    color: var(--q-cyan);
+    font-weight: 600;
+    text-transform: uppercase;
     letter-spacing: 1px;
 }
 
-.status-beacon {
-    width: 6px;
-    height: 6px;
-    background: #8b5cf6;
-    border-radius: 50%;
-    box-shadow: 0 0 8px rgba(139, 92, 246, 0.6);
+.controls-quantum {
+    display: flex;
+    align-items: center;
+    gap: 20px;
 }
 
-.console-close {
-    width: 32px;
-    height: 32px;
-    background: transparent;
-    border: 1px solid transparent;
-    border-radius: 8px;
-    color: var(--text-secondary);
+.quota-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+}
+
+.quota-gauge {
+    width: 80px;
+    height: 3px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.gauge-fill {
+    height: 100%;
+    background: var(--q-cyan);
+    transition: 0.3s;
+    box-shadow: 0 0 10px var(--q-cyan);
+}
+
+.quota-text {
+    font-family: 'Space Grotesk', monospace;
+    font-size: 0.65rem;
+    color: var(--q-text-dim);
+    letter-spacing: 0.5px;
+}
+
+.btn-icon-quantum {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    border: 1px solid var(--q-border);
+    background: rgba(255, 255, 255, 0.02);
+    color: var(--q-text-dim);
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.2s;
+    transition: 0.3s;
 }
 
-.console-close:hover {
-    background: rgba(255, 255, 255, 0.05);
-    border-color: rgba(255, 255, 255, 0.1);
+.btn-icon-quantum:hover {
+    background: rgba(255, 255, 255, 0.08);
     color: #fff;
+    transform: translateY(-2px);
 }
 
-
-/* --- Messages (Premium) --- */
-.console-messages {
+/* Messages */
+.messages-quantum {
     flex: 1;
-    padding: 24px;
+    padding: 24px; /* Reduced padding */
     overflow-y: auto;
     display: flex;
     flex-direction: column;
-    gap: 20px;
-    scroll-behavior: smooth;
+    gap: 16px; /* Tighter gap */
 }
 
-.console-msg {
+.msg-quantum {
     display: flex;
-    gap: 14px;
+    gap: 16px;
     max-width: 85%;
+    align-items: flex-start;
 }
 
-/* AI: Sleek Dark Glass */
-.msg-ai { align-self: flex-start; }
-.msg-ai .msg-content {
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    border-radius: 4px 18px 18px 18px;
-    color: #e2e8f0;
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+.ai-msg {
+    align-self: flex-start;
 }
 
-/* User: Cosmic Gradient (The Fix) */
-.msg-user { align-self: flex-end; flex-direction: row-reverse; }
-.msg-user .msg-content {
-    /* Sophisticated Gradient: Deep Blue to Royal Purple */
-    background: linear-gradient(135deg, rgba(30, 58, 138, 0.6) 0%, rgba(88, 28, 135, 0.5) 100%);
-    border: 1px solid rgba(139, 92, 246, 0.3); /* Subtle Purple Border */
-    border-radius: 18px 4px 18px 18px;
-    color: #fff;
-    /* Soft internal glow for depth */
-    box-shadow: 
-        inset 0 1px 0 rgba(255, 255, 255, 0.15),
-        0 4px 12px rgba(0, 0, 0, 0.2);
-    backdrop-filter: blur(4px);
+.user-msg {
+    align-self: flex-end;
+    flex-direction: row-reverse;
 }
 
-.msg-avatar {
-    width: 30px;
-    height: 30px;
+.msg-avatar-quantum {
+    width: 28px; /* Compact avatar */
+    height: 28px;
     border-radius: 8px;
     flex-shrink: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1rem;
-    margin-top: 2px;
+    font-size: 0.9rem;
+    border: 1px solid var(--q-border);
+    background: rgba(255, 255, 255, 0.02);
 }
 
-.icon-ai { color: #8b5cf6; background: rgba(139, 92, 246, 0.1); }
-.icon-user { color: #fff; background: rgba(255, 255, 255, 0.05); }
-
-.msg-content {
-    padding: 14px 18px;
-    font-size: 0.95rem;
-    line-height: 1.6;
-    font-weight: 400;
+.ai-avatar {
+    border-color: var(--q-violet);
+    color: var(--q-violet);
 }
 
-/* --- Input Area (Floating with Chips) --- */
-.console-input-area {
-    padding: 16px 24px 20px;
-    background: transparent;
-    border-top: 1px solid var(--agent-border);
-    z-index: 2;
-    display: flex; flex-direction: column; gap: 12px;
+.user-avatar {
+    border-color: rgba(255, 255, 255, 0.2);
+    color: #fff;
 }
 
-/* Suggestion Chips */
+.msg-bubble-quantum {
+    padding: 12px 16px; /* Compact bubbles */
+    border-radius: 16px;
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+.ai-msg .msg-bubble-quantum {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid var(--q-border);
+    color: #e4e4e7;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+.user-msg .msg-bubble-quantum {
+    background: var(--q-accent);
+    color: #fff;
+    font-weight: 500;
+    border-radius: 18px 4px 18px 18px;
+    box-shadow: 0 15px 30px rgba(59, 130, 246, 0.3);
+}
+
+/* Input Area */
+.input-area-quantum {
+    padding: 20px 24px 24px;
+    border-top: 1px solid var(--q-border);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
 .suggestion-row {
-    display: flex; gap: 8px; overflow-x: auto; 
-    padding-bottom: 4px; /* Space for scrollbar if needed */
-    scrollbar-width: none; /* Hide scrollbar */
-    mask-image: linear-gradient(to right, black 90%, transparent 100%);
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    scrollbar-width: none;
 }
-.suggestion-row::-webkit-scrollbar { display: none; }
+
+.suggestion-row::-webkit-scrollbar {
+    display: none;
+}
 
 .chip {
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    color: var(--text-secondary);
     padding: 6px 12px;
-    border-radius: 100px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid var(--q-border);
+    color: var(--q-text-dim);
     font-size: 0.75rem;
-    font-family: var(--font-ui);
     cursor: pointer;
+    transition: 0.3s;
     white-space: nowrap;
-    transition: all 0.2s ease;
-    backdrop-filter: blur(4px);
 }
 
 .chip:hover {
-    background: rgba(139, 92, 246, 0.15);
-    border-color: rgba(139, 92, 246, 0.4);
+    background: rgba(255, 255, 255, 0.08);
     color: #fff;
-    transform: translateY(-1px);
+    transform: translateY(-2px);
 }
 
-.input-wrapper {
-    display: flex; align-items: center; gap: 12px;
-    background: rgba(0, 0, 0, 0.3);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    padding: 8px 8px 8px 16px;
-    border-radius: 12px;
-    transition: all 0.3s ease;
-    box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+.input-container-quantum {
+    height: 48px; /* Slimmer input */
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid var(--q-border);
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    padding: 0 8px 0 20px;
+    gap: 12px;
 }
 
-/* --- Motion Budget Controller --- */
-/* LITE MODE: Disable heavy effects */
-body[data-motion="lite"] .bg-aurora,
-body[data-motion="lite"] .social-nebula,
-body[data-motion="lite"] .hero-orb {
-    display: none !important;
+.input-container-quantum:focus-within {
+    border-color: var(--q-cyan);
 }
 
-body[data-motion="lite"] .ai-console-container {
-    backdrop-filter: none; /* Huge GPU Saver */
-    background: #08080b; /* Solid fallback */
-    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-    transition: transform 0.1s, opacity 0.1s, visibility 0s !important;
-}
-
-/* CINEMATIC (Default) is already defined */
-
-/* Header Controls */
-.header-controls { display: flex; gap: 8px; }
-.motion-toggle {
-    width: 28px; height: 28px;
-    background: transparent; border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 6px; color: var(--text-secondary);
-    cursor: pointer; display: flex; align-items: center; justify-content: center;
-    font-size: 0.8rem; transition: all 0.2s;
-}
-.motion-toggle:hover { color: #fff; border-color: rgba(255,255,255,0.3); }
-.motion-toggle.active { color: #8b5cf6; border-color: #8b5cf6; background: rgba(139,92,246,0.1); }
-
-.input-wrapper:focus-within {
-    background: rgba(0, 0, 0, 0.5);
-    border-color: rgba(139, 92, 246, 0.5); /* Purple tint */
-    box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.1);
-}
-
-.console-input {
+.input-container-quantum input {
     flex: 1;
     background: none;
     border: none;
-    outline: none !important;
-    font-family: var(--font-ui);
-    font-size: 1rem;
+    outline: none;
     color: #fff;
-    padding: 4px;
+    font-size: 1rem;
 }
 
-.console-input::placeholder {
-    color: rgba(255, 255, 255, 0.25);
-}
-
-.send-btn {
+.input-container-quantum button {
     width: 40px;
     height: 40px;
-    border-radius: 10px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.03);
     border: none;
-    background: rgba(255, 255, 255, 0.05);
-    color: rgba(255, 255, 255, 0.4);
+    color: var(--q-text-dim);
     cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s;
+    transition: 0.3s;
 }
 
-.console-input:not(:placeholder-shown)~.send-btn,
-.send-btn:hover {
-    background: var(--accent-gradient);
+.input-container-quantum button:hover {
+    background: var(--q-accent);
     color: #fff;
-    box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
 }
 
-/* --- Trigger & Mobile --- */
-.console-trigger {
+.warning-quantum {
+    font-size: 0.75rem;
+    text-align: center;
+    padding: 8px;
+    border-radius: 8px;
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+}
+
+/* Typing */
+.typing-quantum {
+    display: flex;
+    gap: 6px;
+    padding: 10px 0;
+}
+
+.typing-quantum span {
+    width: 6px;
+    height: 6px;
+    background: var(--q-violet);
+    border-radius: 50%;
+    animation: q-typing 1.4s infinite;
+}
+
+.typing-quantum span:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.typing-quantum span:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+@keyframes q-typing {
+
+    0%,
+    100% {
+        opacity: 0.3;
+        transform: scale(0.8);
+    }
+
+    50% {
+        opacity: 1;
+        transform: scale(1.2);
+    }
+}
+
+/* Fix Trig */
+.console-trigger-quantum {
     position: fixed;
     bottom: 30px;
     right: 30px;
-    width: 70px;
-    height: 70px;
-    cursor: pointer;
+    width: 65px;
+    height: 65px;
     z-index: 999999;
-    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    cursor: pointer;
+    transition: 0.3s;
 }
 
-.console-trigger:hover {
+.console-trigger-quantum img {
+    width: 100%;
+    height: 100%;
+    filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.5));
+}
+
+.console-trigger-quantum:hover {
     transform: scale(1.1) rotate(5deg);
 }
 
-.console-trigger img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    filter: drop-shadow(0 8px 20px rgba(0, 0, 0, 0.4));
-}
-
 @media (max-width: 768px) {
-    .ai-console-container {
+    .ai-console-quantum {
         width: 100%;
         height: 100%;
-        border-radius: 0;
-        border: none;
         top: 0;
         left: 0;
         transform: none !important;
-        max-width: 100vw;
-        max-height: 100dvh;
-        background: #08080b; /* Solid for mobile perfromance */
-        box-shadow: none;
-        backdrop-filter: blur(6px);
+        border-radius: 0;
     }
 
-    .console-trigger {
-        bottom: 20px;
-        right: 20px;
-        width: 60px;
-        height: 60px;
-    }
-    
-    .msg-content { font-size: 1rem; }
-}
-
-/* RTL Support */
-html[lang="ar"] .console-trigger {
-    left: 20px;
-    right: auto;
-}
-
-html[lang="ar"] .console-header {
-    flex-direction: row-reverse;
-}
-
-html[lang="ar"] .msg-user {
-    flex-direction: row;
-}
-
-html[lang="ar"] .msg-ai {
-    flex-direction: row-reverse;
-}
-
-html[lang="ar"] .msg-user .msg-content {
-    border-radius: 18px 4px 18px 18px;
-}
-
-html[lang="ar"] .msg-ai .msg-content {
-    border-radius: 4px 18px 18px 18px;
-}
-
-html[lang="ar"] .input-wrapper {
-    flex-direction: row-reverse;
-}
-
-html[lang="ar"] .console-input {
-    text-align: right;
-}
-
-/* --- Typing Animation --- */
-.typing-block {
-    display: flex;
-    gap: 4px;
-    padding: 4px 0;
-    align-items: center;
-    justify-content: center;
-    min-width: 40px;
-}
-
-.typing-block span {
-    width: 6px;
-    height: 6px;
-    background: #8b5cf6;
-    border-radius: 50%;
-    animation: typing 1.2s infinite ease-in-out both;
-}
-
-.typing-block span:nth-child(1) {
-    animation-delay: -0.32s;
-}
-
-.typing-block span:nth-child(2) {
-    animation-delay: -0.16s;
-}
-
-@keyframes typing {
-
-    0%,
-    80%,
-    100% {
-        opacity: 0.2;
-        transform: translateY(0);
-    }
-
-    40% {
-        opacity: 1;
-        transform: translateY(-3px);
+    .quota-gauge {
+        display: none;
     }
 }

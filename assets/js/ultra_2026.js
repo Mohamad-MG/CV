@@ -50,6 +50,11 @@ class NebulaPhysics {
     }
 
     animate() {
+        if (document.body.classList.contains('ai-open')) {
+            requestAnimationFrame(this.animate);
+            return;
+        }
+
         this.particles.forEach(p => {
             // Update Position
             p.x += p.vx;
@@ -470,70 +475,53 @@ const initTerminal = () => {
     });
 };
 
-// --- 9. MOBILE NAV TOGGLE ---
-const initMobileNav = () => {
-    const header = document.querySelector('.header-container');
-    const toggle = document.querySelector('.mobile-menu-toggle');
-    const nav = document.getElementById('primaryNav');
-    if (!header || !toggle) return;
-
-    const isMobile = () => window.innerWidth <= 600;
-
-    const setNavFocusability = (enabled) => {
-        if (!nav) return;
-        nav.setAttribute('aria-hidden', enabled ? 'false' : 'true');
-        nav.querySelectorAll('a, button').forEach((el) => {
-            if (enabled) el.removeAttribute('tabindex');
-            else el.setAttribute('tabindex', '-1');
+// --- 9. STORY INTERACTIVES (Counter + Decrypt) ---
+const initStoryInteractives = () => {
+    // A) $478M Counter Logic
+    const counterElements = document.querySelectorAll('.counter-val');
+    const counterObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const target = parseInt(entry.target.dataset.target);
+                animateCounter(entry.target, target);
+                counterObserver.unobserve(entry.target);
+            }
         });
+    }, { threshold: 0.5 });
+
+    const animateCounter = (el, target) => {
+        let current = 0;
+        const duration = 1500;
+        const startTime = performance.now();
+
+        const update = (now) => {
+            const progress = Math.min((now - startTime) / duration, 1);
+            current = Math.floor(progress * target);
+            el.innerText = `$${current}`;
+            if (progress < 1) requestAnimationFrame(update);
+            else el.innerText = `$${target}`;
+        };
+        requestAnimationFrame(update);
     };
 
-    const closeMenu = (restoreFocus = false) => {
-        header.classList.remove('nav-open');
-        toggle.setAttribute('aria-expanded', 'false');
-        toggle.setAttribute('aria-label', 'Open menu');
-        document.body.classList.remove('nav-open');
-        setNavFocusability(false);
-        if (restoreFocus) toggle.focus();
-    };
+    counterElements.forEach(el => counterObserver.observe(el));
 
-    toggle.addEventListener('click', (e) => {
-        e.stopPropagation();
-        if (!isMobile()) return;
-        const isOpen = header.classList.toggle('nav-open');
-        toggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
-        toggle.setAttribute('aria-label', isOpen ? 'Close menu' : 'Open menu');
-        document.body.classList.toggle('nav-open', isOpen);
-        setNavFocusability(isOpen);
-    });
+    // B) Calm Text Reveal (Blur Fade)
+    const storyElements = document.querySelectorAll('.story-text p, .source-note, .text-divider');
+    const storyObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                // Staggered delay based on visual order
+                const delay = Array.from(storyElements).indexOf(entry.target) * 100;
+                setTimeout(() => {
+                    entry.target.classList.add('visible');
+                }, delay);
+                storyObserver.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.2 });
 
-    document.addEventListener('click', (e) => {
-        if (!isMobile()) return;
-        if (!header.contains(e.target)) closeMenu(false);
-    });
-
-    document.addEventListener('keydown', (e) => {
-        if (!isMobile()) return;
-        if (e.key === 'Escape' && header.classList.contains('nav-open')) {
-            closeMenu(true);
-        }
-    });
-
-    window.addEventListener('resize', () => {
-        if (!isMobile()) {
-            closeMenu();
-            setNavFocusability(true);
-        } else {
-            setNavFocusability(false);
-        }
-    });
-
-    // Initialize default state based on viewport
-    if (isMobile()) {
-        closeMenu();
-    } else {
-        setNavFocusability(true);
-    }
+    storyElements.forEach(el => storyObserver.observe(el));
 };
 
 // --- MASTER BOOT ---
@@ -562,5 +550,5 @@ document.addEventListener('DOMContentLoaded', () => {
     initVideo();
     initCarousel();
     initTerminal();
-    initMobileNav();
+    initStoryInteractives();
 });

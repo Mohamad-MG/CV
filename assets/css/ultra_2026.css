@@ -445,11 +445,71 @@ h1, h2, h3, h4 {
 }
 
 
-/* --- 📜 STORY SECTION --- */
+/* --- 📜 STORY SECTION (CALM & ELEGANT) --- */
 .story-text p {
-    font-size: clamp(1.1rem, 1.6vw, 1.4rem); line-height: 1.6; color: var(--text-muted); margin-bottom: 2.5rem; max-width: 900px;
+    font-size: clamp(1rem, 1.4vw, 1.25rem); /* Reduced size for elegance */
+    line-height: 1.7; 
+    color: var(--text-muted); 
+    margin-bottom: 1.5rem; /* Tighter spacing */
+    max-width: 850px;
+    
+    /* Calm Blur Reveal Effect */
+    opacity: 0;
+    filter: blur(12px);
+    transform: translateY(20px);
+    transition: all 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: opacity, filter, transform;
 }
-.story-text .highlight { color: #fff; text-shadow: 0 0 20px rgba(255,255,255,0.2); }
+
+.story-text p.visible, 
+.source-note.visible,
+.text-divider.visible { 
+    opacity: 1; 
+    filter: blur(0); 
+    transform: translateY(0); 
+}
+
+.story-text .highlight { 
+    color: #fff; 
+    font-weight: 500;
+    /* Removed heavy text-shadow for cleaner look */
+}
+
+/* Inline Link styling */
+.inline-link {
+    color: inherit;
+    text-decoration: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    transition: all 0.3s ease;
+}
+.inline-link:hover {
+    color: #fff;
+    border-color: var(--highlight);
+}
+
+/* Source Note (Micro Typography) */
+.source-note {
+    font-size: 0.8rem; margin-top: -0.5rem; margin-bottom: 2rem;
+    opacity: 0; transform: translateY(10px); transition: 1s ease 0.2s;
+}
+.source-note a {
+    color: var(--text-faint); text-decoration: none; border-bottom: 1px solid rgba(255,255,255,0.1);
+    transition: 0.2s;
+}
+.source-note a:hover { color: var(--highlight); border-color: var(--highlight); }
+
+/* Visual Divider */
+.text-divider {
+    width: 60px; height: 2px; background: rgba(255,255,255,0.1);
+    margin: 2rem 0; border-radius: 2px;
+    opacity: 0; transition: 1s ease;
+}
+
+/* Counter Style */
+.counter-val { 
+    color: #fff; font-weight: 800; font-family: var(--font-display); 
+    display: inline-block; min-width: 1.5em; text-align: center;
+}
 
 
 /* --- 📊 STATS GRID (Bento with Spotlight & Pulse) --- */
