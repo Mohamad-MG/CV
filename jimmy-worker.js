@@ -1,530 +1,339 @@
 /**
- * Jimmy AI Worker – Final Runtime (2026)
- * -------------------------------------
- * - Multi-brain (user / market / style)
- * - Conditional brain injection
- * - Gemini fallback with timeout
- * - KV + in-memory cache
- * - Locale aware
- * - Production safe
+ * Jimmy AI Worker v2.2 – Core / Shadow Expert Architecture (2026)
+ * =============================================================
+ * Optimized for: Stability, Intelligence, and Context Awareness.
  */
 
-/* =======================
-   CONFIG
-======================= */
+/* ============================================================
+   CONFIG & MODEL MAPPING
+============================================================ */
+const WORKER_VERSION = "2.2.1";
+const CACHE_TTL_MS = 300_000;
 
-const CACHE_TTL_MS = 60_000;
-const WORKER_VERSION = "2026.1";
-const MIN_FALLBACK_MS = 1500;
-
-const DEFAULT_LIMITS = {
-  rulesChars: 2500,
-  userChars: 6000,
-  marketChars: 7000,
-  maxHistory: 10,
-  maxMsgChars: 1200,
-};
-
-const GEMINI_MODELS_PRIORITY = [
-  "gemini-3-flash",
-  "gemini-2.5-flash",
-  "gemini-2.0-flash",
-  "gemini-1.5-flash",
+const ALLOWED_ORIGINS = [
+    "https://mo-gamal.com",
+    "https://emarketbank.github.io",
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
 ];
 
-/* =======================
-   CACHE
-======================= */
-
-const cache = {
-  items: new Map(),
+const OPENAI_MODELS = {
+    core: ["gpt-4o-mini"],
+    expert: ["gpt-4o"],
+    emergency: ["gpt-4o-mini"],
 };
 
-const nowMs = () => Date.now();
-
-/* =======================
-   HELPERS
-======================= */
-
-function buildCorsHeaders() {
-  return {
-    "Content-Type": "application/json; charset=utf-8",
-    "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Methods": "POST, OPTIONS, GET",
-    "Access-Control-Allow-Headers": "Content-Type, Authorization",
-    "Access-Control-Max-Age": "86400",
-    "Vary": "Origin",
-  };
-}
-
-function jsonResponse(body, status = 200, headers = {}) {
-  return new Response(JSON.stringify(body), { status, headers });
-}
-
-function getKv(env) {
-  return env.JIMMY_KV || null;
-}
-
-function trimText(text, maxChars) {
-  if (!text) return "";
-  return text.length > maxChars ? text.slice(0, maxChars) : text;
-}
-
-/* =======================
-   LOCALE
-======================= */
-
-function getLocale(request, body) {
-  const bodyLang = String(body?.language || "").toLowerCase();
-  const headerLang = (request.headers.get("accept-language") || "").toLowerCase();
-  const raw = bodyLang || headerLang;
-
-  if (!raw) return "en-us";
-
-  if (raw.startsWith("ar")) {
-    if (/(sa|ae|kw|qa|bh|om)/.test(raw)) return "ar-gulf";
-    return "ar-eg";
-  }
-
-  if (raw.startsWith("en")) return "en-us";
-  return "en-us";
-}
-
-/* =======================
-   KV ACCESS
-======================= */
-
-async function getBrain(env, key) {
-  const kv = getKv(env);
-  if (!kv) throw new Error("MISSING_KV_BINDING");
-
-  const cached = cache.items.get(key);
-  const age = cached ? nowMs() - cached.fetchedAt : Infinity;
-
-  if (cached && age <= CACHE_TTL_MS) {
-    return cached.value;
-  }
-
-  const value = await kv.get(key);
-  cache.items.set(key, { value, fetchedAt: nowMs() });
-  return value;
-}
-
-function parseStyle(text) {
-  if (!text) return null;
-  const raw = String(text);
-  const trimmed = raw.trim();
-  if (!trimmed) return null;
-
-  if (trimmed.startsWith("{")) {
-    try {
-      return JSON.parse(trimmed);
-    } catch {
-      throw new Error("STYLE_INVALID_JSON");
+// Official Model Names for 2026 Stability
+function getModelsForMode(mode) {
+    if (mode === "expert") {
+        return ["gpt-4o", "gemini-1.5-pro"];
     }
-  }
-
-  const lines = raw.split(/\r?\n/);
-  let inLimits = false;
-  const limits = {};
-  let mode = "default";
-  let brainsForce = false;
-  const rulesLines = [];
-
-  for (const line of lines) {
-    const clean = line.trim();
-    if (!clean) {
-      if (!inLimits) rulesLines.push(line);
-      continue;
+    if (mode === "emergency") {
+        return ["gpt-4o-mini", "gemini-1.5-flash"];
     }
-
-    if (clean.toLowerCase() === "[limits]") {
-      inLimits = true;
-      continue;
-    }
-    if (clean.toLowerCase() === "[/limits]") {
-      inLimits = false;
-      continue;
-    }
-
-    if (inLimits) {
-      const match = clean.match(/^([a-z_]+)\s*=\s*(.+)$/i);
-      if (match) {
-        const key = match[1].toLowerCase();
-        const value = match[2].trim();
-        if (key === "mode") mode = value;
-        if (key === "brains_force") brainsForce = value === "true" || value === "1";
-        if (key === "rules_chars") limits.rules_chars = Number(value) || limits.rules_chars;
-        if (key === "user_chars") limits.user_chars = Number(value) || limits.user_chars;
-        if (key === "market_chars") limits.market_chars = Number(value) || limits.market_chars;
-      }
-      continue;
-    }
-
-    rulesLines.push(line);
-  }
-
-  const rulesText = rulesLines.join("\n").trim();
-  if (!rulesText) return null;
-
-  return {
-    rules_text: rulesText,
-    limits,
-    mode,
-    brains_force: brainsForce,
-  };
+    // Priority to OpenAI to avoid Gemini Rate Limits
+    return ["gpt-4o-mini", "gemini-1.5-flash"];
 }
 
-function validateStyle(style) {
-  if (!style || !style.rules_text) {
-    throw new Error("STYLE_MISSING_RULES");
-  }
+/* ============================================================
+   CORE PROMPT STRINGS
+============================================================ */
 
-  const limits = style.limits || {};
-  const keys = ["rules_chars", "user_chars", "market_chars"];
-  for (const key of keys) {
-    if (Object.prototype.hasOwnProperty.call(limits, key)) {
-      const value = Number(limits[key]);
-      if (!Number.isFinite(value) || value <= 0) {
-        throw new Error("LIMITS_INVALID");
-      }
+const CORE_STYLE = `
+أنت جيمي. مساعد ذكي وخبير استشاري
+نافذة عقل بتفكّر بصوت هادي وواضح.
+مش Chatbot، مش Assistant، ومش Sales Rep.
+
+مقياس النجاح الوحيد:
+- لو المستخدم حاسس إنه بيكلم نظام → فشل.
+- لو حاسس إنه بيكلم إنسان فاهم ورايق → نجاح.
+بأختصار: التحدث بطريقة بشرية دارجة وذكية، ممنوع الصياغات الروبوتية.
+
+فلسفة التفاعل:
+- Help-First: القيمة أهم من أي شيء.
+- Human Before Business: كن لطيفاً، مبادراً، وذكياً.
+- Zero Sales Pressure: ممنوع أي CTA تلقائي.
+
+مستوى الذكاء:
+- Advanced-Only: ممنوع نصائح عامة أو كلام كورسات.
+- الرد لازم يغير زاوية نظر، يختصر تفكير، أو يكشف فخ.
+
+اللغة:
+- التزم بلغة المستخدم (مصري طبيعي / خليجي مبسط / US Casual).
+- ممنوع خلط اللهجات.
+- ممنوع ذكر أي مصطلحات تقنية (AI, Model, Prompt, System).
+
+هيكل الرد:
+- الطول: 2 إلى 5 سطور فقط.
+- سؤال واحد كحد أقصى بـ 2-3 اختيارات قصيرة.
+
+Diagnose Mode (عند وجود مشكلة):
+- سؤال تشخيص واحد فقط (بدون استجواب).
+- ركز على: Tracking, Attribution, Funnel leaks, CRO, UX, Retention, Offer.
+`.trim();
+
+const WARM_UP_INSTRUCTION = `
+Warm-Up Protocol (للتنفيذ في أول رد فقط):
+1) ترحيب دافئ غير رسمي.
+2) Insight ذكي مرتبط بكلام المستخدم.
+3) Options ناعمة لتحديد زاوية الحديث.
+`.trim();
+
+const CORE_USER = `
+جيمي الأشطر من محمد.. بس إحنا هنا بنعرف الناس على محمد أكتر.
+محمد — Growth / Digital Systems Architect.
+بيشتغل على الأنظمة قبل القنوات، وعلى القرار قبل التنفيذ.
+مكانه: Business × Product × Marketing.
+
+رحلته:
+- بدأ بقنوات Ads/SEO ثم انتقل لعمق الـ UX والأرقام.
+- Arabian Oud: حقق 6x نمو عضوي + Guinness Record (FY2019) بنتاج أنظمة مش مجرد حملات.
+- مؤسس DigiMora وقائد في Qyadat.
+
+عقليته: System Designer. يبدأ من القرار النهائي ويبني النظام اللي يطلعه. 
+يقول نعم للمشاكل القابلة للبناء، ولا للحلول السكنية المؤقتة.
+`.trim();
+
+const CORE_INDUSTRY = `
+إطار فهم السوق (EG / KSA / UAE):
+- النمو = (طلب + ثقة + تشغيل + قرار).
+- الإعلان Amplifier مش Fixer. لو الـ Offer ضعيف، الإعلانات هتخسرك أسرع.
+- السعودية: الثقة والتشغيل المحلي أولاً.
+- الإمارات: الخندق في الـ Retention والـ CX.
+- مصر: السعر والثقة واللوجستيات (تحدي الـ COD).
+- الربح الحقيقي في التكرار (LTV).
+`.trim();
+
+/* ============================================================
+   GLOBAL HELPERS (Hoisted Safely)
+============================================================ */
+
+const DECISION_TRIGGERS_AR = [
+    /\bROAS\b/i, /\bCAC\b/i, /\bLTV\b/i, /أعمل\s*إيه/i, /اختار\s*إزاي/i, /قرار/i, /ميزانية/i, /خسارة/i,
+];
+
+function trimText(text, max = 1200) {
+    return text?.length > max ? text.slice(0, max) : text;
+}
+
+function normalizeMessages(messages, maxHistory = 10, maxMsgChars = 1200) {
+    return (messages || [])
+        .filter(m => m?.content)
+        .map(m => ({
+            role: m.role === "user" ? "user" : "model",
+            parts: [{ text: trimText(String(m.content), maxMsgChars) }],
+        }))
+        .slice(-maxHistory);
+}
+
+function needsAdvancedMode(message) {
+    const text = (message || "").trim();
+    if (text.length < 10) return false;
+    return DECISION_TRIGGERS_AR.some(p => p.test(text));
+}
+
+function isSimpleFollowUp(message) {
+    const text = (message || "").trim();
+    if (text.length > 50) return false;
+    const simplePatterns = [
+        /^(طيب|تمام|ماشي|ok|okay)\s*(و|and)?/i,
+        /نبدأ\s*(منين|إزاي|من فين)/i,
+        /إيه\s*أول\s*حاجة/i,
+    ];
+    return simplePatterns.some(p => p.test(text));
+}
+
+function buildCorsHeaders(origin) {
+    const allowed = ALLOWED_ORIGINS.find(o => origin?.startsWith(o)) || ALLOWED_ORIGINS[0];
+    return {
+        "Content-Type": "application/json; charset=utf-8",
+        "Access-Control-Allow-Origin": allowed,
+        "Access-Control-Allow-Methods": "POST, OPTIONS, GET",
+        "Access-Control-Allow-Headers": "Content-Type",
+    };
+}
+
+function json(body, status, headers) {
+    return new Response(JSON.stringify(body), { status, headers });
+}
+
+/* ============================================================
+   PROMPT & AI LOGIC
+============================================================ */
+
+function getStyleForLocale(locale) {
+    const isGulf = /sa|ae|kw|qa|bh|om/i.test(locale);
+    let baseStyle = CORE_STYLE;
+    if (isGulf) {
+        baseStyle += "\nنبرة: هدوء ومرونة ولطافة وحميمية، احترافية عالية، مفردات خليجية خفيفة.";
+    } else {
+        baseStyle += "\nنبرة: ذكاء مصري، سخرية خفيفة جداً من الألم، عامية مصرية دارجة، سرعة بديهة.";
     }
-  }
+    return baseStyle;
 }
 
-/* =======================
-   INTENT DETECTION (LIGHT)
-======================= */
+function buildCorePrompt(locale, isFirstMessage = true) {
+    const parts = [
+        getStyleForLocale(locale),
+        CORE_USER,
+        CORE_INDUSTRY,
+    ];
 
-function normalizeText(text) {
-  return String(text || "")
-    .toLowerCase()
-    .replace(/\s+/g, " ")
-    .trim();
-}
-
-function detectIntent(lastMessage) {
-  const text = normalizeText(lastMessage);
-  if (!text) return "general";
-
-  if (
-    /(marketing|growth|ads|ad|paid|seo|crm|funnel|conversion|cvr|roas|cac|ltv|retention|checkout|logistics|ops|revenue|profit|margin|budget|campaign|offer|pricing|acquisition|lead|pipeline|b2b|b2c|ecommerce|e-commerce|meta|tiktok|snapchat|whatsapp|automation|payment|payback|contribution|attribution|organic|paid media|growth engine)/.test(
-      text
-    ) ||
-    /(تسويق|نمو|اعلان|اعلانات|ميديا|سيو|crm|فانل|تحويل|روادس|روأس|كاك|لتي في|احتفاظ|شيك اوت|لوجستكس|تشغيل|تشغيلي|ايرادات|ربح|هامش|ميزانية|حملة|عرض|تسعير|استحواذ|ليد|بايبلاين|بي تو بي|بي تو سي|اي كوميرس|متاجر|متجر|ميتا|تيك توك|سناب|واتساب|اوتوميشن|دفع|باك بيريد|مساهمة|اتريبيوشن|اورجانيك|مدفوع)/.test(
-      text
-    )
-  ) {
-    return "market";
-  }
-
-  if (
-    /(mohamed gamal|mohamed|gamal|cv|resume|portfolio|bio|background|experience|worked|who are you|who is|about you|your work)/.test(
-      text
-    ) ||
-    /(محمد جمال|محمد|جمال|سيرة|سي في|سيڤي|بورتفوليو|خبرة|مين|من هو|عرفني عنك|عن خبرتك|انجازات|أعمالك|شغلك|خلفية)/.test(
-      text
-    )
-  ) {
-    return "user";
-  }
-
-  if (/(سلام|شكرا|مرحبا|hello|hi)/.test(text)) {
-    return "casual";
-  }
-
-  return "general";
-}
-
-/* =======================
-   SYSTEM PROMPT BUILDER
-======================= */
-
-function buildSystemPrompt({ style, userBrain, marketBrain, locale, intent, forceBrains }) {
-  if (!style?.rules_text) throw new Error("MISSING_STYLE_RULES");
-
-  const limits = style.limits || {};
-  const rulesChars = limits.rules_chars || DEFAULT_LIMITS.rulesChars;
-  const userChars = limits.user_chars || DEFAULT_LIMITS.userChars;
-  const marketChars = limits.market_chars || DEFAULT_LIMITS.marketChars;
-
-  const parts = [
-    `MODE: ${style.mode || "default"}`,
-    `LOCALE: ${locale}`,
-    `STYLE_RULES:\n${trimText(style.rules_text, rulesChars)}`,
-  ];
-
-  // Conditional brain injection
-  if (forceBrains || intent === "user" || style.mode === "hiring") {
-    if (userBrain) {
-      parts.push(`USER_BRAIN:\n${trimText(userBrain, userChars)}`);
-    }
-  }
-
-  if (forceBrains || intent === "market" || style.mode === "diagnose") {
-    if (marketBrain) {
-      parts.push(`MARKET_BRAIN:\n${trimText(marketBrain, marketChars)}`);
-    }
-  }
-
-  return parts.join("\n\n");
-}
-
-/* =======================
-   MESSAGE NORMALIZATION
-======================= */
-
-function normalizeMessages(messages, maxHistory, maxMsgChars) {
-  const cleaned = (messages || [])
-    .map((m) => {
-      if (!m?.content) return null;
-      return {
-        role: m.role === "user" ? "user" : "model",
-        parts: [{ text: trimText(String(m.content), maxMsgChars) }],
-        _trimmed: String(m.content).length > maxMsgChars,
-      };
-    })
-    .filter(Boolean);
-
-  const truncatedHistory = cleaned.length > maxHistory;
-  const trimmedAny = cleaned.some((m) => m._trimmed);
-  const sliced = cleaned.slice(-maxHistory).map(({ _trimmed, ...rest }) => rest);
-
-  return {
-    messages: sliced,
-    meta: {
-      truncated: truncatedHistory || trimmedAny,
-      truncated_history: truncatedHistory,
-      truncated_message: trimmedAny,
-      max_chars_used: maxMsgChars,
-      max_messages_used: maxHistory,
-    },
-  };
-}
-
-/* =======================
-   GEMINI CALL
-======================= */
-
-function buildModelPriority(env) {
-  const custom = (env.GEMINI_MODEL || "").trim();
-  return custom
-    ? Array.from(new Set([custom, ...GEMINI_MODELS_PRIORITY]))
-    : GEMINI_MODELS_PRIORITY;
-}
-
-async function callGemini(env, payload, totalBudgetMs, perModelCapMs) {
-  if (!env.GEMINI_API_KEY) throw new Error("MISSING_GEMINI_API_KEY");
-
-  const models = buildModelPriority(env);
-  const startedAt = nowMs();
-
-  for (const model of models) {
-    const elapsed = nowMs() - startedAt;
-    const remaining = totalBudgetMs - elapsed;
-    if (remaining < MIN_FALLBACK_MS) {
-      break;
+    if (isFirstMessage) {
+        parts.push(WARM_UP_INSTRUCTION);
+    } else {
+        parts.push("⚠️ التعليمات الهامة: لقد تجاوزنا مرحلة الترحيب. ادخل في حوار ذكي مباشر مع المستخدم وممنوع تكرار أي صيغ ترحيبية سابقة.");
     }
 
-    const attemptTimeout = Math.min(perModelCapMs, remaining);
-    const controller = new AbortController();
-    const t = setTimeout(() => controller.abort(), attemptTimeout);
+    return parts.join("\n\n");
+}
 
-    try {
-      const res = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${env.GEMINI_API_KEY}`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-          signal: controller.signal,
+function buildExpertPrompt(advancedKB, locale, expertMsgCount = 0) {
+    let expertRules = `
+--- Shadow Expert Mode ---
+أنت الآن في وضع تشخيص متقدم. تأكد من استخدام المعلومات المتوفرة في الـ Knowledge Base.
+ركّز على (لماذا / ماذا) قبل (كيف).
+`.trim();
+
+    if (expertMsgCount >= 2) {
+        expertRules += `\n- جيمي: قلل التحليل، ركز على "تلخيص + اتجاه عملي واحد". خليك أقصر وأجرأ.`;
+    }
+
+    return [
+        buildCorePrompt(locale, false),
+        expertRules,
+        trimText(advancedKB, 12000),
+    ].join("\n\n");
+}
+
+async function callAI(env, mode, prompt, messages) {
+    const models = getModelsForMode(mode);
+    let lastError = null;
+
+    for (const model of models) {
+        try {
+            let response;
+            if (model.startsWith("gemini")) {
+                response = await callGemini(env, model, prompt, messages);
+            } else {
+                response = await callOpenAI(env, model, prompt, messages);
+            }
+            if (response) return { response, model };
+        } catch (err) {
+            lastError = err;
+            continue;
         }
-      );
-
-      if (!res.ok) throw new Error(await res.text());
-
-      const data = await res.json();
-      const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
-      if (!text) throw new Error("EMPTY_RESPONSE");
-
-      return text;
-    } catch (err) {
-      console.warn(`Model failed: ${model}`, err?.message);
-    } finally {
-      clearTimeout(t);
     }
-  }
 
-  throw new Error("ALL_MODELS_FAILED");
+    // Emergency Fallback
+    return await callOpenAI(env, "gpt-4o-mini", prompt, messages)
+        .then(res => ({ response: res, model: "gpt-4o-mini" }))
+        .catch(() => { throw lastError || new Error("ALL_MODELS_FAILED"); });
 }
 
-/* =======================
-   WORKER
-======================= */
+async function callGemini(env, model, systemPrompt, messages) {
+    if (!env.GEMINI_API_KEY) throw new Error("MISSING_GEMINI_API_KEY");
+    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${env.GEMINI_API_KEY}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            system_instruction: { parts: [{ text: systemPrompt }] },
+            contents: messages,
+            generationConfig: { temperature: 0.7, maxOutputTokens: 800 },
+        }),
+    });
+    if (!res.ok) throw new Error("GEMINI_ERROR");
+    const data = await res.json();
+    return data?.candidates?.[0]?.content?.parts?.[0]?.text;
+}
+
+async function callOpenAI(env, model, systemPrompt, messages) {
+    const res = await fetch("https://api.openai.com/v1/chat/completions", {
+        method: "POST",
+        headers: {
+            "Authorization": `Bearer ${env["openai-jimmy"] || env.OPENAI_API_KEY}`,
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            model,
+            messages: [
+                { role: "system", content: systemPrompt },
+                ...messages.map(m => ({
+                    role: m.role === "model" ? "assistant" : m.role,
+                    content: m.parts?.[0]?.text || m.content || "",
+                })),
+            ],
+            max_tokens: 800,
+            temperature: 0.7,
+        }),
+    });
+    if (!res.ok) throw new Error("OPENAI_ERROR");
+    const data = await res.json();
+    return data.choices[0].message.content;
+}
+
+/* ============================================================
+   MAIN FETCH HANDLER
+============================================================ */
 
 export default {
-  async fetch(request, env) {
-    const cors = buildCorsHeaders();
+    async fetch(request, env) {
+        const cors = buildCorsHeaders(request.headers.get("Origin"));
+        if (request.method === "OPTIONS") return new Response(null, { status: 204, headers: cors });
 
-    if (request.method === "OPTIONS") {
-      return new Response(null, { status: 204, headers: cors });
-    }
+        const url = new URL(request.url);
+        if (url.pathname === "/health") return json({ ok: true, version: WORKER_VERSION }, 200, cors);
+        if (request.method !== "POST" || url.pathname !== "/chat") return json({ error: "Not Found" }, 404, cors);
 
-    const url = new URL(request.url);
-
-    /* -------- PROBES -------- */
-
-    if (request.method === "GET" && url.pathname === "/probe/flush") {
-      cache.items.clear();
-      return jsonResponse({ ok: true, cache: "cleared" }, 200, cors);
-    }
-
-    if (request.method === "GET" && url.pathname === "/health") {
-      const hasKV = Boolean(getKv(env));
-      let style = null;
-      let activeMode = null;
-      let limitsSnapshot = {
-        rules_chars: DEFAULT_LIMITS.rulesChars,
-        user_chars: DEFAULT_LIMITS.userChars,
-        market_chars: DEFAULT_LIMITS.marketChars,
-      };
-      let keysPresence = { user: false, market: false, style: false };
-
-      if (hasKV) {
-        const styleRaw = await getBrain(env, "jimmy:style");
-        keysPresence.style = styleRaw != null;
         try {
-          style = parseStyle(styleRaw);
-          if (style) {
-            validateStyle(style);
-            activeMode = style.mode || "default";
-            const limits = style.limits || {};
-            limitsSnapshot = {
-              rules_chars: Number(limits.rules_chars) || DEFAULT_LIMITS.rulesChars,
-              user_chars: Number(limits.user_chars) || DEFAULT_LIMITS.userChars,
-              market_chars: Number(limits.market_chars) || DEFAULT_LIMITS.marketChars,
-            };
-          }
-        } catch {
-          // Keep health lightweight; signal invalid via activeMode.
-          activeMode = "invalid_style";
+            const body = await request.json();
+            const rawMessages = body.messages || [];
+            if (!rawMessages.length) return json({ error: "Empty messages" }, 400, cors);
+
+            const locale = (request.headers.get("accept-language") || "ar-eg").toLowerCase().startsWith("en") ? "en-us" :
+                (/(sa|ae|kw|qa|bh|om)/.test(request.headers.get("accept-language") || "")) ? "ar-gulf" : "ar-eg";
+
+            const expertOnInput = Boolean(body.meta?.expert_on);
+            const expertMsgCount = Number(body.meta?.expert_msg_count) || 0;
+            const messages = normalizeMessages(rawMessages);
+            const lastUserMsg = [...rawMessages].reverse().find(m => m.role === "user")?.content || "";
+            const isFirstInteraction = rawMessages.filter(m => m.role === "assistant" || m.role === "model").length === 0;
+
+            let mode = "core";
+            let prompt;
+            let finalExpertOn = expertOnInput;
+
+            if (expertOnInput || needsAdvancedMode(lastUserMsg)) {
+                const kb = await env.JIMMY_KV?.get("jimmy:kb:advanced");
+                if (kb) {
+                    mode = "expert";
+                    prompt = buildExpertPrompt(kb, locale, expertMsgCount);
+                    finalExpertOn = true;
+                } else {
+                    prompt = buildCorePrompt(locale, isFirstInteraction);
+                    finalExpertOn = false;
+                }
+            } else {
+                prompt = buildCorePrompt(locale, isFirstInteraction);
+                finalExpertOn = false;
+            }
+
+            const ai = await callAI(env, mode, prompt, messages);
+            console.log(`[JIMMY_SUCCESS] mode=${mode} model=${ai.model}`);
+
+            return json({
+                response: ai.response,
+                meta: {
+                    mode,
+                    model: ai.model,
+                    expert_on: finalExpertOn,
+                    expert_msg_count: finalExpertOn ? expertMsgCount + 1 : 0
+                },
+            }, 200, cors);
+
+        } catch (err) {
+            console.error("Worker Error:", err);
+            return json({ response: "تمام… اديني تفاصيل أكتر وأنا أديك اتجاه عملي.", meta: { error: err.message } }, 200, cors);
         }
-
-        const [userRaw, marketRaw] = await Promise.all([
-          getBrain(env, "jimmy:kb:user"),
-          getBrain(env, "jimmy:kb:market"),
-        ]);
-        keysPresence.user = userRaw != null;
-        keysPresence.market = marketRaw != null;
-      }
-
-      return jsonResponse(
-        {
-          ok: true,
-          version: WORKER_VERSION,
-          hasKV,
-          keys: keysPresence,
-          active_mode: activeMode,
-          limits: limitsSnapshot,
-        },
-        200,
-        cors
-      );
     }
-
-    /* -------- CHAT -------- */
-
-    if (request.method !== "POST" || url.pathname !== "/chat") {
-      return jsonResponse({ response: "Method Not Allowed" }, 405, cors);
-    }
-
-    let body;
-    try {
-      body = await request.json();
-    } catch {
-      return jsonResponse({ response: "JSON غير صالح" }, 400, cors);
-    }
-
-    if (!Array.isArray(body?.messages)) {
-      return jsonResponse({ response: "messages مفقودة" }, 400, cors);
-    }
-
-    try {
-      const locale = getLocale(request, body);
-      const maxHistory = Number(env.MAX_HISTORY || DEFAULT_LIMITS.maxHistory);
-      const maxMsgChars = Number(env.MAX_MSG_CHARS || DEFAULT_LIMITS.maxMsgChars);
-      const totalBudgetMs = Number(env.PROVIDER_TIMEOUT_MS || 12000);
-      const perModelCapMs = Number(env.PER_MODEL_TIMEOUT_MS || totalBudgetMs);
-
-      const { messages, meta } = normalizeMessages(body.messages, maxHistory, maxMsgChars);
-      if (!messages.length) {
-        return jsonResponse({ response: "الرسالة فارغة" }, 400, cors);
-      }
-
-      const lastUserMsg =
-        body.messages.slice().reverse().find((m) => m.role === "user")?.content || "";
-
-      const intent = detectIntent(lastUserMsg);
-
-      const style = parseStyle(await getBrain(env, "jimmy:style"));
-      validateStyle(style);
-      const forceBrains = Boolean(style?.brains_force);
-      const includeUserBrain = forceBrains || intent === "user" || style?.mode === "hiring";
-      const includeMarketBrain = forceBrains || intent === "market" || style?.mode === "diagnose";
-      const userBrain = includeUserBrain ? await getBrain(env, "jimmy:kb:user") : "";
-      const marketBrain = includeMarketBrain ? await getBrain(env, "jimmy:kb:market") : "";
-
-      const systemPrompt = buildSystemPrompt({
-        style,
-        userBrain,
-        marketBrain,
-        locale,
-        intent,
-        forceBrains,
-      });
-
-      const payload = {
-        system_instruction: { parts: [{ text: systemPrompt }] },
-        contents: messages,
-        generationConfig: {
-          temperature: body.temperature ?? 0.6,
-          maxOutputTokens: 800,
-        },
-      };
-
-      const text = await callGemini(env, payload, totalBudgetMs, perModelCapMs);
-      return jsonResponse(
-        {
-          response: text,
-          meta: {
-            truncated: meta.truncated,
-            truncated_history: meta.truncated_history,
-            truncated_message: meta.truncated_message,
-            max_chars_used: meta.max_chars_used,
-            max_messages_used: meta.max_messages_used,
-          },
-        },
-        200,
-        cors
-      );
-    } catch (err) {
-      console.error("Worker Error:", err);
-
-      if (err?.message === "STYLE_INVALID_JSON") {
-        return jsonResponse({ response: "STYLE_INVALID_JSON" }, 400, cors);
-      }
-      if (err?.message === "STYLE_MISSING_RULES") {
-        return jsonResponse({ response: "STYLE_MISSING_RULES" }, 400, cors);
-      }
-      if (err?.message === "LIMITS_INVALID") {
-        return jsonResponse({ response: "LIMITS_INVALID" }, 400, cors);
-      }
-
-      return jsonResponse(
-        { response: "معلش، في مشكلة تقنية صغيرة دلوقتي. جرّب تاني بعد شوية." },
-        500,
-        cors
-      );
-    }
-  },
 };

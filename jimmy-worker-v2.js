@@ -1,14 +1,14 @@
 /**
- * Jimmy AI Worker v2.2 – Core / Shadow Expert Architecture (2026)
- * =============================================================
- * Optimized for: Stability, Intelligence, and Context Awareness.
+ * Jimmy AI Worker v2.2.3 – Gemini First / Key Pooling Architecture (2026)
+ * =======================================================================
+ * Optimized for: Resilience, Speed, and Model Authority.
+ * Features: 7-Key Pool, Shuffle/Retry, Latency-Based Failover.
  */
 
 /* ============================================================
-   CONFIG & MODEL MAPPING
+   CONFIG
 ============================================================ */
-const WORKER_VERSION = "2.2.1";
-const CACHE_TTL_MS = 300_000;
+const WORKER_VERSION = "2.2.5";
 
 const ALLOWED_ORIGINS = [
     "https://mo-gamal.com",
@@ -17,23 +17,17 @@ const ALLOWED_ORIGINS = [
     "http://127.0.0.1:5173",
 ];
 
-const OPENAI_MODELS = {
-    core: ["gpt-4o-mini"],
-    expert: ["gpt-4o"],
-    emergency: ["gpt-4o-mini"],
-};
+// Gemini Key Pool Secrets (Cloudflare Worker Secrets)
+const GEMINI_KEY_POOL = [
+    "arabian", "arabw", "Cartonya", "Digimora", "digimoraeg", "mogamal", "qyadat"
+];
 
-// Official Model Names for 2026 Stability
-function getModelsForMode(mode) {
-    if (mode === "expert") {
-        return ["gpt-4o", "gemini-1.5-pro"];
-    }
-    if (mode === "emergency") {
-        return ["gpt-4o-mini", "gemini-1.5-flash"];
-    }
-    // Priority to OpenAI to avoid Gemini Rate Limits
-    return ["gpt-4o-mini", "gemini-1.5-flash"];
-}
+// Official Model Names (Final 2026 Transition)
+const MODELS = {
+    DEFAULT: "gemini-2.5-flash",
+    ADVANCED: "gemini-2.5-pro",
+    FAILOVER: "gemini-3-flash-preview"
+};
 
 /* ============================================================
    CORE PROMPT STRINGS
@@ -105,7 +99,7 @@ const CORE_INDUSTRY = `
 `.trim();
 
 /* ============================================================
-   GLOBAL HELPERS (Hoisted Safely)
+   GLOBAL HELPERS
 ============================================================ */
 
 const DECISION_TRIGGERS_AR = [
@@ -114,6 +108,15 @@ const DECISION_TRIGGERS_AR = [
 
 function trimText(text, max = 1200) {
     return text?.length > max ? text.slice(0, max) : text;
+}
+
+function shuffleArray(array) {
+    const shuffled = [...array];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
 }
 
 function normalizeMessages(messages, maxHistory = 10, maxMsgChars = 1200) {
@@ -130,17 +133,6 @@ function needsAdvancedMode(message) {
     const text = (message || "").trim();
     if (text.length < 10) return false;
     return DECISION_TRIGGERS_AR.some(p => p.test(text));
-}
-
-function isSimpleFollowUp(message) {
-    const text = (message || "").trim();
-    if (text.length > 50) return false;
-    const simplePatterns = [
-        /^(طيب|تمام|ماشي|ok|okay)\s*(و|and)?/i,
-        /نبدأ\s*(منين|إزاي|من فين)/i,
-        /إيه\s*أول\s*حاجة/i,
-    ];
-    return simplePatterns.some(p => p.test(text));
 }
 
 function buildCorsHeaders(origin) {
@@ -206,70 +198,78 @@ function buildExpertPrompt(advancedKB, locale, expertMsgCount = 0) {
     ].join("\n\n");
 }
 
-async function callAI(env, mode, prompt, messages) {
-    const models = getModelsForMode(mode);
-    let lastError = null;
+/* ============================================================
+   GEMINI ENGINE (Key Pooling + Retries)
+============================================================ */
 
-    for (const model of models) {
-        try {
-            let response;
-            if (model.startsWith("gemini")) {
-                response = await callGemini(env, model, prompt, messages);
-            } else {
-                response = await callOpenAI(env, model, prompt, messages);
-            }
-            if (response) return { response, model };
-        } catch (err) {
-            lastError = err;
-            continue;
+async function callGemini(apiKey, model, systemPrompt, messages, timeoutMs = 7000) {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), timeoutMs);
+
+    try {
+        const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                system_instruction: { parts: [{ text: systemPrompt }] },
+                contents: messages,
+                generationConfig: { temperature: 0.7, maxOutputTokens: 800 },
+            }),
+            signal: controller.signal
+        });
+
+        clearTimeout(timer);
+
+        if (!res.ok) {
+            const errBody = await res.json().catch(() => ({}));
+            return { error: true, status: res.status, details: errBody };
         }
+
+        const data = await res.json();
+        const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+        return { error: false, response: text };
+
+    } catch (err) {
+        clearTimeout(timer);
+        return { error: true, type: err.name === 'AbortError' ? 'TIMEOUT' : 'NETWORK', details: err.message };
+    }
+}
+
+async function executeAIRequest(env, model, prompt, messages, maxTries = 7) {
+    const keyPool = shuffleArray(GEMINI_KEY_POOL);
+    let lastError = null;
+    let tryCount = 0;
+
+    for (const keyName of keyPool) {
+        tryCount++;
+        const apiKey = env[keyName];
+        if (!apiKey) continue;
+
+        // Try request (default 7s timeout)
+        const result = await callGemini(apiKey, model, prompt, messages);
+
+        if (!result.error && result.response) {
+            return { response: result.response, model, keyName };
+        }
+
+        // Logging specific error types
+        console.warn(`[JIMMY_RETRY] try=${tryCount}/${maxTries} key=${keyName} model=${model} error=${result.type || result.status}`);
+        lastError = result;
+
+        // High UX responsiveness: If we hit a timeout and reached maxTries, throw specifically
+        if (result.type === 'TIMEOUT' && tryCount >= maxTries) {
+            const err = new Error("FAST_FAILOVER_TIMEOUT");
+            err.details = result;
+            throw err;
+        }
+
+        if (tryCount >= maxTries) break;
+
+        // If it's a 4xx error (other than 429), it might be a request issue
+        if (result.status === 400) break;
     }
 
-    // Emergency Fallback
-    return await callOpenAI(env, "gpt-4o-mini", prompt, messages)
-        .then(res => ({ response: res, model: "gpt-4o-mini" }))
-        .catch(() => { throw lastError || new Error("ALL_MODELS_FAILED"); });
-}
-
-async function callGemini(env, model, systemPrompt, messages) {
-    if (!env.GEMINI_API_KEY) throw new Error("MISSING_GEMINI_API_KEY");
-    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${env.GEMINI_API_KEY}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-            system_instruction: { parts: [{ text: systemPrompt }] },
-            contents: messages,
-            generationConfig: { temperature: 0.7, maxOutputTokens: 800 },
-        }),
-    });
-    if (!res.ok) throw new Error("GEMINI_ERROR");
-    const data = await res.json();
-    return data?.candidates?.[0]?.content?.parts?.[0]?.text;
-}
-
-async function callOpenAI(env, model, systemPrompt, messages) {
-    const res = await fetch("https://api.openai.com/v1/chat/completions", {
-        method: "POST",
-        headers: {
-            "Authorization": `Bearer ${env["openai-jimmy"] || env.OPENAI_API_KEY}`,
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-            model,
-            messages: [
-                { role: "system", content: systemPrompt },
-                ...messages.map(m => ({
-                    role: m.role === "model" ? "assistant" : m.role,
-                    content: m.parts?.[0]?.text || m.content || "",
-                })),
-            ],
-            max_tokens: 800,
-            temperature: 0.7,
-        }),
-    });
-    if (!res.ok) throw new Error("OPENAI_ERROR");
-    const data = await res.json();
-    return data.choices[0].message.content;
+    throw new Error(`EXECUTION_FAILED: ${JSON.stringify(lastError)}`);
 }
 
 /* ============================================================
@@ -282,7 +282,7 @@ export default {
         if (request.method === "OPTIONS") return new Response(null, { status: 204, headers: cors });
 
         const url = new URL(request.url);
-        if (url.pathname === "/health") return json({ ok: true, version: WORKER_VERSION }, 200, cors);
+        if (url.pathname === "/health") return json({ ok: true, version: WORKER_VERSION, provider: "Gemini-Pool" }, 200, cors);
         if (request.method !== "POST" || url.pathname !== "/chat") return json({ error: "Not Found" }, 404, cors);
 
         try {
@@ -302,13 +302,16 @@ export default {
             let mode = "core";
             let prompt;
             let finalExpertOn = expertOnInput;
+            let targetModel = MODELS.DEFAULT;
 
+            // Route Logic
             if (expertOnInput || needsAdvancedMode(lastUserMsg)) {
                 const kb = await env.JIMMY_KV?.get("jimmy:kb:advanced");
                 if (kb) {
                     mode = "expert";
                     prompt = buildExpertPrompt(kb, locale, expertMsgCount);
                     finalExpertOn = true;
+                    targetModel = MODELS.ADVANCED;
                 } else {
                     prompt = buildCorePrompt(locale, isFirstInteraction);
                     finalExpertOn = false;
@@ -318,8 +321,19 @@ export default {
                 finalExpertOn = false;
             }
 
-            const ai = await callAI(env, mode, prompt, messages);
-            console.log(`[JIMMY_SUCCESS] mode=${mode} model=${ai.model}`);
+            let ai;
+            try {
+                // Primary Try: Try up to 2 keys before failing over to faster model
+                ai = await executeAIRequest(env, targetModel, prompt, messages, 2);
+            } catch (err) {
+                const isTimeout = err.message === "FAST_FAILOVER_TIMEOUT";
+                console.warn(isTimeout ? "Fast Failover triggered by Timeout" : "Primary Route Failed, using Failover model:", err.message);
+
+                // Failover attempt: Can try all keys if necessary as this is the "last resort"
+                ai = await executeAIRequest(env, MODELS.FAILOVER, prompt, messages, 7);
+            }
+
+            console.log(`[JIMMY_SUCCESS] model=${ai.model} key_name=${ai.keyName}`);
 
             return json({
                 response: ai.response,
@@ -332,7 +346,7 @@ export default {
             }, 200, cors);
 
         } catch (err) {
-            console.error("Worker Error:", err);
+            console.error("Worker Critical Failure:", err);
             return json({ response: "تمام… اديني تفاصيل أكتر وأنا أديك اتجاه عملي.", meta: { error: err.message } }, 200, cors);
         }
     }
