@@ -8,7 +8,7 @@
 /* ============================================================
    CONFIG
 ============================================================ */
-const WORKER_VERSION = "2.2.6";
+const WORKER_VERSION = "2.2.8";
 
 const ALLOWED_ORIGINS = [
     "https://mo-gamal.com",
@@ -132,6 +132,13 @@ function normalizeMessages(messages, maxHistory = 10, maxMsgChars = 1200) {
 function needsAdvancedMode(message) {
     const text = (message || "").trim();
     if (text.length < 10) return false;
+
+    // 1) Filter out "About Mohamed" queries (Core Role)
+    if (/(محمد|جمال|mohamed|gamal|cv|resume|خبرة|مين|who|about)/i.test(text)) {
+        return false;
+    }
+
+    // 2) Check for Consultant Triggers (Business/Strategy)
     return DECISION_TRIGGERS_AR.some(p => p.test(text));
 }
 
@@ -235,7 +242,7 @@ async function callGemini(apiKey, model, systemPrompt, messages, timeoutMs = 700
     }
 }
 
-async function executeAIRequest(env, model, prompt, messages, { maxTries = 7, allowFastFailover = true } = {}) {
+async function executeAIRequest(env, model, prompt, messages, { maxTries = 7, allowFastFailover = true, timeoutMs = 7000 } = {}) {
     const keyPool = shuffleArray(GEMINI_KEY_POOL);
     let lastError = null;
     let tryCount = 0;
@@ -245,8 +252,8 @@ async function executeAIRequest(env, model, prompt, messages, { maxTries = 7, al
         const apiKey = env[keyName];
         if (!apiKey) continue;
 
-        // Try request (default 7s timeout)
-        const result = await callGemini(apiKey, model, prompt, messages);
+        // Try request (dynamic timeout)
+        const result = await callGemini(apiKey, model, prompt, messages, timeoutMs);
 
         if (!result.error && result.response) {
             return { response: result.response, model, keyName };
@@ -309,8 +316,13 @@ export default {
             let finalExpertOn = expertOnInput;
             let targetModel = MODELS.DEFAULT;
 
+            // 0) Warm-up Lock (First 3 User Requests = ALWAYS Core)
+            // standard conversation: User (1) -> AI (2) -> User (3) -> AI (4) -> User (5)
+            // So triggers are allowed only if messages.length > 5 OR expertMsgCount > 0
+            const isWarmupPhase = messages.length <= 5 && expertMsgCount === 0;
+
             // Route Logic
-            if (expertOnInput || needsAdvancedMode(lastUserMsg)) {
+            if (!isWarmupPhase && (expertOnInput || needsAdvancedMode(lastUserMsg))) {
                 const kb = await env.JIMMY_KV?.get("jimmy:kb:advanced");
                 if (kb) {
                     mode = "expert";
@@ -328,8 +340,8 @@ export default {
 
             let ai;
             try {
-                // Primary Try: Fast Failover enabled, maxTries 7 (for 429 resiliency)
-                ai = await executeAIRequest(env, targetModel, prompt, messages, { maxTries: 7, allowFastFailover: true });
+                // Primary Try: Fast Failover enabled, maxTries 7, Timeout 6s (Aggressive failover for UX)
+                ai = await executeAIRequest(env, targetModel, prompt, messages, { maxTries: 7, allowFastFailover: true, timeoutMs: 6000 });
             } catch (err) {
                 // 1) Trap: 400 Bad Request -> Return error to client, DO NOT Failover
                 if (err.message === "BAD_REQUEST_400") {
@@ -344,8 +356,8 @@ export default {
                 if (isTimeout || isExecutionFailed) {
                     console.warn(isTimeout ? "Fast Failover triggered by Timeout" : "All Keys Failed, using Failover model");
 
-                    // Failover Attempt: Disable Fast Failover (try harder), standard maxTries
-                    ai = await executeAIRequest(env, MODELS.FAILOVER, prompt, messages, { maxTries: 7, allowFastFailover: false });
+                    // Failover Attempt: Disable Fast Failover (try harder), standard maxTries, Timeout 9s (Give it time to work)
+                    ai = await executeAIRequest(env, MODELS.FAILOVER, prompt, messages, { maxTries: 7, allowFastFailover: false, timeoutMs: 9000 });
                 } else {
                     // Logic error or unhandled case -> Re-throw to outer catch
                     throw err;
