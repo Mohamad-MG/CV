@@ -370,7 +370,8 @@
     border: none;
     background: none;
     cursor: pointer;
-    z-index: 9990;
+    z-index: 999999;
+    /* Boosted for mobile visibility over footers/overlays */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -426,11 +427,21 @@
         padding: 16px;
         padding-bottom: max(16px, env(safe-area-inset-bottom));
     }
+
+    /* Better Safe Zone for Mobile */
+    .console-trigger {
+        bottom: 25px;
+        right: 20px;
+        width: 60px;
+        /* Slightly smaller for mobile */
+        height: 60px;
+        z-index: 9999999;
+    }
 }
 
 /* RTL Support */
 html[lang="ar"] .console-trigger {
-    left: 30px;
+    left: 20px;
     right: auto;
 }
 
