@@ -8,7 +8,7 @@
 /* ============================================================
    CONFIG
 ============================================================ */
-const WORKER_VERSION = "2.3.0";
+const WORKER_VERSION = "2.3.1";
 
 const ALLOWED_ORIGINS = [
     "https://mo-gamal.com",
@@ -59,9 +59,6 @@ const CORE_STYLE = `
 
 هيكل الرد:
 - سؤال واحد كحد أقصى بـ 2-3 اختيارات قصيرة.
-
-*** SMART ROUTER LOGIC ***
-(Managed by dedicated classification step)
 `.trim();
 
 const ROUTER_SYSTEM_PROMPT = `
@@ -295,11 +292,15 @@ async function executeAIRequest(env, model, prompt, messages, { maxTries = 7, al
 
 async function classifyRequest(env, messages) {
     try {
+        // Optimization: Route based on last 2 messages only to reduce context cost/noise
+        const recentContext = messages.slice(-2);
+
         // Use Flash with strict constraints for Routing
-        const response = await executeAIRequest(env, MODELS.DEFAULT, ROUTER_SYSTEM_PROMPT, messages, {
+        // allowFastFailover = false (Router is a decision, let it retry a bit if needed)
+        const response = await executeAIRequest(env, MODELS.DEFAULT, ROUTER_SYSTEM_PROMPT, recentContext, {
             maxTries: 2,
-            allowFastFailover: true,
-            timeoutMs: 3000 // Fast decision
+            allowFastFailover: false,
+            timeoutMs: 3500
         });
 
         // Clean up markdown code blocks if present
@@ -307,9 +308,14 @@ async function classifyRequest(env, messages) {
 
         try {
             const decision = JSON.parse(cleanJson);
-            // Default to Core if schema is wrong
-            if (!decision.route || !decision.confidence) return { route: "core", confidence: 1.0, reason: "SchemaFallback" };
+            // Strict Validation
+            const isValid = decision &&
+                (decision.route === "core" || decision.route === "expert") &&
+                typeof decision.confidence === "number";
+
+            if (!isValid) return { route: "core", confidence: 1.0, reason: "InvalidSchema" };
             return decision;
+
         } catch (e) {
             console.warn("Router JSON Parse Failed:", cleanJson);
             return { route: "core", confidence: 1.0, reason: "ParseError" };
@@ -355,8 +361,10 @@ export default {
             // 1) DEDICATED ROUTER STEP
             let routerDecision = { route: "core", confidence: 0.0, reason: "Warmup" };
 
-            // Warm-up Lock: First 3 interactions always Core
-            const isWarmupPhase = messages.length <= 5 && expertMsgCount === 0;
+            // Warm-up Lock: First 3 interactions (USER messages) always Core
+            // We count rawMessages filtering for user.
+            const userMsgCount = rawMessages.filter(m => m.role === "user").length;
+            const isWarmupPhase = userMsgCount <= 3 && expertMsgCount === 0;
 
             if (!isWarmupPhase && !expertOnInput && !needsAdvancedMode(lastUserMsg)) {
                 // If regex didn't explicitly block it (Mohamed filter), ask the Router
