@@ -8,7 +8,7 @@
 /* ============================================================
    CONFIG
 ============================================================ */
-const WORKER_VERSION = "2.2.5";
+const WORKER_VERSION = "2.2.6";
 
 const ALLOWED_ORIGINS = [
     "https://mo-gamal.com",
@@ -256,16 +256,17 @@ async function executeAIRequest(env, model, prompt, messages, maxTries = 7) {
         console.warn(`[JIMMY_RETRY] try=${tryCount}/${maxTries} key=${keyName} model=${model} error=${result.type || result.status}`);
         lastError = result;
 
-        // High UX responsiveness: If we hit a timeout and reached maxTries, throw specifically
-        if (result.type === 'TIMEOUT' && tryCount >= maxTries) {
+        // 1) Timeout determines "Latency Issue" -> Fast Failover immediately
+        if (result.type === 'TIMEOUT') {
             const err = new Error("FAST_FAILOVER_TIMEOUT");
             err.details = result;
             throw err;
         }
 
+        // 2) For 429/Network errors, continue trying other keys up to maxTries
         if (tryCount >= maxTries) break;
 
-        // If it's a 4xx error (other than 429), it might be a request issue
+        // 3) 400 Bad Request usually means payload issue, so stop
         if (result.status === 400) break;
     }
 
@@ -323,8 +324,8 @@ export default {
 
             let ai;
             try {
-                // Primary Try: Try up to 2 keys before failing over to faster model
-                ai = await executeAIRequest(env, targetModel, prompt, messages, 2);
+                // Primary Try: Fast Failover on Timeout, but try all keys for 429s (maxTries=7)
+                ai = await executeAIRequest(env, targetModel, prompt, messages, 7);
             } catch (err) {
                 const isTimeout = err.message === "FAST_FAILOVER_TIMEOUT";
                 console.warn(isTimeout ? "Fast Failover triggered by Timeout" : "Primary Route Failed, using Failover model:", err.message);
