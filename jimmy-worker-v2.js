@@ -17,16 +17,22 @@ const ALLOWED_ORIGINS = [
     "http://127.0.0.1:5173",
 ];
 
-// Dynamic Model Routing (2026 Ultra-Modern Edition)
+const OPENAI_MODELS = {
+    core: ["gpt-4o-mini"],
+    expert: ["gpt-4o"],
+    emergency: ["gpt-4o-mini"],
+};
+
+// Official Model Names for 2026 Stability
 function getModelsForMode(mode) {
     if (mode === "expert") {
-        return ["gpt-4o", "gemini-1.5-pro", "gpt-4-turbo-preview"];
+        return ["gpt-4o", "gemini-1.5-pro"];
     }
     if (mode === "emergency") {
         return ["gpt-4o-mini", "gemini-1.5-flash"];
     }
-    // Priority to OpenAI to avoid Gemini Rate Limits shown in user logs
-    return ["gpt-4o-mini", "gemini-1.5-flash", "gpt-3.5-turbo"];
+    // Priority to OpenAI to avoid Gemini Rate Limits
+    return ["gpt-4o-mini", "gemini-1.5-flash"];
 }
 
 /* ============================================================
