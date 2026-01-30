@@ -4,71 +4,7 @@
    ============================================ */
 
 /* ============================================
-   1. ENHANCED REVEAL ON SCROLL
-   Replaces basic fadeUp with clip-path + blur
-   ============================================ */
-
-@keyframes revealClipBlur {
-    from {
-        opacity: 0;
-        clip-path: inset(0 0 100% 0);
-        filter: blur(10px);
-        transform: translateY(40px);
-    }
-
-    to {
-        opacity: 1;
-        clip-path: inset(0 0 0 0);
-        filter: blur(0);
-        transform: translateY(0);
-    }
-}
-
-@keyframes revealSlideUp {
-    from {
-        opacity: 0;
-        transform: translateY(30px); /* Less travel for elegance */
-        filter: blur(8px); /* Subtle blur */
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-        filter: blur(0);
-    }
-}
-
-/* Enhanced reveal classes */
-.reveal-modern {
-    opacity: 0;
-    animation: revealSlideUp 1.1s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
-}
-
-.reveal-clip {
-    opacity: 0;
-    animation: revealClipBlur 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
-}
-
-/* ============================================
-   2. MAGNETIC HOVER EFFECT
-   Cards "attract" towards cursor
-   ============================================ */
-
-.magnetic-card {
-    position: relative;
-    transition: transform 0.4s var(--ease-smooth);
-    will-change: transform;
-    z-index: 1;
-}
-
-/* ============================================
-   3. 3D TILT EFFECT
-   Perspective tilt following mouse
-   ============================================ */
-/* Removed as per user request */
-
-/* ============================================
-   4. INTERACTIVE PRESS (Tactile Feedback)
+   1. INTERACTIVE PRESS (Tactile Feedback)
    ============================================ */
 .btn-glass-compact:active, 
 .nav-link:active,
@@ -78,62 +14,7 @@
 }
 
 /* ============================================
-   5. TEXT REVEAL ANIMATION
-   Character-by-character reveal
-   ============================================ */
-
-@keyframes textReveal {
-    from {
-        opacity: 0;
-        transform: translateY(20px) rotateX(-90deg);
-        filter: blur(5px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0) rotateX(0deg);
-        filter: blur(0);
-    }
-}
-
-.text-reveal {
-    display: inline-block;
-    opacity: 0;
-    animation: textReveal 0.8s var(--ease-smooth) forwards;
-}
-
-/* Stagger delays for characters */
-.text-reveal:nth-child(1) { animation-delay: 0.05s; }
-.text-reveal:nth-child(2) { animation-delay: 0.1s; }
-.text-reveal:nth-child(3) { animation-delay: 0.15s; }
-.text-reveal:nth-child(4) { animation-delay: 0.2s; }
-.text-reveal:nth-child(5) { animation-delay: 0.25s; }
-.text-reveal:nth-child(6) { animation-delay: 0.3s; }
-.text-reveal:nth-child(7) { animation-delay: 0.35s; }
-.text-reveal:nth-child(8) { animation-delay: 0.4s; }
-
-/* ============================================
-   9. GLOW PULSE (Refined)
-   Sophisticated glow animations
-   ============================================ */
-
-@keyframes glowPulseAdvanced {
-    0%, 100% {
-        box-shadow: 0 0 20px rgba(0, 242, 255, 0.15);
-        border-color: rgba(0, 242, 255, 0.2);
-    }
-    50% {
-        box-shadow: 0 0 35px rgba(0, 242, 255, 0.25);
-        border-color: rgba(0, 242, 255, 0.4);
-    }
-}
-
-.glow-advanced {
-    animation: glowPulseAdvanced 4s ease-in-out infinite;
-}
-
-/* ============================================
-   10. STAGGER ANIMATIONS
+   2. STAGGER ANIMATIONS
    Smart sequential reveals
    ============================================ */
 
@@ -159,14 +40,6 @@
 .stagger-item:nth-child(6) { transition-delay: 0.3s; }
 .stagger-item:nth-child(7) { transition-delay: 0.35s; }
 .stagger-item:nth-child(8) { transition-delay: 0.4s; }
-
-/* ============================================
-   12. UTILITY CLASSES
-   ============================================ */
-
-.spring-smooth { transition: all 0.6s var(--ease-elastic); }
-.ease-out-back { transition: all 0.5s var(--ease-elastic); }
-.ease-expo { transition: all 0.8s cubic-bezier(0.87, 0, 0.13, 1); }
 
 /* Performance fix for reduced motion */
 @media (prefers-reduced-motion: reduce) {

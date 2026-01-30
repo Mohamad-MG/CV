@@ -1,6 +1,6 @@
 /**
  * 🚀 CAPTAIN JIMMY - SYSTEM CORE (2026)
- * "Super Ultra Edition"
+ * Neural Interior Edition - Extreme Fluidity
  */
 
 const J5_CONFIG = {
@@ -9,56 +9,29 @@ const J5_CONFIG = {
     workerUrl: 'https://mg-ai-proxy.emarketbank.workers.dev/chat',
     texts: {
         en: {
-            name: "Captain Jimmy",
-            status: "Online",
-            welcome: "Captain Jimmy on deck! Ready to navigate?",
-            placeholder: "Type a command..."
+            name: "NEURAL UNIT:JIMMY",
+            welcome: "Systems stabilized. Neural link active. How may I assist your navigation?",
+            placeholder: "Command interface..."
         },
         ar: {
-            name: "كابتن جيمي",
-            status: "متصل",
-            welcome: "كابتن جيمي معك! جاهز للإبحار؟",
-            placeholder: "أدخل أمرك..."
+            name: "وحدة جيمي العصبية",
+            welcome: "الأنظمة مستقرة. الرابط العصبي نشط. كيف يمكنني توجيهك؟",
+            placeholder: "واجهة الأوامر..."
         }
     }
 };
 
 class Jimmy5System {
     constructor() {
-        this.body = document.body;
         this.init();
     }
-
     init() {
         this.setMode();
-        window.addEventListener('resize', () => this.handleResize());
-        this.initMobileInteractions();
+        window.addEventListener('resize', () => requestAnimationFrame(() => this.setMode()));
     }
-
     setMode() {
         J5_CONFIG.isLite = window.matchMedia("(max-width: 1024px)").matches;
-        if (J5_CONFIG.isLite) {
-            this.body.classList.add('lite-mode');
-            this.body.classList.remove('ultra-mode');
-        } else {
-            this.body.classList.add('ultra-mode');
-            this.body.classList.remove('lite-mode');
-        }
-    }
-
-    handleResize() {
-        this.setMode();
-    }
-
-    initMobileInteractions() {
-        document.querySelectorAll('.mobile-accordion-trigger').forEach(trigger => {
-            trigger.addEventListener('click', () => {
-                const targetId = trigger.dataset.target;
-                const content = document.getElementById(targetId);
-                trigger.classList.toggle('active');
-                if (content) content.classList.toggle('expanded');
-            });
-        });
+        document.body.classList.toggle('lite-mode', J5_CONFIG.isLite);
     }
 }
 
@@ -66,7 +39,7 @@ class Jimmy5Agent {
     constructor() {
         this.isOpen = false;
         this.isDragging = false;
-        this.startPos = { x: 0, y: 0 };
+        this.pos = { x: 0, y: 0 };
         this.messages = [];
         this.isTyping = false;
         this.lang = document.documentElement.lang === 'ar' ? 'ar' : 'en';
@@ -79,19 +52,19 @@ class Jimmy5Agent {
 
     render() {
         const txt = J5_CONFIG.texts[this.lang];
-        const html = `
+        const container = document.createElement('div');
+        container.id = 'jimmy5-root';
+        container.innerHTML = `
             <button id="jimmy-launcher" aria-label="Open Chat">
-                <video src="${J5_CONFIG.agentVideo}" autoplay loop muted playsinline></video>
+                <video src="${J5_CONFIG.agentVideo}" autoplay loop muted playsinline loading="lazy"></video>
             </button>
-            
             <div id="jimmy-chat-panel" role="dialog" aria-modal="true">
                 <div class="sheet-handle"></div>
                 <div class="chat-header">
                     <div class="brand-group">
                         <span class="header-name">${txt.name}</span>
-                        <span class="header-status">${txt.status}</span>
                     </div>
-                    <button id="chat-close-btn" class="close-btn"><i class="ri-close-line" style="font-size:1.2rem"></i></button>
+                    <button id="chat-close-btn" class="close-btn"><i class="ri-close-line"></i></button>
                 </div>
                 <div id="chat-body" class="chat-body"></div>
                 <div class="chat-footer">
@@ -102,9 +75,6 @@ class Jimmy5Agent {
                 </div>
             </div>
         `;
-        const container = document.createElement('div');
-        container.id = 'jimmy5-root';
-        container.innerHTML = html;
         document.body.appendChild(container);
     }
 
@@ -116,7 +86,8 @@ class Jimmy5Agent {
             input: document.getElementById('chat-input'),
             send: document.getElementById('chat-send-btn'),
             close: document.getElementById('chat-close-btn'),
-            handle: document.querySelector('.sheet-handle')
+            handle: document.querySelector('.sheet-handle'),
+            video: document.querySelector('#jimmy-launcher video')
         };
     }
 
@@ -125,89 +96,77 @@ class Jimmy5Agent {
         this.ui.close.addEventListener('click', () => this.toggle(false));
         this.ui.send.addEventListener('click', () => this.sendMessage());
         this.ui.input.addEventListener('keydown', (e) => { if (e.key === 'Enter') this.sendMessage(); });
-        
-        // Mobile Swipe Down to Close
-        if (this.ui.handle) {
-            let startY = 0;
-            this.ui.handle.addEventListener('touchstart', (e) => startY = e.touches[0].clientY, { passive: true });
-            this.ui.handle.addEventListener('touchmove', (e) => {
-                if (e.touches[0].clientY - startY > 80) this.toggle(false);
-            }, { passive: true });
-        }
     }
 
     initDraggable() {
         const el = this.ui.launcher;
-        let xOffset = 0, yOffset = 0;
-
-        const dragStart = (e) => {
+        let startX, startY;
+        const onStart = (e) => {
             this.isDragging = false;
-            this.startPos.x = (e.type === 'touchstart') ? e.touches[0].clientX : e.clientX;
-            this.startPos.y = (e.type === 'touchstart') ? e.touches[0].clientY : e.clientY;
-            xOffset = el.offsetLeft;
-            yOffset = el.offsetTop;
-            
-            document.addEventListener('mousemove', dragMove);
-            document.addEventListener('mouseup', dragEnd);
-            document.addEventListener('touchmove', dragMove, { passive: false });
-            document.addEventListener('touchend', dragEnd);
+            const event = e.type.includes('touch') ? e.touches[0] : e;
+            startX = event.clientX - this.pos.x;
+            startY = event.clientY - this.pos.y;
+            document.addEventListener(e.type.includes('touch') ? 'touchmove' : 'mousemove', onMove, { passive: false });
+            document.addEventListener(e.type.includes('touch') ? 'touchend' : 'mouseup', onEnd);
         };
-
-        const dragMove = (e) => {
-            const cx = (e.type === 'touchmove') ? e.touches[0].clientX : e.clientX;
-            const cy = (e.type === 'touchmove') ? e.touches[0].clientY : e.clientY;
-            const dx = cx - this.startPos.x;
-            const dy = cy - this.startPos.y;
-
-            if (Math.abs(dx) > 5 || Math.abs(dy) > 5) {
+        const onMove = (e) => {
+            const event = e.type.includes('touch') ? e.touches[0] : e;
+            this.pos.x = event.clientX - startX;
+            this.pos.y = event.clientY - startY;
+            if (Math.abs(this.pos.x) > 5 || Math.abs(this.pos.y) > 5) {
                 this.isDragging = true;
                 e.preventDefault();
-                el.style.transition = 'none';
-                el.style.left = `${xOffset + dx}px`;
-                el.style.top = `${yOffset + dy}px`;
-                el.style.bottom = 'auto'; el.style.right = 'auto';
+                requestAnimationFrame(() => el.style.transform = `translate3d(${this.pos.x}px, ${this.pos.y}px, 0)`);
             }
         };
-
-        const dragEnd = () => {
-            document.removeEventListener('mousemove', dragMove);
-            document.removeEventListener('mouseup', dragEnd);
-            document.removeEventListener('touchmove', dragMove);
-            document.removeEventListener('touchend', dragEnd);
-            
-            if (this.isDragging) {
-                const rect = el.getBoundingClientRect();
-                const snapLeft = (rect.left + rect.width/2) < (window.innerWidth/2);
-                el.style.transition = 'all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.1)';
-                el.style.left = snapLeft ? '24px' : `${window.innerWidth - rect.width - 24}px`;
-                setTimeout(() => { this.isDragging = false; }, 100);
-            }
+        const onEnd = () => {
+            document.removeEventListener('mousemove', onMove);
+            document.removeEventListener('mouseup', onEnd);
+            document.removeEventListener('touchmove', onMove);
+            document.removeEventListener('touchend', onEnd);
+            if (this.isDragging) this.snapToEdge();
         };
+        el.addEventListener('mousedown', onStart);
+        el.addEventListener('touchstart', onStart, { passive: true });
+    }
 
-        el.addEventListener('mousedown', dragStart);
-        el.addEventListener('touchstart', dragStart, { passive: true });
+    snapToEdge() {
+        const el = this.ui.launcher;
+        const screenW = window.innerWidth;
+        const rect = el.getBoundingClientRect();
+        const isLeft = (rect.left + rect.width / 2) < (screenW / 2);
+        this.pos.x = isLeft ? -(screenW - rect.width - 48) : 0;
+        el.style.transition = 'transform 0.5s cubic-bezier(0.19, 1, 0.22, 1)';
+        el.style.transform = `translate3d(${this.pos.x}px, ${this.pos.y}px, 0)`;
+        setTimeout(() => { el.style.transition = ''; this.isDragging = false; }, 500);
     }
 
     toggle(open) {
+        if (this.isOpen === open) return;
         this.isOpen = open;
         this.ui.panel.classList.toggle('active', open);
-        if (J5_CONFIG.isLite && open) document.body.style.overflow = 'hidden';
-        else document.body.style.overflow = '';
-        
-        if (open && this.messages.length === 0) this.addMessage('ai', J5_CONFIG.texts[this.lang].welcome);
-        if (open) setTimeout(() => this.ui.input.focus(), 400);
+        if (open) {
+            this.ui.video.pause();
+            if (this.messages.length === 0) this.addMessage('ai', J5_CONFIG.texts[this.lang].welcome);
+            setTimeout(() => this.ui.input.focus(), 400);
+        } else {
+            this.ui.video.play();
+        }
     }
 
     addMessage(role, text) {
         const row = document.createElement('div');
         row.className = `msg-row ${role}`;
-        const bubble = document.createElement('div');
-        bubble.className = 'msg-bubble';
-        bubble.innerHTML = text.replace(/\n/g, '<br>');
-        row.appendChild(bubble);
+        row.innerHTML = `<div class="msg-bubble">${text.replace(/\n/g, '<br>')}</div>`;
         this.ui.body.appendChild(row);
-        this.ui.body.scrollTop = this.ui.body.scrollHeight;
         this.messages.push({ role, text });
+        this.scrollToBottom();
+    }
+
+    scrollToBottom() {
+        requestAnimationFrame(() => {
+            this.ui.body.scrollTo({ top: this.ui.body.scrollHeight, behavior: 'smooth' });
+        });
     }
 
     async sendMessage() {
@@ -216,7 +175,6 @@ class Jimmy5Agent {
         this.ui.input.value = '';
         this.addMessage('user', text);
         this.showTyping(true);
-
         try {
             const res = await fetch(J5_CONFIG.workerUrl, {
                 method: 'POST',
@@ -228,7 +186,7 @@ class Jimmy5Agent {
             if (data.response) this.addMessage('ai', data.response);
         } catch {
             this.showTyping(false);
-            this.addMessage('ai', "Signal interference. Please retry.");
+            this.addMessage('ai', "Signal disruption. Retrying neural link...");
         }
     }
 
@@ -236,14 +194,13 @@ class Jimmy5Agent {
         this.isTyping = show;
         const existing = document.getElementById('j5-typing');
         if (existing) existing.remove();
-        
         if (show) {
             const row = document.createElement('div');
             row.id = 'j5-typing';
             row.className = 'msg-row ai';
             row.innerHTML = `<div class="msg-bubble"><div class="typing-pulse"><div class="pulse-dot"></div><div class="pulse-dot"></div><div class="pulse-dot"></div></div></div>`;
             this.ui.body.appendChild(row);
-            this.ui.body.scrollTop = this.ui.body.scrollHeight;
+            this.scrollToBottom();
         }
     }
 }

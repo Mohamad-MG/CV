@@ -340,6 +340,22 @@ h4 {
     display: none;
 }
 
+/* --- 📱 MOBILE NAV OVERLAY --- */
+.mobile-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(5, 5, 8, 0.55);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+    z-index: 90;
+}
+
+.mobile-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
 
 /* --- 🚀 HERO SECTION (GLASS COCKPIT) --- */
 .hero {

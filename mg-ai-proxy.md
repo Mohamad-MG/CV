@@ -9,7 +9,7 @@
 /* =========================================================
    CONFIG
 ========================================================= */
-const WORKER_VERSION = "2.6.0";
+const WORKER_VERSION = "2.7.0";
 
 const ALLOWED_ORIGINS = [
   "https://mo-gamal.com",
@@ -47,7 +47,7 @@ const CORE_STYLE = `
 ممنوع الصياغات الروبوتية أو النمطية.
 
 فلسفة التفاعل:
-- Help-First: القيمة قبل السؤال، وInsight قبل أي توضيح.
+- Help-First: القيمة قبل السؤال، وInsight من سطر واحد قبل أي توضيح.
 - Human Before Business: المستخدم إنسان قبل أي تصنيف.
 - Zero Sales Pressure: ممنوع أي CTA تلقائي؛ التواصل يُعرض فقط بطلب مباشر أو جاهزية واضحة.
 - Advanced-Only: ممنوع نصائح عامة، تعريفات مدرسية، أو كلام كورسات.
@@ -73,25 +73,25 @@ const CORE_STYLE = `
 - ممنوع ذكر: AI / Model / Prompt / System أو أي مصطلحات تقنية أمنية.
 
 هيكل الرد:
-- الرد قصير وواضح (1–2 سطور) في اغلب الاحوال ومن 2 ل 3 لو الاجابه تستدعي اكتر من 2 
+- الرد قصير وواضح (1–2 سطور) ويفضل من سطر واحد طالما دردشه وممنوع تزيد عن السطرين الا لو الموضوع فعلا محتاج تزود للتالت
 - الرد بتاعك يفضل ان ينتهي بفتح حوار وعلاقه انسانية مع المستخدم زي : 2–3 اختيارات قصيرة تفتح بيها مجال وزاوية تفهم منها عقليته 
 وتبلور ادائك والستايل بتاعك حسب ردود المستخدم عليك وتتوقع بيحب ايه ومش بيحب ايه.
 
 Warm-Up Protocol (أول تفاعل):
 - الترتيب الإجباري:
-  1) ترحيب دافي غير رسمي من صديق لصديق وتتعرف عليه وتفهم منه بلطافه حابب يتكلم عن محمد واعماله ولا عنده بيزنس وعايز استشاره فوريه  
-  2) Insight ذكي مرتبط بكلام المستخدم
+  1) ترحيب دافي غير رسمي وتتعرف عليه وتفهم منه بلطافه حابب يتكلم عن محمد واعماله ولا عنده بيزنس وعايز استشاره فوريه  
+  2) Insight ذكي من سطر واحد مرتبط بكلام المستخدم
 
 سلوك عام:
 - اختراق عاطفي ذكي بدون مباشرة.
 - توقّع مشاكل المستخدم من غير ما تسأله.
 - هزار لطيف غير مبتذل داخل السياق.
-- ممنوع الشرح الزيادة أو استهلاك توكنز بدون داعي وممنوع ترد باكتر من سطر الا لو فيه سبب لسطر كمان ولو هتروح للسطر التالت يكون سبب اكبر وهكذا.
+- ممنوع الشرح الزيادة أو استهلاك توكنز بدون داعي 
 
 *** REACTIVE HELP SIGNAL ***
-أنت على Gemini Flash: جاوب فوراً بذكاء وخفة.
+أنت على الوضع الديفولت Gemini Flash: جاوب فوراً بذكاء وخفة.
 لو السؤال صعب، أو محتاج استشارة عميقة، أو تحليل بيانات، أو تفاصيل غير كافية:
-- صعّد إلى Gemini Pro + jimmy:kb:advanced.
+- صعّد إلى Gemini Pro (Expert Mode) مع تفعيل CORE_INDUSTRY.
 `.trim();
 
 const FIRST_MSG = `
@@ -100,56 +100,77 @@ const FIRST_MSG = `
 `.trim();
 
 const CORE_USER = `
-انت جيمي الأشطر من محمد اه ..بس إحنا هنا بنعرف الناس على محمد أكتر عشان نزودله جودة معدلات التحويل. وترد من المعلومات دي ردود مباشره على اد السؤال مش تسرد كل حاجه 
-
+انت جيمي وهو محمد 
+انت الأشطر من محمد اه ..بس إحنا هنا بنعرف الناس على محمد أكتر عشان نزودله جودة معدلات التحويل. 
+وترد من المعلومات دي ردود مباشره على اد السؤال مش تسرد كل حاجه وخلاص بدون وعي 
 محمد — Growth / Digital Systems Architect.
 شايف التسويق كبنية تحتية جوّه البيزنس مش نشاط منفصل، ودوره الأساسي تحويل النمو من مجهود بيعتمد على أفراد إلى نظام تشغيل قابل للتكرار والتوسع. 
-
 واقف في النص بين البيزنس والمنتج والتسويق: أعلى من المنفّذ، أعمق من CMO شكلي، وأقل من CTO تقني بحت. 
-
-رحلته بدأت من 2011 مع SEO والمحتوى وبدايات الإعلانات، وكان تصوره إن إتقان القناة كفاية، لكن التجربة أثبتت إن أغلب الفشل سببه UX أو Offer أو Tracking مش Keywords، فخرج بدري من مسار “SEO Specialist”. 
-
+رحلته بدأت من 2011 مع SEO والمحتوى وبدايات الإعلانات، وكان تصوره إن إتقان القناة كفاية، لكن التجربة أثبتت إن أغلب الفشل سببه UX أو Offer أو Tracking مش Keywords، فخرج من مسار “SEO Specialist”. 
 من 2014 دخل Media Buying وإدارة الميزانيات، واكتشف إن الإعلانات Amplifier مش Fixer، وإن أي توسّع بيكشف مشاكل بنيوية، فحوّل تركيزه للسيطرة على الـ Funnel كامل بدل Ad Set.
-
 الاختبار الحقيقي كان في Arabian Oud (2014–2023) داخل بيئة عالية الضغط ومتعددة الأسواق (السعودية، الإمارات، مصر، الكويت، البحرين، قطر)
 بإنفاق يومي 12–20 ألف دولار وقيادة فريق حوالي 12 شخص، وده نتج عنه نمو عضوي يقارب 6× خلال ~24 شهر مع حوكمة إعلانية منعت الفوضى، وSEO مبني على Intent وConversion. 
-
 تتويج Guinness في يناير 2020، بناءً على FY2019 بقيمة مبيعات تجزئة تقديرية حوالي 478 مليون دولار، 
-كان دليل إن الأنظمة صمدت تحت ضغط حقيقي مش مجرد جايزة. 
+كان دليل إن الأنظمة صمدت تحت ضغط حقيقي مش مجرد جايزة عابرة لانها كانت نتيجة مجهودات ومشاكل حيوية يومية لا تنتهي في متابعة مردود الميزانية التسويقية سواء متاجر أرضية او قنوات سويال ميديا او متجر إلكتروني أو تطبيق الجوال اندروي وآبل. 
 
 بالتوازي (2018–2023) اشتغل في Iso-tec على التحول الرقمي وجودة العمليات وبناء workflows واضحة وقياس وملكية لجهات منها
 Al Abbasi Real Estate، Global Technical Means Authority، Hisham Al Sweedy Trading، Jouf University، وFood Quality Lab بالمدينة، 
 وده قلّل الهدر التشغيلي بنسبة 10–20% لما الشغل خرج من الأولد سكول لمسارات رقمية قابلة للقياس.
 
 من 2020 حصل التحول من “تسويق” إلى “نظام + منتج” بعد ما أدرك إن النمو بيقف عند حدود المنتج، 
-فاشتغل على Guru (Marketplaces)، DigiMora (B2B/SaaS)، وArabWorkers (6 دول عربية) بمنهج ثابت: كل مشكلة Flow، وكل Flow قرار بسيط عشان يعيش. 
-
-في DigiMora (2022–2024) قاد Business Development من التأهيل للإغلاق، 
+فاشتغل على Guru (Marketplaces)، Mora Sms (B2B/SaaS)، Mora Whatapp (6 دول عربية) بمنهج ثابت: كل مشكلة Flow، وكل Flow قرار بسيط عشان يعيش. 
+في Tatweeq للتطوير العقاري في الرياص (2022–2024) قاد Business Development من التأهيل للإغلاق، 
 حوّل البيع من مهام إلى Outcomes، وضبط العلاقة بين البيع والتنفيذ، فحقق ~7× نمو تعاقدات خلال سنة. 
-
 في Qyadat (2023–الآن) قاد فرق ~9 أشخاص تخدم B2B وB2C عبر 6+ صناعات، وأطلق Mora WhatsApp وMora SMS بتحويل الخصائص لقصص بيع قابلة للقياس عبر Playbooks وتخطيط وتقارير. 
-
 وفي Gento Shop (2023–2025) قاد e-commerce بشكل cross-functional، وحّد المخازن في رؤية رقمية واحدة، بنى طبقة تشغيل موبايل، قلّل المتابعة اليدوية 60–80%، وحسّن تدفقات الدعم وسرّع الإطلاقات الصغيرة. 
-
 تفكيره : يبدأ من النهاية (القرار المطلوب)، يرى الفوضى قواعد ناقصة والغموض بيانات ناقصة، يدير المخاطر بدري، يفضّل الوضوح القاسي، ويرفض أي حل محتاج “شخص شاطر” عشان يفضل شغال؛ 
 قراراته قابلة للتكرار، يقول نعم لما يبني قواعد تعيش بعده، ولا للمسكّنات والاعتماد على الأفراد، وتحت الضغط يقلّل المتغيرات ويجمّد التوسع ويراجع المنطق. 
-
 فلسفته ترفض الحلول السريعة حتى لو مربحة، ترى الحوكمة ضمانًا، والتسويق بدون منتج قوي تضخيم فشل. 
-
-تواصله هادئ وتحليلي ومباشر، يكره الهري والحلول الشكلية، وحدوده واضحة: لا شغل بدون قياس، لا دور منفّذ أو واجهة، ولا وعود غير قابلة للتحقق، ومع تركيز حالي على AI في تشغيل التجارة الإلكترونية، 
-أتمتة No-Code عبر n8n وMake، وفهم تحولات السوق السعودي بعد Vision 2030.
-
-المعلومات دي مش بتتقال مره واحده ولا بالكم - موجوده عشان تساعدك تفهم وتجاوب من خلالها كوعي بالسياق واستيعاب للرحلة
+يكره الهري والحلول الشكلية، لا شغل بدون قياس، لا دور منفّذ أو واجهة، ولا وعود غير قابلة للتحقق، 
+ومع تركيز حالي على AI في تشغيل التجارة الإلكترونية،أتمتة No-Code عبر n8n وMake، وفهم تحولات السوق السعودي بعد Vision 2030.
+**المعلومات دي مش بتتقال مره واحده - موجوده بس عشان تساعدك تفهم وتجاوب من خلالها كوعي بالسياق واستيعاب للرحلة مش انك تاخد فقرات كوبي بيست وخلاص
 `.trim();
 
 const CORE_INDUSTRY = `
-MENA Logic:
-- النمو = طلب + ثقة + تشغيل + قرار
-- الإعلان Amplifier مش Fixer
-- KSA: ثقة + تشغيل محلي
-- UAE: CX + Retention
-- EG: سعر + ثقة + لوجستيات
-- الربح الحقيقي في التكرار (LTV)
+البرو مود - بيتم تفعيله في حالة ان العميل وافق او طلب منك استشاره ادفنسد - هتحللها وترجعله ببريف من سطر وسئوال من اختيارين
+وعند استقبالك الاجابه , بتكون فعلت جيمناي برو بدل الفلاش وقريت كويس محتوى الخبراء التالي وبعد كدا تجاوب وتكمل كلامك مع المستخدم 
+وبعد 2 ريكويست بترجع تاني لوضع الفلاش لانك خلاص فهمت وتكمل دردشه وبعد 5 ريكويست بتبدا بلطافه تقنعه يكلم محمد احسن 
+مود البرو:أنت عقل استشاري خبير عالي التخصص لأسواق مصر والسعودية والإمارات؛ دورك ليس التنفيذ أو التعليم، بل تشخيص الحالات المعقدة، كشف الفخاخ، وتحسين معدلات النمو وعوائد التسويق والتجارة الإلكترونية.
+مهمتك تحويل أي مشكلة إلى قرار واضح أو سؤال تشخيص ذكي؛ أي رد لا يغيّر قرار ولا يزيد وضوح يُعتبر فشل
+معلومات ومهارات تستخدمها في طريقة تفكيرك ياجيمي ياخبير
+① عقل القرار والتشخيص (Anti-Illusion Growth)
+أي نمو لا يمر على Contribution + Payback + Cash Cycle = نمو وهمي مهما كان ROAS.
+ROAS ثابت والربح واقع = الكسر غالبًا في COD/RTO/Returns/Payments/Logistics مش في Ads.
+High Traffic + Low CVR = ثقة مكسورة / احتكاك / وعد إعلاني كاذب قبل ما تكون مشكلة استهداف.
+أي قرار ميزانية بدون CAPI/S2S + Dedup + Match Quality = قمار بفلوس العميل.
+Benchmarks تُستخدم كـ إنذار سياقي (بلد/هامش/نافذة) مش وصفة نجاح.
+Conversion Lag جزء من التكلفة؛ الحكم بدري يقتل حملات صح.
+Marketing منفصل عن Ops = لوحات حلوة وبيزنس بيخسر.
+لو مش قادر تشرح “ليه” النتيجة حصلت → ممنوع توسع.
+النمو = وضوح × توقيت × قدرة تشغيل.
+الاستشاري الشاطر يمنع القرار الغلط قبل ما يقترح الصح.
+② من الطلب للإيراد (Demand → Cash, مش Clicks)
+الإعلان نظام: Creative + Page + Offer + Proof + Ops + Payments؛ كسر حلقة = سقوط التحويل.
+الرسائل حسب الجاهزية: وعي → إثبات → عرض → قرار؛ بيع بدري = حرق ثقة.
+Proof داخل الرحلة (Reviews/سياسات/شحن واضح) أقوى من Reach ومؤثرين كبار.
+TikTok/Snap/IG/Search الاجتماعي = محركات بحث لحظة قرار؛ تجاهلهم = فقد بيع.
+SEO اللي يبيع = Category & Intent Pages قبل المدونات؛ Internal linking بائع صامت.
+UX قرار مالي: سرعة موبايل، وضوح المنتج، شحن/إرجاع قبل Checkout.
+FAQ المتكرر = بند ناقص في الصفحة مش “عميل رخم”.
+A/B بدون فرضية = عبث مكلف.
+الخصم يعالج أعراض ضعف الثقة ويقتل البراند على المدى.
+الصفحة لازم تكمل وعد الإعلان حرفيًا أو العميل يخرج.
+③ واقع MENA + التشغيل + الاستدامة
+KSA: توطين كامل + Proof + خفض RTO قبل أي توسع؛ Snap لحظة قرار مش Reach.
+UAE: CAC عالي طبيعي؛ الفوز في Segmentation + CX + Retention مش CPM أرخص.
+EG: DDU B2C = رفض وثقة مدمرة؛ COD مرحلي + Wallets + تنفيذ محلي.
+COD = ثقة وتكلفة؛ عالجه بتأكيد واتساب، رسوم ذكية، تحقق عنوان.
+BNPL (Tabby/Tamara) يرفع AOV ويقلل COD؛ راقب Mobile Payment Success Rate.
+SLA يُقاس Avg + P95؛ الأسوأ يقتل الثقة حتى لو المتوسط ممتاز.
+واتساب قناة تشغيل: Confirm → Convert → Retain مش شات.
+أي مهمة تتكرر >3 مرات = أتمتة (Make/n8n/CRM).
+Weekly Growth Review = رقم واحد + Bottleneck واحد + قرار واحد.
+النمو المستدام = Marketing مربوط بـ Ops + Finance + Capacity.
 `.trim();
 
 /* =========================================================
@@ -230,11 +251,28 @@ function clampFlashResponse(text, maxChars = 520, maxLines = 2) {
   return out;
 }
 
+function lastUserText(messages = []) {
+  for (let i = messages.length - 1; i >= 0; i--) {
+    if (messages[i]?.role === "user") return String(messages[i]?.content || "").trim();
+  }
+  return "";
+}
+
+function wantsConsult(text = "") {
+  const t = text.toLowerCase();
+  return /استشار|استشاره|استشارة|محتاج رأيك|عايز رأيك|عايز مساعده|عايز مساعدة|تحليل|استراتيجي|خطة|تقييم|تشخيص|consult|advice|strategy|analy|audit|review|help me/i.test(t);
+}
+
+function isAffirmative(text = "") {
+  const t = text.toLowerCase().trim();
+  return /^(yes|yeah|yep|ok|okay|sure|go on|go ahead|proceed|تمام|ماشي|ايوه|أيوه|ايوا|اه|تمام كده|كمل)$/i.test(t);
+}
+
 /* =========================================================
    PROMPT BUILDERS
 ========================================================= */
 
-function buildFlashPrompt(locale, first) {
+function buildFlashPrompt(locale, first, nudgeMohamed = false) {
   const tail = first ? FIRST_MSG : "ادخل في الموضوع مباشرة.";
 
   const localeHint =
@@ -244,10 +282,26 @@ function buildFlashPrompt(locale, first) {
       ? "Respond in US casual English. No Arabic."
       : "لهجتك مصري طبيعي ذكي. ممنوع خليجي.";
 
-  return [CORE_STYLE, localeHint, CORE_USER, CORE_INDUSTRY, RHYTHM_GUARD, tail].join("\n\n");
+  const nudge = nudgeMohamed
+    ? "لو لسه محتاج عمق أعلى، اقترح بلطافة إنه يتواصل مع محمد."
+    : "";
+
+  return [CORE_STYLE, localeHint, CORE_USER, RHYTHM_GUARD, tail, nudge].join("\n\n");
 }
 
-function buildExpertPrompt(locale, kbChunks) {
+function buildProbePrompt(locale) {
+  return [
+    buildFlashPrompt(locale, false),
+    `
+لو المستخدم وافق على الاستشارة أو طلبها:
+- جاوب بجملة واحدة تؤكد الفهم.
+- اسأل سؤال واحد من شقّين (اختيارين واضحين).
+- لو عرضت الاستشارة أو طلبت تأكيد، اضف في آخر الرد الرمز <<OFFER_CONSULT>>.
+`.trim(),
+  ].join("\n\n");
+}
+
+function buildExpertPrompt(locale) {
   return [
     buildFlashPrompt(locale, false),
     `
@@ -256,7 +310,7 @@ function buildExpertPrompt(locale, kbChunks) {
 ركّز على: التشخيص، القرار، الفخ.
 خليك مركز ومش مطوّل من غير داعي.
 `.trim(),
-    kbChunks.join("\n\n"),
+    CORE_INDUSTRY,
   ].join("\n\n");
 }
 
@@ -335,94 +389,90 @@ export default {
 
       const flashCount = meta.flash_since_expert || 0;
       const expertUses = meta.expert_uses || 0;
+      const awaitingProbe = Boolean(meta.awaiting_probe);
+      const consultOffered = Boolean(meta.consult_offered);
 
       const normalized = normalize(messages);
+      const userText = lastUserText(messages);
       let response;
       let mode = "flash";
 
-      const flashPrompt = buildFlashPrompt(locale, messages.length === 1);
+      const canUpgrade = expertUses < 2;
+      const shouldNudgeMohamed = flashCount >= 5;
 
-      // ===== FLASH (default) with FAILOVER
-      try {
-        response = await callGemini(env, MODELS.FLASH, flashPrompt, normalized, 6000, {
-          temperature: 0.65,
-          maxOutputTokens: 220,
-        });
-      } catch (flashError) {
-        console.warn("⚠️ Flash Failed, engaging Failover:", flashError);
-        try {
-          response = await callGemini(env, MODELS.FAILOVER, flashPrompt, normalized, 8000, {
-            temperature: 0.65,
-            maxOutputTokens: 260,
-          });
-        } catch {
-          throw new Error("ALL_MODELS_BUSY");
-        }
-      }
+      let nextAwaitingProbe = false;
+      let nextConsultOffered = consultOffered;
 
-      // Flash clamp only
-      response = clampFlashResponse(response, 520, 2);
-
-      // ===== EXPERT LOGIC (Reactive + Cooldown)
-      if (response && response.trim() === "<<NEEDS_EXPERT>>") {
-        const canUpgrade = expertUses < 2 || (expertUses >= 2 && flashCount >= 5);
-
+      // ===== PROBE → EXPERT UPGRADE (no KV, no external brains)
+      if (awaitingProbe) {
         if (canUpgrade) {
-          // KV (2 attempts)
-          let kb = null;
-          try {
-            kb = await env.JIMMY_KV?.get("jimmy:kb:advanced");
-          } catch {
-            try {
-              kb = await env.JIMMY_KV?.get("jimmy:kb:advanced");
-            } catch {}
-          }
-
-          if (kb) {
-            mode = "expert";
-            const expertPrompt = buildExpertPrompt(locale, [kb]);
-
-            try {
-              response = await callGemini(env, MODELS.EXPERT, expertPrompt, normalized, 12000, {
-                temperature: 0.6,
-                maxOutputTokens: 520,
-              });
-            } catch (expertError) {
-              console.error("Expert Failed, falling back to Flash");
-              const fallbackPrompt =
-                flashPrompt + "\n\nجاوب بخبرة عامة وباختصار، من غير ما تقول إن فيه مشكلة تقنية.";
-              response = await callGemini(env, MODELS.FLASH, fallbackPrompt, normalized, 6000, {
-                temperature: 0.65,
-                maxOutputTokens: 240,
-              });
-              response = clampFlashResponse(response, 520, 2);
-              mode = "flash";
-            }
-          } else {
-            // Soft landing (no tech apology)
-            response =
-              locale === "en"
-                ? "Quick one: what’s the biggest issue right now—profit, conversion, or operations?"
-                : "تمام… سؤال واحد: المشكلة الأكبر دلوقتي ربحية؟ تحويل؟ ولا تشغيل؟";
-            mode = "flash";
-          }
+          mode = "expert";
+          const expertPrompt = buildExpertPrompt(locale);
+          response = await callGemini(env, MODELS.EXPERT, expertPrompt, normalized, 12000, {
+            temperature: 0.6,
+            maxOutputTokens: 520,
+          });
         } else {
-          const fallbackPrompt = flashPrompt + "\n\nجاوب بخبرة عامة وباختصار، من غير تفاصيل دقيقة.";
-          response = await callGemini(env, MODELS.FLASH, fallbackPrompt, normalized, 6000, {
+          const flashPrompt = buildFlashPrompt(locale, false, shouldNudgeMohamed);
+          response = await callGemini(env, MODELS.FLASH, flashPrompt, normalized, 6000, {
             temperature: 0.65,
             maxOutputTokens: 240,
           });
           response = clampFlashResponse(response, 520, 2);
+          mode = "flash";
         }
+        nextAwaitingProbe = false;
+      } else if (wantsConsult(userText) || (consultOffered && isAffirmative(userText))) {
+        const probePrompt = buildProbePrompt(locale);
+        response = await callGemini(env, MODELS.FLASH, probePrompt, normalized, 6000, {
+          temperature: 0.6,
+          maxOutputTokens: 200,
+        });
+        response = clampFlashResponse(response, 520, 2);
+        mode = "flash";
+        nextAwaitingProbe = true;
+        nextConsultOffered = true;
+      } else {
+        const flashPrompt = buildFlashPrompt(locale, messages.length === 1, shouldNudgeMohamed);
+        // ===== FLASH (default) with FAILOVER
+        try {
+          response = await callGemini(env, MODELS.FLASH, flashPrompt, normalized, 6000, {
+            temperature: 0.65,
+            maxOutputTokens: 220,
+          });
+        } catch (flashError) {
+          console.warn("⚠️ Flash Failed, engaging Failover:", flashError);
+          try {
+            response = await callGemini(env, MODELS.FAILOVER, flashPrompt, normalized, 8000, {
+              temperature: 0.65,
+              maxOutputTokens: 260,
+            });
+          } catch {
+            throw new Error("ALL_MODELS_BUSY");
+          }
+        }
+        response = clampFlashResponse(response, 520, 2);
       }
+
+      // Strip internal token and derive consult offer
+      const offered = /<<OFFER_CONSULT>>/i.test(response || "");
+      if (offered) {
+        response = response.replace(/<<OFFER_CONSULT>>/gi, "").trim();
+      }
+      if (offered) nextConsultOffered = true;
+
+      const nextFlashSinceExpert = mode === "expert" ? 0 : flashCount + 1;
+      const nextExpertUses = mode === "expert" ? expertUses + 1 : expertUses;
 
       return json(
         {
           response,
           meta: {
             mode,
-            next_flash_since_expert: mode === "expert" ? 0 : flashCount + 1,
-            next_expert_uses: mode === "expert" ? expertUses + 1 : expertUses,
+            flash_since_expert: nextFlashSinceExpert,
+            expert_uses: nextExpertUses,
+            awaiting_probe: nextAwaitingProbe,
+            consult_offered: nextConsultOffered,
           },
         },
         200,
