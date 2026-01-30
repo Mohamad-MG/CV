@@ -381,14 +381,20 @@ const initScrollReveal = () => {
 
 // --- 6. VIDEO PLAYER ---
 const initVideo = () => {
-    const videoScreen = document.querySelector('.ipad-screen');
     const video = document.getElementById('showreelVideo');
-    if (!videoScreen || !video) return;
+    if (!video) return;
 
-    videoScreen.addEventListener('click', () => {
+    const videoContainer = video.closest('.ipad-mockup');
+    const togglePlayback = () => {
         if (video.paused) video.play();
         else video.pause();
-    });
+    };
+
+    if (videoContainer) {
+        videoContainer.addEventListener('click', togglePlayback);
+    } else {
+        video.addEventListener('click', togglePlayback);
+    }
 };
 
 // --- 7. CAROUSEL INTERACTION (Universal) ---
@@ -450,32 +456,7 @@ const initCarousel = () => {
     setupCarousel('eduCarousel', 'edu-prev', 'edu-next');
 };
 
-// --- 8. TERMINAL EDUCATION LOGIC (Ultra Modern) ---
-const initTerminal = () => {
-    const trigger = document.getElementById('eduTrigger');
-    const windowEl = document.getElementById('eduWindow');
-    const logs = document.querySelectorAll('.log-entry');
-
-    if (!trigger || !windowEl) return;
-
-    trigger.addEventListener('click', () => {
-        windowEl.classList.toggle('open');
-        const isOpen = windowEl.classList.contains('open');
-
-        // Update Status Text
-        trigger.querySelector('.status').innerText = isOpen ? 'Close' : 'View';
-
-        if (isOpen) {
-            logs.forEach((log, index) => {
-                log.style.transitionDelay = `${index * 80}ms`;
-            });
-        } else {
-            logs.forEach(log => log.style.transitionDelay = '0ms');
-        }
-    });
-};
-
-// --- 9. STORY INTERACTIVES (Counter + Decrypt) ---
+// --- 8. STORY INTERACTIVES (Counter + Decrypt) ---
 const initStoryInteractives = () => {
     // A) $478M Counter Logic
     const counterElements = document.querySelectorAll('.counter-val');
@@ -526,8 +507,6 @@ const initStoryInteractives = () => {
 
 // --- MASTER BOOT ---
 document.addEventListener('DOMContentLoaded', () => {
-    console.log("System 3.2: Online");
-
     // Core Motion
     new DataDecrypt();
     new IgnitionMetrics();
@@ -549,6 +528,5 @@ document.addEventListener('DOMContentLoaded', () => {
     initScrollReveal();
     initVideo();
     initCarousel();
-    initTerminal();
     initStoryInteractives();
 });

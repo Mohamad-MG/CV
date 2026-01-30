@@ -112,6 +112,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const mobileToggle = document.querySelector('.mobile-menu-toggle');
     const mobileNav = document.querySelector('.header-nav');
+    const headerContainer = document.querySelector('.header-container');
     let mobileOverlay = document.querySelector('.mobile-overlay');
 
     // Create overlay if it doesn't exist
@@ -124,8 +125,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const toggleMobileMenu = () => {
         mobileToggle?.classList.toggle('active');
         mobileNav?.classList.toggle('mobile-open');
+        headerContainer?.classList.toggle('nav-open');
         mobileOverlay?.classList.toggle('active');
-        document.body.style.overflow = mobileNav?.classList.contains('mobile-open') ? 'hidden' : '';
+
+        const isOpen = mobileNav?.classList.contains('mobile-open') || headerContainer?.classList.contains('nav-open');
+        if (mobileToggle) {
+            mobileToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+        }
+
+        document.body.classList.toggle('nav-open', Boolean(isOpen));
+        document.body.style.overflow = isOpen ? 'hidden' : '';
     };
 
     mobileToggle?.addEventListener('click', toggleMobileMenu);
