@@ -981,104 +981,96 @@ h4 {
 }
 
 
-/* --- 🎞️ EXPERIENCE CAROUSEL (Clean Navigation) --- */
+/* --- 🎞️ EXPERIENCE CAROUSEL (Ultra Polish) --- */
 .carousel-container {
     position: relative;
     width: 100%;
-    padding-bottom: 40px;
+    padding-bottom: 20px;
+    /* Clean gradient mask for side fade */
+    mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+    -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
 }
 
-/* Navigation Buttons (Glass Orbs) */
+/* Navigation Buttons (Desktop Only) */
 .nav-btn {
     position: absolute;
-    top: 40%;
+    top: 45%;
     transform: translateY(-50%);
-    width: 48px;
-    height: 48px;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    width: 54px;
+    height: 54px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 50%;
     color: #fff;
-    font-size: 1.2rem;
+    font-size: 1.4rem;
     cursor: pointer;
     z-index: 10;
-    backdrop-filter: blur(8px);
-    transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+    backdrop-filter: blur(12px);
+    transition: 0.4s var(--ease-smooth);
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
+@media (max-width: 1024px) {
+    .nav-btn { display: none; } /* Focus on touch interaction for mobile */
+    .carousel-container { 
+        mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
+    }
+}
+
 .nav-btn:hover {
-    background: var(--highlight);
+    background: rgba(59, 130, 246, 0.15);
     border-color: var(--highlight);
-    box-shadow: 0 0 20px rgba(59, 130, 246, 0.4);
+    box-shadow: 0 0 30px rgba(59, 130, 246, 0.2);
+    transform: translateY(-50%) scale(1.1);
 }
 
-.prev-btn {
-    left: -20px;
-}
+.prev-btn { left: -20px; }
+.next-btn { right: -20px; }
 
-.next-btn {
-    right: -20px;
-}
-
-/* Scroll Container (Smooth & Simple) */
+/* Scroll Container */
 .horizontal-scroll {
     display: flex;
-    gap: 24px;
+    gap: 32px; /* Increased gap for breathability */
     overflow-x: auto;
     scroll-snap-type: x mandatory;
-    scroll-behavior: smooth;
-    /* Native smooth scroll */
-    padding: 20px 5vw;
+    padding: 40px 10%;
     scrollbar-width: none;
     -ms-overflow-style: none;
-    cursor: grab;
-    /* Standard drag cursor */
 }
 
-.horizontal-scroll:active {
-    cursor: grabbing;
-}
+.horizontal-scroll::-webkit-scrollbar { display: none; }
 
-.horizontal-scroll::-webkit-scrollbar {
-    display: none;
-}
-
-/* The Card (Clean) */
+/* The Card (Refined) */
 .exp-card {
-    min-width: 280px;
-    height: 400px;
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.01) 100%);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 24px;
-    padding: 32px;
+    min-width: 320px;
+    height: 440px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 32px;
+    padding: 40px;
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
     scroll-snap-align: center;
-    transition: transform 0.3s ease, border-color 0.3s;
-    user-select: none;
-    /* Prevent text selection while dragging */
+    transition: 0.5s var(--ease-smooth);
+    will-change: transform, border-color, background;
 }
 
-/* Simple Active State */
-.exp-card:hover {
-    border-color: var(--highlight);
-    transform: translate3d(0, -5px, 0);
-    /* Hardware accelerated */
-}
-
-/* Remove Complex Drag States */
-.carousel-container:active .exp-card {
-    cursor: grabbing;
+@media (max-width: 768px) {
+    .exp-card {
+        min-width: 280px;
+        height: 400px;
+        padding: 30px;
+    }
 }
 
 .exp-card:hover {
-    background: linear-gradient(180deg, rgba(59, 130, 246, 0.1) 0%, rgba(20, 20, 25, 0.8) 100%);
-    border-color: var(--highlight);
-    transform: translateY(-10px);
+    background: rgba(59, 130, 246, 0.05);
+    border-color: rgba(59, 130, 246, 0.4);
+    transform: translateY(-12px) scale(1.02);
+    box-shadow: 0 30px 60px -20px rgba(0,0,0,0.6);
 }
 
 .exp-year {
@@ -1111,46 +1103,49 @@ h4 {
     line-height: 1.5;
 }
 
-/* Timeline Scrubber (Bottom Bar) */
+/* Timeline Scrubber (Refined) */
 .timeline-scrubber {
     position: relative;
-    max-width: 600px;
-    margin: 40px auto 0;
-    padding-top: 20px;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    max-width: 800px;
+    margin: 60px auto 0;
+    padding-top: 30px;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .scrub-track {
     display: flex;
     justify-content: space-between;
-    font-size: 0.75rem;
+    font-size: 0.8rem;
     color: var(--text-faint);
-    font-family: monospace;
+    font-family: var(--font-display);
+    font-weight: 600;
+    letter-spacing: 1px;
 }
 
 .scrub-year {
     cursor: pointer;
-    transition: color 0.3s;
-    padding: 10px 0;
-    /* Easier to click */
+    transition: 0.3s;
+    padding: 10px 15px;
+    position: relative;
+    z-index: 2;
 }
 
 .scrub-year:hover {
-    color: var(--highlight);
+    color: #fff;
+    text-shadow: 0 0 15px rgba(255,255,255,0.5);
 }
 
 /* The Moving Indicator */
 .scrub-indicator {
     position: absolute;
-    top: -3px;
+    top: -2px;
     left: 0;
-    width: 6px;
-    height: 6px;
+    width: 40px;
+    height: 4px;
     background: var(--highlight);
-    border-radius: 50%;
-    box-shadow: 0 0 10px var(--highlight);
+    border-radius: 100px;
+    box-shadow: 0 0 20px var(--highlight);
     transition: transform 0.1s linear;
-    /* Smooth drag follow */
     will-change: transform;
 }
 
@@ -1575,11 +1570,11 @@ body.perf-lite .footer-dock {
 /* --- 🎓 EDUCATION CAROUSEL VARIANT --- */
 .edu-card .exp-year {
     color: #a78bfa;
-    /* Soft Purple */
 }
 
 .edu-card:hover {
-    background: linear-gradient(180deg, rgba(139, 92, 246, 0.1) 0%, rgba(20, 20, 25, 0.8) 100%);
-    border-color: #8b5cf6;
-    transform: translateY(-10px);
+    background: rgba(139, 92, 246, 0.05);
+    border-color: rgba(139, 92, 246, 0.4);
+    transform: translateY(-12px) scale(1.02);
+    box-shadow: 0 30px 60px -20px rgba(0,0,0,0.6);
 }
