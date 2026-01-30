@@ -1,29 +1,38 @@
 /**
- * 🚀 JIMMY 5 - SYSTEM CORE (2026)
- * "The Intelligence that Moves with You"
+ * 🚀 CAPTAIN JIMMY - SYSTEM CORE (2026)
+ * "Super Ultra Edition"
  */
 
 const J5_CONFIG = {
     isLite: window.matchMedia("(max-width: 1024px)").matches,
-    agentVideo: 'assets/images/Jimmy-icon-v.m4v',
+    agentVideo: 'assets/images/Jimmy-icon-v.m4v', 
     workerUrl: 'https://mg-ai-proxy.emarketbank.workers.dev/chat',
-    welcomeMsg: {
-        en: "Quantum Link Established. I am Jimmy5. How can I accelerate your growth today?",
-        ar: "تم تأسيس الارتباط الكمي. أنا جيمي 5. كيف يمكنني تسريع نموك اليوم؟"
+    texts: {
+        en: {
+            name: "Captain Jimmy",
+            status: "Online",
+            welcome: "Captain Jimmy on deck! Ready to navigate?",
+            placeholder: "Type a command..."
+        },
+        ar: {
+            name: "كابتن جيمي",
+            status: "متصل",
+            welcome: "كابتن جيمي معك! جاهز للإبحار؟",
+            placeholder: "أدخل أمرك..."
+        }
     }
 };
 
 class Jimmy5System {
     constructor() {
         this.body = document.body;
-        this.lang = document.documentElement.lang || 'en';
         this.init();
     }
 
     init() {
         this.setMode();
         window.addEventListener('resize', () => this.handleResize());
-        console.log(`Jimmy5 System: ${J5_CONFIG.isLite ? 'Lite' : 'Ultra'} Mode Active`);
+        this.initMobileInteractions();
     }
 
     setMode() {
@@ -38,12 +47,18 @@ class Jimmy5System {
     }
 
     handleResize() {
-        const wasLite = J5_CONFIG.isLite;
         this.setMode();
-        if (wasLite !== J5_CONFIG.isLite) {
-            // Hot reload specific components if needed
-            location.reload(); // Simplest way to ensure all physics/layouts reset
-        }
+    }
+
+    initMobileInteractions() {
+        document.querySelectorAll('.mobile-accordion-trigger').forEach(trigger => {
+            trigger.addEventListener('click', () => {
+                const targetId = trigger.dataset.target;
+                const content = document.getElementById(targetId);
+                trigger.classList.toggle('active');
+                if (content) content.classList.toggle('expanded');
+            });
+        });
     }
 }
 
@@ -51,10 +66,10 @@ class Jimmy5Agent {
     constructor() {
         this.isOpen = false;
         this.isDragging = false;
-        this.dragPos = { x: 0, y: 0 };
         this.startPos = { x: 0, y: 0 };
         this.messages = [];
         this.isTyping = false;
+        this.lang = document.documentElement.lang === 'ar' ? 'ar' : 'en';
         
         this.render();
         this.cacheDOM();
@@ -63,32 +78,26 @@ class Jimmy5Agent {
     }
 
     render() {
+        const txt = J5_CONFIG.texts[this.lang];
         const html = `
-            <div id="jimmy-launcher">
+            <button id="jimmy-launcher" aria-label="Open Chat">
                 <video src="${J5_CONFIG.agentVideo}" autoplay loop muted playsinline></video>
-            </div>
+            </button>
             
-            <div id="jimmy-chat-panel">
-                <div class="chat-handle"></div>
+            <div id="jimmy-chat-panel" role="dialog" aria-modal="true">
+                <div class="sheet-handle"></div>
                 <div class="chat-header">
-                    <div class="chat-user-info">
-                        <div class="chat-avatar">J</div>
-                        <div class="chat-status-info">
-                            <span class="chat-name">Jimmy5 AI</span>
-                            <span class="chat-status">Active Now</span>
-                        </div>
+                    <div class="brand-group">
+                        <span class="header-name">${txt.name}</span>
+                        <span class="header-status">${txt.status}</span>
                     </div>
-                    <button id="chat-close-btn" class="btn-icon-quantum"><i class="ri-close-line"></i></button>
+                    <button id="chat-close-btn" class="close-btn"><i class="ri-close-line" style="font-size:1.2rem"></i></button>
                 </div>
-                
-                <div id="chat-messages" class="chat-messages">
-                    <!-- Messages will appear here -->
-                </div>
-                
-                <div class="chat-input-area">
-                    <div class="chat-input-wrapper">
-                        <input type="text" id="chat-input" placeholder="Ask me anything..." autocomplete="off">
-                        <button id="chat-send-btn" class="chat-send-btn"><i class="ri-send-plane-2-fill"></i></button>
+                <div id="chat-body" class="chat-body"></div>
+                <div class="chat-footer">
+                    <div class="input-capsule">
+                        <input type="text" id="chat-input" class="input-field" placeholder="${txt.placeholder}" autocomplete="off">
+                        <button id="chat-send-btn" class="send-btn"><i class="ri-arrow-up-line"></i></button>
                     </div>
                 </div>
             </div>
@@ -103,170 +112,142 @@ class Jimmy5Agent {
         this.ui = {
             launcher: document.getElementById('jimmy-launcher'),
             panel: document.getElementById('jimmy-chat-panel'),
-            msgs: document.getElementById('chat-messages'),
+            body: document.getElementById('chat-body'),
             input: document.getElementById('chat-input'),
             send: document.getElementById('chat-send-btn'),
             close: document.getElementById('chat-close-btn'),
-            handle: document.querySelector('.chat-handle')
+            handle: document.querySelector('.sheet-handle')
         };
     }
 
     bindEvents() {
-        this.ui.launcher.addEventListener('click', () => {
-            if (!this.isDragging) this.toggle(true);
-        });
-        
+        this.ui.launcher.addEventListener('click', () => { if (!this.isDragging) this.toggle(true); });
         this.ui.close.addEventListener('click', () => this.toggle(false));
-        
         this.ui.send.addEventListener('click', () => this.sendMessage());
-        this.ui.input.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') this.sendMessage();
-        });
-
-        // Mobile Gesture: Swipe down on handle to close
-        let touchStartY = 0;
-        this.ui.handle.addEventListener('touchstart', (e) => {
-            touchStartY = e.touches[0].clientY;
-        });
-        this.ui.handle.addEventListener('touchmove', (e) => {
-            const touchY = e.touches[0].clientY;
-            const diff = touchY - touchStartY;
-            if (diff > 50) this.toggle(false);
-        });
+        this.ui.input.addEventListener('keydown', (e) => { if (e.key === 'Enter') this.sendMessage(); });
+        
+        // Mobile Swipe Down to Close
+        if (this.ui.handle) {
+            let startY = 0;
+            this.ui.handle.addEventListener('touchstart', (e) => startY = e.touches[0].clientY, { passive: true });
+            this.ui.handle.addEventListener('touchmove', (e) => {
+                if (e.touches[0].clientY - startY > 80) this.toggle(false);
+            }, { passive: true });
+        }
     }
 
     initDraggable() {
-        if (!J5_CONFIG.isLite) return;
-
         const el = this.ui.launcher;
-        let xOffset = 0;
-        let yOffset = 0;
+        let xOffset = 0, yOffset = 0;
 
         const dragStart = (e) => {
             this.isDragging = false;
-            this.startPos.x = (e.type === "touchstart") ? e.touches[0].clientX : e.clientX;
-            this.startPos.y = (e.type === "touchstart") ? e.touches[0].clientY : e.clientY;
-            
+            this.startPos.x = (e.type === 'touchstart') ? e.touches[0].clientX : e.clientX;
+            this.startPos.y = (e.type === 'touchstart') ? e.touches[0].clientY : e.clientY;
             xOffset = el.offsetLeft;
             yOffset = el.offsetTop;
             
-            document.addEventListener("mousemove", dragMove);
-            document.addEventListener("mouseup", dragEnd);
-            document.addEventListener("touchmove", dragMove, { passive: false });
-            document.addEventListener("touchend", dragEnd);
+            document.addEventListener('mousemove', dragMove);
+            document.addEventListener('mouseup', dragEnd);
+            document.addEventListener('touchmove', dragMove, { passive: false });
+            document.addEventListener('touchend', dragEnd);
         };
 
         const dragMove = (e) => {
-            const currentX = (e.type === "touchmove") ? e.touches[0].clientX : e.clientX;
-            const currentY = (e.type === "touchmove") ? e.touches[0].clientY : e.clientY;
-            
-            const dx = currentX - this.startPos.x;
-            const dy = currentY - this.startPos.y;
-            
+            const cx = (e.type === 'touchmove') ? e.touches[0].clientX : e.clientX;
+            const cy = (e.type === 'touchmove') ? e.touches[0].clientY : e.clientY;
+            const dx = cx - this.startPos.x;
+            const dy = cy - this.startPos.y;
+
             if (Math.abs(dx) > 5 || Math.abs(dy) > 5) {
                 this.isDragging = true;
                 e.preventDefault();
+                el.style.transition = 'none';
                 el.style.left = `${xOffset + dx}px`;
                 el.style.top = `${yOffset + dy}px`;
-                el.style.bottom = 'auto';
-                el.style.right = 'auto';
+                el.style.bottom = 'auto'; el.style.right = 'auto';
             }
         };
 
         const dragEnd = () => {
-            document.removeEventListener("mousemove", dragMove);
-            document.removeEventListener("mouseup", dragEnd);
-            document.removeEventListener("touchmove", dragMove);
-            document.removeEventListener("touchend", dragEnd);
+            document.removeEventListener('mousemove', dragMove);
+            document.removeEventListener('mouseup', dragEnd);
+            document.removeEventListener('touchmove', dragMove);
+            document.removeEventListener('touchend', dragEnd);
             
-            // Snap to edge
             if (this.isDragging) {
                 const rect = el.getBoundingClientRect();
-                const screenWidth = window.innerWidth;
-                if (rect.left + rect.width/2 < screenWidth/2) {
-                    el.style.transition = 'left 0.3s cubic-bezier(0.16, 1, 0.3, 1)';
-                    el.style.left = '10px';
-                } else {
-                    el.style.transition = 'left 0.3s cubic-bezier(0.16, 1, 0.3, 1)';
-                    el.style.left = `${screenWidth - rect.width - 10}px`;
-                }
-                setTimeout(() => el.style.transition = '', 300);
+                const snapLeft = (rect.left + rect.width/2) < (window.innerWidth/2);
+                el.style.transition = 'all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.1)';
+                el.style.left = snapLeft ? '24px' : `${window.innerWidth - rect.width - 24}px`;
+                setTimeout(() => { this.isDragging = false; }, 100);
             }
         };
 
-        el.addEventListener("mousedown", dragStart);
-        el.addEventListener("touchstart", dragStart, { passive: true });
+        el.addEventListener('mousedown', dragStart);
+        el.addEventListener('touchstart', dragStart, { passive: true });
     }
 
     toggle(open) {
         this.isOpen = open;
         this.ui.panel.classList.toggle('active', open);
-        document.body.classList.toggle('no-scroll', open);
+        if (J5_CONFIG.isLite && open) document.body.style.overflow = 'hidden';
+        else document.body.style.overflow = '';
         
-        if (open && this.messages.length === 0) {
-            const lang = document.documentElement.lang || 'en';
-            this.addMessage('ai', J5_CONFIG.welcomeMsg[lang]);
-        }
-
-        if (open) {
-            this.ui.input.focus();
-        }
+        if (open && this.messages.length === 0) this.addMessage('ai', J5_CONFIG.texts[this.lang].welcome);
+        if (open) setTimeout(() => this.ui.input.focus(), 400);
     }
 
     addMessage(role, text) {
+        const row = document.createElement('div');
+        row.className = `msg-row ${role}`;
         const bubble = document.createElement('div');
-        bubble.className = `msg-bubble msg-${role}`;
+        bubble.className = 'msg-bubble';
         bubble.innerHTML = text.replace(/\n/g, '<br>');
-        this.ui.msgs.appendChild(bubble);
-        this.ui.msgs.scrollTop = this.ui.msgs.scrollHeight;
+        row.appendChild(bubble);
+        this.ui.body.appendChild(row);
+        this.ui.body.scrollTop = this.ui.body.scrollHeight;
         this.messages.push({ role, text });
     }
 
     async sendMessage() {
         const text = this.ui.input.value.trim();
         if (!text || this.isTyping) return;
-
         this.ui.input.value = '';
         this.addMessage('user', text);
         this.showTyping(true);
 
         try {
-            const response = await fetch(J5_CONFIG.workerUrl, {
+            const res = await fetch(J5_CONFIG.workerUrl, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ 
-                    messages: this.messages.map(m => ({
-                        role: m.role === 'ai' ? 'assistant' : 'user',
-                        content: m.text
-                    }))
-                })
+                body: JSON.stringify({ messages: this.messages.map(m => ({ role: m.role==='ai'?'assistant':'user', content: m.text })) })
             });
-            const data = await response.json();
+            const data = await res.json();
             this.showTyping(false);
-            this.addMessage('ai', data.response || "I encountered a glitch in the matrix.");
-        } catch (err) {
+            if (data.response) this.addMessage('ai', data.response);
+        } catch {
             this.showTyping(false);
-            this.addMessage('ai', "Signal lost. Please try again.");
+            this.addMessage('ai', "Signal interference. Please retry.");
         }
     }
 
     showTyping(show) {
         this.isTyping = show;
+        const existing = document.getElementById('j5-typing');
+        if (existing) existing.remove();
+        
         if (show) {
-            const typing = document.createElement('div');
-            typing.id = 'jimmy-typing';
-            typing.className = 'msg-bubble msg-ai typing';
-            typing.innerHTML = '<span></span><span></span><span></span>';
-            this.ui.msgs.appendChild(typing);
-        } else {
-            const typing = document.getElementById('jimmy-typing');
-            if (typing) typing.remove();
+            const row = document.createElement('div');
+            row.id = 'j5-typing';
+            row.className = 'msg-row ai';
+            row.innerHTML = `<div class="msg-bubble"><div class="typing-pulse"><div class="pulse-dot"></div><div class="pulse-dot"></div><div class="pulse-dot"></div></div></div>`;
+            this.ui.body.appendChild(row);
+            this.ui.body.scrollTop = this.ui.body.scrollHeight;
         }
-        this.ui.msgs.scrollTop = this.ui.msgs.scrollHeight;
     }
 }
 
-// Initialize on Load
 document.addEventListener('DOMContentLoaded', () => {
     window.j5System = new Jimmy5System();
     window.j5Agent = new Jimmy5Agent();
