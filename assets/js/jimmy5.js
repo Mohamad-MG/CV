@@ -5,7 +5,7 @@
 
 const J5_CONFIG = {
     isLite: window.matchMedia("(max-width: 1024px)").matches,
-    agentVideo: 'assets/images/Jimmy-icon-v.m4v', 
+    agentVideo: 'assets/images/jimmy-icon.m4v', 
     workerUrl: 'https://mg-ai-proxy.emarketbank.workers.dev/chat',
     texts: {
         en: {
@@ -38,8 +38,6 @@ class Jimmy5System {
 class Jimmy5Agent {
     constructor() {
         this.isOpen = false;
-        this.isDragging = false;
-        this.pos = { x: 0, y: 0 };
         this.messages = [];
         this.isTyping = false;
         this.lang = document.documentElement.lang === 'ar' ? 'ar' : 'en';
@@ -47,7 +45,6 @@ class Jimmy5Agent {
         this.render();
         this.cacheDOM();
         this.bindEvents();
-        this.initDraggable();
     }
 
     render() {
@@ -92,59 +89,25 @@ class Jimmy5Agent {
     }
 
     bindEvents() {
-        this.ui.launcher.addEventListener('click', () => { if (!this.isDragging) this.toggle(true); });
+        this.ui.launcher.addEventListener('click', () => this.toggle(true));
         this.ui.close.addEventListener('click', () => this.toggle(false));
         this.ui.send.addEventListener('click', () => this.sendMessage());
         this.ui.input.addEventListener('keydown', (e) => { if (e.key === 'Enter') this.sendMessage(); });
-    }
-
-    initDraggable() {
-        const el = this.ui.launcher;
-        let startX, startY;
-        const onStart = (e) => {
-            this.isDragging = false;
-            const event = e.type.includes('touch') ? e.touches[0] : e;
-            startX = event.clientX - this.pos.x;
-            startY = event.clientY - this.pos.y;
-            document.addEventListener(e.type.includes('touch') ? 'touchmove' : 'mousemove', onMove, { passive: false });
-            document.addEventListener(e.type.includes('touch') ? 'touchend' : 'mouseup', onEnd);
-        };
-        const onMove = (e) => {
-            const event = e.type.includes('touch') ? e.touches[0] : e;
-            this.pos.x = event.clientX - startX;
-            this.pos.y = event.clientY - startY;
-            if (Math.abs(this.pos.x) > 5 || Math.abs(this.pos.y) > 5) {
-                this.isDragging = true;
-                e.preventDefault();
-                requestAnimationFrame(() => el.style.transform = `translate3d(${this.pos.x}px, ${this.pos.y}px, 0)`);
-            }
-        };
-        const onEnd = () => {
-            document.removeEventListener('mousemove', onMove);
-            document.removeEventListener('mouseup', onEnd);
-            document.removeEventListener('touchmove', onMove);
-            document.removeEventListener('touchend', onEnd);
-            if (this.isDragging) this.snapToEdge();
-        };
-        el.addEventListener('mousedown', onStart);
-        el.addEventListener('touchstart', onStart, { passive: true });
-    }
-
-    snapToEdge() {
-        const el = this.ui.launcher;
-        const screenW = window.innerWidth;
-        const rect = el.getBoundingClientRect();
-        const isLeft = (rect.left + rect.width / 2) < (screenW / 2);
-        this.pos.x = isLeft ? -(screenW - rect.width - 48) : 0;
-        el.style.transition = 'transform 0.5s cubic-bezier(0.19, 1, 0.22, 1)';
-        el.style.transform = `translate3d(${this.pos.x}px, ${this.pos.y}px, 0)`;
-        setTimeout(() => { el.style.transition = ''; this.isDragging = false; }, 500);
+        
+        // Mobile Swipe Down to Close
+        let touchStartY = 0;
+        this.ui.handle.addEventListener('touchstart', (e) => touchStartY = e.touches[0].clientY, { passive: true });
+        this.ui.handle.addEventListener('touchmove', (e) => {
+            if (e.touches[0].clientY - touchStartY > 80) this.toggle(false);
+        }, { passive: true });
     }
 
     toggle(open) {
         if (this.isOpen === open) return;
         this.isOpen = open;
         this.ui.panel.classList.toggle('active', open);
+        this.ui.launcher.classList.toggle('hidden', open); // Hide launcher when open for clean view
+        
         if (open) {
             this.ui.video.pause();
             if (this.messages.length === 0) this.addMessage('ai', J5_CONFIG.texts[this.lang].welcome);

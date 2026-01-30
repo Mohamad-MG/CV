@@ -15,6 +15,14 @@ class NebulaPhysics {
         this.particles = [];
         this.width = window.innerWidth;
         this.height = window.innerHeight;
+        this.isPaused = document.hidden;
+        this.lastFrame = 0;
+        this.isLowPower =
+            window.matchMedia("(max-width: 768px)").matches ||
+            (navigator.deviceMemory && navigator.deviceMemory <= 4) ||
+            (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4);
+        this.frameInterval = this.isLowPower ? 33 : 16;
+        this.disableCollisions = this.isLowPower;
 
         this.initParticles();
         this.animate = this.animate.bind(this);
@@ -23,6 +31,10 @@ class NebulaPhysics {
         window.addEventListener('resize', () => {
             this.width = window.innerWidth;
             this.height = window.innerHeight;
+        });
+
+        document.addEventListener('visibilitychange', () => {
+            this.isPaused = document.hidden;
         });
     }
 
@@ -49,11 +61,16 @@ class NebulaPhysics {
         });
     }
 
-    animate() {
-        if (document.body.classList.contains('ai-open')) {
+    animate(timestamp) {
+        if (this.isPaused || document.body.classList.contains('ai-open')) {
             requestAnimationFrame(this.animate);
             return;
         }
+        if (timestamp - this.lastFrame < this.frameInterval) {
+            requestAnimationFrame(this.animate);
+            return;
+        }
+        this.lastFrame = timestamp;
 
         this.particles.forEach(p => {
             // Update Position
@@ -71,9 +88,11 @@ class NebulaPhysics {
         });
 
         // Particle-Particle Collision (Kinetic Repulsion)
-        for (let i = 0; i < this.particles.length; i++) {
-            for (let j = i + 1; j < this.particles.length; j++) {
-                this.resolveCollision(this.particles[i], this.particles[j]);
+        if (!this.disableCollisions) {
+            for (let i = 0; i < this.particles.length; i++) {
+                for (let j = i + 1; j < this.particles.length; j++) {
+                    this.resolveCollision(this.particles[i], this.particles[j]);
+                }
             }
         }
 
@@ -507,6 +526,14 @@ const initStoryInteractives = () => {
 
 // --- MASTER BOOT ---
 document.addEventListener('DOMContentLoaded', () => {
+    const isLowPowerDevice =
+        window.matchMedia("(max-width: 768px)").matches ||
+        (navigator.deviceMemory && navigator.deviceMemory <= 4) ||
+        (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4);
+    if (isLowPowerDevice) {
+        document.body.classList.add('perf-lite');
+    }
+
     // Core Motion
     new DataDecrypt();
     new IgnitionMetrics();
@@ -515,13 +542,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const marqueeInstances = [];
     document.querySelectorAll('.marquee-container').forEach(m => marqueeInstances.push(new DraggableMarquee(m)));
     const applyPauseState = () => {
-        const isPaused = document.body.classList.contains('ai-open');
+        const isPaused = document.body.classList.contains('ai-open') || document.hidden;
         marqueeInstances.forEach(instance => instance && instance.setPaused(isPaused));
     };
     applyPauseState();
     const bodyObserver = new MutationObserver(applyPauseState);
     bodyObserver.observe(document.body, { attributes: true, attributeFilter: ['class'] });
     window.addEventListener('jimmy:toggle', applyPauseState);
+    document.addEventListener('visibilitychange', applyPauseState);
 
     // Interaction
     initInteractions();
