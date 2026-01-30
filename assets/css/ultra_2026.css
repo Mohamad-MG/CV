@@ -1592,12 +1592,6 @@ h4 {
     transform: translateY(0);
 }
 
-.cursor-dot,
-.cursor-outline,
-.back-to-top {
-    display: none !important;
-}
-
 
 /* --- 🎓 EDUCATION CAROUSEL VARIANT --- */
 .edu-card .exp-year {
