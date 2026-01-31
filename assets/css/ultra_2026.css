@@ -584,7 +584,7 @@ h4 {
 .avatar-layer {
     position: absolute;
     inset: 0;
-    background-image: url('../images/mo.PNG');
+    background-image: url('../images/Mohamed.PNG');
     background-size: cover;
     background-position: center 20%;
     filter: grayscale(0.1) contrast(1.1);

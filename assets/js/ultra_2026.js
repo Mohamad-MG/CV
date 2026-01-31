@@ -22,7 +22,8 @@ class NebulaPhysics {
             (navigator.deviceMemory && navigator.deviceMemory <= 4) ||
             (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4);
         this.frameInterval = this.isLowPower ? 33 : 16;
-        this.disableCollisions = this.isLowPower;
+        this.disableCollisions = false;
+        this.collisionPadding = 10;
 
         this.initParticles();
         this.animate = this.animate.bind(this);
@@ -39,25 +40,92 @@ class NebulaPhysics {
     }
 
     initParticles() {
+        const padding = this.collisionPadding;
+        const maxAttempts = 200;
+        const placed = [];
+        const radii = this.signals.map(el => {
+            const rect = el.getBoundingClientRect();
+            const size = Math.max(rect.width, rect.height, 20);
+            return Math.max(12, size / 2 + 6);
+        });
+        const maxRadius = Math.max(...radii, 20);
+        const gridSize = Math.max(40, (maxRadius * 2) + (padding * 2));
+        const gridPoints = [];
+
+        for (let y = gridSize / 2; y < this.height; y += gridSize) {
+            for (let x = gridSize / 2; x < this.width; x += gridSize) {
+                gridPoints.push({ x, y });
+            }
+        }
+        for (let i = gridPoints.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [gridPoints[i], gridPoints[j]] = [gridPoints[j], gridPoints[i]];
+        }
+
+        const isClear = (x, y, radius) => {
+            for (const p of placed) {
+                const dx = x - p.x;
+                const dy = y - p.y;
+                const minDist = radius + p.radius + padding;
+                if ((dx * dx) + (dy * dy) < (minDist * minDist)) {
+                    return false;
+                }
+            }
+            return true;
+        };
+
         this.signals.forEach((el, index) => {
             // Disable CSS animation override
             el.style.animation = 'none';
-            el.style.opacity = '0.7';
             el.style.left = '0'; // Reset CSS positioning
             el.style.top = '0';
 
-            // Random start pos
-            const radius = 30; // Approx radius for collision
-            const x = Math.random() * (this.width - radius * 2) + radius;
-            const y = Math.random() * (this.height - radius * 2) + radius;
+            const radius = radii[index];
+            let x = 0;
+            let y = 0;
+            let placedOk = false;
+
+            for (let attempt = 0; attempt < maxAttempts; attempt++) {
+                x = Math.random() * (this.width - radius * 2) + radius;
+                y = Math.random() * (this.height - radius * 2) + radius;
+                if (isClear(x, y, radius)) {
+                    placedOk = true;
+                    break;
+                }
+            }
+
+            if (!placedOk && gridPoints.length) {
+                for (let i = 0; i < gridPoints.length; i++) {
+                    const point = gridPoints[i];
+                    const jitter = (Math.random() - 0.5) * padding;
+                    const candX = Math.min(Math.max(point.x + jitter, radius), this.width - radius);
+                    const candY = Math.min(Math.max(point.y + jitter, radius), this.height - radius);
+                    if (isClear(candX, candY, radius)) {
+                        x = candX;
+                        y = candY;
+                        placedOk = true;
+                        gridPoints.splice(i, 1);
+                        break;
+                    }
+                }
+            }
+
+            if (!placedOk) {
+                x = Math.random() * (this.width - radius * 2) + radius;
+                y = Math.random() * (this.height - radius * 2) + radius;
+            }
 
             // Random velocity (slow float)
-            const vx = (Math.random() - 0.5) * 0.8;
-            const vy = (Math.random() - 0.5) * 0.8;
+            const speed = this.isLowPower ? 0.45 : 0.8;
+            const vx = (Math.random() - 0.5) * speed;
+            const vy = (Math.random() - 0.5) * speed;
 
             this.particles.push({
                 el, x, y, vx, vy, radius, mass: 1
             });
+            placed.push({ x, y, radius });
+            el.style.opacity = '0.7';
+            el.style.transform = `translate3d(${x}px, ${y}px, 0)`;
         });
     }
 
@@ -82,9 +150,6 @@ class NebulaPhysics {
             if (p.x + p.radius > this.width) { p.x = this.width - p.radius; p.vx *= -1; }
             if (p.y - p.radius < 0) { p.y = p.radius; p.vy *= -1; }
             if (p.y + p.radius > this.height) { p.y = this.height - p.radius; p.vy *= -1; }
-
-            // Apply Transform
-            p.el.style.transform = `translate(${p.x}px, ${p.y}px)`;
         });
 
         // Particle-Particle Collision (Kinetic Repulsion)
@@ -96,6 +161,11 @@ class NebulaPhysics {
             }
         }
 
+        // Apply Transform after collision resolution
+        this.particles.forEach(p => {
+            p.el.style.transform = `translate3d(${p.x}px, ${p.y}px, 0)`;
+        });
+
         requestAnimationFrame(this.animate);
     }
 
@@ -103,7 +173,7 @@ class NebulaPhysics {
         const dx = p2.x - p1.x;
         const dy = p2.y - p1.y;
         const distance = Math.sqrt(dx * dx + dy * dy);
-        const minDist = p1.radius + p2.radius + 20; // +20 padding for "electrical field" feel
+        const minDist = p1.radius + p2.radius + this.collisionPadding;
 
         if (distance < minDist) {
             // Elastic Collision Logic
@@ -129,7 +199,7 @@ class NebulaPhysics {
             p2.vy = v2Real.y;
 
             // Separate particles to prevent sticking
-            const overlap = minDist - distance;
+            const overlap = Math.max(0, minDist - distance);
             const separateX = (overlap / 2) * Math.cos(angle);
             const separateY = (overlap / 2) * Math.sin(angle);
 
