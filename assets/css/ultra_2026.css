@@ -1,13 +1,13 @@
 :root {
   /* --- 🌌 2026 DEEP NAVY UNIVERSE --- */
-  --bg-deep: #05050a; 
+  --bg-deep: #05050a;
   --bg-void: #020205;
   --bg-accent-glow: rgba(59, 130, 246, 0.12);
-  
+
   /* --- 💎 UNIFIED PROTECTIVE GLASS FRAME --- */
   --glass-bg: rgba(255, 255, 255, 0.04);
   --glass-border: rgba(255, 255, 255, 0.08);
-  --glass-blur: blur(14px); 
+  --glass-blur: blur(14px);
   --glass-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.5);
   --glass-highlight: inset 0 1px 0 rgba(255, 255, 255, 0.05);
 
@@ -27,11 +27,14 @@
 }
 
 /* Base Reset & Setup */
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  margin: 0; padding: 0;
+  margin: 0;
+  padding: 0;
 }
 
 html {
@@ -39,6 +42,7 @@ html {
   background-color: #05050a; 
   scroll-behavior: smooth;
   font-size: 16px;
+  perspective: 2000px; /* Essential for 3D depth */
 }
 
 body {
@@ -47,34 +51,61 @@ body {
   font-family: var(--font-body);
   overflow-x: hidden;
   line-height: 1.65;
+  transform-style: preserve-3d;
 }
 
-h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-display);
-  font-weight: 700;
-  line-height: 1.1;
-  letter-spacing: -0.03em;
-}
-
-/* --- 🧊 LAYOUT UTILS --- */
-.content-wrap,
-.content-wrap--wide {
-  width: 100%;
-  margin: 0 auto;
-  padding-left: clamp(24px, 5vw, 60px);
-  padding-right: clamp(24px, 5vw, 60px);
+/* --- 🧊 UNIFIED PROTECTIVE GLASS FRAME (Layer 2) --- */
+.identity-card, .stat-card, .exp-card, .industry-card, .future-card, .ipad-mockup {
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  box-shadow: 
+    0 30px 80px -20px rgba(0, 0, 0, 0.8), /* Deep shadow for Layer 4 separation */
+    inset 0 1px 1px rgba(255, 255, 255, 0.1); /* Layer 2 Top Edge Light */
+  border-radius: 24px;
+  transform-style: preserve-3d;
+  transition: transform 0.6s var(--ease-smooth), box-shadow 0.6s ease;
+  will-change: transform;
   position: relative;
-  z-index: 2;
+  overflow: hidden;
 }
 
-.content-wrap { max-width: 1100px; }
-.content-wrap--wide { max-width: 1400px; }
+/* Dynamic Reflection Overlay (Layer 2.5) */
+.identity-card::after, .stat-card::after, .exp-card::after, .industry-card::after, .future-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    600px circle at var(--reflect-x, 50%) var(--reflect-y, 50%), 
+    rgba(255, 255, 255, 0.08), 
+    transparent 40%
+  );
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
 
-section {
-  padding: var(--section-gap) 0;
-  position: relative;
-  width: 100%;
-}/* --- 🌌 BACKGROUND UNIVERSE (The Layered Night) --- */
+.identity-card:hover::after, .stat-card:hover::after, .exp-card:hover::after, .industry-card:hover::after {
+  opacity: 1;
+}
+
+/* Hover elevation lift */
+.identity-card:hover, .stat-card:hover, .exp-card:hover, .industry-card:hover {
+  box-shadow: 
+    0 50px 120px -30px rgba(0, 0, 0, 0.9),
+    0 0 20px rgba(59, 130, 246, 0.1);
+  transform: translateY(-10px) rotateX(2deg) translateZ(10px);
+}
+
+/* Layer 1: Internal Content Elevation */
+.id-header, .id-visual, .stat-number, .stat-label, .exp-year, .industry-icon {
+  transform: translateZ(40px); /* Lifted off the glass surface */
+  transition: transform 0.6s var(--ease-smooth);
+}
+
+/* --- 🌌 BACKGROUND UNIVERSE (The Layered Night) --- */
 
 .bg-void-layer {
 
@@ -96,7 +127,7 @@ section {
 
   inset: -20%;
 
-  background: 
+  background:
 
     radial-gradient(1200px 900px at 15% 15%, rgba(59, 130, 246, 0.15), transparent 70%),
 
@@ -162,10 +193,12 @@ section {
     filter: blur(40px);
     opacity: 0.7;
   }
+
   .bg-glass-haze {
     opacity: 0.25;
   }
 }
+
 /* --- 🌫️ NEBULA MOTION --- */
 .social-nebula {
   position: fixed;
@@ -191,7 +224,8 @@ section {
   width: 100%;
   height: 100%;
   object-fit: contain;
-  opacity: 0.2; /* Extremely subtle */
+  opacity: 0.2;
+  /* Extremely subtle */
 }
 
 body.ai-open .signal {
@@ -203,42 +237,52 @@ body.ai-open .signal {
     transform: translateY(110vh) rotate(0deg);
     opacity: 0;
   }
+
   20% {
     opacity: 0.15;
   }
+
   80% {
     opacity: 0.15;
   }
+
   100% {
     transform: translateY(-10vh) rotate(10deg);
     opacity: 0;
   }
 }
+
 @keyframes motionFade {
   0% {
     opacity: 0;
     transform: scale(0.9);
   }
+
   50% {
     opacity: 0.15;
     transform: scale(1);
   }
+
   100% {
     opacity: 0;
     transform: scale(0.9);
   }
 }
+
 @keyframes motionSway {
   0% {
     transform: translate(0, 0);
   }
+
   50% {
     transform: translate(40px, -20px);
   }
+
   100% {
     transform: translate(0, 0);
   }
 }
+
 .ani-rise {
   animation: motionRise 60s linear infinite;
 }
@@ -573,7 +617,8 @@ h4 {
 .id-logo-large {
   width: 160px;
   height: auto;
-  filter: none; /* No effects */
+  filter: none;
+  /* No effects */
   position: relative;
   z-index: 11;
   display: block;
@@ -632,42 +677,57 @@ h4 {
 
 /* --- 🎞️ MIXED ANIMATIONS --- */
 @keyframes liveBreathe {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: scale(1);
   }
+
   50% {
     transform: scale(1.05);
   }
+
   /* Slow zoom in/out */
 }
+
 @keyframes liquidBorder {
-  0%, 100% {
+
+  0%,
+  100% {
     border-radius: 12px 12px 12px 12px;
   }
+
   33% {
     border-radius: 16px 10px 14px 12px;
   }
+
   66% {
     border-radius: 10px 14px 12px 16px;
   }
 }
+
 @keyframes lightSweep {
   0% {
     transform: translateX(-100%) skewX(-25deg);
     opacity: 0;
   }
+
   40% {
     transform: translateX(200%) skewX(-25deg);
     opacity: 1;
   }
+
   /* Fast sweep */
   100% {
     transform: translateX(200%) skewX(-25deg);
     opacity: 0;
   }
+
   /* Wait */
 }
+
 @media (prefers-reduced-motion: reduce) {
+
   *,
   ::before,
   ::after {
@@ -675,6 +735,7 @@ h4 {
     animation-iteration-count: 1 !important;
     transition-duration: 0.5s !important;
   }
+
   .ani-rise,
   .ani-fade,
   .ani-sway,
@@ -685,6 +746,7 @@ h4 {
     animation-duration: 40s !important;
   }
 }
+
 /* Floating HUD Data Overlays (Clean & Animated) */
 .float-data {
   position: absolute;
@@ -728,38 +790,50 @@ h4 {
 }
 
 @keyframes floatKSA {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: translateY(0);
   }
+
   50% {
     transform: translateY(15px);
   }
 }
 
 @keyframes floatEGY {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: translateY(0);
   }
+
   50% {
     transform: translateY(-15px);
   }
 }
 
 @keyframes float2026 {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: translateY(-20px);
   }
+
   50% {
     transform: translateY(20px);
   }
 }
+
 /* --- 📜 STORY SECTION (CALM & ELEGANT) --- */
 .story-text {
-  text-align: left; /* Left align for a professional feel */
+  text-align: left;
+  /* Left align for a professional feel */
 }
 
 .story-text p {
-  font-size: clamp(0.95rem, 1.2vw, 1.1rem); /* Reduced size for high-end look */
+  font-size: clamp(0.95rem, 1.2vw, 1.1rem);
+  /* Reduced size for high-end look */
   line-height: 1.8;
   color: var(--text-muted);
   margin-bottom: 2rem;
@@ -889,17 +963,21 @@ h4 {
     stroke-dashoffset: 1000;
     opacity: 0;
   }
+
   15% {
     opacity: 0.15;
   }
+
   85% {
     opacity: 0.15;
   }
+
   100% {
     stroke-dashoffset: 0;
     opacity: 0;
   }
 }
+
 .stat-card:hover {
   border-color: rgba(59, 130, 246, 0.3);
 }
@@ -1020,11 +1098,14 @@ h4 {
 @media (max-width: 1024px) {
   .nav-btn {
     display: none;
-  } /* Focus on touch interaction for mobile */
+  }
+
+  /* Focus on touch interaction for mobile */
   .carousel-container {
     mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
   }
 }
+
 .nav-btn:hover {
   background: rgba(59, 130, 246, 0.15);
   border-color: var(--highlight);
@@ -1043,7 +1124,8 @@ h4 {
 /* Scroll Container */
 .horizontal-scroll {
   display: flex;
-  gap: 32px; /* Increased gap for breathability */
+  gap: 32px;
+  /* Increased gap for breathability */
   overflow-x: auto;
   scroll-snap-type: x mandatory;
   padding: 40px 10%;
@@ -1081,6 +1163,7 @@ h4 {
     padding: 30px;
   }
 }
+
 .exp-card:hover {
   background: rgba(59, 130, 246, 0.05);
   border-color: rgba(59, 130, 246, 0.4);
@@ -1405,6 +1488,7 @@ h4 {
     gap: 16px;
     border-radius: 20px;
   }
+
   .footer-brand,
   [dir=rtl] .footer-brand,
   .footer-status,
@@ -1412,14 +1496,18 @@ h4 {
     padding: 0;
     border: none;
   }
+
   .footer-actions {
-    display: none; /* Keep it clean on mobile dock */
+    display: none;
+    /* Keep it clean on mobile dock */
   }
+
   .footer-jimmy-wrap {
     width: 40px;
     height: 40px;
   }
 }
+
 /* --- 📱 MOBILE RESPONSIVE --- */
 @media (max-width: 1024px) {
   .hero-grid {
@@ -1427,99 +1515,123 @@ h4 {
     text-align: center;
     gap: 60px;
   }
+
   .hero-mission {
     display: flex;
     flex-direction: column;
     align-items: center;
   }
+
   .hero-badge-row {
     justify-content: center;
   }
+
   .mission-metrics {
     justify-content: center;
     flex-wrap: wrap;
     row-gap: 16px;
   }
+
   .hero-signature-badges {
     justify-content: center;
   }
+
   .metric-divider {
     display: none;
   }
+
   .hero-identity {
     transform: none;
   }
+
   .stats-grid {
     grid-template-columns: 1fr;
     grid-template-rows: auto;
   }
+
   .stat-card:nth-child(1) {
     grid-column: auto;
     grid-row: auto;
   }
+
   .footer-dock {
     flex-direction: column;
     gap: 20px;
     padding: 24px;
     width: 90%;
   }
+
   .footer-status {
     border-left: none;
     padding-left: 0;
   }
+
   .timeline {
     margin-left: 0;
     padding-left: 30px;
   }
+
   .timeline-dot {
     left: -38px;
   }
 }
+
 @media (max-width: 600px) {
   .tagline {
     font-size: 2.5rem;
   }
+
   .hero-identity {
     transform: none;
   }
+
   .skill-chip,
   .tool-tag {
     padding: 8px 14px;
     font-size: 0.78rem;
   }
+
   .header-nav {
     display: none;
   }
+
   .mobile-menu-toggle {
     display: inline-flex;
   }
+
   .mission-metrics {
     gap: 16px;
     width: 100%;
   }
+
   .metric-block {
     max-width: 220px;
     text-align: center;
   }
+
   .m-lbl {
     line-height: 1.3;
     text-align: center;
     overflow-wrap: anywhere;
   }
 }
+
 @media (max-width: 768px) {
   .header-container {
     backdrop-filter: blur(10px);
   }
+
   .hero-orb {
     width: 90vw;
     height: 90vw;
     filter: blur(50px);
   }
+
   .footer-dock {
     box-shadow: 0 12px 28px -12px rgba(0, 0, 0, 0.7);
   }
 }
+
 /* --- ⚙️ PERF LITE (Lower blur/shadows for smoother frames) --- */
 body.perf-lite .header-container {
   backdrop-filter: blur(10px);
@@ -1688,6 +1800,7 @@ body.perf-lite .ipad-mockup {
     justify-content: center;
   }
 }
+
 /* 
    🚀 CAPTAIN JIMMY - NEURAL GLASS INTERIOR (2026)
    State: Ultra-High-End Polish / Kinetic Interface
@@ -1744,15 +1857,19 @@ body.ai-open {
 }
 
 @keyframes launcherBreath {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: scale(1);
     opacity: 0.1;
   }
+
   50% {
     transform: scale(1.4);
     opacity: 0.25;
   }
 }
+
 #jimmy-launcher:hover {
   transform: translateY(-10px) scale(1.1) rotate(5deg) translateZ(0);
 }
@@ -1773,18 +1890,21 @@ body.ai-open {
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  background: linear-gradient(165deg, rgba(10, 10, 15, 0.8) 0%, rgba(5, 5, 10, 0.9) 100%);
-  backdrop-filter: var(--blur-lg) saturate(180%);
-  -webkit-backdrop-filter: var(--blur-lg) saturate(180%);
+  background: linear-gradient(165deg, rgba(8, 8, 14, 0.98) 0%, rgba(4, 4, 10, 0.99) 100%);
+  backdrop-filter: var(--blur-lg) saturate(200%);
+  -webkit-backdrop-filter: var(--blur-lg) saturate(200%);
   border: 1px solid var(--surface-border);
-  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.02), 0 50px 120px -30px rgb(0, 0, 0);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.03),
+    0 50px 120px -30px rgba(0, 0, 0, 0.9),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
   top: 50%;
   left: 50%;
   opacity: 0;
   visibility: hidden;
-  transform: translate(-50%, -40%) scale(0.9) translateZ(0);
+  transform: translate(-50%, -40%) scale(0.95) translateZ(0);
   will-change: transform, opacity;
-  transition: opacity 0.5s var(--easing-smooth), transform 0.6s var(--easing-smooth), visibility 0.5s;
+  transition: opacity 0.4s var(--easing-smooth), transform 0.5s var(--easing-smooth), visibility 0.4s;
   pointer-events: none;
 }
 
@@ -1798,6 +1918,7 @@ body.ai-open {
   opacity: 0;
   transition: 0.6s var(--easing-spring);
 }
+
 #jimmy-launcher:hover::after {
   opacity: 0.3;
   inset: -5px;
@@ -1834,6 +1955,7 @@ body.ai-open {
     border-radius: 32px;
   }
 }
+
 @media (max-width: 768px) {
   #jimmy-chat-panel {
     top: auto;
@@ -1845,10 +1967,12 @@ body.ai-open {
     border-radius: 32px 32px 0 0;
     transform: translateY(105%) translateZ(0);
   }
+
   #jimmy-chat-panel.active {
     transform: translateY(0) translateZ(0);
   }
 }
+
 /* --- 🎩 NEURAL HEADER (Redesigned) --- */
 .chat-header {
   height: 90px;
@@ -1918,11 +2042,28 @@ body.ai-open {
 /* --- 💬 CHAT BODY --- */
 .chat-body {
   flex: 1;
-  padding: 32px;
+  padding: 24px 28px;
   overflow-y: auto;
+  overflow-x: hidden;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 16px;
+  scroll-behavior: smooth;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
+}
+
+.chat-body::-webkit-scrollbar {
+  width: 4px;
+}
+
+.chat-body::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.chat-body::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
 }
 
 .msg-row {
@@ -1937,14 +2078,19 @@ body.ai-open {
     opacity: 0;
     transform: translateY(12px) scale(0.98);
   }
+
   to {
     opacity: 1;
     transform: translateY(0) scale(1);
   }
 }
+
 .msg-bubble {
-  font-size: 1rem;
-  line-height: 1.7;
+  font-size: 0.9rem;
+  line-height: 1.65;
+  letter-spacing: 0.01em;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .msg-row.user {
@@ -1962,11 +2108,15 @@ body.ai-open {
 
 .msg-row.ai {
   align-self: flex-start;
+  max-width: 90%;
 }
 
 .msg-row.ai .msg-bubble {
-  color: var(--text-ai);
-  padding: 4px 0;
+  color: rgba(255, 255, 255, 0.92);
+  padding: 12px 16px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 18px 18px 18px 4px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 /* --- 💡 SUGGESTION CHIPS (Under Input) --- */
@@ -2086,25 +2236,33 @@ body.ai-open {
 }
 
 @keyframes waveAnim {
-  0%, 100% {
+
+  0%,
+  100% {
     height: 4px;
     opacity: 0.3;
   }
+
   50% {
     height: 15px;
     opacity: 1;
   }
 }
+
 @keyframes neuralPulse {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: scale(1);
     opacity: 1;
   }
+
   50% {
     transform: scale(1.3);
     opacity: 0.6;
   }
 }
+
 .sheet-handle {
   display: none;
   width: 36px;
@@ -2145,8 +2303,15 @@ body.ai-open {
 }
 
 @keyframes expertPulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.7; }
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.7;
+  }
 }
 
 /* ===== Expert Mode Typing Indicator ===== */
@@ -2182,4 +2347,61 @@ body.ai-open {
 .msg-bubble:has(.retry-btn) {
   border: 1px solid rgba(239, 68, 68, 0.3);
   background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(0, 0, 0, 0.2));
+}
+
+/* ===== RTL Support for Arabic ===== */
+html[lang="ar"] #jimmy-chat-panel,
+html[dir="rtl"] #jimmy-chat-panel {
+  direction: rtl;
+  text-align: right;
+}
+
+html[lang="ar"] .msg-row.user,
+html[dir="rtl"] .msg-row.user {
+  align-self: flex-start;
+}
+
+html[lang="ar"] .msg-row.ai,
+html[dir="rtl"] .msg-row.ai {
+  align-self: flex-end;
+}
+
+html[lang="ar"] .msg-row.user .msg-bubble,
+html[dir="rtl"] .msg-row.user .msg-bubble {
+  border-radius: 24px 24px 24px 4px;
+}
+
+html[lang="ar"] .msg-row.ai .msg-bubble,
+html[dir="rtl"] .msg-row.ai .msg-bubble {
+  border-radius: 18px 18px 4px 18px;
+}
+
+html[lang="ar"] .chip,
+html[dir="rtl"] .chip {
+  direction: rtl;
+}
+
+/* ===== Ultra Smooth Animations ===== */
+@keyframes msgIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.99);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ===== Faster Wave Animation ===== */
+.wave-bar {
+  animation-duration: 0.8s;
+}
+
+/* ===== Input Focus State ===== */
+.input-field:focus {
+  outline: none;
+  border-color: rgba(59, 130, 246, 0.4);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }

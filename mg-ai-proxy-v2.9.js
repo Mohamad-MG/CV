@@ -525,7 +525,7 @@ export default {
                     system_instruction: { parts: [{ text: systemPrompt }] },
                     generationConfig: {
                         temperature: targetMode === "expert" ? 0.7 : 0.5,
-                        maxOutputTokens: targetMode === "expert" ? 600 : 300,
+                        maxOutputTokens: targetMode === "expert" ? 800 : 512,
                     }
                 };
 
