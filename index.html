@@ -5,7 +5,29 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mohamed Gamal | Growth Systems Architect</title>
-    <meta name="description" content="Mohamed Gamal - Building sustainable growth engines.">
+    <meta name="description" content="Mohamed Gamal - Growth Systems Architect & System Builder. Specializing in sustainable growth engines, SEO, and ROI-driven marketing across MENA.">
+    <meta name="keywords" content="Growth Systems Architect, Digital Marketing Saudi Arabia, E-commerce Growth, Mohamed Gamal, ROI Marketing">
+
+    <!-- Open Graph / Social -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Mohamed Gamal | Growth Systems Architect">
+    <meta property="og:description" content="Turning marketing into a sustainable growth engine. Build for 2026.">
+    <meta property="og:image" content="assets/images/Mohamed.PNG">
+
+    <!-- Structured Data (JSON-LD) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "Mohamed Gamal",
+      "jobTitle": "Growth Systems Architect",
+      "url": "https://emarketbank.github.io/CV/",
+      "sameAs": [
+        "https://www.linkedin.com/in/mohamadgamal/"
+      ],
+      "knowsAbout": ["Growth Marketing", "Digital Strategy", "E-commerce Optimization", "SAAS Growth"]
+    }
+    </script>
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -17,9 +39,8 @@
     <!-- Icons -->
     <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
 
-    <!-- ULTRA 2026 STYLES -->
-    <link rel="stylesheet" href="assets/css/ultra_2026.css?v=5.0">
-    <link rel="stylesheet" href="assets/css/jimmy5.css?v=5.0">
+    <!-- ULTRA 2026 STYLES (Production Ready) -->
+    <link rel="stylesheet" href="assets/css/ultra_2026.css?v=6.0">
 
     <!-- Core System Scripts -->
     <script src="assets/js/header.js" defer></script>
@@ -114,7 +135,10 @@
 
                 <!-- Right: The Identity (Glass Card) -->
                 <div class="hero-identity reveal" style="transition-delay: 0.2s;">
-                    <div class="identity-card glass-panel tilt-3d">
+                    <div class="identity-card glass-panel tilt-3d" id="identityCard">
+                        <!-- HUD Scanlines Overlay -->
+                        <div class="hud-scanlines"></div>
+                        
                         <div class="id-header">
                             <img src="assets/images/logo.png" alt="Mohamed Gamal Logo" class="id-logo-large" decoding="async">
                         </div>
@@ -122,11 +146,17 @@
                             <div class="avatar-frame">
                                 <div class="avatar-layer"></div>
                             </div>
+                            <!-- Live HUD Points -->
+                            <div class="hud-data-point top-left">SYS_ACTIVE</div>
+                            <div class="hud-data-point bottom-right" id="liveTime">12:00:00</div>
                         </div>
                         <!-- HUD Data Points (Floating on Frame) -->
                         <div class="float-data d1">KSA</div>
                         <div class="float-data d2">EGY</div>
                         <div class="float-data d3">2026</div>
+                        
+                        <!-- Neural Pulse Line -->
+                        <div class="neural-line"></div>
                     </div>
                 </div>
 
@@ -404,8 +434,7 @@
                     <h2>Campaign Highlights</h2>
                 </div>
 
-                <div class="ipad-mockup reveal"
-                    style="text-align: center; max-width: 800px; margin: 0 auto; border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 10px; background: rgba(255,255,255,0.05);">
+                <div class="ipad-mockup reveal">
                     <video id="showreelVideo" playsinline autoplay muted loop preload="metadata"
                         style="width: 100%; border-radius: 12px; display: block;">
                         <source src="https://1mow3s8ds9.ucarecd.net/2478abdf-b606-416c-b89c-54f02ff8ea17/"
@@ -627,11 +656,6 @@
 
     <footer class="site-footer-2026">
         <div class="footer-dock content-wrap reveal">
-            <!-- Jimmy Neural Icon -->
-            <div class="footer-jimmy-wrap">
-                <video src="assets/images/jimmy-icon.m4v" autoplay loop muted playsinline></video>
-            </div>
-
             <!-- Left: Brand -->
             <div class="footer-brand">
                 <img src="assets/images/logo.png" alt="Mohamed Gamal Logo" class="footer-logo-img" loading="lazy" decoding="async">

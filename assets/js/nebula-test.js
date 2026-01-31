@@ -24,7 +24,7 @@
             this.config = {
                 baseSpeed: this.isLowPower ? 0.22 : 0.3,
                 fallSpeed: this.isLowPower ? 0.38 : 0.5,
-                collisionPadding: this.isLowPower ? 6 : 8,
+                collisionPadding: this.isLowPower ? 8 : 12,
                 drag: 0.96,
                 recovery: 0.02,
                 downFlowChance: 0.2,
@@ -92,7 +92,7 @@
                     for (const p of placed) {
                         const dx = x - p.x;
                         const dy = y - p.y;
-                        const minDist = radius + p.radius + 15;
+                        const minDist = radius + p.radius + 18;
                         if ((dx * dx + dy * dy) < (minDist * minDist)) {
                             safe = false;
                             break;
