@@ -401,12 +401,12 @@ class Jimmy5Agent {
 
     showTyping(show) {
         this.isTyping = show;
-        const existing = document.getElementById('j5-typing');
+        const existing = document.getElementById('chat-typing');
         if (existing) existing.remove();
 
         if (show) {
             const row = document.createElement('div');
-            row.id = 'j5-typing';
+            row.id = 'chat-typing';
             row.className = 'msg-row ai';
 
             // Show different text for Expert mode

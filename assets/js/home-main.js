@@ -3,17 +3,15 @@
  * Combined Logic for: Motion, Data Decrypt, Metrics, Marquee, and Interaction.
  */
 
-// Nebula background handled by assets/js/nebula-test.js
+// Nebula background handled by assets/js/nebula-background.js
 
 // --- 1. DATA DECRYPT (Matrix Style Reveal) ---
 class DataDecrypt {
     constructor() {
         this.scrambleChars = '/>_-\|[]{}*&^%$#@!~';
-        this.tagline = document.querySelector('.tagline');
         this.eyebrow = document.querySelector('.hero-eyebrow');
 
         if (this.eyebrow) this.initElement(this.eyebrow, 200, 30);
-        if (this.tagline) this.initElement(this.tagline, 600, 15);
     }
 
     initElement(el, startDelay, speed) {
@@ -65,6 +63,24 @@ class DataDecrypt {
                 span.style.webkitTextFillColor = '';
             }
         }, 40);
+    }
+}
+
+// --- 1b. FLUID LIGHT SWEEP (2026 Motion) ---
+class FluidSweep {
+    constructor() {
+        this.tagline = document.querySelector('.tagline');
+        if (this.tagline) {
+            // Set data-text for the pseudo-element glow
+            this.tagline.setAttribute('data-text', this.tagline.innerText);
+            this.init(800); // Trigger after a short delay
+        }
+    }
+
+    init(delay) {
+        setTimeout(() => {
+            this.tagline.classList.add('sweep-active');
+        }, delay);
     }
 }
 
@@ -250,9 +266,9 @@ const initSpatialDepth = () => {
             const rect = panel.getBoundingClientRect();
             const px = clientX - rect.left;
             const py = clientY - rect.top;
-            
+
             // Check if mouse is near the panel for reflection effect
-            const dist = Math.sqrt((px - rect.width/2)**2 + (py - rect.height/2)**2);
+            const dist = Math.sqrt((px - rect.width / 2) ** 2 + (py - rect.height / 2) ** 2);
             if (dist < 600) {
                 panel.style.setProperty('--reflect-x', `${(px / rect.width) * 100}%`);
                 panel.style.setProperty('--reflect-y', `${(py / rect.height) * 100}%`);
@@ -271,11 +287,11 @@ const initLiveHUD = () => {
         // Network Latency Simulation (Actual network API if available)
         const latency = Math.floor(Math.random() * 20 + 15); // 15-35ms
         if (ksaEl) ksaEl.innerHTML = `KSA <span style="opacity:0.5; font-size:0.5rem;">${latency}MS</span>`;
-        
+
         // Growth Index Simulation
         const growthIndex = (Math.random() * 0.5 + 9.5).toFixed(2); // 9.5 to 10.0
         if (egyEl) egyEl.innerHTML = `EGY <span style="opacity:0.5; font-size:0.5rem;">IX_${growthIndex}</span>`;
-        
+
         // System Uptime / Status
         if (futureEl) futureEl.innerHTML = `2026 <span style="opacity:0.5; font-size:0.5rem;">VER_2.8</span>`;
     };
@@ -440,6 +456,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Core Motion
     new DataDecrypt();
+    new FluidSweep();
     new IgnitionMetrics();
 
     // Marquees
