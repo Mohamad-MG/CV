@@ -42,34 +42,83 @@ const CONTACT_TEMPLATES = {
     "ar-eg": `محمد هيكون سعيد يسمع منك! 😊
 
 تحب مكالمة ولا واتساب؟
-📞 مكالمة: 00201555141282
+📞 مكالمة: tel:+201555141282
+🧾 للنسخ: 00201555141282
 💬 واتساب: https://wa.me/201555141282`,
 
     "ar-sa": `محمد يسعد يسمع منك! 😊
 
 تفضل مكالمة أو واتساب؟
-📞 اتصال: 00201555141282
+📞 اتصال: tel:+201555141282
+🧾 للنسخ: 00201555141282
 💬 واتساب: https://wa.me/201555141282`,
 
     en: `Mohamed would love to hear from you! 😊
 
 Prefer a call or WhatsApp?
-📞 Call: 00201555141282
+📞 Call: tel:+201555141282
+🧾 To copy: 00201555141282
 💬 WhatsApp: https://wa.me/201555141282`,
 
-    // Fallbacks for backward compatibility
-    ar: `محمد هيكون سعيد يسمع منك! 😊
+    // Neutral Arabic (for Levant/Maghreb/unknown)
+    ar: `محمد يسعد يسمع منك! 😊
 
-تحب مكالمة ولا واتساب؟
-📞 مكالمة: 00201555141282
+تفضل مكالمة أو واتساب؟
+📞 مكالمة: tel:+201555141282
+🧾 للنسخ: 00201555141282
 💬 واتساب: https://wa.me/201555141282`,
 
+    // Gulf fallback (kept for backward compatibility)
     gulf: `محمد يسعد يسمع منك! 😊
 
 تفضل مكالمة أو واتساب؟
-📞 اتصال: 00201555141282
+📞 اتصال: tel:+201555141282
+🧾 للنسخ: 00201555141282
 💬 واتساب: https://wa.me/201555141282`,
 };
+
+/* =========================================================
+  PORTFOLIO TEMPLATES (Zero-variation portfolio responses)
+========================================================= */
+const PORTFOLIO_TEMPLATES = {
+    "ar-eg": `اتفضل! 🌐
+
+🔗 البورتفوليو: https://mo-gamal.com
+📄 السيرة الذاتية (PDF): https://mo-gamal.com/Mohamed-Gamal-CV.pdf
+
+لو عندك أي سؤال وانا هنا! 😊`,
+
+    "ar-sa": `تفضل! 🌐
+
+🔗 الموقع: https://mo-gamal.com
+📄 السيرة الذاتية (PDF): https://mo-gamal.com/Mohamed-Gamal-CV.pdf
+
+أي استفسار أنا جاهز! 😊`,
+
+    en: `Here you go! 🌐
+
+🔗 Portfolio: https://mo-gamal.com
+📄 Resume (PDF): https://mo-gamal.com/Mohamed-Gamal-CV.pdf
+
+Any questions, I'm here! 😊`,
+
+    // Neutral Arabic
+    ar: `تفضل! 🌐
+
+🔗 الموقع: https://mo-gamal.com
+📄 السيرة الذاتية (PDF): https://mo-gamal.com/Mohamed-Gamal-CV.pdf
+
+أي سؤال أنا جاهز! 😊`,
+
+    // Gulf fallback
+    gulf: `تفضل! 🌐
+
+🔗 الموقع: https://mo-gamal.com
+📄 السيرة الذاتية (PDF): https://mo-gamal.com/Mohamed-Gamal-CV.pdf
+
+أي استفسار أنا جاهز! 😊`,
+};
+
 
 /* =========================================================
   CORE PROMPTS
@@ -259,19 +308,21 @@ function detectLocale(req) {
     // English
     if (acceptLang.startsWith("en") && !acceptLang.includes("ar")) return "en";
 
-    // Generic Arabic from Gulf region
-    if (/(SA|AE|KW|QA|BH|OM)/.test(country) && acceptLang.startsWith("ar")) return "ar-sa";
+    // Generic Arabic (non-Gulf, non-Egypt) → neutral Arabic to avoid tone mismatch
+    if (acceptLang.startsWith("ar")) return "ar";
 
-    // Default Egyptian
+    // Default Egyptian (only if no Arabic signal detected)
     return "ar-eg";
 }
 
-function clampFlashResponse(text, maxChars = 520, maxLines = 2) {
+function clampFlashResponse(text, maxChars = 900, maxLines = 4) {
     if (!text) return text;
     let out = String(text).trim();
 
-    // Remove accidental meta/system artifacts
-    out = out.replace(/\b(As an AI|AI model|system prompt|prompt|model)\b/gi, "");
+    // Remove accidental meta/system artifacts (phrases only, not individual words)
+    out = out.replace(/\b(As an AI|AI model|system prompt|AI assistant|language model)\b/gi, "");
+    // Remove single "prompt" or "model" ONLY when followed by technical context
+    out = out.replace(/\b(prompt|model)\s+(engineering|training|parameter)/gi, "");
 
     // Clamp by lines
     const lines = out
@@ -281,10 +332,25 @@ function clampFlashResponse(text, maxChars = 520, maxLines = 2) {
 
     if (lines.length > maxLines) out = lines.slice(0, maxLines).join("\n").trim();
 
-    // Clamp by chars
+    // Clamp by chars (with smart word-boundary detection)
     if (out.length > maxChars) {
-        out = out.slice(0, maxChars).trim();
-        if (!/[.!؟…]$/.test(out)) out += "؟";
+        // Find last space before maxChars to avoid cutting mid-word
+        let cutPoint = maxChars;
+        const lastSpace = out.lastIndexOf(" ", maxChars);
+        const lastNewline = out.lastIndexOf("\n", maxChars);
+
+        // Use the furthest valid break point
+        cutPoint = Math.max(lastSpace, lastNewline);
+
+        // If no space found in reasonable range, hard cut
+        if (cutPoint < maxChars * 0.8) cutPoint = maxChars;
+
+        out = out.slice(0, cutPoint).trim();
+
+        // Add ellipsis or question mark if no sentence ending
+        if (!/[.!؟…]$/.test(out)) {
+            out += out.includes("؟") || /[\u0600-\u06FF]/.test(out) ? "…" : "...";
+        }
     }
 
     return out;
@@ -306,16 +372,17 @@ function wantsConsult(text = "") {
 // Portfolio intent detection (higher priority than contact)
 function wantsPortfolio(text = "") {
     const t = text.toLowerCase();
-    return /(لينك|link).*(بورتفوليو|موقع|portfolio|website|site|cv|سيرة|سيره)/i.test(t) ||
-        /(بورتفوليو|موقع|portfolio|website).*(لينك|link)/i.test(t);
+    return /(لينك|link).*(بورتفوليو|موقع|portfolio|website|site|cv|سيرة|سيره|page|profile|bio|resume|mo-gamal|mo gamal)/i.test(t) ||
+        /(بورتفوليو|موقع|portfolio|website|site|page|profile|cv|bio|resume|السيرة|البروفايل).*(لينك|link)/i.test(t) ||
+        /\b(site|page|profile|cv|resume|bio|الموقع|السيرة|البروفايل|mo-gamal|mo gamal)\b/i.test(t);
 }
 
 // ✅ FIX #3: Contact intent with portfolio exclusion
 function wantsContact(text = "") {
     const t = text.toLowerCase();
 
-    // Portfolio requests have priority
-    if (wantsPortfolio(t)) return false;
+    // Portfolio requests have priority (pass original text, not lowercased)
+    if (wantsPortfolio(text)) return false;
 
     // LinkedIn is contact intent ("لينكدإن" or "لينك محمد")
     const isLinkedInOrPersonal = /لينكدإن|linkedin|لينك محمد|mohamed.*link|link.*mohamed/i.test(t);
@@ -342,10 +409,14 @@ function isSubstantiveResponse(text = "") {
     const uniqueWords = new Set(t.split(/\s+/));
     if (uniqueWords.size < 3) return false;
 
-    // CRITICAL: Must contain business/marketing content keywords
-    const hasContentKeywords = /إعلان|اعلان|تحويل|ربح|ميزانية|تسويق|تشغيل|متجر|منتج|صفحة|حملة|استهداف|ads|conversion|profit|budget|marketing|operations|store|product|landing|campaign|targeting|roas|cac|cvr|seo|tracking/i.test(t);
+    // CRITICAL: Must contain business outcomes OR marketing mechanics keywords
+    // Business outcomes: sales, orders, visits, checkout, conversions, etc.
+    const hasBusinessOutcomes = /مبيعات|طلبات|زيارات|سلة|checkout|تحويل|conversion|مرتجعات|returns|شحن|shipping|عملاء|customers|orders|sales|visits|cart/i.test(t);
 
-    if (!hasContentKeywords) return false;
+    // Marketing mechanics: ROAS, CAC, ads, SEO, tracking, budget, etc.
+    const hasMarketingMechanics = /إعلان|اعلان|ربح|ميزانية|تسويق|تشغيل|متجر|منتج|صفحة|حملة|استهداف|ads|profit|budget|marketing|operations|store|product|landing|campaign|targeting|roas|cac|cvr|seo|tracking|pixels|analytics/i.test(t);
+
+    if (!hasBusinessOutcomes && !hasMarketingMechanics) return false;
 
     // Has keywords AND reasonable length = substantive
     return t.length >= 10;
@@ -365,11 +436,11 @@ function buildFlashPrompt(locale, first, nudgeMohamed = false) {
                 ? "Respond in US casual English. No Arabic."
                 : "لهجتك مصري طبيعي ذكي. ممنوع خليجي.";
 
-    // ✅ FIX #4: Permission-based nudge (ask first, don't push)
+    // ✅ FIX #4: Permission-based nudge with contextual reason
     const nudge = nudgeMohamed
         ? locale === "en"
-            ? "If you sense they need deeper help, gently suggest: 'Would it help to connect directly with Mohamed?'"
-            : "لو حاسس إنه محتاج مساعدة أعمق، اقترح بلطف: 'يمكن يكون أحسن تتكلم مع محمد مباشرة؟'"
+            ? "If the discussion needs account access, sensitive data, or detailed analytics, gently suggest: 'This might need Mohamed directly—would it help to connect?'"
+            : "لو الموضوع محتاج دخول حسابات أو أرقام خاصة أو تفاصيل حساسة، اقترح بلطف: 'ممكن ده يحتاج محمد نفسه—تحب تتواصل معاه؟'"
         : "";
 
     return [CORE_STYLE, localeHint, CORE_USER, RHYTHM_GUARD, tail, nudge].join("\n\n");
@@ -412,7 +483,7 @@ async function callGemini(env, model, prompt, messages, timeout = 7000, gen = {}
 
     const generationConfig = {
         temperature: 0.65,
-        maxOutputTokens: 220,
+        maxOutputTokens: 400,  // Increased for fuller responses
         ...gen,
     };
 
@@ -489,7 +560,27 @@ export default {
             let nextAwaitingProbe = false;
             let nextConsultOffered = consultOffered;
 
-            // ===== CONTACT REQUEST (Highest Priority)
+            // ===== PORTFOLIO REQUEST (Highest Priority - Zero Variation)
+            if (wantsPortfolio(userText)) {
+                const template = PORTFOLIO_TEMPLATES[locale] || PORTFOLIO_TEMPLATES.ar;
+
+                return json(
+                    {
+                        response: template,
+                        meta: {
+                            mode: "portfolio",
+                            flash_since_expert: flashCount,
+                            expert_uses: expertUses,
+                            awaiting_probe: false,
+                            consult_offered: consultOffered,
+                        },
+                    },
+                    200,
+                    headers
+                );
+            }
+
+            // ===== CONTACT REQUEST (Second Priority)
             // ✅ FIX #1: Unified template, zero variation
             if (wantsContact(userText)) {
                 const template = CONTACT_TEMPLATES[locale] || CONTACT_TEMPLATES.ar;
@@ -525,9 +616,9 @@ export default {
                     const flashPrompt = buildFlashPrompt(locale, false, shouldNudgeMohamed);
                     response = await callGemini(env, MODELS.FLASH, flashPrompt, normalized, 6000, {
                         temperature: 0.65,
-                        maxOutputTokens: 240,
+                        maxOutputTokens: 320,
                     });
-                    response = clampFlashResponse(response, 520, 2);
+                    response = clampFlashResponse(response);  // Use improved defaults
                     mode = "flash";
                 }
                 nextAwaitingProbe = false;
@@ -537,9 +628,9 @@ export default {
                 const probePrompt = buildProbePrompt(locale);
                 response = await callGemini(env, MODELS.FLASH, probePrompt, normalized, 6000, {
                     temperature: 0.6,
-                    maxOutputTokens: 200,
+                    maxOutputTokens: 280,
                 });
-                response = clampFlashResponse(response, 520, 2);
+                response = clampFlashResponse(response);  // Use improved defaults
                 mode = "flash";
                 nextAwaitingProbe = true;
                 nextConsultOffered = true;
@@ -550,20 +641,20 @@ export default {
                 try {
                     response = await callGemini(env, MODELS.FLASH, flashPrompt, normalized, 6000, {
                         temperature: 0.65,
-                        maxOutputTokens: 220,
+                        maxOutputTokens: 320,
                     });
                 } catch (flashError) {
                     console.warn("⚠️ Flash Failed, engaging Failover:", flashError);
                     try {
                         response = await callGemini(env, MODELS.FAILOVER, flashPrompt, normalized, 8000, {
                             temperature: 0.65,
-                            maxOutputTokens: 260,
+                            maxOutputTokens: 380,
                         });
                     } catch {
                         throw new Error("ALL_MODELS_BUSY");
                     }
                 }
-                response = clampFlashResponse(response, 520, 2);
+                response = clampFlashResponse(response);  // Use improved defaults
             }
 
             // Strip internal token

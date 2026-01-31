@@ -244,47 +244,6 @@ const initInteractions = () => {
             });
         });
     });
-
-    // 🚀 NEW: Ultra 2026 Identity Card 3D Tilt
-    const idCard = document.getElementById('identityCard');
-    if (idCard) {
-        idCard.addEventListener('mousemove', (e) => {
-            const rect = idCard.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
-            
-            const xc = rect.width / 2;
-            const yc = rect.height / 2;
-            
-            const dx = x - xc;
-            const dy = y - yc;
-            
-            // Subtle rotation (max 10 degrees)
-            const rotX = (dy / yc) * -10;
-            const rotY = (dx / xc) * 10;
-            
-            idCard.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg) scale3d(1.02, 1.02, 1.02)`;
-        });
-        
-        idCard.addEventListener('mouseleave', () => {
-            idCard.style.transform = `rotateX(0) rotateY(0) scale3d(1, 1, 1)`;
-        });
-    }
-};
-
-// --- 4b. LIVE HUD SYSTEM ---
-const initLiveHUD = () => {
-    const clockEl = document.getElementById('liveTime');
-    if (!clockEl) return;
-
-    const updateClock = () => {
-        const now = new Date();
-        const options = { timeZone: 'Asia/Riyadh', hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' };
-        clockEl.innerText = now.toLocaleTimeString('en-US', options);
-    };
-    
-    setInterval(updateClock, 1000);
-    updateClock();
 };
 
 // --- 5. SCROLL REVEAL (Staggered) ---
@@ -460,7 +419,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Interaction
     initInteractions();
-    initLiveHUD();
     initScrollReveal();
     initVideo();
     initCarousel();
