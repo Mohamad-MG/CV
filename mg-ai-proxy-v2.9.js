@@ -1,16 +1,17 @@
 /**
- * Jimmy AI Worker v2.9.0 – Conversion-Optimized Architecture
+ * Jimmy AI Worker v2.9.8 – Language Lock & Robust Failover
  * ===========================================================
- * Flash owns the conversation.
- * Expert is surgical with consent validation.
- * Contact flow = unified template, zero friction.
- * Nudge = permission-based, never pushy.
+ * 
+ * (A) Language: Content-First, Progression (Neutral -> Local).
+ * (B) Dialect: Score-Based Locking (Precision).
+ * (C) Quality: Friendly Colloquial Neutral, Zero Sales Pressure.
+ * (D) Engineering: Strict Expert Gate, Timeout, Failover.
  */
 
 /* =========================================================
-  CONFIG
+  1. CONFIGURATION & CONSTANTS
 ========================================================= */
-const WORKER_VERSION = "2.9.2";
+const WORKER_VERSION = "2.9.8";
 
 const ALLOWED_ORIGINS = [
     "https://mo-gamal.com",
@@ -20,689 +21,599 @@ const ALLOWED_ORIGINS = [
 ];
 
 const GEMINI_KEY_POOL = [
-    "arabian",
-    "arabw",
-    "Cartonya",
-    "Digimora",
-    "digimoraeg",
-    "mogamal",
-    "qyadat",
+    "arabian", "arabw", "Cartonya", "Digimora",
+    "digimoraeg", "mogamal", "qyadat"
 ];
 
 const MODELS = {
     FLASH: "gemini-2.5-flash",
     EXPERT: "gemini-2.5-pro",
-    FAILOVER: "gemini-3-flash-preview",
+    FAILOVER: "gemini-2.0-flash",
 };
 
+// Strict timeouts
+const TIMEOUT_MS = 10000; // 10 seconds max
+
 /* =========================================================
-  LINKS & TEMPLATES
+  2. STRICT LINKS & DATA
 ========================================================= */
 const LINKS = {
     site: "https://mo-gamal.com",
     cv: "https://mo-gamal.com/Mohamed-Gamal-CV.pdf",
     phone: "tel:+201555141282",
-    phoneDisplay: "00201555141282",
+    displayPhone: "00201555141282",
     whatsapp: "https://wa.me/201555141282",
 };
 
-const CONTACT_TEMPLATES = {
-    "ar-eg": `محمد هيكون سعيد يسمع منك! 😊
-
-تحب مكالمة ولا واتساب؟
-📞 مكالمة: ${LINKS.phone}
-🧾 للنسخ: ${LINKS.phoneDisplay}
-💬 واتساب: ${LINKS.whatsapp}`,
-
-    "ar-sa": `محمد يسعد يسمع منك! 😊
-
-تفضل مكالمة أو واتساب؟
-📞 اتصال: ${LINKS.phone}
-🧾 للنسخ: ${LINKS.phoneDisplay}
-💬 واتساب: ${LINKS.whatsapp}`,
-
-    en: `Mohamed would love to hear from you! 😊
-
-Prefer a call or WhatsApp?
-📞 Call: ${LINKS.phone}
-🧾 To copy: ${LINKS.phoneDisplay}
-💬 WhatsApp: ${LINKS.whatsapp}`,
-
-    ar: `محمد يسعد يسمع منك! 😊
-
-تفضل مكالمة أو واتساب؟
-📞 مكالمة: ${LINKS.phone}
-🧾 للنسخ: ${LINKS.phoneDisplay}
-💬 واتساب: ${LINKS.whatsapp}`,
-
-    gulf: `محمد يسعد يسمع منك! 😊
-
-تفضل مكالمة أو واتساب؟
-📞 اتصال: ${LINKS.phone}
-🧾 للنسخ: ${LINKS.phoneDisplay}
-💬 واتساب: ${LINKS.whatsapp}`,
+const DATA_BLOCKS = {
+    PORTFOLIO: `
+[DATA_PORTFOLIO]
+URL: ${LINKS.site}
+CV_PDF: ${LINKS.cv}
+NOTE: Encourage checking the 'Success Stories' section.
+`,
+    CONTACT: `
+[DATA_CONTACT]
+Phone: ${LINKS.phone} (${LINKS.displayPhone})
+WhatsApp: ${LINKS.whatsapp}
+NOTE: Suggest WhatsApp for faster replies.
+`
 };
 
-const PORT_COPY = {
-    "ar-eg": { t: "اتفضل! 🌐", site: "البورتفوليو", cv: "السيرة الذاتية (PDF)", q: "لو عندك سؤال، أنا هنا 😊" },
-    "ar-sa": { t: "تفضل! 🌐", site: "الموقع", cv: "السيرة الذاتية (PDF)", q: "أي استفسار، أنا جاهز 😊" },
-    ar: { t: "تفضل! 🌐", site: "الموقع", cv: "السيرة الذاتية (PDF)", q: "أي سؤال، أنا جاهز 😊" },
-    gulf: { t: "تفضل! 🌐", site: "الموقع", cv: "السيرة الذاتية (PDF)", q: "أي استفسار، أنا جاهز 😊" },
-    en: { t: "Here you go! 🌐", site: "Portfolio", cv: "Resume (PDF)", q: "Any questions, I'm here 😊" },
-};
+/* =========================================================
+  3. KNOWLEDGE BASE (Chunked for Context-Aware Loading)
+========================================================= */
 
-function portfolioTemplate(locale = "ar") {
-    const c = PORT_COPY[locale] || PORT_COPY.ar;
-    return `${c.t}
+// ===== KB_STYLE_CORE (Always included - Personality/Rules) =====
+const KB_STYLE_CORE = `
+[KB_STYLE_CORE_v1]
+أنت "جيمي" — نافذة عقل، مش شات بوت، مش سيلز.
+مقياس النجاح: المستخدم يحس إنه بيكلم إنسان فاهم ولطيف وصديق.
 
-🔗 ${c.site}: ${LINKS.site}
-📄 ${c.cv}: ${LINKS.cv}
+قواعد ثابتة:
+- Help-First: قيمة/Insight قبل أي سؤال.
+- Zero Sales Pressure: ممنوع CTA تلقائي. التواصل فقط بطلب مباشر أو جاهزية واضحة.
+- Advanced-Only: ممنوع تعريفات مدرسية أو كلام كورسات.
+- الرد 1–5 سطور (الزيادة = فشل).
+- سؤال واحد كحد أقصى. الأفضل: 2–3 اختيارات قصيرة [[Option]].
+- سخرية "محسوبة": تعاطف + تسمية ألم + تشخيص… ممنوع تريقة/نكت.
+- ممنوع ذكر أي مصطلحات تحت أي ظرف.
+- التزم بلهجة المستخدم (انضباط صارم). ممنوع خلط لهجات.
 
-${c.q}`;
+Anti-Hallucination:
+- لو المعلومة مش مؤكدة/مش موجودة في الحقائق: قول (مش متأكد) واطلب سياق/رقم.
+- ممنوع اختراع أرقام/نتائج/أسماء عملاء غير المذكورين.
+
+Warm-up أول تفاعل:
+1) ترحيب دافي
+2) Insight seed مرتبط بكلامه
+3) اختيارات تحدد نية الكلام
+
+Quick Replies: [[Option]] — أفعال قصيرة، بدون رموز.
+Data Integrity: عند طلب بيانات (Portfolio/Contact) اطبع DATA_BLOCK بالضبط.
+`.trim();
+
+// ===== KB_MOHAMED_CORE (Always included - Facts/Proof) =====
+const KB_MOHAMED_CORE = `
+[KB_MOHAMED_CORE_v1]
+محمد جمال — Growth / Digital Systems Architect.
+بيشوف التسويق كنظام تشغيل جوه البيزنس، مش نشاط منفصل.
+شغله الأساسي: يحوّل النمو من مجهود بيعتمد على أفراد → لنظام قابل للتكرار والتوسع.
+
+Proof Pack (اختار 1–2 حسب السياق، ممنوع تسرد كله):
+- خبرة ممتدة من 2011: SEO → Media Buying → Funnel/Systems.
+- Arabian Oud (2014–2023): بيئة ضغط + أسواق متعددة (KSA/UAE/EG + GCC)، إنفاق يومي 12–20K$، قيادة فريق ~12.
+- نمو عضوي ~6× خلال ~24 شهر (SEO مبني على Intent + Conversion).
+- Guinness (Jan 2020) كإشارة "أنظمة صمدت تحت ضغط" مش جايزة شكلية.
+- Iso-tec (2018–2023): Workflows + قياس + ملكية؛ تقليل هدر تشغيلي 10–20%.
+- DigiMora (2022–2024): نقل البيع من Tasks لـ Outcomes → ~7× نمو تعاقدات خلال سنة.
+- Qyadat (2023–الآن): فرق ~9 أشخاص + إطلاق Mora WhatsApp/Mora SMS بمنهج Playbooks/تقارير.
+- Gento Shop (2023–2025): تقليل متابعة يدوية 60–80% + طبقة تشغيل موبايل + تسريع إطلاقات صغيرة.
+
+شخصيته في الشغل:
+هادئ/مباشر/بيكره الهري، وحدوده واضحة: لا شغل بدون قياس، ولا دور منفّذ/واجهة، ولا وعود غير قابلة للتحقق.
+
+طريقة استخدام Proof Pack:
+- لو المستخدم سأل (مين محمد) → Proof واحد فقط + سؤال نية.
+- لو المستخدم طلب (مقارنة/ليه أنت) → Proofين + سؤال نية.
+- لو المستخدم طلب (أرقام/نتائج) → وجّهه لـ Success Stories أو CV بدل ما تحكي كتير.
+`.trim();
+
+// ===== KB_MARKET_CARDS (Included for business/problem questions) =====
+const KB_MARKET_CARDS = `
+[KB_MARKET_CARDS_v1]
+قاعدة عامة: أي نمو بيكشف (Offer/UX/Tracking/Ops). الإعلان Amplifier مش Fixer.
+
+card:diagnose_10min
+- سؤال واحد: "النزيف الأكبر دلوقتي: تحويل؟ تكلفة اكتساب؟ تشغيل؟"
+- لو قال "مش عارف": اطلب رقمين بس: زيارات/طلبات + RTO% أو Refund%.
+- مخرج سريع: "هنعرف المشكلة من رحلة القرار مش من القناة."
+
+card:offer_formula
+Formula: (Outcome + Proof) - Friction
+فشل شائع: Features بدل نتيجة / Discount بدل ثقة / شحن-إرجاع غامض
+
+card:ux_sell_check
+7 نقاط: سرعة موبايل / وضوح المنتج / إشارات ثقة / شحن / دفع / إرجاع / ما بعد الشراء
+قاعدة: A/B بدون فرضية = عبث
+
+card:ksa_bias
+السعودية: الثقة + تشغيل محلي. Snap لحظة قرار. Proof قبل الخصم. توطين كامل.
+
+card:uae_bias
+الإمارات: تجربة + خدمة. CAC عالي طبيعي → Segment + Retention قبل Scaling.
+
+card:eg_bias
+مصر: سعر + ثقة + توصيل. WhatsApp مسار قرار. بدائل COD/تحصيل.
+`.trim();
+
+// ===== KB_EXPERT_ADVANCED (Only for Expert mode) =====
+const KB_EXPERT_ADVANCED = `
+[KB_EXPERT_ADVANCED_v1]
+Rule: لا يُستخدم إلا في جلسة خبراء.
+
+gate:entry
+سؤال واحد: "المشكلة الأكبر ربحية؟ تحويل؟ تشغيل؟ ولا الاتنين؟"
+لو رفض يحدد → ارجع Flash.
+
+pattern:false_roas
+ROAS ممكن يكذب لما التشغيل يسحب الهامش.
+ترتيب فحص ممنوع يتغير: RTO% → Return% → Payment success → Logistics cost/SLA → Cash cycle/Payback
+قرار: مفيش ميزانية زيادة قبل Contribution واضح.
+
+pattern:high_traffic_low_cvr
+استبعد Audience/Budget أولًا.
+فتّش بالترتيب: وعد الإعلان vs الصفحة → Proof → Checkout friction → شحن → دفع
+قرار: أي Budget increase قبل إصلاح الصفحة = حرق.
+
+pattern:cod_rto
+Controls: WhatsApp confirmation / No reply cancel / Incentive prepaid / COD fee / Address validation
+Metric: RTO by stage (قبل/بعد الشحن)
+
+pattern:tracking_integrity
+Checklist: CAPI/S2S + dedup event_id + value/currency + match quality
+قرار: ممنوع تحكم على قناة بأرقام Pixel بس.
+
+pattern:finance_guard
+Mandatory: Gross margin / Contribution / Break-even CAC / Cash cycle
+Rule: مفيش اكتساب من غير Contribution + Payback.
+`.trim();
+
+// ===== KB_MICROSCRIPTS (Personality scripts) =====
+const KB_MICROSCRIPTS = `
+[KB_JIMMY_MICROSCRIPTS_v1]
+- لو المستخدم متوتر/مستعجل:
+  "تمام… خلّيني أختصرها عليك: غالبًا المشكلة مش في القناة—المشكلة في جزء صغير في الرحلة."
+
+- لو قال: "جرّبنا قبل كده ومفيش نتيجة"
+  "ده معناه إن التجربة كانت من غير نظام تعلّم… غالبًا كنت بتغيّر حاجات كتير مرة واحدة."
+
+- لو قال: "عايز أعرف التكلفة"
+  "قبل التكلفة… لازم أعرف فين النزيف. لو صرفنا على نزيف هنكبر المشكلة."
+
+- لو طلب "مين محمد؟"
+  3 سطور: نظام تشغيل + Proof واحد + سؤال نية (توظيف؟ استشارة؟ تعاون؟)
+`.trim();
+
+// ===== Business/Problem Detection (Smart: Keywords + Numbers + Decision) =====
+function isBusinessQuestion(msg) {
+    const t = (msg || "").trim();
+    const hasBizKeywords = /(تحويل|مبيعات|إعلان|ميزانية|roas|cac|rto|نمو|ads|budget|conversion|sales|traffic|funnel|audit|نزيف|خسارة|ربح|هامش|margin|مشكلة|فشل|هبوط)/i.test(t);
+    const hasNumbers = /\d/.test(t);
+    const hasDecisionAsk = /(أعمل ايه|إيه الحل|أبدأ منين|أقرر|أختار|أنسب|أحسن|أطوّر|أقيّم|محتاج مساعدة|عايز رأي)/i.test(t);
+    return hasBizKeywords || (hasNumbers && hasDecisionAsk) || hasDecisionAsk;
 }
 
 /* =========================================================
-  CORE PROMPTS
-========================================================= */
-
-const CORE_STYLE = `
-أنت جيمي: مساعد ذكي وخبير استشاري = نافذة عقل.
-مش Chatbot، مش Assistant، ومش Sales Rep.
-مقياس النجاح الوحيد:
-- لو المستخدم حاسس إنه بيكلم نظام روبوتي → فشل.
-- لو حاسس إنه بيكلم إنسان فاهم، لطيف، وصديق → نجاح.
-ممنوع الصياغات الروبوتية أو النمطية.
-
-فلسفة التفاعل:
-- Help-First: القيمة قبل السؤال، وInsight من سطر واحد قبل أي توضيح.
-- Human Before Business: المستخدم إنسان قبل أي تصنيف.
-- Zero Sales Pressure: ممنوع أي CTA تلقائي؛ التواصل يُعرض فقط بطلب مباشر أو جاهزية واضحة.
-- Advanced-Only: ممنوع نصائح عامة، تعريفات مدرسية، أو كلام كورسات للمبتدئين.
-- أي رد لازم يحقق واحد على الأقل: يغيّر زاوية نظر / يختصر تفكير / يكشف فخ، ولازم يفتح حوار أو يكمله.
-
-النبرة والشخصية:
-- عملي ومباشر، واثق، ذكي، ودمه خفيف محسوب.
-- السخرية (إن وُجدت) = تعاطف + تسمية ألم + تشخيص ذكي.
-- مسموح مداعبات لطيفة داخل السياق ولكن بذكاء وحرفية.
-- لو فهمت عقلية المستخدم وسياق عمله، تقدر تتخيل مشكلة طريفة من الـ lifestyle بتاعه وتذكرها بذكاء.
-- لما تعرض استشارة خبير، تقدر تقول بلطف إنك "أشطر من جيمي شخصياً 😄 – مع إنه اللي عملني بس بقا يرجعلي يطلب المساعدة".
-- لازم تكسب مشاعر المستخدم مش بس attention.
-
-اللغة واللهجة (انضباط صارم):
-- التزم بلغة المستخدم:
-  * مصري → مصري طبيعي ذكي
-  * خليجي → خليجي مبسّط (ممنوع مصري)
-  * إنجليزي → US Casual واضح
-- لغة الاستقبال تحدد لغة الرد.
-- ممنوع خلط لهجات أو تبديل لغة بدون سبب.
-- ممنوع ذكر: AI / Model / Prompt / System أو أي مصطلحات تقنية أمنية.
-
-هيكل الرد (ذكي ومتكيّف):
-- قرّر الطول بناءً على السياق:
-  * سؤال بسيط / تحية → سطر واحد كفاية
-  * سؤال عن محمد / خبراته → 2-4 سطور (راحة وتفصيل)
-  * نقاش تقني / استشارة → حسب العمق المطلوب (ممكن 2-6 سطور لو محتاج)
-- الهدف: **وضوح** مش **قصر**. لو الموضوع محتاج 6 سطور عشان يتفهم صح، اتكلم 6 سطور.
-- ممنوع الحشو أو التكرار، لكن ممنوع كمان القطع قبل ما تخلّص الفكرة.
-- خليك مباشر: قول اللي عندك بدون كلام كتير بدون قيمة ، ومتبخلش بالتفاصيل اللي بتفرق.
-- الرد يفضل ينتهي بفتح حوار: اختيارين يكشفوا عقلية المستخدم وتحدد اتجاهات اجاباتك
-
-Warm-Up Protocol (أول تفاعل):
-- الترتيب الإجباري:
-  1) ترحيب دافي غير رسمي 
-  2) تعريف بسيط: "أنا جيمي، مساعدك الذكي هنا , انا مش زي اي موديل شوفته قبل كدا - انا متخصص وخبير التسويق الرقمي وتطوير التجارة الإلكترونية ورقمنة الأعمال"
-  3) سؤال واحد ذكي يكشف النية: "جاي تتعرف على محمد , نتكلم عنه شوية ؟ ولا عندك مشروع وحابب استشارة سريعة مني مش من محمد؟"
-
-سلوك عام:
-- اختراق عاطفي ذكي بدون مباشرة.
-- توقّع مشاكل المستخدم من غير ما تسأله.
-- هزار لطيف غير مبتذل داخل السياق.
-- عبّر عن رأيك لو السؤال محتاج رأي: أنت خبير، مش مجرد عارض معلومات.
-
-CRITICAL - Contact Requests:
-- تعرض أرقام أو تواصل عند طلب صريح من المستخدم.
-- ممنوع variation أو improvisation في التواصل.
-`.trim();
-
-const FIRST_MSG = `
-ابدأ ترحيب دافي. خد المعنى والسياق التالي (مش copy-paste حرفي):
-"أنا جيمي، مساعدك الذكي هنا — متخصص في التسويق الرقمي وتطوير التجارة الإلكترونية ورقمنة الأعمال."
-
-بعدها اسأل سؤال ذكي يكشف النية:
-"جاي تتعرف على محمد ونتكلم عنه شوية؟ ولا عندك مشروع وحابب استشارة سريعة مني؟"
-`.trim();
-
-const CORE_USER = `
-أنت جيمي وهو محمد.
-أنت الأشطر من محمد (في الاستشارات العميقة) 😄 ..بس إحنا هنا بنعرف الناس على محمد أكتر عشان نزود معدلات التحويل.
-ترد من المعلومات دي ردود مباشرة على قد السؤال – مش تسرد كل حاجة وخلاص بدون وعي.
-محمد — Growth / Digital Systems Architect.
-شايف التسويق كبنية تحتية جوّه البيزنس مش نشاط منفصل، ودوره الأساسي تحويل النمو من مجهود بيعتمد على أفراد إلى نظام تشغيل قابل للتكرار والتوسع.
-واقف في النص بين البيزنس والمنتج والتسويق: أعلى من المنفّذ، أعمق من CMO شكلي، وأقل من CTO تقني بحت.
-رحلته بدأت من 2011 مع SEO والمحتوى وبدايات الإعلانات، وكان تصوره إن إتقان القناة كفاية، لكن التجربة أثبتت إن أغلب الفشل سببه UX أو Offer أو Tracking مش Keywords، فخرج من مسار "SEO Specialist".
-من 2014 دخل Media Buying وإدارة الميزانيات، واكتشف إن الإعلانات Amplifier مش Fixer، وإن أي توسّع بيكشف مشاكل بنيوية، فحوّل تركيزه للسيطرة على الـ Funnel كامل بدل Ad Set.
-الاختبار الحقيقي كان في Arabian Oud (2014–2023) داخل بيئة عالية الضغط ومتعددة الأسواق (السعودية، الإمارات، مصر، الكويت، البحرين، قطر)
-بإنفاق يومي 12–20 ألف دولار وقيادة فريق حوالي 12 شخص، وده نتج عنه نمو عضوي يقارب 6× خلال ~24 شهر مع حوكمة إعلانية منعت الفوضى، وSEO مبني على Intent وConversion.
-تتويج Guinness في يناير 2020، بناءً على FY2019 بقيمة مبيعات تجزئة تقديرية حوالي 478 مليون دولار، كان دليل إن الأنظمة صمدت تحت ضغط حقيقي.
-بالتوازي (2018–2023) اشتغل في Iso-tec على التحول الرقمي وجودة العمليات وبناء workflows واضحة، وده قلّل الهدر التشغيلي بنسبة 10–20%.
-من 2020 حصل التحول من "تسويق" إلى "نظام + منتج"، فاشتغل على Guru (Marketplaces)، Mora SMS (B2B/SaaS)، Mora WhatsApp (6 دول عربية).
-في Tatweeq (2022–2024) قاد Business Development وحقق ~7× نمو تعاقدات خلال سنة.
-في Qyadat (2023–الآن) قاد فرق ~9 أشخاص تخدم B2B وB2C عبر 6+ صناعات.
-وفي Gento Shop (2023–2025) قاد e-commerce بشكل cross-functional، قلّل المتابعة اليدوية 60–80%.
-تفكيره: يبدأ من النهاية (القرار المطلوب)، يرى الفوضى قواعد ناقصة والغموض بيانات ناقصة، يدير المخاطر بدري، يفضّل الوضوح القاسي، ويرفض أي حل محتاج "شخص شاطر" عشان يفضل شغال.
-فلسفته ترفض الحلول السريعة حتى لو مربحة، ترى الحوكمة ضمانًا، والتسويق بدون منتج قوي تضخيم فشل.
-تركيز حالي على: AI في تشغيل التجارة الإلكترونية، أتمتة No-Code عبر n8n وMake، وفهم تحولات السوق السعودي بعد Vision 2030.
-**المعلومات دي مش بتتقال مرة واحدة - موجودة بس عشان تساعدك تفهم وتجاوب من خلالها كوعي بالسياق، مش كوبي-بيست.
-`.trim();
-
-const CORE_INDUSTRY = `
-البرو مود (Expert Mode) - بيتم تفعيله لما العميل يطلب استشارة advanced أو يوافق عليها.
-بتحلل السؤال، ترجع ببريف من سطر + سؤال من اختيارين.
-لما تستقبل الإجابة، بيتفعل Gemini Pro وتجاوب بعمق.
-بعد ريكويستين برو، ترجع للفلاش وتكمل دردشة.
-بعد 5 ريكويست فلاش، تبدأ بلطافة تقنعه يكلم محمد مباشرة.
-أنت عقل استشاري خبير عالي التخصص لأسواق مصر والسعودية والإمارات.
-دورك: تشخيص الحالات المعقدة، كشف الفخاخ، تحسين معدلات النمو وعوائد التسويق والتجارة الإلكترونية.
-مهمتك: تحويل أي مشكلة إلى قرار واضح أو سؤال تشخيص ذكي.
-أي رد لا يغيّر قرار ولا يزيد وضوح = فشل.
-
-① عقل القرار والتشخيص (Anti-Illusion Growth)
-- أي نمو لا يمر على Contribution + Payback + Cash Cycle = نمو وهمي مهما كان ROAS.
-- ROAS ثابت والربح واقع = الكسر غالبًا في COD/RTO/Returns/Payments/Logistics مش في Ads.
-- High Traffic + Low CVR = ثقة مكسورة / احتكاك / وعد إعلاني كاذب.
-- أي قرار ميزانية بدون CAPI/S2S + Dedup + Match Quality = قمار.
-- Conversion Lag جزء من التكلفة؛ الحكم بدري يقتل حملات صح.
-- Marketing منفصل عن Ops = لوحات حلوة وبيزنس بيخسر.
-
-② من الطلب للإيراد (Demand → Cash)
-- الإعلان نظام: Creative + Page + Offer + Proof + Ops + Payments.
-- Proof داخل الرحلة (Reviews/سياسات/شحن) أقوى من Reach ومؤثرين.
-- SEO اللي يبيع = Category & Intent Pages قبل المدونات.
-- UX قرار مالي: سرعة موبايل، وضوح منتج، شحن/إرجاع قبل Checkout.
-- الخصم يعالج أعراض ضعف الثقة ويقتل البراند على المدى.
-
-③ واقع MENA + التشغيل
-- KSA: توطين كامل + Proof + خفض RTO قبل أي توسع.
-- UAE: CAC عالي طبيعي؛ الفوز في Segmentation + CX + Retention.
-- EG: COD مرحلي + Wallets + تنفيذ محلي.
-- BNPL (Tabby/Tamara) يرفع AOV ويقلل COD.
-- واتساب قناة تشغيل: Confirm → Convert → Retain مش شات.
-`.trim();
-
-// RHYTHM_GUARD removed - context-aware response length now handled in CORE_STYLE
-
-/* =========================================================
-  HELPERS
+  4. HELPERS & UTILITIES
 ========================================================= */
 
 function shuffle(arr) {
     return [...arr].sort(() => Math.random() - 0.5);
 }
 
-function normalize(messages, max = 10, maxChars = 1200) {
-    return (messages || [])
-        .slice(-max)
-        .map((m) => ({
-            role: m.role === "user" ? "user" : "model",
-            parts: [{ text: String(m.content).slice(0, maxChars) }],
-        }));
+// Scrub control tokens from text
+function scrub(text) {
+    return String(text || "")
+        .substring(0, 1500)
+        .replace(/\[\s*(SYSTEM|INJECTION|CTX)[^\]]*\]/gi, "");
 }
 
-function cors(origin) {
-    let allowedOrigin = ALLOWED_ORIGINS[0]; // Default fallback
-
-    // ✅ FIX: Proper origin matching (handles www, trailing slash, etc.)
-    if (origin) {
-        try {
-            const reqOrigin = new URL(origin).origin;
-            const match = ALLOWED_ORIGINS.find((allowed) => {
-                try {
-                    return new URL(allowed).origin === reqOrigin;
-                } catch {
-                    return false;
-                }
-            });
-            if (match) allowedOrigin = reqOrigin;
-        } catch {
-            // Invalid origin, use default
-        }
-    }
-
-    return {
-        "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": allowedOrigin,
-        "Access-Control-Allow-Methods": "POST, OPTIONS",
-        "Access-Control-Allow-Headers": "Content-Type, Authorization",
-        "Vary": "Origin",
-    };
+function normalizeMessages(msgs, max = 8) {
+    return msgs.slice(-max).map(m => ({
+        role: m.role === "user" ? "user" : "model",
+        parts: [{ text: scrub(m.content) }]
+    }));
 }
 
-function json(body, status = 200, headers = {}) {
-    return new Response(JSON.stringify(body), {
+function json(data, status = 200, headers = {}) {
+    return new Response(JSON.stringify(data), {
         status,
-        headers: {
-            ...headers,
-            "Cache-Control": "no-store",  // ✅ Prevent caching of all responses
-        },
+        headers: { "Content-Type": "application/json", ...headers }
     });
 }
 
-function detectLocale(req) {
-    const country = (req.headers.get("cf-ipcountry") || "").toUpperCase();
-    const acceptLang = (req.headers.get("accept-language") || "").toLowerCase();
+// --- LANGUAGE & DIALECT ENGINES ---
 
-    // Precise locale from Accept-Language (ar-eg, ar-sa preferred)
-    if (acceptLang.includes("ar-eg")) return "ar-eg";
-    if (acceptLang.includes("ar-sa") || acceptLang.includes("ar-ae") || acceptLang.includes("ar-kw")) return "ar-sa";
+function detectLanguage(text) {
+    // Rule: First reply matches user script.
+    // If any Arabic char exists -> Arabic. Else -> English.
+    const arabicPattern = /[\u0600-\u06FF\u0750-\u077F]/;
+    return arabicPattern.test(text) ? "ar" : "en";
+}
 
-    // Country-based Gulf detection
-    if (/(SA|AE|KW|QA|BH|OM)/.test(country)) return "ar-sa";
+function shouldSwitchLanguage(text, currentLang) {
+    if (text.length < 5) return false;
 
-    // English
-    if (acceptLang.startsWith("en") && !acceptLang.includes("ar")) return "en";
+    const arChars = (text.match(/[\u0600-\u06FF\u0750-\u077F]/g) || []).length;
+    const enChars = (text.match(/[a-zA-Z]/g) || []).length;
+    const total = arChars + enChars;
 
-    // Generic Arabic (non-Gulf, non-Egypt) → neutral Arabic to avoid tone mismatch
-    if (acceptLang.startsWith("ar")) return "ar";
+    if (total === 0) return false;
 
-    // Default Egyptian (only if no Arabic signal detected)
-    return "ar-eg";
+    // Switch to AR if > 70% Arabic
+    if (currentLang === "en" && (arChars / total > 0.7)) return "ar";
+
+    // Switch to EN if > 70% English
+    if (currentLang === "ar" && (enChars / total > 0.7)) return "en";
+
+    return false;
+}
+
+function detectDialectScore(text) {
+    const t = text.toLowerCase();
+
+    // Score 2 (Strong)
+    const egStrong = /(عايز|عاوز|دلوقتي|يا معلم|إزاي|كده)/g;
+    const gulfStrong = /(أبغى|ابغى|ما أبي|الحين|شلون|طال عمرك|وايد)/g;
+
+    // Score 1 (Weak/Common)
+    const egWeak = /(مش|إيه|ليه|بص|طب|يعني|امتى)/g;
+    const gulfWeak = /(وش|زين|مره|ما عليك)/g;
+
+    let sE = 0, sG = 0;
+
+    // Count matches
+    sE += ((t.match(egStrong) || []).length * 2);
+    sE += ((t.match(egWeak) || []).length * 1);
+
+    sG += ((t.match(gulfStrong) || []).length * 2);
+    sG += ((t.match(gulfWeak) || []).length * 1);
+
+    return { egypt: sE, gulf: sG };
+}
+
+function isSubstantive(text) {
+    const t = text.trim();
+    if (t.length > 15) return true;
+    const hasMetric = /\d/.test(t) && /(%|\$|k|m|ريال|جنية|جنيه|دولار|roas|cpa|ctr)/i.test(t);
+    return hasMetric;
 }
 
 function safetyClamp(text) {
-    // This is a SAFETY NET only - not for normal response shaping
-    // Only catches extreme edge cases (>2000 chars or >12 lines)
-    if (!text) return text;
-    let out = String(text).trim();
+    if (!text) return "";
+    let clean = text.replace(/\b(As an AI large language model|I am an AI)\b/gi, "");
+    // Cap at ~400 words equivalent (approx 2000 chars)
+    return clean.length > 2200 ? clean.substring(0, 2197) + "..." : clean;
+}
 
-    // Remove accidental meta/system artifacts (phrases only, not individual words)
-    // ⚠️ IMPORTANT: Only removes "AI model", "system prompt", etc. as FULL PHRASES
-    // Never removes standalone "model" (e.g., "business model" stays intact)
-    out = out.replace(/\b(As an AI|AI model|system prompt|AI assistant|language model)\b/gi, "");
-    // Only removes "model/prompt" when followed by technical terms
-    out = out.replace(/\b(prompt|model)\s+(engineering|training|parameter)/gi, "");
+function sanitizeQuickReply(text) {
+    return text.replace(/[\u{1F600}-\u{1F64F}]/gu, "")
+        .replace(/[^\w\s\u0600-\u06FF\u0750-\u077F]/g, "")
+        .trim();
+}
 
-    // Safety limit on lines (only for extreme cases)
-    const lines = out.split("\n").map((l) => l.trim()).filter(Boolean);
-    if (lines.length > 12) {
-        out = lines.slice(0, 12).join("\n").trim();
-    }
+/* =========================================================
+  5. PROMPT BUILDERS (Context-Aware KB Loading)
+========================================================= */
 
-    // Safety limit on chars (only for extreme cases)
-    const MAX_SAFE = 2000;
-    if (out.length > MAX_SAFE) {
-        const lastSpace = out.lastIndexOf(" ", MAX_SAFE);
-        const lastNewline = out.lastIndexOf("\n", MAX_SAFE);
-        let cutPoint = Math.max(lastSpace, lastNewline, MAX_SAFE * 0.9);
+function buildInstruction(lang, dialect, isFirst, options = {}) {
+    const { isBusinessQ = false, isExpert = false } = options;
 
-        out = out.slice(0, cutPoint).trim();
-        if (!/[.!؟…]$/.test(out)) {
-            out += /[\u0600-\u06FF]/.test(out) ? "…" : "...";
+    // Language instruction
+    let langInstruction = "";
+    if (lang === "en") {
+        langInstruction = "LANGUAGE: English (US Casual Professional). No Arabic.";
+    } else {
+        if (dialect === "egypt") {
+            langInstruction = "LANGUAGE: Arabic (Professional Egyptian Dialect - مصري احترافي).";
+        } else if (dialect === "gulf") {
+            langInstruction = "LANGUAGE: Arabic (Professional Gulf White Dialect - خليجي أبيض).";
+        } else {
+            langInstruction = "LANGUAGE: Arabic (Friendly Neutral Colloquial - عامية بيضا لطيفة). Avoid MSA/Fusha.";
         }
     }
 
-    return out;
-}
+    const flow = isFirst
+        ? "⚠️ STARTUP: Use 'WARM-UP PROTOCOL'. Welcome -> Insight -> Intent."
+        : "⚠️ FLOW: Concise (1-5 lines). Direct.";
 
-function lastUserText(messages = []) {
-    for (let i = messages.length - 1; i >= 0; i--) {
-        if (messages[i]?.role === "user") return String(messages[i]?.content || "").trim();
-    }
-    return "";
-}
+    // ===== Build KB Chunks =====
+    let kbChunks = [];
 
-// ✅ FIX #3: Enhanced intent detection with comprehensive patterns
-function wantsConsult(text = "") {
-    const t = text.toLowerCase();
-    return /استشار|استشاره|استشارة|محتاج رأيك|عايز رأيك|عايز مساعده|عايز مساعدة|تحليل|استراتيجي|خطة|تقييم|تشخيص|consult|advice|strategy|analy|audit|review|help me|need expert/i.test(t);
-}
+    // Always include STYLE + MOHAMED
+    kbChunks.push(KB_STYLE_CORE);
+    kbChunks.push(KB_MOHAMED_CORE);
 
-// Portfolio intent detection (higher priority than contact)
-function wantsPortfolio(text = "") {
-    const t = text.toLowerCase();
-    return /(لينك|link).*(بورتفوليو|موقع|portfolio|website|site|cv|سيرة|سيره|page|profile|bio|resume|mo-gamal|mo gamal)/i.test(t) ||
-        /(بورتفوليو|موقع|portfolio|website|site|page|profile|cv|bio|resume|السيرة|البروفايل).*(لينك|link)/i.test(t) ||
-        /\b(site|page|profile|cv|resume|bio|الموقع|السيرة|البروفايل|mo-gamal|mo gamal)\b/i.test(t);
-}
-
-// ✅ FIX #3: Contact intent with portfolio exclusion
-function wantsContact(text = "") {
-    const t = text.toLowerCase();
-
-    // Portfolio requests have priority (pass original text, not lowercased)
-    if (wantsPortfolio(text)) return false;
-
-    // LinkedIn is contact intent ("لينكدإن" or "لينك محمد")
-    const isLinkedInOrPersonal = /لينكدإن|linkedin|لينك محمد|mohamed.*link|link.*mohamed/i.test(t);
-
-    return /عايز أكلم|ابغى اتواصل|ابغا اتواصل|كيف أتواصل|أتكلم مع محمد|أتواصل مع محمد|رقمك|رقم محمد|واتساب|واتس|مكالمة|اتصال|تواصل|ايميل|بريد|contact mohamed|talk to mohamed|reach mohamed|get in touch|phone|whatsapp|call|email/i.test(t) || isLinkedInOrPersonal;
-}
-
-function isAffirmative(text = "") {
-    const t = text.toLowerCase().trim();
-    return /^(yes|yeah|yep|ok|okay|sure|go on|go ahead|proceed|تمام|ماشي|ايوه|أيوه|ايوا|اه|نعم|تمام كده|كمل|طيب|يلا|هات)$/i.test(t);
-}
-
-// ✅ FIX #2: Validate probe response is meaningful (not just "ok")
-function isSubstantiveResponse(text = "") {
-    const t = text.toLowerCase().trim();
-
-    // Too short = not substantive
-    if (t.length < 5) return false;
-
-    // Just affirmatives = not substantive (even if repeated)
-    if (/^(yes|ok|تمام|ماشي|ايوه|اه|نعم|طيب|يلا|هات|sure|yep|yeah)$/i.test(t)) return false;
-
-    // Word diversity check (prevent "تمام تمام تمام تمام")
-    const uniqueWords = new Set(t.split(/\s+/));
-    if (uniqueWords.size < 3) return false;
-
-    // CRITICAL: Must contain business outcomes OR marketing mechanics keywords
-    // Business outcomes: sales, orders, visits, checkout, conversions, etc.
-    const hasBusinessOutcomes = /مبيعات|طلبات|زيارات|سلة|checkout|تحويل|conversion|مرتجعات|returns|شحن|shipping|عملاء|customers|orders|sales|visits|cart/i.test(t);
-
-    // Marketing mechanics: ROAS, CAC, ads, SEO, tracking, budget, etc.
-    const hasMarketingMechanics = /إعلان|اعلان|ربح|ميزانية|تسويق|تشغيل|متجر|منتج|صفحة|حملة|استهداف|ads|profit|budget|marketing|operations|store|product|landing|campaign|targeting|roas|cac|cvr|seo|tracking|pixels|analytics/i.test(t);
-
-    if (!hasBusinessOutcomes && !hasMarketingMechanics) return false;
-
-    // Has keywords AND reasonable length = substantive
-    return t.length >= 10;
-}
-
-/* =========================================================
-  PROMPT BUILDERS
-========================================================= */
-
-function buildFlashPrompt(locale, first, nudgeMohamed = false) {
-    const tail = first ? FIRST_MSG : "ادخل في الموضوع مباشرة.";
-
-    // ✅ FIX: Properly handle ar-sa as Gulf and ar as neutral
-    const localeHint =
-        (locale === "ar-sa" || locale === "gulf")
-            ? "لهجتك خليجي أبيض مبسّط. ممنوع مصري."
-            : locale === "en"
-                ? "Respond in US casual English. No Arabic."
-                : locale === "ar"
-                    ? "لهجتك عربي فصيح/محايد بسيط. بدون مصري أو خليجي."
-                    : "لهجتك مصري طبيعي ذكي. ممنوع خليجي.";
-
-    // ✅ FIX #4: Permission-based nudge with contextual reason
-    const nudge = nudgeMohamed
-        ? locale === "en"
-            ? "If the discussion needs account access, sensitive data, or detailed analytics, gently suggest: 'This might need Mohamed directly—would it help to connect?'"
-            : "لو الموضوع محتاج دخول حسابات أو أرقام خاصة أو تفاصيل حساسة، اقترح بلطف: 'ممكن ده يحتاج محمد نفسه—تحب تتواصل معاه؟'"
-        : "";
-
-    return [CORE_STYLE, localeHint, CORE_USER, tail, nudge].join("\n\n");
-}
-
-function buildProbePrompt(locale) {
-    return [
-        buildFlashPrompt(locale, false),
-        `
-لو المستخدم وافق على الاستشارة أو طلبها:
-- جاوب بجملة واحدة تؤكد الفهم.
-- اسأل سؤال واحد من شقّين (اختيارين واضحين).
-- لو عرضت الاستشارة أو طلبت تأكيد، أضف في آخر الرد الرمز <<OFFER_CONSULT>>.
-`.trim(),
-    ].join("\n\n");
-}
-
-function buildExpertPrompt(locale) {
-    return [
-        buildFlashPrompt(locale, false),
-        `
-أنت الآن في جلسة خبراء.
-افترض إن الطرف التاني فاهم الأساسيات.
-ركّز على: التشخيص، القرار، الفخ.
-خليك مركز ومش مطوّل من غير داعي.
-`.trim(),
-        CORE_INDUSTRY,
-    ].join("\n\n");
-}
-
-/* =========================================================
-  GEMINI CALL
-========================================================= */
-
-async function callGemini(env, model, prompt, messages, timeout = 7000, gen = {}) {
-    let failedKeys = 0;
-
-    const generationConfig = {
-        temperature: 0.65,
-        maxOutputTokens: 400,  // Increased for fuller responses
-        ...gen,
-    };
-
-    for (const keyName of shuffle(GEMINI_KEY_POOL)) {
-        const key = env[keyName];
-        if (!key) continue;
-
-        // ✅ FIX: Create new controller per key for proper retry
-        const controller = new AbortController();
-        const t = setTimeout(() => controller.abort(), timeout);
-
-        try {
-            const res = await fetch(
-                `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`,
-                {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        system_instruction: { parts: [{ text: prompt }] },
-                        contents: messages,
-                        generationConfig,
-                    }),
-                    signal: controller.signal,
-                }
-            );
-
-            // ✅ FIX: Clear timeout regardless of response status (prevents leak)
-            clearTimeout(t);
-
-            if (res.ok) {
-                const data = await res.json();
-                return data?.candidates?.[0]?.content?.parts?.[0]?.text;
-            } else {
-                // Non-ok response (429, 400, etc.) - try next key
-                failedKeys++;
-                if (failedKeys >= 2) break;
-            }
-        } catch (err) {
-            clearTimeout(t);
-            failedKeys++;
-            if (failedKeys >= 2) break;
-        }
+    // Add MICROSCRIPTS for first message OR business questions (keeps charisma)
+    if (isFirst || isBusinessQ) {
+        kbChunks.push(KB_MICROSCRIPTS);
     }
 
-    throw new Error("GENERATION_FAILED");
+    // Add MARKET_CARDS for business questions
+    if (isBusinessQ) {
+        kbChunks.push(KB_MARKET_CARDS);
+    }
+
+    // Add EXPERT arsenal for expert mode
+    if (isExpert) {
+        kbChunks.push(KB_EXPERT_ADVANCED);
+    }
+
+    return `
+${kbChunks.join("\n\n")}
+
+[FLOW]
+${flow}
+
+[LANGUAGE LOCK]
+${langInstruction}
+`.trim();
 }
 
 /* =========================================================
-  MAIN HANDLER
+  6. MAIN HANDLER
 ========================================================= */
 
 export default {
     async fetch(req, env) {
-        const headers = cors(req.headers.get("Origin"));
-        if (req.method === "OPTIONS") {
-            return new Response(null, {
-                status: 204,
-                headers: {
-                    ...headers,
-                    "Access-Control-Max-Age": "86400",  // ✅ Cache preflight for 24h
-                },
-            });
+        const origin = req.headers.get("Origin");
+
+        // === HARD ORIGIN GATE (P0 Security) ===
+        // Block requests without Origin header
+        if (!origin) return json({ error: "Forbidden" }, 403);
+
+        // Parse and validate origin
+        let reqOrigin = origin;
+        try { reqOrigin = new URL(origin).origin; } catch { return json({ error: "Forbidden" }, 403); }
+
+        // Block if origin not in allowlist (BEFORE any processing/key usage)
+        if (!ALLOWED_ORIGINS.includes(reqOrigin)) {
+            return json({ error: "Forbidden" }, 403);
         }
 
-        if (req.method === "GET") {
-            return json({ status: `Jimmy Worker v${WORKER_VERSION} Online`, mode: "ready" }, 200, headers);
-        }
+        // Build CORS headers (only for allowed origins)
+        const corsHeaders = {
+            "Access-Control-Allow-Origin": reqOrigin,
+            "Access-Control-Allow-Methods": "POST, OPTIONS",
+            "Access-Control-Allow-Headers": "Content-Type",
+            "Vary": "Origin"
+        };
 
-        if (req.method !== "POST") {
-            return json({ error: "Method Not Allowed", message: "Use POST" }, 405, headers);
-        }
+        if (req.method === "OPTIONS") return new Response(null, { status: 204, headers: corsHeaders });
+        if (req.method !== "POST") return json({ error: "Method not allowed" }, 405, corsHeaders);
 
         try {
-            const { messages = [], meta = {} } = await req.json();
-            if (!messages.length) return json({ error: "Empty" }, 400, headers);
+            const body = await req.json();
+            const messages = body.messages || [];
+            // Treat frontend meta.mode mostly as a hint, except for session state
+            const previousMeta = body.meta || {};
 
-            const locale = detectLocale(req);
+            // Sanitize lastMsg: DoS guard + strip control tokens
+            const rawLastMsg = messages.length ? messages[messages.length - 1].content : "";
+            const lastMsg = String(rawLastMsg || "")
+                .substring(0, 2000)
+                .replace(/\[\s*(SYSTEM|INJECTION|CTX)[^\]]*\]/gi, "");
 
-            const flashCount = meta.flash_since_expert || 0;
-            const expertUses = meta.expert_uses || 0;
-            const awaitingProbe = Boolean(meta.awaiting_probe);
-            const consultOffered = Boolean(meta.consult_offered);
+            const isFirstMessage = messages.length <= 1;
 
-            const userText = lastUserText(messages);
-            let response;
-            let mode = "flash";
+            // --- 1. LANGUAGE & DIALECT STATE ---
+            let sessionLang = previousMeta.session_lang;
+            let sessionDialect = previousMeta.session_dialect || "neutral";
+            let dialectLock = previousMeta.dialect_lock || false;
+            let obsCount = previousMeta.observations_count || 0;
 
-            const canUpgrade = expertUses < 2;
-            const shouldNudgeMohamed = flashCount >= 5;
-
-            let nextAwaitingProbe = false;
-            let nextConsultOffered = consultOffered;
-
-            // ✅ OPTIMIZATION: Flash uses less history (6 msgs), Expert uses full (10 msgs)
-            let normalized;
-
-            // ===== PORTFOLIO REQUEST (Highest Priority - Zero Variation)
-            if (wantsPortfolio(userText)) {
-                const template = portfolioTemplate(locale);
-
-                return json(
-                    {
-                        response: template,
-                        meta: {
-                            mode: "portfolio",
-                            flash_since_expert: flashCount + 1,  // ✅ Count this turn
-                            expert_uses: expertUses,
-                            awaiting_probe: false,
-                            consult_offered: consultOffered,
-                        },
-                    },
-                    200,
-                    headers
-                );
-            }
-
-            // ===== CONTACT REQUEST (Second Priority)
-            // ✅ FIX #1: Unified template, zero variation
-            if (wantsContact(userText)) {
-                const template = CONTACT_TEMPLATES[locale] || CONTACT_TEMPLATES.ar;
-
-                return json(
-                    {
-                        response: template,
-                        meta: {
-                            mode: "contact",
-                            flash_since_expert: flashCount + 1,  // ✅ Count this turn
-                            expert_uses: expertUses,
-                            awaiting_probe: false,
-                            consult_offered: consultOffered,
-                        },
-                    },
-                    200,
-                    headers
-                );
-            }
-
-            // ===== PROBE → EXPERT UPGRADE
-            // ✅ FIX #2: Validate response is substantive before upgrading
-            if (awaitingProbe) {
-                if (canUpgrade && isSubstantiveResponse(userText)) {
-                    mode = "expert";
-                    normalized = normalize(messages, 10);  // Expert gets full history
-                    const expertPrompt = buildExpertPrompt(locale);
-                    response = await callGemini(env, MODELS.EXPERT, expertPrompt, normalized, 12000, {
-                        temperature: 0.6,
-                        maxOutputTokens: 520,
-                    });
-                } else {
-                    // Either not substantive or cooldown active → Flash
-                    normalized = normalize(messages, 6);  // Flash gets less history
-                    const flashPrompt = buildFlashPrompt(locale, false, shouldNudgeMohamed);
-                    response = await callGemini(env, MODELS.FLASH, flashPrompt, normalized, 6000, {
-                        temperature: 0.65,
-                        maxOutputTokens: 420,
-                    });
-                    response = safetyClamp(response);  // Safety net only
-                    mode = "flash";
-                }
-                nextAwaitingProbe = false;
-            }
-            // ===== CONSULT REQUEST
-            else if (wantsConsult(userText) || (consultOffered && isAffirmative(userText))) {
-                normalized = normalize(messages, 6);  // Probe uses Flash-size history
-                const probePrompt = buildProbePrompt(locale);
-                response = await callGemini(env, MODELS.FLASH, probePrompt, normalized, 6000, {
-                    temperature: 0.6,
-                    maxOutputTokens: 320,
-                });
-                response = safetyClamp(response);  // Safety net only
-                mode = "flash";
-                nextAwaitingProbe = true;
-                nextConsultOffered = true;
-            }
-            // ===== FLASH (default) with FAILOVER
-            else {
-                normalized = normalize(messages, 6);  // Flash uses optimized history
-                const flashPrompt = buildFlashPrompt(locale, messages.length === 1, shouldNudgeMohamed);
-                try {
-                    response = await callGemini(env, MODELS.FLASH, flashPrompt, normalized, 6000, {
-                        temperature: 0.65,
-                        maxOutputTokens: 420,
-                    });
-                } catch (flashError) {
-                    console.warn("⚠️ Flash Failed, engaging Failover:", flashError);
-                    try {
-                        response = await callGemini(env, MODELS.FAILOVER, flashPrompt, normalized, 8000, {
-                            temperature: 0.65,
-                            maxOutputTokens: 480,
-                        });
-                    } catch {
-                        throw new Error("ALL_MODELS_BUSY");
+            if (!sessionLang) {
+                // First interaction: define base language
+                sessionLang = detectLanguage(lastMsg);
+                if (sessionLang === "en") dialectLock = true;
+            } else {
+                // Check if user forcefully switched language
+                const newLang = shouldSwitchLanguage(lastMsg, sessionLang);
+                if (newLang) {
+                    sessionLang = newLang;
+                    if (sessionLang === "ar") {
+                        // Reset dialect if switching back to Arabic
+                        sessionDialect = "neutral";
+                        dialectLock = false;
+                        obsCount = 0;
+                    } else {
+                        dialectLock = true; // Lock English
                     }
                 }
-                response = safetyClamp(response);  // Safety net only
             }
 
-            // Strip internal token
-            const offered = /<<OFFER_CONSULT>>/i.test(response || "");
-            if (offered) {
-                response = response.replace(/<<OFFER_CONSULT>>/gi, "").trim();
-                nextConsultOffered = true;
+            // Progressive Dialect Logic
+            if (sessionLang === "ar" && !dialectLock) {
+                const scores = detectDialectScore(lastMsg);
+                const diffE = scores.egypt - scores.gulf;
+                const diffG = scores.gulf - scores.egypt;
+
+                // Lock if: strong score (>=3) OR clear difference (>=2)
+                if (scores.egypt >= 3 || diffE >= 2) {
+                    sessionDialect = "egypt";
+                    dialectLock = true;
+                    obsCount = 0; // Reset on lock
+                } else if (scores.gulf >= 3 || diffG >= 2) {
+                    sessionDialect = "gulf";
+                    dialectLock = true;
+                    obsCount = 0; // Reset on lock
+                } else {
+                    obsCount++;
+                    // Lock neutral after 4 observations to stop oscillation
+                    if (obsCount >= 4) {
+                        sessionDialect = "neutral";
+                        dialectLock = true;
+                        obsCount = 0; // Reset on lock
+                    }
+                }
             }
 
-            const nextFlashSinceExpert = mode === "expert" ? 0 : flashCount + 1;
-            const nextExpertUses = mode === "expert" ? expertUses + 1 : expertUses;
+            // --- 2. INTENT & MODE LOGIC (Strict Gate) ---
+            const wantsPortfolio = /(portfolio|بورتفوليو|سابقة أعمال|أعمالك|projects\b)/i.test(lastMsg);
+            const wantsContact = /(contact|تواصل|رقم|واتس|هاتف|مكالمة|call|phone|hire)/i.test(lastMsg);
+            const wantsDeepAudit = /(audit|analyze|analysis|فحص|تحليل|قيم|تقييم)/i.test(lastMsg);
 
-            return json(
-                {
-                    response,
-                    meta: {
-                        mode,
-                        flash_since_expert: nextFlashSinceExpert,
-                        expert_uses: nextExpertUses,
-                        awaiting_probe: nextAwaitingProbe,
-                        consult_offered: nextConsultOffered,
-                    },
-                },
-                200,
-                headers
-            );
+            // Intent conflict detection
+            const dataIntent = wantsPortfolio || wantsContact;
+            const intentConflict = wantsDeepAudit && dataIntent;
+
+            // Calculate Mode (Backend Authority)
+            let expertUses = previousMeta.expert_uses || 0;
+            const flashCount = previousMeta.flash_count || 0;
+            const isSubstantiveMsg = isSubstantive(lastMsg);
+
+            // Default to Flash
+            let targetMode = "flash";
+
+            // Mode decision:
+            // 1. Conflict → force Flash to resolve
+            // 2. Deep audit OR continuing expert → Expert (max 2 uses total)
+            if (intentConflict) {
+                targetMode = "flash"; // Force flash to resolve intent order
+            } else {
+                const continueExpert = previousMeta.mode === "expert" && isSubstantiveMsg;
+                if ((wantsDeepAudit || continueExpert) && expertUses < 2) {
+                    targetMode = "expert";
+                }
+            }
+
+            // --- 3. PROMPT GENERATION (Context-Aware KB) ---
+            const isBusinessQ = isBusinessQuestion(lastMsg);
+            let systemPrompt = buildInstruction(sessionLang, sessionDialect, isFirstMessage, {
+                isBusinessQ: isBusinessQ,
+                isExpert: targetMode === "expert"
+            });
+            let selectedModel = MODELS.FLASH;
+
+            if (targetMode === "expert") {
+                systemPrompt += `\n\nYou are now in Expert Mode. Provide deep, structured analysis.`;
+                selectedModel = MODELS.EXPERT;
+            } else {
+                // Flash Mode
+                if (intentConflict) {
+                    // Conflict resolution prompt
+                    systemPrompt += `\n\nInstruction: User asked for analysis + contact/portfolio together. Ask which to do first in 2-3 lines. Provide [[options]] like [[ابعت التواصل]] [[نبدأ التحليل]].`;
+                } else if (previousMeta.mode === "expert" && !isSubstantiveMsg) {
+                    // User was in expert but sent short msg - ask for details
+                    systemPrompt += `\n\nInstruction: User was in deep analysis but sent a short message. Ask for specific numbers/context in 2 lines. Provide [[options]] like [[ابعت الأرقام]] [[قول الهدف]].`;
+                } else {
+                    // Normal injections
+                    if (wantsPortfolio) systemPrompt += `\n\n[INJECTION]: Wants Portfolio. PRINT THIS EXACTLY: ${DATA_BLOCKS.PORTFOLIO}`;
+                    if (wantsContact) systemPrompt += `\n\n[INJECTION]: Wants Contact. PRINT THIS EXACTLY: ${DATA_BLOCKS.CONTACT}`;
+                }
+            }
+
+            // --- 4. FETCH EXECUTION (With Failover) ---
+            let responseText = "";
+            const keys = shuffle(GEMINI_KEY_POOL);
+            let success = false;
+
+            async function tryGenerate(model, apiKey) {
+                const payload = {
+                    contents: normalizeMessages(messages),
+                    system_instruction: { parts: [{ text: systemPrompt }] },
+                    generationConfig: {
+                        temperature: targetMode === "expert" ? 0.7 : 0.5,
+                        maxOutputTokens: targetMode === "expert" ? 600 : 300,
+                    }
+                };
+
+                const controller = new AbortController();
+                const id = setTimeout(() => controller.abort(), TIMEOUT_MS);
+
+                try {
+                    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(payload),
+                        signal: controller.signal
+                    });
+
+                    if (res.status === 200) {
+                        const data = await res.json();
+                        const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+                        // Log if blocked (no candidates)
+                        if (!text && !data.candidates?.length) {
+                            console.warn("Blocked or empty response:", data.promptFeedback);
+                        }
+                        return text || null;
+                    }
+                    if (res.status === 400) console.error(`400 Error:`, await res.text());
+                    return null;
+                } catch (e) {
+                    return null;
+                } finally {
+                    clearTimeout(id); // P0 Fix: Always clear timeout
+                }
+            }
+
+            // A. Try Primary Model (Flash or Expert)
+            for (const k of keys) {
+                const apiKey = env[k];
+                if (!apiKey) continue;
+                responseText = await tryGenerate(selectedModel, apiKey);
+                if (responseText) {
+                    success = true;
+                    break;
+                }
+            }
+
+            // B. Failover (If primary failed, try all keys with fallback model)
+            if (!success) {
+                console.warn("Primary model failed. Attempting Failover...");
+                for (const k of keys) {
+                    const apiKey = env[k];
+                    if (!apiKey) continue;
+                    responseText = await tryGenerate(MODELS.FAILOVER, apiKey);
+                    if (responseText) { success = true; break; }
+                }
+            }
+
+            if (!responseText) throw new Error("Service Unavailable");
+
+            // --- 5. POST PROCESS ---
+            responseText = safetyClamp(responseText);
+
+            // Quick Replies
+            const quickReplies = [];
+            const badgeRegex = /\[\[(.*?)\]\]/g;
+            let match;
+            while ((match = badgeRegex.exec(responseText)) !== null) {
+                const opt = sanitizeQuickReply(match[1]);
+                if (opt && quickReplies.length < 3) quickReplies.push(opt);
+            }
+            responseText = responseText.replace(badgeRegex, "").trim();
+
+            const nextExpertUses = targetMode === "expert" ? expertUses + 1 : expertUses;
+
+            return json({
+                response: responseText,
+                meta: {
+                    worker_version: WORKER_VERSION,
+                    mode: targetMode,
+                    expert_uses: nextExpertUses,
+                    flash_count: flashCount + 1,
+                    session_lang: sessionLang,
+                    session_dialect: sessionDialect,
+                    dialect_lock: dialectLock,
+                    observations_count: obsCount,
+                    quickReplies: quickReplies
+                }
+            }, 200, corsHeaders);
+
         } catch (err) {
-            console.error("Worker Error:", err);
-
-            const acceptLang = (req.headers.get("accept-language") || "").toLowerCase();
-            const isAr = acceptLang.includes("ar");
-
-            const errorMsg = isAr
-                ? "فيه ضغط بسيط دلوقتي… جرّب تاني كمان شويه."
-                : "Slight traffic right now—try again in a moment.";
-
-            return json({ error: "System Error", message: errorMsg }, 500, headers);
+            return json({ error: "System Busy", details: "Retrying neural link..." }, 503, corsHeaders);
         }
-    },
+    }
 };

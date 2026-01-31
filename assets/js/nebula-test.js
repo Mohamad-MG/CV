@@ -20,16 +20,15 @@
                 (navigator.deviceMemory && navigator.deviceMemory <= 4) ||
                 (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4);
 
-            // System Config (tuned for smoothness)
+            // System Config (The 2026 Universe Protocol)
             this.config = {
-                baseSpeed: this.isLowPower ? 0.22 : 0.3,
-                fallSpeed: this.isLowPower ? 0.38 : 0.5,
-                collisionPadding: this.isLowPower ? 8 : 12,
-                drag: 0.96,
-                recovery: 0.02,
-                downFlowChance: 0.2,
-                spawnInterval: 220,
-                sideBias: 0.35
+                baseSpeed: this.isLowPower ? 0.1 : 0.15, 
+                fallSpeed: this.isLowPower ? 0.25 : 0.35, 
+                collisionPadding: 3, 
+                drag: 0.98,
+                recovery: 0.015,
+                downFlowChance: 0.3, 
+                laneWidth: 90 // Balanced lane width for desktop and mobile
             };
 
             this.init();
@@ -49,25 +48,41 @@
             return 16;
         }
 
-        getBiasedX() {
-            const { sideBias } = this.config;
-            const rand = Math.random();
-            if (rand < 0.45) {
-                return Math.random() * (this.width * sideBias);
+        getAvailableX(isFalling, particleToExempt = null) {
+            const laneWidth = this.config.laneWidth;
+            const totalLanes = Math.floor(this.width / laneWidth);
+            const occupiedLanes = new Set();
+
+            // Identify lanes occupied by icons moving in the SAME direction
+            for (const p of this.particles) {
+                if (!p.active || p === particleToExempt) continue;
+                if (p.isFalling === isFalling) {
+                    occupiedLanes.add(Math.floor(p.x / laneWidth));
+                }
             }
-            if (rand < 0.9) {
-                const rightStart = this.width * (1 - sideBias);
-                return rightStart + Math.random() * (this.width * sideBias);
+
+            // Create a pool of free lanes for this specific direction
+            const freeLanes = [];
+            for (let i = 0; i < totalLanes; i++) {
+                if (!occupiedLanes.has(i)) freeLanes.push(i);
             }
-            const centerWidth = this.width * (1 - 2 * sideBias);
-            const centerStart = this.width * sideBias;
-            return centerStart + Math.random() * centerWidth;
+
+            // If a free lane exists, pick one randomly
+            if (freeLanes.length > 0) {
+                const lane = freeLanes[Math.floor(Math.random() * freeLanes.length)];
+                // Randomize position within the chosen lane for a natural look
+                return (lane * laneWidth) + (Math.random() * (laneWidth * 0.6) + laneWidth * 0.2);
+            }
+
+            // Fallback: strictly avoid the nearest neighbors if all lanes are full
+            return Math.random() * this.width;
         }
 
         init() {
-            const placed = [];
-
             this.signals.forEach((el, index) => {
+                const isFalling = Math.random() < this.config.downFlowChance;
+                const radius = this.getRadius(el);
+                
                 Object.assign(el.style, {
                     position: 'absolute',
                     left: '0',
@@ -75,59 +90,30 @@
                     margin: '0',
                     willChange: 'transform',
                     opacity: '0',
-                    transition: 'opacity 1.4s ease'
+                    transition: 'opacity 5s ease' 
                 });
 
-                const radius = this.getRadius(el);
-                let x = 0;
-                let y = 0;
-                let safe = false;
-                let attempts = 0;
+                const x = this.getAvailableX(isFalling);
+                const y = Math.random() * this.height;
 
-                while (attempts < 150) {
-                    safe = true;
-                    x = this.getBiasedX();
-                    y = Math.random() * this.height;
-
-                    for (const p of placed) {
-                        const dx = x - p.x;
-                        const dy = y - p.y;
-                        const minDist = radius + p.radius + 18;
-                        if ((dx * dx + dy * dy) < (minDist * minDist)) {
-                            safe = false;
-                            break;
-                        }
-                    }
-
-                    if (safe) break;
-                    attempts++;
-                }
-
-                const isFalling = Math.random() < this.config.downFlowChance;
-                const speed = isFalling ? this.config.fallSpeed : this.config.baseSpeed;
+                const speedMult = isFalling ? 1 : 1.2; 
+                const speed = (isFalling ? this.config.fallSpeed : this.config.baseSpeed) * speedMult;
                 const baseVy = isFalling ? speed : -speed;
 
-                this.particles.push({
-                    el,
-                    x,
-                    y,
-                    radius,
-                    vx: 0,
-                    vy: baseVy,
-                    baseVy,
-                    mass: radius,
-                    active: false,
-                    isFalling
-                });
+                const particle = {
+                    el, x, y, radius, vx: 0, vy: baseVy, baseVy, mass: radius, active: false, isFalling
+                };
 
-                placed.push({ x, y, radius });
+                this.particles.push(particle);
 
+                const activationDelay = 500 + (index * 1400); 
+                
                 setTimeout(() => {
-                    const p = this.particles[index];
-                    if (!p) return;
-                    p.active = true;
-                    p.el.style.opacity = '0.6';
-                }, index * this.config.spawnInterval);
+                    particle.active = true;
+                    requestAnimationFrame(() => {
+                        particle.el.style.opacity = '0.2';
+                    });
+                }, activationDelay);
             });
         }
 
@@ -171,18 +157,20 @@
         }
 
         handleWrap(p) {
-            if (p.x < -p.radius) p.x = this.width + p.radius;
-            if (p.x > this.width + p.radius) p.x = -p.radius;
+            const buffer = p.radius + 50;
 
             if (p.isFalling) {
-                if (p.y > this.height + 50) {
-                    p.y = -50;
-                    p.x = this.getBiasedX();
+                if (p.y > this.height + buffer) {
+                    p.y = -buffer;
+                    p.x = this.getAvailableX(p.isFalling, p);
                 }
-            } else if (p.y < -50) {
-                p.y = this.height + 50;
-                p.x = this.getBiasedX();
+            } else if (p.y < -buffer) {
+                p.y = this.height + buffer;
+                p.x = this.getAvailableX(p.isFalling, p);
             }
+
+            if (p.x < -p.radius) p.x = this.width + p.radius;
+            if (p.x > this.width + p.radius) p.x = -p.radius;
         }
 
         resolveCollision(p1, p2) {
