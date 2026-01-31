@@ -9,12 +9,12 @@ const J5_CONFIG = {
     workerUrl: 'https://mg-ai-proxy.emarketbank.workers.dev/chat',
     texts: {
         en: {
-            name: "NEURAL UNIT:JIMMY",
+            name: "CAPTAIN JIMMY",
             welcome: "Systems stabilized. Neural link active. How may I assist your navigation?",
             placeholder: "Command interface..."
         },
         ar: {
-            name: "وحدة جيمي العصبية",
+            name: "كابتن جيمي",
             welcome: "الأنظمة مستقرة. الرابط العصبي نشط. كيف يمكنني توجيهك؟",
             placeholder: "واجهة الأوامر..."
         }
@@ -42,9 +42,15 @@ class Jimmy5Agent {
         this.isTyping = false;
         this.lang = document.documentElement.lang === 'ar' ? 'ar' : 'en';
         
+        this.suggestions = {
+            en: ["Who is Mohamed?", "What are his core skills?", "Recent achievements?", "Download CV"],
+            ar: ["من هو محمد؟", "ما هي مهاراته الأساسية؟", "أبرز الإنجازات؟", "تحميل السيرة الذاتية"]
+        };
+
         this.render();
         this.cacheDOM();
         this.bindEvents();
+        this.renderSuggestions();
     }
 
     render() {
@@ -59,11 +65,15 @@ class Jimmy5Agent {
                 <div class="sheet-handle"></div>
                 <div class="chat-header">
                     <div class="brand-group">
+                        <div class="header-jimmy-icon">
+                            <video src="${J5_CONFIG.agentVideo}" autoplay loop muted playsinline></video>
+                        </div>
                         <span class="header-name">${txt.name}</span>
                     </div>
                     <button id="chat-close-btn" class="close-btn"><i class="ri-close-line"></i></button>
                 </div>
                 <div id="chat-body" class="chat-body"></div>
+                <div id="suggestion-track" class="suggestion-track"></div>
                 <div class="chat-footer">
                     <div class="input-capsule">
                         <input type="text" id="chat-input" class="input-field" placeholder="${txt.placeholder}" autocomplete="off">
@@ -80,6 +90,7 @@ class Jimmy5Agent {
             launcher: document.getElementById('jimmy-launcher'),
             panel: document.getElementById('jimmy-chat-panel'),
             body: document.getElementById('chat-body'),
+            track: document.getElementById('suggestion-track'),
             input: document.getElementById('chat-input'),
             send: document.getElementById('chat-send-btn'),
             close: document.getElementById('chat-close-btn'),
@@ -102,15 +113,34 @@ class Jimmy5Agent {
         }, { passive: true });
     }
 
+    renderSuggestions() {
+        this.ui.track.innerHTML = '';
+        const list = this.suggestions[this.lang];
+        list.forEach(text => {
+            const chip = document.createElement('div');
+            chip.className = 'chip';
+            chip.innerText = text;
+            chip.onclick = () => {
+                this.ui.input.value = text;
+                this.sendMessage();
+            };
+            this.ui.track.appendChild(chip);
+        });
+    }
+
     toggle(open) {
         if (this.isOpen === open) return;
         this.isOpen = open;
         this.ui.panel.classList.toggle('active', open);
-        this.ui.launcher.classList.toggle('hidden', open); // Hide launcher when open for clean view
+        this.ui.launcher.classList.toggle('hidden', open);
         
         if (open) {
             this.ui.video.pause();
-            if (this.messages.length === 0) this.addMessage('ai', J5_CONFIG.texts[this.lang].welcome);
+            if (this.messages.length === 0) {
+                setTimeout(() => {
+                    this.addMessage('ai', J5_CONFIG.texts[this.lang].welcome);
+                }, 600);
+            }
             setTimeout(() => this.ui.input.focus(), 400);
         } else {
             this.ui.video.play();
@@ -120,7 +150,13 @@ class Jimmy5Agent {
     addMessage(role, text) {
         const row = document.createElement('div');
         row.className = `msg-row ${role}`;
-        row.innerHTML = `<div class="msg-bubble">${text.replace(/\n/g, '<br>')}</div>`;
+        const bubble = document.createElement('div');
+        bubble.className = 'msg-bubble';
+        
+        // Snappy fade effect is handled by CSS (msgIn animation)
+        bubble.innerText = text;
+        
+        row.appendChild(bubble);
         this.ui.body.appendChild(row);
         this.messages.push({ role, text });
         this.scrollToBottom();
@@ -138,18 +174,24 @@ class Jimmy5Agent {
         this.ui.input.value = '';
         this.addMessage('user', text);
         this.showTyping(true);
+        
         try {
             const res = await fetch(J5_CONFIG.workerUrl, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ messages: this.messages.map(m => ({ role: m.role==='ai'?'assistant':'user', content: m.text })) })
+                body: JSON.stringify({ 
+                    messages: this.messages.map(m => ({ 
+                        role: m.role === 'ai' ? 'assistant' : 'user', 
+                        content: m.text 
+                    })) 
+                })
             });
             const data = await res.json();
             this.showTyping(false);
             if (data.response) this.addMessage('ai', data.response);
         } catch {
             this.showTyping(false);
-            this.addMessage('ai', "Signal disruption. Retrying neural link...");
+            this.addMessage('ai', this.lang === 'ar' ? "عذراً، حدث انقطاع في الاتصال." : "Signal disruption. Retrying neural link...");
         }
     }
 
@@ -161,7 +203,15 @@ class Jimmy5Agent {
             const row = document.createElement('div');
             row.id = 'j5-typing';
             row.className = 'msg-row ai';
-            row.innerHTML = `<div class="msg-bubble"><div class="typing-pulse"><div class="pulse-dot"></div><div class="pulse-dot"></div><div class="pulse-dot"></div></div></div>`;
+            row.innerHTML = `
+                <div class="typing-indicator">
+                    <div class="neural-wave">
+                        <div class="wave-bar"></div>
+                        <div class="wave-bar"></div>
+                        <div class="wave-bar"></div>
+                    </div>
+                    <span style="font-size: 0.8rem; opacity: 0.6;">Jimmy is processing...</span>
+                </div>`;
             this.ui.body.appendChild(row);
             this.scrollToBottom();
         }

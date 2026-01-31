@@ -1,4 +1,29 @@
 document.addEventListener('DOMContentLoaded', () => {
+    const ensureScrollLock = () => {
+        if (window.MGScrollLock) return window.MGScrollLock;
+        const getCount = () => parseInt(document.body.dataset.scrollLockCount || '0', 10) || 0;
+        const setCount = (val) => {
+            document.body.dataset.scrollLockCount = String(val);
+        };
+        const lock = () => {
+            const next = getCount() + 1;
+            setCount(next);
+            if (next === 1) {
+                document.body.style.overflow = 'hidden';
+            }
+        };
+        const unlock = () => {
+            const next = Math.max(0, getCount() - 1);
+            setCount(next);
+            if (next === 0) {
+                document.body.style.overflow = '';
+            }
+        };
+        window.MGScrollLock = { lock, unlock };
+        return window.MGScrollLock;
+    };
+    const scrollLock = ensureScrollLock();
+
     const progressLine = document.getElementById('progressLine');
     let scrollTicking = false;
 
@@ -64,7 +89,7 @@ document.addEventListener('DOMContentLoaded', () => {
         lightboxImg.src = images[currentImageIndex].src;
         lightbox.classList.add('active');
         lightbox.setAttribute('aria-hidden', 'false');
-        document.body.style.overflow = 'hidden';
+        scrollLock.lock();
     };
 
     const closeLightbox = () => {
@@ -74,7 +99,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         lightbox.classList.remove('active');
         lightbox.setAttribute('aria-hidden', 'true');
-        document.body.style.overflow = '';
+        scrollLock.unlock();
     };
 
     const navLightbox = (direction) => {
@@ -133,7 +158,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         contactModal.classList.add('show');
         contactModal.setAttribute('aria-hidden', 'false');
-        document.body.style.overflow = 'hidden';
+        scrollLock.lock();
     };
 
     const hideContactModal = () => {
@@ -143,7 +168,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         contactModal.classList.remove('show');
         contactModal.setAttribute('aria-hidden', 'true');
-        document.body.style.overflow = '';
+        scrollLock.unlock();
     };
 
     contactFab?.addEventListener('click', showContactModal);
@@ -187,7 +212,7 @@ document.addEventListener('DOMContentLoaded', () => {
         videoLightboxDesc.textContent = desc;
 
         videoLightbox.setAttribute('aria-hidden', 'false');
-        document.body.style.overflow = 'hidden';
+        scrollLock.lock();
 
         // Auto play
         lightboxVideo.play().catch(() => {});
@@ -197,7 +222,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!videoLightbox || !lightboxVideo) return;
 
         videoLightbox.setAttribute('aria-hidden', 'true');
-        document.body.style.overflow = '';
+        scrollLock.unlock();
 
         lightboxVideo.pause();
         lightboxVideo.currentTime = 0;

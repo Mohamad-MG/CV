@@ -4,6 +4,31 @@
  */
 
 document.addEventListener('DOMContentLoaded', () => {
+    const ensureScrollLock = () => {
+        if (window.MGScrollLock) return window.MGScrollLock;
+        const getCount = () => parseInt(document.body.dataset.scrollLockCount || '0', 10) || 0;
+        const setCount = (val) => {
+            document.body.dataset.scrollLockCount = String(val);
+        };
+        const lock = () => {
+            const next = getCount() + 1;
+            setCount(next);
+            if (next === 1) {
+                document.body.style.overflow = 'hidden';
+            }
+        };
+        const unlock = () => {
+            const next = Math.max(0, getCount() - 1);
+            setCount(next);
+            if (next === 0) {
+                document.body.style.overflow = '';
+            }
+        };
+        window.MGScrollLock = { lock, unlock };
+        return window.MGScrollLock;
+    };
+    const scrollLock = ensureScrollLock();
+
     // ============================================
     // 3. ANIMATED INDICATOR
     // ============================================
@@ -134,7 +159,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         document.body.classList.toggle('nav-open', Boolean(isOpen));
-        document.body.style.overflow = isOpen ? 'hidden' : '';
+        if (isOpen) {
+            scrollLock.lock();
+        } else {
+            scrollLock.unlock();
+        }
     };
 
     mobileToggle?.addEventListener('click', toggleMobileMenu);
