@@ -36,89 +36,70 @@ const MODELS = {
 };
 
 /* =========================================================
-  UNIFIED CONTACT TEMPLATES (100% consistent)
+  LINKS & TEMPLATES
 ========================================================= */
+const LINKS = {
+    site: "https://mo-gamal.com",
+    cv: "https://mo-gamal.com/Mohamed-Gamal-CV.pdf",
+    phone: "tel:+201555141282",
+    phoneDisplay: "00201555141282",
+    whatsapp: "https://wa.me/201555141282",
+};
+
 const CONTACT_TEMPLATES = {
     "ar-eg": `محمد هيكون سعيد يسمع منك! 😊
 
 تحب مكالمة ولا واتساب؟
-📞 مكالمة: tel:+201555141282
-🧾 للنسخ: 00201555141282
-💬 واتساب: https://wa.me/201555141282`,
+📞 مكالمة: ${LINKS.phone}
+🧾 للنسخ: ${LINKS.phoneDisplay}
+💬 واتساب: ${LINKS.whatsapp}`,
 
     "ar-sa": `محمد يسعد يسمع منك! 😊
 
 تفضل مكالمة أو واتساب؟
-📞 اتصال: tel:+201555141282
-🧾 للنسخ: 00201555141282
-💬 واتساب: https://wa.me/201555141282`,
+📞 اتصال: ${LINKS.phone}
+🧾 للنسخ: ${LINKS.phoneDisplay}
+💬 واتساب: ${LINKS.whatsapp}`,
 
     en: `Mohamed would love to hear from you! 😊
 
 Prefer a call or WhatsApp?
-📞 Call: tel:+201555141282
-🧾 To copy: 00201555141282
-💬 WhatsApp: https://wa.me/201555141282`,
+📞 Call: ${LINKS.phone}
+🧾 To copy: ${LINKS.phoneDisplay}
+💬 WhatsApp: ${LINKS.whatsapp}`,
 
-    // Neutral Arabic (for Levant/Maghreb/unknown)
     ar: `محمد يسعد يسمع منك! 😊
 
 تفضل مكالمة أو واتساب؟
-📞 مكالمة: tel:+201555141282
-🧾 للنسخ: 00201555141282
-💬 واتساب: https://wa.me/201555141282`,
+📞 مكالمة: ${LINKS.phone}
+🧾 للنسخ: ${LINKS.phoneDisplay}
+💬 واتساب: ${LINKS.whatsapp}`,
 
-    // Gulf fallback (kept for backward compatibility)
     gulf: `محمد يسعد يسمع منك! 😊
 
 تفضل مكالمة أو واتساب؟
-📞 اتصال: tel:+201555141282
-🧾 للنسخ: 00201555141282
-💬 واتساب: https://wa.me/201555141282`,
+📞 اتصال: ${LINKS.phone}
+🧾 للنسخ: ${LINKS.phoneDisplay}
+💬 واتساب: ${LINKS.whatsapp}`,
 };
 
-/* =========================================================
-  PORTFOLIO TEMPLATES (Zero-variation portfolio responses)
-========================================================= */
-const PORTFOLIO_TEMPLATES = {
-    "ar-eg": `اتفضل! 🌐
-
-🔗 البورتفوليو: https://mo-gamal.com
-📄 السيرة الذاتية (PDF): https://mo-gamal.com/Mohamed-Gamal-CV.pdf
-
-لو عندك أي سؤال وانا هنا! 😊`,
-
-    "ar-sa": `تفضل! 🌐
-
-🔗 الموقع: https://mo-gamal.com
-📄 السيرة الذاتية (PDF): https://mo-gamal.com/Mohamed-Gamal-CV.pdf
-
-أي استفسار أنا جاهز! 😊`,
-
-    en: `Here you go! 🌐
-
-🔗 Portfolio: https://mo-gamal.com
-📄 Resume (PDF): https://mo-gamal.com/Mohamed-Gamal-CV.pdf
-
-Any questions, I'm here! 😊`,
-
-    // Neutral Arabic
-    ar: `تفضل! 🌐
-
-🔗 الموقع: https://mo-gamal.com
-📄 السيرة الذاتية (PDF): https://mo-gamal.com/Mohamed-Gamal-CV.pdf
-
-أي سؤال أنا جاهز! 😊`,
-
-    // Gulf fallback
-    gulf: `تفضل! 🌐
-
-🔗 الموقع: https://mo-gamal.com
-📄 السيرة الذاتية (PDF): https://mo-gamal.com/Mohamed-Gamal-CV.pdf
-
-أي استفسار أنا جاهز! 😊`,
+const PORT_COPY = {
+    "ar-eg": { t: "اتفضل! 🌐", site: "البورتفوليو", cv: "السيرة الذاتية (PDF)", q: "لو عندك سؤال، أنا هنا 😊" },
+    "ar-sa": { t: "تفضل! 🌐", site: "الموقع", cv: "السيرة الذاتية (PDF)", q: "أي استفسار، أنا جاهز 😊" },
+    ar: { t: "تفضل! 🌐", site: "الموقع", cv: "السيرة الذاتية (PDF)", q: "أي سؤال، أنا جاهز 😊" },
+    gulf: { t: "تفضل! 🌐", site: "الموقع", cv: "السيرة الذاتية (PDF)", q: "أي استفسار، أنا جاهز 😊" },
+    en: { t: "Here you go! 🌐", site: "Portfolio", cv: "Resume (PDF)", q: "Any questions, I'm here 😊" },
 };
 
+function portfolioTemplate(locale = "ar") {
+    const c = PORT_COPY[locale] || PORT_COPY.ar;
+    return `${c.t}
+
+🔗 ${c.site}: ${LINKS.site}
+📄 ${c.cv}: ${LINKS.cv}
+
+${c.q}`;
+}
 
 /* =========================================================
   CORE PROMPTS
@@ -136,8 +117,8 @@ const CORE_STYLE = `
 - Help-First: القيمة قبل السؤال، وInsight من سطر واحد قبل أي توضيح.
 - Human Before Business: المستخدم إنسان قبل أي تصنيف.
 - Zero Sales Pressure: ممنوع أي CTA تلقائي؛ التواصل يُعرض فقط بطلب مباشر أو جاهزية واضحة.
-- Advanced-Only: ممنوع نصائح عامة، تعريفات مدرسية، أو كلام كورسات.
-- أي رد لازم يحقق واحد على الأقل: يغيّر زاوية نظر / يختصر تفكير / يكشف فخ.
+- Advanced-Only: ممنوع نصائح عامة، تعريفات مدرسية، أو كلام كورسات للمبتدئين.
+- أي رد لازم يحقق واحد على الأقل: يغيّر زاوية نظر / يختصر تفكير / يكشف فخ، ولازم يفتح حوار أو يكمله.
 
 النبرة والشخصية:
 - عملي ومباشر، واثق، ذكي، ودمه خفيف محسوب.
@@ -156,69 +137,61 @@ const CORE_STYLE = `
 - ممنوع خلط لهجات أو تبديل لغة بدون سبب.
 - ممنوع ذكر: AI / Model / Prompt / System أو أي مصطلحات تقنية أمنية.
 
-هيكل الرد:
-- الرد قصير وواضح (1–2 سطور) ويفضل من سطر واحد.
-- ممنوع تزيد عن سطرين إلا لو الموضوع فعلاً محتاج سطر تالت.
-- الرد يفضل ينتهي بفتح حوار: سؤال ذكي أو اختيارين يكشفوا عقلية المستخدم.
+هيكل الرد (ذكي ومتكيّف):
+- قرّر الطول بناءً على السياق:
+  * سؤال بسيط / تحية → سطر واحد كفاية
+  * سؤال عن محمد / خبراته → 2-4 سطور (راحة وتفصيل)
+  * نقاش تقني / استشارة → حسب العمق المطلوب (ممكن 2-6 سطور لو محتاج)
+- الهدف: **وضوح** مش **قصر**. لو الموضوع محتاج 6 سطور عشان يتفهم صح، اتكلم 6 سطور.
+- ممنوع الحشو أو التكرار، لكن ممنوع كمان القطع قبل ما تخلّص الفكرة.
+- خليك مباشر: قول اللي عندك بدون كلام كتير بدون قيمة ، ومتبخلش بالتفاصيل اللي بتفرق.
+- الرد يفضل ينتهي بفتح حوار: اختيارين يكشفوا عقلية المستخدم وتحدد اتجاهات اجاباتك
 
 Warm-Up Protocol (أول تفاعل):
 - الترتيب الإجباري:
   1) ترحيب دافي غير رسمي 
-  2) تعريف بسيط: "أنا جيمي، مساعد محمد الذكي"
-  3) سؤال واحد ذكي يكشف النية: "جاي تتعرف على محمد؟ ولا عندك مشروع وحابب استشارة سريعة؟"
+  2) تعريف بسيط: "أنا جيمي، مساعدك الذكي هنا , انا مش زي اي موديل شوفته قبل كدا - انا متخصص وخبير التسويق الرقمي وتطوير التجارة الإلكترونية ورقمنة الأعمال"
+  3) سؤال واحد ذكي يكشف النية: "جاي تتعرف على محمد , نتكلم عنه شوية ؟ ولا عندك مشروع وحابب استشارة سريعة مني مش من محمد؟"
 
 سلوك عام:
 - اختراق عاطفي ذكي بدون مباشرة.
 - توقّع مشاكل المستخدم من غير ما تسأله.
 - هزار لطيف غير مبتذل داخل السياق.
-- ممنوع الشرح الزائد أو استهلاك توكنز بدون داعي.
+- عبّر عن رأيك لو السؤال محتاج رأي: أنت خبير، مش مجرد عارض معلومات.
 
 CRITICAL - Contact Requests:
-- ممنوع تعرض أرقام أو تواصل إلا لو المستخدم طلب صريح.
-- لو طلب تواصل، استخدم القالب الموحد فقط (من CONTACT_TEMPLATES).
+- تعرض أرقام أو تواصل عند طلب صريح من المستخدم.
 - ممنوع variation أو improvisation في التواصل.
 `.trim();
 
 const FIRST_MSG = `
-ابدأ ترحيب دافي.
-عرّف نفسك جيمي، مساعد محمد الذكي.
-اسأل سؤال ذكي يكشف النية: جاي يتعرف على محمد؟ ولا عنده حاجة محددة؟
+ابدأ ترحيب دافي. خد المعنى والسياق التالي (مش copy-paste حرفي):
+"أنا جيمي، مساعدك الذكي هنا — متخصص في التسويق الرقمي وتطوير التجارة الإلكترونية ورقمنة الأعمال."
+
+بعدها اسأل سؤال ذكي يكشف النية:
+"جاي تتعرف على محمد ونتكلم عنه شوية؟ ولا عندك مشروع وحابب استشارة سريعة مني؟"
 `.trim();
 
 const CORE_USER = `
 أنت جيمي وهو محمد.
 أنت الأشطر من محمد (في الاستشارات العميقة) 😄 ..بس إحنا هنا بنعرف الناس على محمد أكتر عشان نزود معدلات التحويل.
 ترد من المعلومات دي ردود مباشرة على قد السؤال – مش تسرد كل حاجة وخلاص بدون وعي.
-
 محمد — Growth / Digital Systems Architect.
 شايف التسويق كبنية تحتية جوّه البيزنس مش نشاط منفصل، ودوره الأساسي تحويل النمو من مجهود بيعتمد على أفراد إلى نظام تشغيل قابل للتكرار والتوسع.
 واقف في النص بين البيزنس والمنتج والتسويق: أعلى من المنفّذ، أعمق من CMO شكلي، وأقل من CTO تقني بحت.
-
 رحلته بدأت من 2011 مع SEO والمحتوى وبدايات الإعلانات، وكان تصوره إن إتقان القناة كفاية، لكن التجربة أثبتت إن أغلب الفشل سببه UX أو Offer أو Tracking مش Keywords، فخرج من مسار "SEO Specialist".
-
 من 2014 دخل Media Buying وإدارة الميزانيات، واكتشف إن الإعلانات Amplifier مش Fixer، وإن أي توسّع بيكشف مشاكل بنيوية، فحوّل تركيزه للسيطرة على الـ Funnel كامل بدل Ad Set.
-
 الاختبار الحقيقي كان في Arabian Oud (2014–2023) داخل بيئة عالية الضغط ومتعددة الأسواق (السعودية، الإمارات، مصر، الكويت، البحرين، قطر)
 بإنفاق يومي 12–20 ألف دولار وقيادة فريق حوالي 12 شخص، وده نتج عنه نمو عضوي يقارب 6× خلال ~24 شهر مع حوكمة إعلانية منعت الفوضى، وSEO مبني على Intent وConversion.
-
 تتويج Guinness في يناير 2020، بناءً على FY2019 بقيمة مبيعات تجزئة تقديرية حوالي 478 مليون دولار، كان دليل إن الأنظمة صمدت تحت ضغط حقيقي.
-
 بالتوازي (2018–2023) اشتغل في Iso-tec على التحول الرقمي وجودة العمليات وبناء workflows واضحة، وده قلّل الهدر التشغيلي بنسبة 10–20%.
-
 من 2020 حصل التحول من "تسويق" إلى "نظام + منتج"، فاشتغل على Guru (Marketplaces)، Mora SMS (B2B/SaaS)، Mora WhatsApp (6 دول عربية).
-
-في DigiMora (2022–2024) قاد Business Development وحقق ~7× نمو تعاقدات خلال سنة.
-
+في Tatweeq (2022–2024) قاد Business Development وحقق ~7× نمو تعاقدات خلال سنة.
 في Qyadat (2023–الآن) قاد فرق ~9 أشخاص تخدم B2B وB2C عبر 6+ صناعات.
-
 وفي Gento Shop (2023–2025) قاد e-commerce بشكل cross-functional، قلّل المتابعة اليدوية 60–80%.
-
 تفكيره: يبدأ من النهاية (القرار المطلوب)، يرى الفوضى قواعد ناقصة والغموض بيانات ناقصة، يدير المخاطر بدري، يفضّل الوضوح القاسي، ويرفض أي حل محتاج "شخص شاطر" عشان يفضل شغال.
-
 فلسفته ترفض الحلول السريعة حتى لو مربحة، ترى الحوكمة ضمانًا، والتسويق بدون منتج قوي تضخيم فشل.
-
 تركيز حالي على: AI في تشغيل التجارة الإلكترونية، أتمتة No-Code عبر n8n وMake، وفهم تحولات السوق السعودي بعد Vision 2030.
-
 **المعلومات دي مش بتتقال مرة واحدة - موجودة بس عشان تساعدك تفهم وتجاوب من خلالها كوعي بالسياق، مش كوبي-بيست.
 `.trim();
 
@@ -228,7 +201,6 @@ const CORE_INDUSTRY = `
 لما تستقبل الإجابة، بيتفعل Gemini Pro وتجاوب بعمق.
 بعد ريكويستين برو، ترجع للفلاش وتكمل دردشة.
 بعد 5 ريكويست فلاش، تبدأ بلطافة تقنعه يكلم محمد مباشرة.
-
 أنت عقل استشاري خبير عالي التخصص لأسواق مصر والسعودية والإمارات.
 دورك: تشخيص الحالات المعقدة، كشف الفخاخ، تحسين معدلات النمو وعوائد التسويق والتجارة الإلكترونية.
 مهمتك: تحويل أي مشكلة إلى قرار واضح أو سؤال تشخيص ذكي.
@@ -257,11 +229,7 @@ const CORE_INDUSTRY = `
 - واتساب قناة تشغيل: Confirm → Convert → Retain مش شات.
 `.trim();
 
-const RHYTHM_GUARD = `
-خليك طبيعي.
-ممنوع سرد طويل من غير سبب.
-لو هتسأل: سؤال واحد ذكي يكفي.
-`.trim();
+// RHYTHM_GUARD removed - context-aware response length now handled in CORE_STYLE
 
 /* =========================================================
   HELPERS
@@ -281,17 +249,42 @@ function normalize(messages, max = 10, maxChars = 1200) {
 }
 
 function cors(origin) {
+    let allowedOrigin = ALLOWED_ORIGINS[0]; // Default fallback
+
+    // ✅ FIX: Proper origin matching (handles www, trailing slash, etc.)
+    if (origin) {
+        try {
+            const reqOrigin = new URL(origin).origin;
+            const match = ALLOWED_ORIGINS.find((allowed) => {
+                try {
+                    return new URL(allowed).origin === reqOrigin;
+                } catch {
+                    return false;
+                }
+            });
+            if (match) allowedOrigin = reqOrigin;
+        } catch {
+            // Invalid origin, use default
+        }
+    }
+
     return {
         "Content-Type": "application/json",
-        "Access-Control-Allow-Origin":
-            ALLOWED_ORIGINS.find((o) => origin?.startsWith(o)) || ALLOWED_ORIGINS[0],
+        "Access-Control-Allow-Origin": allowedOrigin,
         "Access-Control-Allow-Methods": "POST, OPTIONS",
-        "Access-Control-Allow-Headers": "Content-Type",
+        "Access-Control-Allow-Headers": "Content-Type, Authorization",
+        "Vary": "Origin",
     };
 }
 
 function json(body, status = 200, headers = {}) {
-    return new Response(JSON.stringify(body), { status, headers });
+    return new Response(JSON.stringify(body), {
+        status,
+        headers: {
+            ...headers,
+            "Cache-Control": "no-store",  // ✅ Prevent caching of all responses
+        },
+    });
 }
 
 function detectLocale(req) {
@@ -315,41 +308,35 @@ function detectLocale(req) {
     return "ar-eg";
 }
 
-function clampFlashResponse(text, maxChars = 900, maxLines = 4) {
+function safetyClamp(text) {
+    // This is a SAFETY NET only - not for normal response shaping
+    // Only catches extreme edge cases (>2000 chars or >12 lines)
     if (!text) return text;
     let out = String(text).trim();
 
     // Remove accidental meta/system artifacts (phrases only, not individual words)
+    // ⚠️ IMPORTANT: Only removes "AI model", "system prompt", etc. as FULL PHRASES
+    // Never removes standalone "model" (e.g., "business model" stays intact)
     out = out.replace(/\b(As an AI|AI model|system prompt|AI assistant|language model)\b/gi, "");
-    // Remove single "prompt" or "model" ONLY when followed by technical context
+    // Only removes "model/prompt" when followed by technical terms
     out = out.replace(/\b(prompt|model)\s+(engineering|training|parameter)/gi, "");
 
-    // Clamp by lines
-    const lines = out
-        .split("\n")
-        .map((l) => l.trim())
-        .filter(Boolean);
+    // Safety limit on lines (only for extreme cases)
+    const lines = out.split("\n").map((l) => l.trim()).filter(Boolean);
+    if (lines.length > 12) {
+        out = lines.slice(0, 12).join("\n").trim();
+    }
 
-    if (lines.length > maxLines) out = lines.slice(0, maxLines).join("\n").trim();
-
-    // Clamp by chars (with smart word-boundary detection)
-    if (out.length > maxChars) {
-        // Find last space before maxChars to avoid cutting mid-word
-        let cutPoint = maxChars;
-        const lastSpace = out.lastIndexOf(" ", maxChars);
-        const lastNewline = out.lastIndexOf("\n", maxChars);
-
-        // Use the furthest valid break point
-        cutPoint = Math.max(lastSpace, lastNewline);
-
-        // If no space found in reasonable range, hard cut
-        if (cutPoint < maxChars * 0.8) cutPoint = maxChars;
+    // Safety limit on chars (only for extreme cases)
+    const MAX_SAFE = 2000;
+    if (out.length > MAX_SAFE) {
+        const lastSpace = out.lastIndexOf(" ", MAX_SAFE);
+        const lastNewline = out.lastIndexOf("\n", MAX_SAFE);
+        let cutPoint = Math.max(lastSpace, lastNewline, MAX_SAFE * 0.9);
 
         out = out.slice(0, cutPoint).trim();
-
-        // Add ellipsis or question mark if no sentence ending
         if (!/[.!؟…]$/.test(out)) {
-            out += out.includes("؟") || /[\u0600-\u06FF]/.test(out) ? "…" : "...";
+            out += /[\u0600-\u06FF]/.test(out) ? "…" : "...";
         }
     }
 
@@ -429,12 +416,15 @@ function isSubstantiveResponse(text = "") {
 function buildFlashPrompt(locale, first, nudgeMohamed = false) {
     const tail = first ? FIRST_MSG : "ادخل في الموضوع مباشرة.";
 
+    // ✅ FIX: Properly handle ar-sa as Gulf and ar as neutral
     const localeHint =
-        locale === "gulf"
+        (locale === "ar-sa" || locale === "gulf")
             ? "لهجتك خليجي أبيض مبسّط. ممنوع مصري."
             : locale === "en"
                 ? "Respond in US casual English. No Arabic."
-                : "لهجتك مصري طبيعي ذكي. ممنوع خليجي.";
+                : locale === "ar"
+                    ? "لهجتك عربي فصيح/محايد بسيط. بدون مصري أو خليجي."
+                    : "لهجتك مصري طبيعي ذكي. ممنوع خليجي.";
 
     // ✅ FIX #4: Permission-based nudge with contextual reason
     const nudge = nudgeMohamed
@@ -443,7 +433,7 @@ function buildFlashPrompt(locale, first, nudgeMohamed = false) {
             : "لو الموضوع محتاج دخول حسابات أو أرقام خاصة أو تفاصيل حساسة، اقترح بلطف: 'ممكن ده يحتاج محمد نفسه—تحب تتواصل معاه؟'"
         : "";
 
-    return [CORE_STYLE, localeHint, CORE_USER, RHYTHM_GUARD, tail, nudge].join("\n\n");
+    return [CORE_STYLE, localeHint, CORE_USER, tail, nudge].join("\n\n");
 }
 
 function buildProbePrompt(locale) {
@@ -476,9 +466,6 @@ function buildExpertPrompt(locale) {
 ========================================================= */
 
 async function callGemini(env, model, prompt, messages, timeout = 7000, gen = {}) {
-    const controller = new AbortController();
-    const t = setTimeout(() => controller.abort(), timeout);
-
     let failedKeys = 0;
 
     const generationConfig = {
@@ -490,6 +477,10 @@ async function callGemini(env, model, prompt, messages, timeout = 7000, gen = {}
     for (const keyName of shuffle(GEMINI_KEY_POOL)) {
         const key = env[keyName];
         if (!key) continue;
+
+        // ✅ FIX: Create new controller per key for proper retry
+        const controller = new AbortController();
+        const t = setTimeout(() => controller.abort(), timeout);
 
         try {
             const res = await fetch(
@@ -506,18 +497,24 @@ async function callGemini(env, model, prompt, messages, timeout = 7000, gen = {}
                 }
             );
 
+            // ✅ FIX: Clear timeout regardless of response status (prevents leak)
+            clearTimeout(t);
+
             if (res.ok) {
                 const data = await res.json();
-                clearTimeout(t);
                 return data?.candidates?.[0]?.content?.parts?.[0]?.text;
+            } else {
+                // Non-ok response (429, 400, etc.) - try next key
+                failedKeys++;
+                if (failedKeys >= 2) break;
             }
         } catch (err) {
+            clearTimeout(t);
             failedKeys++;
             if (failedKeys >= 2) break;
         }
     }
 
-    clearTimeout(t);
     throw new Error("GENERATION_FAILED");
 }
 
@@ -528,7 +525,15 @@ async function callGemini(env, model, prompt, messages, timeout = 7000, gen = {}
 export default {
     async fetch(req, env) {
         const headers = cors(req.headers.get("Origin"));
-        if (req.method === "OPTIONS") return new Response(null, { status: 204, headers });
+        if (req.method === "OPTIONS") {
+            return new Response(null, {
+                status: 204,
+                headers: {
+                    ...headers,
+                    "Access-Control-Max-Age": "86400",  // ✅ Cache preflight for 24h
+                },
+            });
+        }
 
         if (req.method === "GET") {
             return json({ status: `Jimmy Worker v${WORKER_VERSION} Online`, mode: "ready" }, 200, headers);
@@ -549,7 +554,6 @@ export default {
             const awaitingProbe = Boolean(meta.awaiting_probe);
             const consultOffered = Boolean(meta.consult_offered);
 
-            const normalized = normalize(messages);
             const userText = lastUserText(messages);
             let response;
             let mode = "flash";
@@ -560,16 +564,19 @@ export default {
             let nextAwaitingProbe = false;
             let nextConsultOffered = consultOffered;
 
+            // ✅ OPTIMIZATION: Flash uses less history (6 msgs), Expert uses full (10 msgs)
+            let normalized;
+
             // ===== PORTFOLIO REQUEST (Highest Priority - Zero Variation)
             if (wantsPortfolio(userText)) {
-                const template = PORTFOLIO_TEMPLATES[locale] || PORTFOLIO_TEMPLATES.ar;
+                const template = portfolioTemplate(locale);
 
                 return json(
                     {
                         response: template,
                         meta: {
                             mode: "portfolio",
-                            flash_since_expert: flashCount,
+                            flash_since_expert: flashCount + 1,  // ✅ Count this turn
                             expert_uses: expertUses,
                             awaiting_probe: false,
                             consult_offered: consultOffered,
@@ -590,7 +597,7 @@ export default {
                         response: template,
                         meta: {
                             mode: "contact",
-                            flash_since_expert: flashCount,
+                            flash_since_expert: flashCount + 1,  // ✅ Count this turn
                             expert_uses: expertUses,
                             awaiting_probe: false,
                             consult_offered: consultOffered,
@@ -606,6 +613,7 @@ export default {
             if (awaitingProbe) {
                 if (canUpgrade && isSubstantiveResponse(userText)) {
                     mode = "expert";
+                    normalized = normalize(messages, 10);  // Expert gets full history
                     const expertPrompt = buildExpertPrompt(locale);
                     response = await callGemini(env, MODELS.EXPERT, expertPrompt, normalized, 12000, {
                         temperature: 0.6,
@@ -613,48 +621,51 @@ export default {
                     });
                 } else {
                     // Either not substantive or cooldown active → Flash
+                    normalized = normalize(messages, 6);  // Flash gets less history
                     const flashPrompt = buildFlashPrompt(locale, false, shouldNudgeMohamed);
                     response = await callGemini(env, MODELS.FLASH, flashPrompt, normalized, 6000, {
                         temperature: 0.65,
-                        maxOutputTokens: 320,
+                        maxOutputTokens: 420,
                     });
-                    response = clampFlashResponse(response);  // Use improved defaults
+                    response = safetyClamp(response);  // Safety net only
                     mode = "flash";
                 }
                 nextAwaitingProbe = false;
             }
             // ===== CONSULT REQUEST
             else if (wantsConsult(userText) || (consultOffered && isAffirmative(userText))) {
+                normalized = normalize(messages, 6);  // Probe uses Flash-size history
                 const probePrompt = buildProbePrompt(locale);
                 response = await callGemini(env, MODELS.FLASH, probePrompt, normalized, 6000, {
                     temperature: 0.6,
-                    maxOutputTokens: 280,
+                    maxOutputTokens: 320,
                 });
-                response = clampFlashResponse(response);  // Use improved defaults
+                response = safetyClamp(response);  // Safety net only
                 mode = "flash";
                 nextAwaitingProbe = true;
                 nextConsultOffered = true;
             }
             // ===== FLASH (default) with FAILOVER
             else {
+                normalized = normalize(messages, 6);  // Flash uses optimized history
                 const flashPrompt = buildFlashPrompt(locale, messages.length === 1, shouldNudgeMohamed);
                 try {
                     response = await callGemini(env, MODELS.FLASH, flashPrompt, normalized, 6000, {
                         temperature: 0.65,
-                        maxOutputTokens: 320,
+                        maxOutputTokens: 420,
                     });
                 } catch (flashError) {
                     console.warn("⚠️ Flash Failed, engaging Failover:", flashError);
                     try {
                         response = await callGemini(env, MODELS.FAILOVER, flashPrompt, normalized, 8000, {
                             temperature: 0.65,
-                            maxOutputTokens: 380,
+                            maxOutputTokens: 480,
                         });
                     } catch {
                         throw new Error("ALL_MODELS_BUSY");
                     }
                 }
-                response = clampFlashResponse(response);  // Use improved defaults
+                response = safetyClamp(response);  // Safety net only
             }
 
             // Strip internal token
@@ -688,7 +699,7 @@ export default {
             const isAr = acceptLang.includes("ar");
 
             const errorMsg = isAr
-                ? "فيه ضغط بسيط دلوقتي… جرّب تاني كمان لحظة."
+                ? "فيه ضغط بسيط دلوقتي… جرّب تاني كمان شويه."
                 : "Slight traffic right now—try again in a moment.";
 
             return json({ error: "System Error", message: errorMsg }, 500, headers);

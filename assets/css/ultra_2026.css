@@ -1177,19 +1177,19 @@ h4 {
 .d1 {
   top: -10px;
   right: -20px;
-  animation: floatSmooth 6s ease-in-out infinite;
+  animation: floatSmooth 8s ease-in-out infinite;
 }
 
 .d2 {
   bottom: 60px;
   right: -30px;
-  animation: floatSmooth 7s ease-in-out infinite 1s;
+  animation: floatSmooth 10s ease-in-out infinite 1s;
 }
 
 .d3 {
   top: 40px;
   left: -30px;
-  animation: floatSmooth 8s ease-in-out infinite 0.5s;
+  animation: floatSmooth 9s ease-in-out infinite 0.5s;
 }
 
 @keyframes floatSmooth {
@@ -1197,7 +1197,7 @@ h4 {
     transform: translateY(0);
   }
   50% {
-    transform: translateY(-10px);
+    transform: translateY(-15px);
   }
 }
 /* --- 📜 STORY SECTION (CALM & ELEGANT) --- */
