@@ -685,12 +685,6 @@ h4 {
     }
 }
 
-.blurred-layer,
-.clear-layer,
-.scan-line {
-    display: none;
-}
-
 /* Floating HUD Data Overlays (Clean & Animated) */
 
 .float-data {
