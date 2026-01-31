@@ -226,24 +226,62 @@ class DraggableMarquee {
     }
 }
 
-// --- 4. 3D TILT & SPOTLIGHT EFFECT ---
-const initInteractions = () => {
-    // Spotlight for Stat Cards
-    const statCards = document.querySelectorAll('.stat-card');
-    statCards.forEach(card => {
-        let rafId = null;
-        card.addEventListener('mousemove', (e) => {
-            if (rafId) return;
-            rafId = requestAnimationFrame(() => {
-                const rect = card.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
-                card.style.setProperty('--mouse-x', `${x}px`);
-                card.style.setProperty('--mouse-y', `${y}px`);
-                rafId = null;
-            });
+// --- 4. SPATIAL DEPTH ENGINE (3D & Reflections) ---
+const initSpatialDepth = () => {
+    const glassPanels = document.querySelectorAll('.identity-card, .stat-card, .exp-card, .industry-card, .future-card');
+    const bgVoid = document.querySelector('.bg-void-layer');
+    const bgAmbient = document.querySelector('.bg-ambient-glow');
+
+    window.addEventListener('mousemove', (e) => {
+        const { clientX, clientY } = e;
+        const xPct = (clientX / window.innerWidth - 0.5) * 2; // -1 to 1
+        const yPct = (clientY / window.innerHeight - 0.5) * 2; // -1 to 1
+
+        // A) Deep Parallax (Layers 4)
+        if (bgVoid) {
+            bgVoid.style.transform = `translate3d(${xPct * -15}px, ${yPct * -15}px, -100px) scale(1.1)`;
+        }
+        if (bgAmbient) {
+            bgAmbient.style.transform = `translate3d(${xPct * 30}px, ${yPct * 30}px, -50px)`;
+        }
+
+        // B) Dynamic Glass Reflections (Layer 2)
+        glassPanels.forEach(panel => {
+            const rect = panel.getBoundingClientRect();
+            const px = clientX - rect.left;
+            const py = clientY - rect.top;
+            
+            // Check if mouse is near the panel for reflection effect
+            const dist = Math.sqrt((px - rect.width/2)**2 + (py - rect.height/2)**2);
+            if (dist < 600) {
+                panel.style.setProperty('--reflect-x', `${(px / rect.width) * 100}%`);
+                panel.style.setProperty('--reflect-y', `${(py / rect.height) * 100}%`);
+            }
         });
     });
+};
+
+// --- 4b. LIVE HUD DATA SYSTEM ---
+const initLiveHUD = () => {
+    const ksaEl = document.querySelector('.d1');
+    const egyEl = document.querySelector('.d2');
+    const futureEl = document.querySelector('.d3');
+
+    const updateHUD = () => {
+        // Network Latency Simulation (Actual network API if available)
+        const latency = Math.floor(Math.random() * 20 + 15); // 15-35ms
+        if (ksaEl) ksaEl.innerHTML = `KSA <span style="opacity:0.5; font-size:0.5rem;">${latency}MS</span>`;
+        
+        // Growth Index Simulation
+        const growthIndex = (Math.random() * 0.5 + 9.5).toFixed(2); // 9.5 to 10.0
+        if (egyEl) egyEl.innerHTML = `EGY <span style="opacity:0.5; font-size:0.5rem;">IX_${growthIndex}</span>`;
+        
+        // System Uptime / Status
+        if (futureEl) futureEl.innerHTML = `2026 <span style="opacity:0.5; font-size:0.5rem;">VER_2.8</span>`;
+    };
+
+    setInterval(updateHUD, 3000);
+    updateHUD();
 };
 
 // --- 5. SCROLL REVEAL (Staggered) ---
@@ -418,7 +456,8 @@ document.addEventListener('DOMContentLoaded', () => {
     document.addEventListener('visibilitychange', applyPauseState);
 
     // Interaction
-    initInteractions();
+    initSpatialDepth();
+    initLiveHUD();
     initScrollReveal();
     initVideo();
     initCarousel();

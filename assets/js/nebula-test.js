@@ -22,17 +22,20 @@
 
             // System Config (The 2026 Universe Protocol)
             this.config = {
-                baseSpeed: this.isLowPower ? 0.1 : 0.15, 
-                fallSpeed: this.isLowPower ? 0.25 : 0.35, 
+                baseSpeed: this.isLowPower ? 0.08 : 0.15, 
+                fallSpeed: this.isLowPower ? 0.2 : 0.35, 
                 collisionPadding: 3, 
                 drag: 0.98,
                 recovery: 0.015,
                 downFlowChance: 0.3, 
-                laneWidth: 90 // Balanced lane width for desktop and mobile
+                laneWidth: 90,
+                // Adaptive Pass: 1 pass for mobile/low-power, 2 for desktop
+                physicsPasses: this.isLowPower ? 1 : 2
             };
 
             this.init();
             this.animate = this.animate.bind(this);
+            // Throttle: Skip frames if needed or use RAF
             requestAnimationFrame(this.animate);
 
             window.addEventListener('resize', () => this.handleResize());
@@ -140,8 +143,8 @@
                 this.handleWrap(p);
             });
 
-            const passes = this.isLowPower ? 1 : 2;
-            for (let k = 0; k < passes; k++) {
+            // Adaptive Physics Throttling
+            for (let k = 0; k < this.config.physicsPasses; k++) {
                 for (let i = 0; i < this.particles.length; i++) {
                     for (let j = i + 1; j < this.particles.length; j++) {
                         this.resolveCollision(this.particles[i], this.particles[j]);

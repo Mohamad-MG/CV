@@ -196,21 +196,27 @@ class Jimmy5Agent {
     toggle(open) {
         if (this.isOpen === open) return;
         this.isOpen = open;
-        this.ui.panel.classList.toggle('active', open);
-        this.ui.launcher.classList.toggle('hidden', open);
-        document.body.classList.toggle('ai-open', open);
-        this.ui.launcher.setAttribute('aria-expanded', String(open));
-        this.ui.panel.setAttribute('aria-hidden', String(!open));
+
+        requestAnimationFrame(() => {
+            this.ui.panel.classList.toggle('active', open);
+            this.ui.launcher.classList.toggle('hidden', open);
+            document.body.classList.toggle('ai-open', open);
+            this.ui.launcher.setAttribute('aria-expanded', String(open));
+            this.ui.panel.setAttribute('aria-hidden', String(!open));
+        });
+
         window.dispatchEvent(new CustomEvent('jimmy:toggle', { detail: { open } }));
 
         if (open) {
             this.ui.video.pause();
             if (this.messages.length === 0) {
+                // Sentient timing: Welcome appears just as panel settles
                 setTimeout(() => {
                     this.addMessage('ai', J5_CONFIG.texts[this.lang].welcome);
-                }, 600);
+                }, 350);
             }
-            setTimeout(() => this.ui.input.focus(), 400);
+            // Snappy focus
+            setTimeout(() => this.ui.input.focus(), 250);
         } else {
             this.ui.video.play();
         }
