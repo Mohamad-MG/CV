@@ -5,7 +5,51 @@
 
 // Nebula background handled by assets/js/nebula-background.js
 
-// --- 1. DATA DECRYPT (Matrix Style Reveal) ---
+// --- 1. KINETIC TEXT (Word Reveal Engine) ---
+class KineticText {
+    constructor() {
+        this.elements = document.querySelectorAll('.kinetic-text');
+        this.init();
+    }
+
+    init() {
+        this.elements.forEach(el => {
+            const text = el.innerText.trim();
+            if (!text) return;
+            
+            el.innerHTML = '';
+            el.style.opacity = '1';
+            el.style.visibility = 'visible';
+
+            const words = text.split(/\s+/);
+            words.forEach((word, wordIdx) => {
+                const wordSpan = document.createElement('span');
+                wordSpan.className = 'word';
+                wordSpan.style.display = 'inline-block';
+                wordSpan.style.whiteSpace = 'nowrap';
+                
+                // Grouping characters into words for a cleaner "reveal"
+                word.split('').forEach((char, charIdx) => {
+                    const charSpan = document.createElement('span');
+                    charSpan.className = 'char';
+                    charSpan.innerText = char;
+                    // Calmer delay: 0.02s per char instead of 0.04s, and 0.05s per word
+                    const delay = (wordIdx * 0.05) + (charIdx * 0.02);
+                    charSpan.style.transitionDelay = `${delay}s`;
+                    wordSpan.appendChild(charSpan);
+                });
+
+                el.appendChild(wordSpan);
+                if (wordIdx < words.length - 1) {
+                    const space = document.createTextNode(' ');
+                    el.appendChild(space);
+                }
+            });
+        });
+    }
+}
+
+// --- 1b. DATA DECRYPT (Matrix Style Reveal) ---
 class DataDecrypt {
     constructor() {
         this.scrambleChars = '/>_-\|[]{}*&^%$#@!~';
@@ -66,20 +110,27 @@ class DataDecrypt {
     }
 }
 
-// --- 1b. FLUID LIGHT SWEEP (2026 Motion) ---
+// --- 1b. OPTICAL SWEEP (2026 Kinetic Sync) ---
 class FluidSweep {
     constructor() {
-        this.tagline = document.querySelector('.tagline');
-        if (this.tagline) {
-            // Set data-text for the pseudo-element glow
-            this.tagline.setAttribute('data-text', this.tagline.innerText);
-            this.init(800); // Trigger after a short delay
+        this.mission = document.querySelector('.hero-mission');
+        if (this.mission) {
+            this.init(200); 
         }
     }
 
     init(delay) {
         setTimeout(() => {
-            this.tagline.classList.add('sweep-active');
+            this.mission.classList.add('visible');
+            // Fail-safe: ensure characters are visible if mission is visible
+            const chars = this.mission.querySelectorAll('.char');
+            chars.forEach((char, i) => {
+                setTimeout(() => {
+                    char.style.opacity = '1';
+                    char.style.transform = 'translateY(0) rotateX(0deg)';
+                    char.style.textShadow = '0 0 transparent';
+                }, i * 30 + 500); // Staggered fail-safe
+            });
         }, delay);
     }
 }
@@ -245,6 +296,7 @@ class DraggableMarquee {
 // --- 4. SPATIAL DEPTH ENGINE (3D & Reflections) ---
 const initSpatialDepth = () => {
     const glassPanels = document.querySelectorAll('.identity-card, .stat-card, .exp-card, .industry-card, .future-card');
+    const identityCard = document.querySelector('.identity-card');
     const bgVoid = document.querySelector('.bg-void-layer');
     const bgAmbient = document.querySelector('.bg-ambient-glow');
 
@@ -253,7 +305,7 @@ const initSpatialDepth = () => {
         const xPct = (clientX / window.innerWidth - 0.5) * 2; // -1 to 1
         const yPct = (clientY / window.innerHeight - 0.5) * 2; // -1 to 1
 
-        // A) Deep Parallax (Layers 4)
+        // A) Deep Parallax
         if (bgVoid) {
             bgVoid.style.transform = `translate3d(${xPct * -15}px, ${yPct * -15}px, -100px) scale(1.1)`;
         }
@@ -261,13 +313,12 @@ const initSpatialDepth = () => {
             bgAmbient.style.transform = `translate3d(${xPct * 30}px, ${yPct * 30}px, -50px)`;
         }
 
-        // B) Dynamic Glass Reflections (Layer 2)
+        // B) Dynamic Glass Reflections
         glassPanels.forEach(panel => {
             const rect = panel.getBoundingClientRect();
             const px = clientX - rect.left;
             const py = clientY - rect.top;
 
-            // Check if mouse is near the panel for reflection effect
             const dist = Math.sqrt((px - rect.width / 2) ** 2 + (py - rect.height / 2) ** 2);
             if (dist < 600) {
                 panel.style.setProperty('--reflect-x', `${(px / rect.width) * 100}%`);
@@ -275,6 +326,17 @@ const initSpatialDepth = () => {
             }
         });
     });
+
+    // C) Scroll-Linked Tilt for Identity (Removed for 2026 Stability)
+    /*
+    window.addEventListener('scroll', () => {
+        if (identityCard) {
+            const scrollPct = window.scrollY / window.innerHeight;
+            const rotation = scrollPct * 20; // Max 20deg tilt
+            identityCard.style.transform = `rotateY(${-10 - rotation}deg) rotateX(${5 + rotation/2}deg)`;
+        }
+    }, { passive: true });
+    */
 };
 
 // --- 4b. LIVE HUD DATA SYSTEM ---
@@ -300,6 +362,44 @@ const initLiveHUD = () => {
     updateHUD();
 };
 
+// --- 4c. SMART PULSE ENGINE (Organic Async Rhythm) ---
+class SmartPulseEngine {
+    constructor() {
+        this.paths = document.querySelectorAll('.pulse-path');
+        if (this.paths.length > 0) this.init();
+    }
+
+    init() {
+        this.paths.forEach((path, index) => {
+            // Sequential start to avoid simultaneous burst
+            const initialDelay = index * 1000 + Math.random() * 2000;
+            setTimeout(() => this.runCycle(path), initialDelay);
+        });
+    }
+
+    runCycle(path) {
+        // 1. Clean up previous state
+        path.classList.remove('is-pulsing');
+        path.style.animationDuration = '0s';
+        void path.offsetWidth; // Force hardware reflow
+
+        // 2. Random Speed (6s to 10s for sophisticated but active look)
+        const duration = (6 + Math.random() * 4).toFixed(2);
+        
+        // 3. Re-apply and trigger
+        setTimeout(() => {
+            path.style.animationDuration = `${duration}s`;
+            path.classList.add('is-pulsing');
+            
+            // 4. Schedule next run: Duration + Near-Zero Silence (0.1s to 0.6s)
+            const silence = 100 + Math.random() * 500;
+            const nextRunTime = (parseFloat(duration) * 1000) + silence;
+            
+            setTimeout(() => this.runCycle(path), nextRunTime);
+        }, 50); // Small buffer to ensure class removal is registered
+    }
+}
+
 // --- 5. SCROLL REVEAL (Staggered) ---
 const initScrollReveal = () => {
     const elements = document.querySelectorAll('.reveal, .stagger-item');
@@ -307,9 +407,6 @@ const initScrollReveal = () => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
                 entry.target.classList.add('visible');
-                // Auto-play pulse paths when in view
-                const path = entry.target.querySelector('.pulse-path');
-                if (path) path.style.animationPlayState = 'running';
                 observer.unobserve(entry.target);
             }
         });
@@ -338,25 +435,29 @@ const initVideo = () => {
 
 // --- 7. CAROUSEL INTERACTION (Universal) ---
 const initCarousel = () => {
-    const setupCarousel = (containerId, prevClass, nextClass, indicatorId = null) => {
+    const setupCarousel = (containerId, prevSelector, nextSelector, indicatorId = null) => {
         const container = document.getElementById(containerId);
-        const prevBtn = document.querySelector(`.${prevClass}`);
-        const nextBtn = document.querySelector(`.${nextClass}`);
+        const prevBtn = document.querySelector(prevSelector);
+        const nextBtn = document.querySelector(nextSelector);
         const indicator = indicatorId ? document.getElementById(indicatorId) : null;
 
         if (!container) return;
 
-        const scrollAmount = 340;
+        // Dynamic scroll amount based on card width + gap
+        const getScrollAmount = () => {
+            const card = container.querySelector('.exp-card, .edu-card');
+            return card ? card.offsetWidth + 30 : 350;
+        };
 
         if (nextBtn) {
             nextBtn.addEventListener('click', () => {
-                container.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+                container.scrollBy({ left: getScrollAmount(), behavior: 'smooth' });
             });
         }
 
         if (prevBtn) {
             prevBtn.addEventListener('click', () => {
-                container.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+                container.scrollBy({ left: -getScrollAmount(), behavior: 'smooth' });
             });
         }
 
@@ -372,27 +473,81 @@ const initCarousel = () => {
                     indicator.style.transform = `translate3d(${indicatorPos}px, 0, 0)`;
                 });
             }, { passive: true });
-
-            // Clickable Years Logic
-            const years = indicator.parentElement.querySelectorAll('.scrub-year');
-            years.forEach(year => {
-                year.addEventListener('click', () => {
-                    const targetYear = year.getAttribute('data-target');
-                    const targetCard = container.querySelector(`.exp-card[data-year="${targetYear}"]`);
-                    if (targetCard) {
-                        const scrollPos = targetCard.offsetLeft - (container.clientWidth / 2) + (targetCard.clientWidth / 2);
-                        container.scrollTo({ left: scrollPos, behavior: 'smooth' });
-                    }
-                });
-            });
         }
     };
 
-    // Initialize Experience Carousel
-    setupCarousel('expCarousel', 'prev-btn', 'next-btn', 'scrubIndicator');
+    // Initialize both carousels
+    setupCarousel('expCarousel', '.experience-section .prev-btn', '.experience-section .next-btn', 'scrubIndicator');
+    setupCarousel('eduCarousel', '.education-section .prev-btn', '.education-section .next-btn');
 
-    // Initialize Education Carousel
-    setupCarousel('eduCarousel', 'edu-prev', 'edu-next');
+    // Drag to Scroll Logic
+    const initDragToScroll = () => {
+        const sliders = document.querySelectorAll('.horizontal-scroll');
+        sliders.forEach(slider => {
+            let isDown = false;
+            let startX;
+            let scrollLeft;
+
+            slider.addEventListener('mousedown', (e) => {
+                isDown = true;
+                slider.classList.add('active');
+                startX = e.pageX - slider.offsetLeft;
+                scrollLeft = slider.scrollLeft;
+                // Temporarily disable snap to allow free drag
+                slider.style.scrollSnapType = 'none';
+            });
+
+            slider.addEventListener('mouseleave', () => {
+                isDown = false;
+                slider.style.scrollSnapType = 'x mandatory';
+            });
+
+            slider.addEventListener('mouseup', () => {
+                isDown = false;
+                // Re-enable snap to snap to closest card
+                slider.style.scrollSnapType = 'x mandatory';
+            });
+
+            slider.addEventListener('mousemove', (e) => {
+                if (!isDown) return;
+                e.preventDefault();
+                const x = e.pageX - slider.offsetLeft;
+                const walk = (x - startX) * 2; // Scroll speed multiplier
+                slider.scrollLeft = scrollLeft - walk;
+            });
+        });
+    };
+
+    // Initial Centering Logic (Focus on Arabian Oud for the perfect balance per reference)
+    const centerInitial = () => {
+        const expContainer = document.getElementById('expCarousel');
+        if (expContainer) {
+            const cards = expContainer.querySelectorAll('.exp-card');
+            // Target index 4 (Arabian Oud) to match the image exactly
+            const targetCard = cards.length > 4 ? cards[4] : cards[0];
+            
+            if (targetCard) {
+                const scrollPos = targetCard.offsetLeft - (expContainer.clientWidth / 2) + (targetCard.clientWidth / 2);
+                expContainer.scrollTo({ left: scrollPos, behavior: 'auto' });
+            }
+        }
+
+        // Education Carousel Initial Centering (2nd card)
+        const eduContainer = document.getElementById('eduCarousel');
+        if (eduContainer) {
+            const cards = eduContainer.querySelectorAll('.edu-card');
+            const targetCard = cards.length > 1 ? cards[1] : cards[0];
+            if (targetCard) {
+                const scrollPos = targetCard.offsetLeft - (eduContainer.clientWidth / 2) + (targetCard.clientWidth / 2);
+                eduContainer.scrollTo({ left: scrollPos, behavior: 'auto' });
+            }
+        }
+        
+        initDragToScroll();
+    };
+
+    // Run after a small delay to ensure rendering
+    setTimeout(centerInitial, 100);
 };
 
 // --- 8. STORY INTERACTIVES (Counter + Decrypt) ---
@@ -455,22 +610,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Core Motion
+    new KineticText();
     new DataDecrypt();
     new FluidSweep();
     new IgnitionMetrics();
-
-    // Marquees
-    const marqueeInstances = [];
-    document.querySelectorAll('.marquee-container').forEach(m => marqueeInstances.push(new DraggableMarquee(m)));
-    const applyPauseState = () => {
-        const isPaused = document.body.classList.contains('ai-open') || document.hidden;
-        marqueeInstances.forEach(instance => instance && instance.setPaused(isPaused));
-    };
-    applyPauseState();
-    const bodyObserver = new MutationObserver(applyPauseState);
-    bodyObserver.observe(document.body, { attributes: true, attributeFilter: ['class'] });
-    window.addEventListener('jimmy:toggle', applyPauseState);
-    document.addEventListener('visibilitychange', applyPauseState);
 
     // Interaction
     initSpatialDepth();
@@ -479,4 +622,5 @@ document.addEventListener('DOMContentLoaded', () => {
     initVideo();
     initCarousel();
     initStoryInteractives();
+    new SmartPulseEngine();
 });

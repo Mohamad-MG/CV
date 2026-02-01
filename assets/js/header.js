@@ -83,7 +83,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let normalized = path;
 
         try {
-            normalized = new URL(path, window.location.origin).pathname;
+            normalized = new URL(path, window.location.href).pathname;
         } catch (err) {
             normalized = path;
         }
