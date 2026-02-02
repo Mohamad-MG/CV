@@ -361,41 +361,77 @@ const initCarousel = () => {
     setupCarousel('expCarousel', '.experience-section .prev-btn', '.experience-section .next-btn', 'scrubIndicator');
     setupCarousel('eduCarousel', '.education-section .prev-btn', '.education-section .next-btn');
 
-    // Drag to Scroll Logic
+    // Drag to Scroll Logic with Momentum (Inertia)
     const initDragToScroll = () => {
         const sliders = document.querySelectorAll('.horizontal-scroll');
+        
         sliders.forEach(slider => {
             let isDown = false;
             let startX;
             let scrollLeft;
+            let velX = 0;
+            let momentumID;
+
+            const beginMomentum = () => {
+                momentumID = requestAnimationFrame(momentumLoop);
+            };
+
+            const cancelMomentum = () => {
+                cancelAnimationFrame(momentumID);
+            };
+
+            const momentumLoop = () => {
+                slider.scrollLeft += velX;
+                velX *= 0.95; // Friction
+                if (Math.abs(velX) > 0.5) {
+                    momentumID = requestAnimationFrame(momentumLoop);
+                }
+            };
 
             slider.addEventListener('mousedown', (e) => {
                 isDown = true;
                 slider.classList.add('active');
                 startX = e.pageX - slider.offsetLeft;
                 scrollLeft = slider.scrollLeft;
-                // Temporarily disable snap to allow free drag
+                cancelMomentum();
                 slider.style.scrollSnapType = 'none';
             });
 
             slider.addEventListener('mouseleave', () => {
                 isDown = false;
+                slider.classList.remove('active');
                 slider.style.scrollSnapType = 'x mandatory';
             });
 
             slider.addEventListener('mouseup', () => {
                 isDown = false;
-                // Re-enable snap to snap to closest card
-                slider.style.scrollSnapType = 'x mandatory';
+                slider.classList.remove('active');
+                beginMomentum();
+                // Delay re-enabling snap to allow momentum to finish
+                setTimeout(() => {
+                    if (!isDown) slider.style.scrollSnapType = 'x proximity';
+                }, 500);
             });
 
             slider.addEventListener('mousemove', (e) => {
                 if (!isDown) return;
                 e.preventDefault();
                 const x = e.pageX - slider.offsetLeft;
-                const walk = (x - startX) * 2; // Scroll speed multiplier
+                const walk = (x - startX) * 2;
+                const prevScrollLeft = slider.scrollLeft;
                 slider.scrollLeft = scrollLeft - walk;
+                velX = slider.scrollLeft - prevScrollLeft;
             });
+
+            // Touch Support
+            slider.addEventListener('touchstart', (e) => {
+                cancelMomentum();
+                slider.style.scrollSnapType = 'none';
+            }, { passive: true });
+
+            slider.addEventListener('touchend', () => {
+                slider.style.scrollSnapType = 'x proximity';
+            }, { passive: true });
         });
     };
 

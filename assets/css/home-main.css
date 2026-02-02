@@ -19,8 +19,8 @@
   --color-text-faint: #475569;
 
   /* Typography & Layout */
-  --font-display: 'Space Grotesk', sans-serif;
-  --font-body: 'Outfit', sans-serif;
+  --font-display: 'Unbounded', sans-serif;
+  --font-body: 'Plus Jakarta Sans', sans-serif;
   --container-max: 1400px;
   --section-gap: clamp(40px, 8vh, 80px);
   --ease-smooth: cubic-bezier(0.19, 1, 0.22, 1);
@@ -752,15 +752,15 @@ h4 {
 
 /* --- 📐 KINETIC TYPOGRAPHY (SHARP RGB 2026) --- */
 .tagline {
-  font-family: 'Syne', sans-serif;
-  font-size: clamp(2.5rem, 6.5vw, 4.6rem);
-  line-height: 0.95; /* Tighter line-height */
-  letter-spacing: -0.05em; /* Aggressive tracking */
-  font-weight: 800;
+  font-family: var(--font-display);
+  font-size: clamp(2.2rem, 6vw, 4.2rem); /* Slightly reduced for Unbounded width */
+  line-height: 1.1; /* More breath for Unbounded */
+  letter-spacing: -0.02em; /* Balanced tracking */
+  font-weight: 900;
   color: #fff;
   text-wrap: balance;
   perspective: 1000px;
-  margin-bottom: 32px; /* Adjusted spacing */
+  margin-bottom: 32px;
   opacity: 1;
   visibility: visible;
 }
@@ -1368,7 +1368,7 @@ h4 {
 }
 
 .stat-number {
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: var(--font-display);
   font-size: 2.6rem;
   font-weight: 800;
   color: #fff;
@@ -1446,18 +1446,74 @@ h4 {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 8px 16px; /* Slightly tighter padding */
+  padding: 8px 16px;
   border-radius: 999px;
   background: var(--glass-bg);
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
   border: 1px solid var(--glass-border);
   color: #fff;
-  font-size: 0.75rem; /* Down from 0.85rem */
+  font-size: 0.75rem;
   font-weight: 600;
   letter-spacing: 0.01em;
   white-space: nowrap;
   box-shadow: 0 8px 20px -10px rgba(0, 0, 0, 0.5);
+}
+
+.skill-card {
+  display: inline-flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 24px 32px;
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 700;
+  white-space: nowrap;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  transition: all 0.4s var(--ease-smooth);
+  cursor: grab;
+  user-select: none;
+  min-width: 240px;
+  text-align: center;
+}
+
+.skill-card:active {
+  cursor: grabbing;
+  transform: scale(0.98);
+}
+
+.skill-card:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: var(--color-accent);
+  transform: translateY(-5px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 20px rgba(59, 130, 246, 0.2);
+}
+
+/* Draggable Scroll Container for Skills */
+.skills-carousel {
+  display: flex;
+  gap: 20px;
+  overflow-x: auto;
+  padding: 40px 5vw;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  scroll-snap-type: x proximity;
+  cursor: grab;
+}
+
+.skills-carousel::-webkit-scrollbar {
+  display: none;
+}
+
+.skills-carousel:active {
+  cursor: grabbing;
 }
 
 /* --- 🎞️ EXPERIENCE CAROUSEL (Ultra Polish) --- */

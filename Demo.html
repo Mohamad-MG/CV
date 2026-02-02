@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Font Models Showcase | 2026 Edition</title>
+    
+    <!-- Google Fonts Import -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&family=Inter:wght@400;700&family=Lexend:wght@400;800&family=Outfit:wght@400;800&family=Plus+Jakarta+Sans:wght@400;800&family=Space+Grotesk:wght@400;700&family=Syne:wght@800&family=Unbounded:wght@400;900&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg: #05050a;
+            --glass: rgba(255, 255, 255, 0.03);
+            --border: rgba(255, 255, 255, 0.08);
+            --accent: #3B82F6;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: #fff;
+            margin: 0;
+            padding: 50px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+            align-items: center;
+        }
+
+        .showcase-card {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 40px;
+            width: 100%;
+            max-width: 800px;
+            transition: 0.3s;
+        }
+
+        .showcase-card:hover {
+            border-color: var(--accent);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .label {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--accent);
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        h1 { margin: 0 0 20px 0; }
+        p { margin: 0; opacity: 0.8; line-height: 1.6; }
+
+        /* Model 1: The Impact (Syne + Outfit) */
+        .m1 h1 { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 3.5rem; line-height: 0.95; letter-spacing: -0.05em; }
+        .m1 p { font-family: 'Outfit', sans-serif; font-size: 1.1rem; }
+
+        /* Model 2: The Engineer (Space Grotesk + Inter) */
+        .m2 h1 { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 3.2rem; line-height: 1.1; }
+        .m2 p { font-family: 'Inter', sans-serif; font-size: 1rem; }
+
+        /* Model 3: The Heavy Geometric (Unbounded + Plus Jakarta Sans) */
+        .m3 h1 { font-family: 'Unbounded', sans-serif; font-weight: 900; font-size: 3rem; line-height: 1; letter-spacing: -0.02em; }
+        .m3 p { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1rem; }
+
+        /* Model 4: The Clean Humanist (Lexend + Cairo) */
+        .m4 h1 { font-family: 'Lexend', sans-serif; font-weight: 800; font-size: 3.2rem; line-height: 1.1; }
+        .m4 p { font-family: 'Cairo', sans-serif; font-size: 1.1rem; }
+
+        /* Model 5: The Pure Modern (Outfit + Space Grotesk) */
+        .m5 h1 { font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 3.5rem; line-height: 1; }
+        .m5 p { font-family: 'Space Grotesk', sans-serif; font-size: 1.1rem; }
+
+        .btn-apply {
+            margin-top: 30px;
+            display: inline-block;
+            padding: 10px 20px;
+            border: 1px solid var(--accent);
+            border-radius: 100px;
+            color: #fff;
+            text-decoration: none;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+
+    <div style="text-align: center; margin-bottom: 40px;">
+        <h2 style="font-family: 'Space Grotesk';">2026 Font Identity Models</h2>
+        <p style="font-family: 'Inter';">Choose the combination that best fits the "Growth Systems Architect" brand.</p>
+    </div>
+
+    <!-- Model 1 -->
+    <div class="showcase-card m1">
+        <span class="label">Model 01: The Impact (Syne + Outfit)</span>
+        <h1>I turn marketing into a sustainable growth engine</h1>
+        <p>I started with campaigns — some worked, some didn’t, most didn’t scale. Over time, working across different businesses and markets, one thing became clear: the problem was never the ads.</p>
+    </div>
+
+    <!-- Model 2 -->
+    <div class="showcase-card m2">
+        <span class="label">Model 02: The Tech Strategist (Space Grotesk + Inter)</span>
+        <h1>I turn marketing into a sustainable growth engine</h1>
+        <p>I started with campaigns — some worked, some didn’t, most didn’t scale. Over time, working across different businesses and markets, one thing became clear: the problem was never the ads.</p>
+    </div>
+
+    <!-- Model 3 -->
+    <div class="showcase-card m3">
+        <span class="label">Model 03: The New Luxury (Unbounded + Plus Jakarta)</span>
+        <h1>I turn marketing into a sustainable growth engine</h1>
+        <p>I started with campaigns — some worked, some didn’t, most didn’t scale. Over time, working across different businesses and markets, one thing became clear: the problem was never the ads.</p>
+    </div>
+
+    <!-- Model 4 -->
+    <div class="showcase-card m4">
+        <span class="label">Model 04: The Humanist (Lexend + Cairo)</span>
+        <h1>I turn marketing into a sustainable growth engine</h1>
+        <p>I started with campaigns — some worked, some didn’t, most didn’t scale. Over time, working across different businesses and markets, one thing became clear: the problem was never the ads.</p>
+    </div>
+
+    <!-- Model 5 -->
+    <div class="showcase-card m5">
+        <span class="label">Model 05: The Pure Modern (Outfit + Space Grotesk)</span>
+        <h1>I turn marketing into a sustainable growth engine</h1>
+        <p>I started with campaigns — some worked, some didn’t, most didn’t scale. Over time, working across different businesses and markets, one thing became clear: the problem was never the ads.</p>
+    </div>
+
+</body>
+</html>
