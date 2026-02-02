@@ -5,678 +5,323 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mohamed Gamal | Portfolio</title>
-    <meta name="description" content="Digital Marketing Portfolio - Mohamed Gamal">
+    <meta name="description" content="Digital Marketing Portfolio - Mohamed Gamal. A showcase of ROI-driven campaigns and creative strategies.">
+    
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
-        rel="stylesheet">
-    <link rel="stylesheet" href="../assets/css/theme.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 
+    <!-- Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+
+    <!-- Core Styles (Unified) -->
+    <link rel="stylesheet" href="../assets/css/home-main.css?v=6.0">
+    <link rel="stylesheet" href="../assets/css/jimmy-core.css?v=5.0">
+    <!-- Portfolio Specific Overrides -->
     <link rel="stylesheet" href="../assets/css/portfolio.css">
-    <link rel="stylesheet" href="../assets/css/motion-effects.css">
-    <link rel="stylesheet" href="../assets/css/header.css">
-    <script src="../assets/js/portfolio.js" defer></script>
-    <script src="../assets/js/motion-effects.js" defer></script>
+
+    <!-- Scripts -->
     <script src="../assets/js/header.js" defer></script>
+    <script src="../assets/js/home-main.js?v=2.1" defer></script>
+    <script src="../assets/js/portfolio.js" defer></script>
 </head>
 
 <body>
-    <!-- Premium Header -->
+    <!-- Background Foundation (Nebula System) -->
+    <div class="bg-void-layer"></div>
+    <div class="bg-ambient-glow"></div>
+    <div class="bg-micro-dust"></div>
+    <div class="bg-glass-haze"></div>
+    <div class="bg-vignette"></div>
+
+    <!-- Premium Header (Nav Only) -->
     <header class="site-header">
         <div class="header-container">
-            <!-- Logo/Brand -->
-            <a href="/CV/" class="header-logo">
-                <img src="../assets/images/Eng-logo-mg2.png" alt="Mohamed Gamal Logo" class="logo-img">
-            </a>
-
-            <!-- Navigation -->
-            <nav class="header-nav">
-                <a href="/CV/" class="nav-link">Home</a>
-                <a href="/CV/portfolio/" class="nav-link active">Portfolio</a>
-                <a href="/CV/achievements/" class="nav-link">Achievements</a>
-                <div class="nav-indicator"></div>
+            <nav id="primaryNav" class="header-nav">
+                <a href="../" class="nav-link">Home</a>
+                <a href="./" class="nav-link active">Portfolio</a>
+                <a href="../achievements/" class="nav-link">Achievements</a>
             </nav>
-
-            <!-- Mobile Menu Toggle -->
-            <button class="mobile-menu-toggle" aria-label="Toggle menu">
-                <span></span>
-                <span></span>
-                <span></span>
+            <button class="mobile-menu-toggle" aria-label="Open menu" aria-expanded="false" aria-controls="primaryNav">
+                <i class="ri-menu-3-line"></i>
             </button>
         </div>
     </header>
 
-    <!-- Ambient Background -->
-    <div class="ambient ambient-1"></div>
-    <div class="ambient ambient-2"></div>
+    <main>
+        <!-- Hero Section -->
+        <section class="hero" style="min-height: 60vh; padding-top: 140px;">
+            <div class="hero-orb"></div>
+            <div class="content-wrap content-wrap--wide" style="text-align: center;">
+                <div class="section-header reveal" style="margin: 0 auto; text-align: center;">
+                    <p class="overline" style="justify-content: center;">The Work</p>
+                    <h1 class="tagline kinetic-text" style="font-size: clamp(2.5rem, 5vw, 4rem);">
+                        Results Driven.<br>Visually Crafted.
+                    </h1>
+                </div>
 
-    <!-- Floating Particles -->
-    <div class="particles">
-        <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
-    </div>
-
-    <!-- Progress Line -->
-    <div class="progress-line" id="progressLine"></div>
-
-    <!-- Hero -->
-    <header class="hero">
-        <h1>My Work</h1>
-        <p>Creative campaigns & designs for leading brands</p>
-
-        <div class="stats">
-            <div class="stat">
-                <div class="stat-number">36+</div>
-                <div class="stat-label">Designs</div>
+                <!-- Stats -->
+                <div class="stats-grid reveal" style="justify-content: center; display: flex; gap: 20px; flex-wrap: wrap; margin-top: 40px;">
+                    <div class="stat-card" style="min-width: 200px; flex: 1; max-width: 250px;">
+                        <div class="stat-number">36+</div>
+                        <div class="stat-label">Designs</div>
+                    </div>
+                    <div class="stat-card" style="min-width: 200px; flex: 1; max-width: 250px;">
+                        <div class="stat-number">11+</div>
+                        <div class="stat-label">Reels</div>
+                    </div>
+                    <div class="stat-card" style="min-width: 200px; flex: 1; max-width: 250px;">
+                        <div class="stat-number">20+</div>
+                        <div class="stat-label">Brands</div>
+                    </div>
+                </div>
             </div>
-            <div class="stat">
-                <div class="stat-number">11+</div>
-                <div class="stat-label">Videos</div>
-            </div>
-            <div class="stat">
-                <div class="stat-number">20+</div>
-                <div class="stat-label">Brands</div>
+        </section>
+
+        <!-- Controls -->
+        <div class="content-wrap reveal" style="margin-bottom: 40px; text-align: center;">
+            <div class="portfolio-tabs" style="display: inline-flex; background: var(--glass-bg); padding: 6px; border-radius: 100px; border: 1px solid var(--glass-border);">
+                <button class="tab-btn active" data-tab="images" style="padding: 10px 24px; border-radius: 100px; border: none; background: rgba(255,255,255,0.1); color: #fff; font-weight: 600; cursor: pointer; transition: 0.3s;">Images</button>
+                <button class="tab-btn" data-tab="videos" style="padding: 10px 24px; border-radius: 100px; border: none; background: transparent; color: var(--text-muted); font-weight: 600; cursor: pointer; transition: 0.3s;">Reels</button>
             </div>
         </div>
 
-        <!-- Tab Navigation -->
-        <div class="portfolio-tabs">
-            <button class="tab-btn active" data-tab="images">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <rect x="3" y="3" width="18" height="18" rx="2" />
-                    <circle cx="8.5" cy="8.5" r="1.5" />
-                    <path d="M21 15l-5-5L5 21" />
-                </svg>
-                Images
-            </button>
-            <button class="tab-btn" data-tab="videos">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <polygon points="5 3 19 12 5 21 5 3" />
-                </svg>
-                Reels
-            </button>
-        </div>
-    </header>
+        <!-- Images Gallery -->
+        <section class="gallery-section tab-content" id="imagesSection">
+            <div class="content-wrap content-wrap--wide">
+                <div class="gallery-grid" id="galleryGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 24px;">
+                    
+                    <!-- Gallery Items (Glass Style) -->
+                    <!-- Loop through your original items here, adding 'industry-card' class for the glass effect -->
+                    
+                    <!-- العربية للعود -->
+                    <div class="gallery-item industry-card" style="padding: 0; overflow: hidden; height: 300px; cursor: pointer;">
+                        <img src="https://i.ibb.co/2015sCSk/image.jpg" alt="Arabian Oud" style="width: 100%; height: 100%; object-fit: cover; transition: 0.5s;">
+                        <div class="gallery-overlay" style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.9), transparent); display: flex; flex-direction: column; justify-content: flex-end; padding: 20px; opacity: 0; transition: 0.3s;">
+                            <h4 style="color: #fff; margin: 0;">العربية للعود</h4>
+                            <span style="color: var(--text-muted); font-size: 0.8rem;">E-commerce & Branding</span>
+                        </div>
+                    </div>
 
-    <!-- Images Gallery -->
-    <main class="gallery-section tab-content">
-        <div class="gallery-grid" id="galleryGrid">
-            <!-- العربية للعود - Arabian Oud -->
-            <div class="gallery-item" data-category="ecommerce">
-                <img src="https://i.ibb.co/2015sCSk/image.jpg" alt="Arabian Oud Campaign" loading="lazy">
-                <div class="gallery-overlay">
-                    <h4>العربية للعود</h4>
-                    <span>E-commerce & Branding</span>
-                </div>
-            </div>
+                    <div class="gallery-item industry-card" style="padding: 0; overflow: hidden; height: 300px; cursor: pointer;">
+                        <img src="https://i.ibb.co/bgkCY4zD/image.jpg" alt="Qyadat" style="width: 100%; height: 100%; object-fit: cover; transition: 0.5s;">
+                        <div class="gallery-overlay" style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.9), transparent); display: flex; flex-direction: column; justify-content: flex-end; padding: 20px; opacity: 0; transition: 0.3s;">
+                            <h4 style="color: #fff; margin: 0;">قيادات</h4>
+                            <span style="color: var(--text-muted); font-size: 0.8rem;">B2B Marketing</span>
+                        </div>
+                    </div>
 
-            <!-- قيادات - Qyadat -->
-            <div class="gallery-item" data-category="b2b">
-                <img src="https://i.ibb.co/bgkCY4zD/image.jpg" alt="Qyadat Campaign" loading="lazy">
-                <div class="gallery-overlay">
-                    <h4>قيادات</h4>
-                    <span>B2B Marketing</span>
-                </div>
-            </div>
-            <div class="gallery-item" data-category="b2b">
-                <img src="https://i.ibb.co/Y4dvBhBt/2.jpg" alt="Qyadat Campaign 2" loading="lazy">
-                <div class="gallery-overlay">
-                    <h4>قيادات</h4>
-                    <span>B2B Marketing</span>
-                </div>
-            </div>
-            <div class="gallery-item" data-category="b2b">
-                <img src="https://i.ibb.co/qF5gFVwf/image.jpg" alt="Qyadat Campaign 3" loading="lazy">
-                <div class="gallery-overlay">
-                    <h4>قيادات</h4>
-                    <span>B2B Marketing</span>
-                </div>
-            </div>
+                    <div class="gallery-item industry-card" style="padding: 0; overflow: hidden; height: 300px; cursor: pointer;">
+                        <img src="https://i.ibb.co/Y4dvBhBt/2.jpg" alt="Qyadat 2" style="width: 100%; height: 100%; object-fit: cover; transition: 0.5s;">
+                        <div class="gallery-overlay" style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.9), transparent); display: flex; flex-direction: column; justify-content: flex-end; padding: 20px; opacity: 0; transition: 0.3s;">
+                            <h4 style="color: #fff; margin: 0;">قيادات</h4>
+                            <span style="color: var(--text-muted); font-size: 0.8rem;">B2B Marketing</span>
+                        </div>
+                    </div>
 
+                    <!-- Mora -->
+                    <div class="gallery-item industry-card" style="padding: 0; overflow: hidden; height: 300px; cursor: pointer;">
+                        <img src="https://i.ibb.co/VWzzfDMJ/image.jpg" alt="Mora" style="width: 100%; height: 100%; object-fit: cover; transition: 0.5s;">
+                        <div class="gallery-overlay" style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.9), transparent); display: flex; flex-direction: column; justify-content: flex-end; padding: 20px; opacity: 0; transition: 0.3s;">
+                            <h4 style="color: #fff; margin: 0;">مورا</h4>
+                            <span style="color: var(--text-muted); font-size: 0.8rem;">SaaS Platform</span>
+                        </div>
+                    </div>
 
+                     <!-- Al Hayat -->
+                     <div class="gallery-item industry-card" style="padding: 0; overflow: hidden; height: 300px; cursor: pointer;">
+                        <img src="https://i.ibb.co/tMFQSLDR/image.jpg" alt="Al Hayat" style="width: 100%; height: 100%; object-fit: cover; transition: 0.5s;">
+                        <div class="gallery-overlay" style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.9), transparent); display: flex; flex-direction: column; justify-content: flex-end; padding: 20px; opacity: 0; transition: 0.3s;">
+                            <h4 style="color: #fff; margin: 0;">مستشفيات الحياة</h4>
+                            <span style="color: var(--text-muted); font-size: 0.8rem;">Healthcare</span>
+                        </div>
+                    </div>
 
-            <!-- مورا - Mora -->
-            <div class="gallery-item" data-category="tech">
-                <img src="https://i.ibb.co/VWzzfDMJ/image.jpg" alt="Mora Platform" loading="lazy">
-                <div class="gallery-overlay">
-                    <h4>مورا</h4>
-                    <span>SaaS Platform</span>
-                </div>
-            </div>
+                    <!-- Sarh Schools -->
+                    <div class="gallery-item industry-card" style="padding: 0; overflow: hidden; height: 300px; cursor: pointer;">
+                        <img src="https://i.ibb.co/ynPKwgbW/1.jpg" alt="Sarh Schools" style="width: 100%; height: 100%; object-fit: cover; transition: 0.5s;">
+                        <div class="gallery-overlay" style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.9), transparent); display: flex; flex-direction: column; justify-content: flex-end; padding: 20px; opacity: 0; transition: 0.3s;">
+                            <h4 style="color: #fff; margin: 0;">مدارس صرح المستقبل</h4>
+                            <span style="color: var(--text-muted); font-size: 0.8rem;">Education</span>
+                        </div>
+                    </div>
 
-            <!-- شات مورا - Chat Mora -->
-            <div class="gallery-item" data-category="tech">
-                <img src="https://i.ibb.co/hFjhPhMq/image.jpg" alt="Chat Mora" loading="lazy">
-                <div class="gallery-overlay">
-                    <h4>شات مورا</h4>
-                    <span>WhatsApp Solutions</span>
-                </div>
-            </div>
-            <div class="gallery-item" data-category="tech">
-                <img src="https://i.ibb.co/21VM3nVq/C2C.jpg" alt="Chat Mora 1" loading="lazy">
-                <div class="gallery-overlay">
-                    <h4>شات مورا</h4>
-                    <span>WhatsApp Solutions</span>
-                </div>
-            </div>
+                     <!-- Vinofy -->
+                     <div class="gallery-item industry-card" style="padding: 0; overflow: hidden; height: 300px; cursor: pointer;">
+                        <img src="https://i.ibb.co/1NnHkbJ/image.jpg" alt="Vinofy" style="width: 100%; height: 100%; object-fit: cover; transition: 0.5s;">
+                        <div class="gallery-overlay" style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.9), transparent); display: flex; flex-direction: column; justify-content: flex-end; padding: 20px; opacity: 0; transition: 0.3s;">
+                            <h4 style="color: #fff; margin: 0;">فينوفاي</h4>
+                            <span style="color: var(--text-muted); font-size: 0.8rem;">E-commerce</span>
+                        </div>
+                    </div>
 
-            <!-- مستشفيات الحياة الوطني - Al Hayat National Hospitals -->
-            <div class="gallery-item" data-category="healthcare">
-                <img src="https://i.ibb.co/tMFQSLDR/image.jpg" alt="Al Hayat National Hospitals" loading="lazy">
-                <div class="gallery-overlay">
-                    <h4>مستشفيات الحياة الوطني</h4>
-                    <span>Healthcare Marketing</span>
-                </div>
-            </div>
-            <div class="gallery-item" data-category="healthcare">
-                <img src="https://i.ibb.co/fYWZBZns/image.jpg" alt="Al Hayat National Hospitals 2" loading="lazy">
-                <div class="gallery-overlay">
-                    <h4>مستشفيات الحياة الوطني</h4>
-                    <span>Healthcare Marketing</span>
-                </div>
-            </div>
+                    <!-- Tatweeq -->
+                    <div class="gallery-item industry-card" style="padding: 0; overflow: hidden; height: 300px; cursor: pointer;">
+                        <img src="https://i.ibb.co/6cP7j9Hh/2.jpg" alt="Tatweeq" style="width: 100%; height: 100%; object-fit: cover; transition: 0.5s;">
+                        <div class="gallery-overlay" style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.9), transparent); display: flex; flex-direction: column; justify-content: flex-end; padding: 20px; opacity: 0; transition: 0.3s;">
+                            <h4 style="color: #fff; margin: 0;">تطويق</h4>
+                            <span style="color: var(--text-muted); font-size: 0.8rem;">Branding</span>
+                        </div>
+                    </div>
 
-            <!-- مدارس صرح المستقبل - Sarh Al Mustaqbal Schools -->
-            <div class="gallery-item" data-category="education">
-                <img src="https://i.ibb.co/ynPKwgbW/1.jpg" alt="Sarh Al Mustaqbal Schools" loading="lazy">
-                <div class="gallery-overlay">
-                    <h4>مدارس صرح المستقبل</h4>
-                    <span>Education Sector</span>
-                </div>
-            </div>
-            <div class="gallery-item" data-category="education">
-                <img src="https://i.ibb.co/84sMbWsy/image.jpg" alt="Sarh Al Mustaqbal Schools 1" loading="lazy">
-                <div class="gallery-overlay">
-                    <h4>مدارس صرح المستقبل</h4>
-                    <span>Education Sector</span>
-                </div>
-            </div>
+                    <!-- Huawei -->
+                    <div class="gallery-item industry-card" style="padding: 0; overflow: hidden; height: 300px; cursor: pointer;">
+                        <img src="https://i.ibb.co/FbMwLSJJ/4.jpg" alt="Huawei" style="width: 100%; height: 100%; object-fit: cover; transition: 0.5s;">
+                        <div class="gallery-overlay" style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.9), transparent); display: flex; flex-direction: column; justify-content: flex-end; padding: 20px; opacity: 0; transition: 0.3s;">
+                            <h4 style="color: #fff; margin: 0;">هواوي</h4>
+                            <span style="color: var(--text-muted); font-size: 0.8rem;">Technology</span>
+                        </div>
+                    </div>
 
-            <!-- مدرسة علوم الإرتقاء - Ertiqaa Science School -->
-            <div class="gallery-item" data-category="education">
-                <img src="https://i.ibb.co/S4wDH90s/image.jpg" alt="Ertiqaa Science School" loading="lazy">
-                <div class="gallery-overlay">
-                    <h4>مدرسة علوم الإرتقاء</h4>
-                    <span>Education Sector</span>
+                    <!-- Nokhbat Al Oud -->
+                    <div class="gallery-item industry-card" style="padding: 0; overflow: hidden; height: 300px; cursor: pointer;">
+                        <img src="https://i.ibb.co/sp4x0DqL/1.jpg" alt="Nokhbat Oud" style="width: 100%; height: 100%; object-fit: cover; transition: 0.5s;">
+                        <div class="gallery-overlay" style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.9), transparent); display: flex; flex-direction: column; justify-content: flex-end; padding: 20px; opacity: 0; transition: 0.3s;">
+                            <h4 style="color: #fff; margin: 0;">نخبة العود</h4>
+                            <span style="color: var(--text-muted); font-size: 0.8rem;">Perfumes</span>
+                        </div>
+                    </div>
                 </div>
             </div>
+        </section>
 
-            <!-- الدار السعودية للإستقدام - Saudi Recruitment House -->
-            <div class="gallery-item" data-category="b2b">
-                <img src="https://i.ibb.co/pv3mXYfb/image.jpg" alt="Saudi Recruitment House" loading="lazy">
-                <div class="gallery-overlay">
-                    <h4>الدار السعودية للإستقدام</h4>
-                    <span>Recruitment Services</span>
-                </div>
-            </div>
-            <div class="gallery-item" data-category="b2b">
-                <img src="https://i.ibb.co/zCz0PHb/1.jpg" alt="Saudi Recruitment House 1" loading="lazy">
-                <div class="gallery-overlay">
-                    <h4>الدار السعودية للإستقدام</h4>
-                    <span>Recruitment Services</span>
-                </div>
-            </div>
+        <!-- Video Gallery (Hidden by default) -->
+        <section class="gallery-section tab-content" id="videosSection" style="display: none;">
+            <div class="content-wrap content-wrap--wide">
+                <div class="gallery-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 24px;">
+                    <!-- Video Items -->
+                    <div class="video-item industry-card" data-video-index="0" style="padding: 0; overflow: hidden; height: 400px; cursor: pointer;">
+                        <video src="https://res.cloudinary.com/dnvdj0shd/video/upload/v1769014449/%D8%A7%D9%84%D8%B9%D8%B1%D8%A8%D9%8A%D8%A9_%D9%84%D9%84%D8%B9%D9%88%D8%AF_vqax64.mp4" poster="https://i.ibb.co/ns48zgnt/image.png" style="width: 100%; height: 100%; object-fit: cover;"></video>
+                        <div class="gallery-overlay" style="position: absolute; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center;">
+                            <div style="width: 50px; height: 50px; background: rgba(255,255,255,0.2); backdrop-filter: blur(10px); border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(255,255,255,0.3);">
+                                <i class="ri-play-fill" style="font-size: 24px; color: #fff;"></i>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="video-item industry-card" data-video-index="1" style="padding: 0; overflow: hidden; height: 400px; cursor: pointer;">
+                        <video src="https://res.cloudinary.com/dnvdj0shd/video/upload/v1769014434/%D8%A7%D9%84%D8%B9%D8%B1%D8%A8%D9%8A%D8%A9_%D9%84%D9%84%D8%B9%D9%88%D8%AF1_vzuuqr.mp4" poster="https://i.ibb.co/xqdzmDcy/image.png" style="width: 100%; height: 100%; object-fit: cover;"></video>
+                        <div class="gallery-overlay" style="position: absolute; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center;">
+                             <div style="width: 50px; height: 50px; background: rgba(255,255,255,0.2); backdrop-filter: blur(10px); border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(255,255,255,0.3);">
+                                <i class="ri-play-fill" style="font-size: 24px; color: #fff;"></i>
+                            </div>
+                        </div>
+                    </div>
 
-            <!-- فينوفاي - Vinofy -->
-            <div class="gallery-item" data-category="ecommerce">
-                <img src="https://i.ibb.co/1NnHkbJ/image.jpg" alt="Vinofy" loading="lazy">
-                <div class="gallery-overlay">
-                    <h4>فينوفاي</h4>
-                    <span>E-commerce</span>
-                </div>
-            </div>
-            <div class="gallery-item" data-category="ecommerce">
-                <img src="https://i.ibb.co/HLpFZSyv/image.jpg" alt="Vinofy 1" loading="lazy">
-                <div class="gallery-overlay">
-                    <h4>فينوفاي</h4>
-                    <span>E-commerce</span>
-                </div>
-            </div>
-            <div class="gallery-item" data-category="ecommerce">
-                <img src="https://i.ibb.co/8LJ6p7SP/1.jpg" alt="Vinofy 2" loading="lazy">
-                <div class="gallery-overlay">
-                    <h4>فينوفاي</h4>
-                    <span>E-commerce</span>
-                </div>
-            </div>
+                    <div class="video-item industry-card" data-video-index="5" style="padding: 0; overflow: hidden; height: 400px; cursor: pointer;">
+                        <video src="https://res.cloudinary.com/dnvdj0shd/video/upload/v1769014432/%D9%82%D9%8A%D8%A7%D8%AF%D8%A7%D8%AA_dsvpdh.mp4" poster="https://i.ibb.co/bg78vn6t/7.png" style="width: 100%; height: 100%; object-fit: cover;"></video>
+                        <div class="gallery-overlay" style="position: absolute; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center;">
+                             <div style="width: 50px; height: 50px; background: rgba(255,255,255,0.2); backdrop-filter: blur(10px); border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(255,255,255,0.3);">
+                                <i class="ri-play-fill" style="font-size: 24px; color: #fff;"></i>
+                            </div>
+                        </div>
+                    </div>
 
-            <!-- تطويق - Tatweeq -->
-            <div class="gallery-item" data-category="branding">
-                <img src="https://i.ibb.co/6cP7j9Hh/2.jpg" alt="Tatweeq" loading="lazy">
-                <div class="gallery-overlay">
-                    <h4>تطويق</h4>
-                    <span>Branding</span>
-                </div>
-            </div>
-            <div class="gallery-item" data-category="branding">
-                <img src="https://i.ibb.co/3YdzVdMh/3.jpg" alt="Tatweeq 1" loading="lazy">
-                <div class="gallery-overlay">
-                    <h4>تطويق</h4>
-                    <span>Branding</span>
-                </div>
-            </div>
+                    <div class="video-item industry-card" data-video-index="8" style="padding: 0; overflow: hidden; height: 400px; cursor: pointer;">
+                        <video src="https://res.cloudinary.com/dnvdj0shd/video/upload/v1769014437/%D9%85%D8%AF%D8%A7%D8%B1%D8%B3_%D8%B9%D9%84%D9%88%D9%85_%D8%A7%D9%84%D8%A5%D8%B1%D8%AA%D9%82%D8%A7%D8%A1-1_sk4o4k.mp4" poster="https://i.ibb.co/Zzkbfjbp/2.png" style="width: 100%; height: 100%; object-fit: cover;"></video>
+                        <div class="gallery-overlay" style="position: absolute; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center;">
+                             <div style="width: 50px; height: 50px; background: rgba(255,255,255,0.2); backdrop-filter: blur(10px); border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(255,255,255,0.3);">
+                                <i class="ri-play-fill" style="font-size: 24px; color: #fff;"></i>
+                            </div>
+                        </div>
+                    </div>
 
-            <!-- هواوي - Huawei -->
-            <div class="gallery-item" data-category="tech">
-                <img src="https://i.ibb.co/FbMwLSJJ/4.jpg" alt="Huawei Campaign" loading="lazy">
-                <div class="gallery-overlay">
-                    <h4>هواوي</h4>
-                    <span>Technology</span>
-                </div>
-            </div>
+                    <div class="video-item industry-card" data-video-index="10" style="padding: 0; overflow: hidden; height: 400px; cursor: pointer;">
+                        <video src="https://res.cloudinary.com/dnvdj0shd/video/upload/v1769014431/%D9%88%D9%88%D9%84_%D8%B3%D8%AA%D8%B1%D9%8A%D8%AA_%D8%A7%D9%86%D8%AC%D9%84%D9%8A%D8%B4_a5p0jx.mp4" poster="https://i.ibb.co/DHrPs71K/1.png" style="width: 100%; height: 100%; object-fit: cover;"></video>
+                        <div class="gallery-overlay" style="position: absolute; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center;">
+                             <div style="width: 50px; height: 50px; background: rgba(255,255,255,0.2); backdrop-filter: blur(10px); border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(255,255,255,0.3);">
+                                <i class="ri-play-fill" style="font-size: 24px; color: #fff;"></i>
+                            </div>
+                        </div>
+                    </div>
 
-            <!-- سونوف - Sonof -->
-            <div class="gallery-item" data-category="tech">
-                <img src="https://i.ibb.co/WNG593C4/image.jpg" alt="Sonof" loading="lazy">
-                <div class="gallery-overlay">
-                    <h4>سونوف</h4>
-                    <span>Smart Home</span>
                 </div>
             </div>
+        </section>
 
-            <!-- توليجور - Tolegor -->
-            <div class="gallery-item" data-category="ecommerce">
-                <img src="https://i.ibb.co/HpPLb99d/image.jpg" alt="Tolegor" loading="lazy">
-                <div class="gallery-overlay">
-                    <h4>توليجور</h4>
-                    <span>E-commerce</span>
-                </div>
-            </div>
-
-            <!-- سفرك - Safark -->
-            <div class="gallery-item" data-category="travel">
-                <img src="https://i.ibb.co/TGybkpV/image.jpg" alt="Safark Travel" loading="lazy">
-                <div class="gallery-overlay">
-                    <h4>سفرك</h4>
-                    <span>Travel & Tourism</span>
-                </div>
-            </div>
-
-            <!-- لونا - Luna -->
-            <div class="gallery-item" data-category="ecommerce">
-                <img src="https://i.ibb.co/Kx7HGqKT/image.jpg" alt="Luna" loading="lazy">
-                <div class="gallery-overlay">
-                    <h4>لونا</h4>
-                    <span>E-commerce</span>
-                </div>
-            </div>
-
-            <!-- نخبة العود - Nokhbat Al Oud -->
-            <div class="gallery-item" data-category="ecommerce">
-                <img src="https://i.ibb.co/sp4x0DqL/1.jpg" alt="Nokhbat Al Oud" loading="lazy">
-                <div class="gallery-overlay">
-                    <h4>نخبة العود</h4>
-                    <span>Perfumes & Oud</span>
-                </div>
-            </div>
-
-            <!-- الشماسي للحقائب - Al Shamasi Bags -->
-            <div class="gallery-item" data-category="ecommerce">
-                <img src="https://i.ibb.co/FkChGgmL/image.jpg" alt="Al Shamasi Bags" loading="lazy">
-                <div class="gallery-overlay">
-                    <h4>الشماسي للحقائب</h4>
-                    <span>Fashion & Accessories</span>
-                </div>
-            </div>
-
-            <!-- فاشون - Fashion -->
-            <div class="gallery-item" data-category="ecommerce">
-                <img src="https://i.ibb.co/Y4xSTtLw/image.jpg" alt="Fashion Campaign" loading="lazy">
-                <div class="gallery-overlay">
-                    <h4>فاشون</h4>
-                    <span>Fashion & Lifestyle</span>
-                </div>
-            </div>
-
-            <!-- ان هاوس - In House -->
-            <div class="gallery-item" data-category="branding">
-                <img src="https://i.ibb.co/gLk2LtWw/1.jpg" alt="In House" loading="lazy">
-                <div class="gallery-overlay">
-                    <h4>ان هاوس</h4>
-                    <span>Interior Design</span>
-                </div>
-            </div>
-
-            <!-- الخزائن المتحدة - United Safes -->
-            <div class="gallery-item" data-category="b2b">
-                <img src="https://i.ibb.co/MDkKdBJQ/2.jpg" alt="United Safes" loading="lazy">
-                <div class="gallery-overlay">
-                    <h4>الخزائن المتحدة</h4>
-                    <span>Security Solutions</span>
-                </div>
-            </div>
-
-            <!-- متجر خمسات للإتصالات - Khamsat Telecom -->
-            <div class="gallery-item" data-category="retail">
-                <img src="https://i.ibb.co/DHmWMST7/image.jpg" alt="Khamsat Telecom" loading="lazy">
-                <div class="gallery-overlay">
-                    <h4>متجر خمسات للإتصالات</h4>
-                    <span>Telecom Retail</span>
-                </div>
-            </div>
-
-            <!-- C2C -->
-            <div class="gallery-item" data-category="ecommerce">
-                <img src="https://i.ibb.co/MktJQ87V/2.jpg" alt="C2C Platform" loading="lazy">
-                <div class="gallery-overlay">
-                    <h4>C2C</h4>
-                    <span>Marketplace</span>
-                </div>
-            </div>
-
-            <!-- ديجيمورا - DigiMora -->
-            <div class="gallery-item" data-category="tech">
-                <img src="https://i.ibb.co/jPt8yDXL/3.jpg" alt="DigiMora Campaign" loading="lazy">
-                <div class="gallery-overlay">
-                    <h4>ديجيمورا</h4>
-                    <span>Digital Solutions</span>
-                </div>
-            </div>
-            <div class="gallery-item" data-category="tech">
-                <img src="https://i.ibb.co/67wJ9zkt/image.jpg" alt="DigiMora Campaign 1" loading="lazy">
-                <div class="gallery-overlay">
-                    <h4>ديجيمورا</h4>
-                    <span>Digital Solutions</span>
-                </div>
-            </div>
-            <div class="gallery-item" data-category="tech">
-                <img src="https://i.ibb.co/k6yqT78w/image.jpg" alt="DigiMora Campaign 2" loading="lazy">
-                <div class="gallery-overlay">
-                    <h4>ديجيمورا</h4>
-                    <span>Digital Solutions</span>
-                </div>
-            </div>
-            <div class="gallery-item" data-category="tech">
-                <img src="https://i.ibb.co/gLqZ2RZZ/image.jpg" alt="DigiMora Campaign 3" loading="lazy">
-                <div class="gallery-overlay">
-                    <h4>ديجيمورا</h4>
-                    <span>Digital Solutions</span>
-                </div>
-            </div>
-            <div class="gallery-item" data-category="tech">
-                <img src="https://i.ibb.co/0yS49vJy/1.jpg" alt="DigiMora Campaign 4" loading="lazy">
-                <div class="gallery-overlay">
-                    <h4>ديجيمورا</h4>
-                    <span>Digital Solutions</span>
-                </div>
-            </div>
-        </div>
     </main>
 
-    <!-- Video Gallery Section -->
-    <section class="video-gallery-section tab-content" id="reelsSection" style="display: none;">
-        <div class="video-gallery-grid">
-
-            <!-- Video 1 - Arabian Oud -->
-            <div class="video-item" data-video-index="0">
-                <video src="https://res.cloudinary.com/dnvdj0shd/video/upload/v1769014449/%D8%A7%D9%84%D8%B9%D8%B1%D8%A8%D9%8A%D8%A9_%D9%84%D9%84%D8%B9%D9%88%D8%AF_vqax64.mp4" poster="https://i.ibb.co/ns48zgnt/image.png" preload="none"></video>
-                <div class="video-overlay">
-                    <div class="video-play-icon">
-                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M8 5v14l11-7z" fill="currentColor" />
-                        </svg>
-                    </div>
-                    <div class="video-info">
-                        <h4>العربية للعود</h4>
-                        <span>Arabian Oud Campaign</span>
-                    </div>
-                </div>
+    <!-- Footer (The Dock) -->
+    <footer class="site-footer-2026">
+        <div class="footer-dock content-wrap reveal">
+            <!-- Left: Brand -->
+            <div class="footer-brand">
+                <img src="../assets/images/logo.png" alt="Mohamed Gamal Logo" class="footer-logo-img" loading="lazy">
             </div>
 
-            <!-- Video 2 - Arabian Oud 1 -->
-            <div class="video-item" data-video-index="1">
-                <video src="https://res.cloudinary.com/dnvdj0shd/video/upload/v1769014434/%D8%A7%D9%84%D8%B9%D8%B1%D8%A8%D9%8A%D8%A9_%D9%84%D9%84%D8%B9%D9%88%D8%AF1_vzuuqr.mp4" poster="https://i.ibb.co/xqdzmDcy/image.png" preload="none"></video>
-                <div class="video-overlay">
-                    <div class="video-play-icon">
-                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M8 5v14l11-7z" fill="currentColor" />
-                        </svg>
-                    </div>
-                    <div class="video-info">
-                        <h4>العربية للعود</h4>
-                        <span>Product Launch</span>
-                    </div>
-                </div>
+            <!-- Center: Actions -->
+            <div class="footer-actions">
+                <a href="../" class="dock-link">Home</a>
+                <a href="https://www.linkedin.com/in/mohamadgamal/" target="_blank" rel="noopener" class="dock-link">LinkedIn</a>
+                <a href="https://wa.me/201555141282" target="_blank" rel="noopener" class="dock-link">WhatsApp</a>
             </div>
 
-            <!-- Video 3 - Arabian Oud 2 -->
-            <div class="video-item" data-video-index="2">
-                <video src="https://res.cloudinary.com/dnvdj0shd/video/upload/v1769014439/%D8%A7%D9%84%D8%B9%D8%B1%D8%A8%D9%8A%D8%A9_%D9%84%D9%84%D8%B9%D9%88%D8%AF2_dxn8jq.mp4" poster="https://i.ibb.co/35qJ7XXK/1.png" preload="none"></video>
-                <div class="video-overlay">
-                    <div class="video-play-icon">
-                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M8 5v14l11-7z" fill="currentColor" />
-                        </svg>
-                    </div>
-                    <div class="video-info">
-                        <h4>العربية للعود</h4>
-                        <span>Ramadan Special</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Video 4 - Arabian Oud 3 -->
-            <div class="video-item" data-video-index="3">
-                <video src="https://res.cloudinary.com/dnvdj0shd/video/upload/v1769014433/%D8%A7%D9%84%D8%B9%D8%B1%D8%A8%D9%8A%D8%A9_%D9%84%D9%84%D8%B9%D9%88%D8%AF3_cpnxdn.mp4" poster="https://i.ibb.co/wFPYxqhs/2.png" preload="none"></video>
-                <div class="video-overlay">
-                    <div class="video-play-icon">
-                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M8 5v14l11-7z" fill="currentColor" />
-                        </svg>
-                    </div>
-                    <div class="video-info">
-                        <h4>العربية للعود</h4>
-                        <span>Brand Story</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Video 5 - Arabian Oud 7 -->
-            <div class="video-item" data-video-index="4">
-                <video src="https://res.cloudinary.com/dnvdj0shd/video/upload/v1769014452/%D8%A7%D9%84%D8%B9%D8%B1%D8%A8%D9%8A%D8%A9_%D9%84%D9%84%D8%B9%D9%88%D8%AF7_ttmnrj.mp4" poster="https://i.ibb.co/tTyGNXKd/3.png" preload="none"></video>
-                <div class="video-overlay">
-                    <div class="video-play-icon">
-                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M8 5v14l11-7z" fill="currentColor" />
-                        </svg>
-                    </div>
-                    <div class="video-info">
-                        <h4>العربية للعود</h4>
-                        <span>Retail Campaign</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Video 6 - Qyadat -->
-            <div class="video-item" data-video-index="5">
-                <video src="https://res.cloudinary.com/dnvdj0shd/video/upload/v1769014432/%D9%82%D9%8A%D8%A7%D8%AF%D8%A7%D8%AA_dsvpdh.mp4" poster="https://i.ibb.co/bg78vn6t/7.png" preload="none"></video>
-                <div class="video-overlay">
-                    <div class="video-play-icon">
-                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M8 5v14l11-7z" fill="currentColor" />
-                        </svg>
-                    </div>
-                    <div class="video-info">
-                        <h4>قيادات</h4>
-                        <span>B2B Marketing</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Video 7 - Qyadat 2 -->
-            <div class="video-item" data-video-index="6">
-                <video src="https://res.cloudinary.com/dnvdj0shd/video/upload/v1769014438/%D9%82%D9%8A%D8%A7%D8%AF%D8%A7%D8%AA2_fgfecu.mp4" poster="https://i.ibb.co/Nnk9mGKP/1.png" preload="none"></video>
-                <div class="video-overlay">
-                    <div class="video-play-icon">
-                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M8 5v14l11-7z" fill="currentColor" />
-                        </svg>
-                    </div>
-                    <div class="video-info">
-                        <h4>قيادات</h4>
-                        <span>Services Overview</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Video 8 - Nahj School 1 -->
-            <div class="video-item" data-video-index="7">
-                <video src="https://res.cloudinary.com/dnvdj0shd/video/upload/v1769014433/%D9%81%D9%8A%D8%AF%D9%8A%D9%88_%D9%85%D8%AF%D8%B1%D8%B3%D8%A9_%D9%86%D9%87%D8%AC-1_dbafub.mp4" poster="https://i.ibb.co/77xPmx8/image.png" preload="none"></video>
-                <div class="video-overlay">
-                    <div class="video-play-icon">
-                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M8 5v14l11-7z" fill="currentColor" />
-                        </svg>
-                    </div>
-                    <div class="video-info">
-                        <h4>مدرسة نهج العالمية</h4>
-                        <span>Education</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Video 9 - Ertiqaa School -->
-            <div class="video-item" data-video-index="8">
-                <video src="https://res.cloudinary.com/dnvdj0shd/video/upload/v1769014437/%D9%85%D8%AF%D8%A7%D8%B1%D8%B3_%D8%B9%D9%84%D9%88%D9%85_%D8%A7%D9%84%D8%A5%D8%B1%D8%AA%D9%82%D8%A7%D8%A1-1_sk4o4k.mp4" poster="https://i.ibb.co/Zzkbfjbp/2.png" preload="none"></video>
-                <div class="video-overlay">
-                    <div class="video-play-icon">
-                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M8 5v14l11-7z" fill="currentColor" />
-                        </svg>
-                    </div>
-                    <div class="video-info">
-                        <h4>مدارس علوم الإرتقاء</h4>
-                        <span>School Promo</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Video 10 - Nahj School Full -->
-            <div class="video-item" data-video-index="9">
-                <video src="https://res.cloudinary.com/dnvdj0shd/video/upload/v1769014443/%D9%85%D8%AF%D8%B1%D8%B3%D8%A9_%D9%86%D9%87%D8%AC_%D8%A7%D9%84%D8%B9%D8%A7%D9%84%D9%85%D9%8A%D8%A9-1_uuhdfo.mp4" poster="https://i.ibb.co/PZTtL5Sf/1.png" preload="none"></video>
-                <div class="video-overlay">
-                    <div class="video-play-icon">
-                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M8 5v14l11-7z" fill="currentColor" />
-                        </svg>
-                    </div>
-                    <div class="video-info">
-                        <h4>مدرسة نهج العالمية</h4>
-                        <span>Full Campaign</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Video 11 - Wall Street English -->
-            <div class="video-item" data-video-index="10">
-                <video src="https://res.cloudinary.com/dnvdj0shd/video/upload/v1769014431/%D9%88%D9%88%D9%84_%D8%B3%D8%AA%D8%B1%D9%8A%D8%AA_%D8%A7%D9%86%D8%AC%D9%84%D9%8A%D8%B4_a5p0jx.mp4" poster="https://i.ibb.co/DHrPs71K/1.png" preload="none"></video>
-                <div class="video-overlay">
-                    <div class="video-play-icon">
-                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M8 5v14l11-7z" fill="currentColor" />
-                        </svg>
-                    </div>
-                    <div class="video-info">
-                        <h4>وول ستريت انجليش</h4>
-                        <span>Wall Street English</span>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-    </section>
-
-    <!-- Video Lightbox -->
-    <div class="video-lightbox" id="videoLightbox" aria-hidden="true">
-        <button class="lightbox-close" type="button" aria-label="Close video">✕</button>
-        <button class="lightbox-nav lightbox-prev video-nav-prev" type="button" aria-label="Previous video">←</button>
-        <div class="video-lightbox-content">
-            <video id="lightboxVideo" controls loop playsinline preload="none"></video>
-            <div class="video-lightbox-info">
-                <h3 id="videoLightboxTitle"></h3>
-                <span id="videoLightboxDesc"></span>
-            </div>
-        </div>
-        <button class="lightbox-nav lightbox-next video-nav-next" type="button" aria-label="Next video">→</button>
-    </div>
-
-
-    <!-- Lightbox -->
-    <div class="lightbox" id="lightbox" aria-hidden="true">
-        <button class="lightbox-close" type="button" aria-label="Close image">✕</button>
-        <button class="lightbox-nav lightbox-prev" type="button" aria-label="Previous image">←</button>
-        <div class="lightbox-content">
-            <img src="" alt="Lightbox Image" id="lightboxImg">
-        </div>
-        <button class="lightbox-nav lightbox-next" type="button" aria-label="Next image">→</button>
-    </div>
-
-    <!-- Footer -->
-    <footer class="portfolio-footer">
-        <div class="footer-container">
-            <div class="footer-content">
-                <div class="footer-brand">
-                    <a href="/CV/" class="footer-logo">
-                        <img src="../assets/images/Eng-logo-mg2.png" alt="Mohamed Gamal Logo" class="logo-img">
-                    </a>
-                    <p class="brand-tagline">Digital Growth Architect building scalable systems across the MENA region.</p>
-                </div>
-
-                <div class="footer-nav-group">
-                    <h5 class="footer-title">Explore</h5>
-                    <ul class="footer-links">
-                        <li><a href="/CV/" class="footer-link">Home</a></li>
-                        <li><a href="/CV/portfolio/" class="footer-link">Portfolio</a></li>
-                        <li><a href="/CV/achievements/" class="footer-link">Achievements</a></li>
-                    </ul>
-                </div>
-
-                <div class="footer-nav-group">
-                    <h5 class="footer-title">Connect</h5>
-                    <ul class="footer-links">
-                        <li><a href="https://www.linkedin.com/in/mohamadgamal/" target="_blank" rel="noopener" class="footer-link">LinkedIn</a></li>
-                        <li><a href="https://wa.me/201555141282" target="_blank" rel="noopener" class="footer-link">WhatsApp</a></li>
-                    </ul>
-                </div>
+            <!-- Right: Status -->
+            <div class="footer-status">
+                <span class="status-dot"></span>
+                <span class="status-text">Open for Projects</span>
             </div>
         </div>
     </footer>
 
-    <!-- Contact Floating Button -->
-    <button class="contact-fab" type="button" aria-label="Open contact options">
-        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-            <path
-                d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" />
-        </svg>
-    </button>
-
-    <!-- Contact Modal -->
-    <div class="contact-modal-overlay" id="contactModal" aria-hidden="true">
-        <div class="contact-modal" role="dialog" aria-modal="true" aria-labelledby="contactModalTitle">
-            <button class="modal-close" type="button" aria-label="Close contact options">✕</button>
-            <h3 id="contactModalTitle">Let's Connect with Mohamed</h3>
-            <div class="modal-buttons">
-                <a href="tel:+201555141282" class="modal-btn call">
-                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path
-                            d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56a.977.977 0 00-1.01.24l-1.57 1.97c-2.83-1.35-5.48-3.9-6.89-6.83l1.95-1.66c.27-.28.35-.67.24-1.02-.37-1.11-.56-2.3-.56-3.53 0-.54-.45-.99-.99-.99H4.19C3.65 3 3 3.24 3 3.99 3 13.28 10.73 21 20.01 21c.71 0 .99-.63.99-1.18v-3.45c0-.54-.45-.99-.99-.99z" />
-                    </svg>
-                    Call
-                </a>
-                <a href="https://wa.me/201555141282?text=Hi%20Mohamed,%20I'd%20like%20to%20connect%20with%20you"
-                    target="_blank" rel="noopener" class="modal-btn whatsapp">
-                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path
-                            d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
-                    </svg>
-                    WhatsApp
-                </a>
-            </div>
-        </div>
+    <!-- Lightboxes (Hidden) -->
+    <div id="lightbox" style="display:none; position: fixed; inset: 0; z-index: 2000; background: rgba(0,0,0,0.9); backdrop-filter: blur(10px); align-items: center; justify-content: center;">
+        <img id="lightboxImg" src="" style="max-width: 90%; max-height: 90vh; border-radius: 12px; box-shadow: 0 0 50px rgba(0,0,0,0.5);">
+        <button id="closeLightbox" style="position: absolute; top: 30px; right: 30px; background: none; border: none; color: #fff; font-size: 30px; cursor: pointer;">&times;</button>
     </div>
-</body>
 
+    <!-- Scripts for Interaction -->
+    <script>
+        // Simple Tab Switcher
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                // Remove active class
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.tab-btn').forEach(b => b.style.background = 'transparent');
+                document.querySelectorAll('.tab-btn').forEach(b => b.style.color = 'var(--text-muted)');
+                
+                // Add active class
+                btn.classList.add('active');
+                btn.style.background = 'rgba(255,255,255,0.1)';
+                btn.style.color = '#fff';
+
+                // Show Content
+                const tab = btn.dataset.tab;
+                if(tab === 'images') {
+                    document.getElementById('imagesSection').style.display = 'block';
+                    document.getElementById('videosSection').style.display = 'none';
+                } else {
+                    document.getElementById('imagesSection').style.display = 'none';
+                    document.getElementById('videosSection').style.display = 'block';
+                }
+            });
+        });
+
+        // Hover Effect for Items
+        document.querySelectorAll('.gallery-item').forEach(item => {
+            item.addEventListener('mouseenter', () => {
+                item.querySelector('img').style.transform = 'scale(1.1)';
+                item.querySelector('.gallery-overlay').style.opacity = '1';
+            });
+            item.addEventListener('mouseleave', () => {
+                item.querySelector('img').style.transform = 'scale(1)';
+                item.querySelector('.gallery-overlay').style.opacity = '0';
+            });
+            
+            // Lightbox
+            item.addEventListener('click', () => {
+                const src = item.querySelector('img').src;
+                const lightbox = document.getElementById('lightbox');
+                const lbImg = document.getElementById('lightboxImg');
+                lbImg.src = src;
+                lightbox.style.display = 'flex';
+            });
+        });
+
+        document.getElementById('closeLightbox').addEventListener('click', () => {
+            document.getElementById('lightbox').style.display = 'none';
+        });
+    </script>
+</body>
 </html>
