@@ -472,7 +472,7 @@ h2,
 h3,
 h4 {
   font-family: var(--font-display);
-  font-weight: 700;
+  font-weight: 800; /* Increased from 700 */
   letter-spacing: -0.02em;
   color: var(--accent-primary);
 }
@@ -1386,7 +1386,7 @@ h4 {
 .stat-label {
   font-size: 0.85rem;
   color: #fff;
-  font-weight: 700;
+  font-weight: 500; /* Reduced from 700 */
   margin-bottom: 2px;
   position: relative;
   z-index: 2;
@@ -1462,58 +1462,91 @@ h4 {
 
 .skill-card {
   display: inline-flex;
-  flex-direction: column;
-  justify-content: center;
   align-items: center;
-  padding: 24px 32px;
-  background: var(--glass-bg);
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
-  border: 1px solid var(--glass-border);
-  border-radius: 20px;
+  gap: 16px;
+  padding: 18px 32px;
+  background: rgba(255, 255, 255, 0.02);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 100px; /* Pill shape for 2026 look */
   color: #fff;
   font-family: var(--font-display);
-  font-size: 1.1rem;
-  font-weight: 700;
+  font-size: 0.95rem;
+  font-weight: 500;
   white-space: nowrap;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-  transition: all 0.4s var(--ease-smooth);
-  cursor: grab;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  transition: all 0.5s var(--ease-smooth);
+  cursor: pointer;
   user-select: none;
-  min-width: 240px;
-  text-align: center;
+  position: relative;
+  overflow: hidden;
 }
 
-.skill-card:active {
-  cursor: grabbing;
-  transform: scale(0.98);
+.skill-card i {
+  font-size: 1.2rem;
+  color: var(--color-accent);
+  opacity: 0.8;
+}
+
+/* Glass Sheen Effect */
+.skill-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.05),
+    transparent
+  );
+  transform: skewX(-25deg);
+  transition: 0.5s;
+}
+
+.skill-card:hover::before {
+  left: 150%;
 }
 
 .skill-card:hover {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: var(--color-accent);
-  transform: translateY(-5px);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 20px rgba(59, 130, 246, 0.2);
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(59, 130, 246, 0.3);
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4), 0 0 20px rgba(59, 130, 246, 0.1);
 }
 
-/* Draggable Scroll Container for Skills */
-.skills-carousel {
+/* Skills Marquee System */
+.skills-marquee {
+  width: 100%;
+  overflow: hidden;
+  padding: 40px 0;
+  mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+}
+
+.skills-track {
   display: flex;
-  gap: 20px;
-  overflow-x: auto;
-  padding: 40px 5vw;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-  scroll-snap-type: x proximity;
-  cursor: grab;
+  gap: 24px;
+  width: max-content;
+  animation: skills-scroll 60s linear infinite;
+  padding-left: 24px;
 }
 
-.skills-carousel::-webkit-scrollbar {
-  display: none;
+@keyframes skills-scroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
 }
 
-.skills-carousel:active {
-  cursor: grabbing;
+.skills-marquee:hover .skills-track {
+  animation-play-state: paused;
+}
+
+/* Redefine horizontal-scroll for general use if needed, but marquee handles skills now */
+.skills-carousel {
+  display: none; /* Replaced by marquee for movement */
 }
 
 /* --- 🎞️ EXPERIENCE CAROUSEL (Ultra Polish) --- */
@@ -1663,6 +1696,7 @@ h4 {
 .exp-card h3 {
   font-size: 1.25rem;
   color: #fff;
+  font-weight: 500; /* Added */
   margin-bottom: 8px;
   line-height: 1.2;
 }
@@ -1773,6 +1807,7 @@ h4 {
 
 .industry-card h4 {
   font-size: 1.25rem;
+  font-weight: 500; /* Added */
   margin-bottom: 12px;
 }
 
@@ -1814,6 +1849,7 @@ h4 {
 
 .future-card h3 {
   font-size: 1.2rem;
+  font-weight: 500; /* Added */
   color: #fff;
 }
 
