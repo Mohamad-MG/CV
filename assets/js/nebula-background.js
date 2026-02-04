@@ -19,6 +19,9 @@
                 window.matchMedia('(max-width: 768px)').matches ||
                 (navigator.deviceMemory && navigator.deviceMemory <= 4) ||
                 (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4);
+            this.lastFrameTs = 0;
+            this.minFrameInterval = this.isLowPower ? (1000 / 30) : 0;
+            this.scrollPauseUntil = 0;
 
             // System Config (The 2026 Universe Protocol)
             this.config = {
@@ -30,7 +33,7 @@
                 downFlowChance: 0.3, 
                 laneWidth: 90,
                 // Adaptive Pass: 1 pass for mobile/low-power, 2 for desktop
-                physicsPasses: this.isLowPower ? 1 : 2
+                physicsPasses: this.isLowPower ? 0 : 2
             };
 
             this.init();
@@ -39,6 +42,11 @@
             requestAnimationFrame(this.animate);
 
             window.addEventListener('resize', () => this.handleResize());
+            window.addEventListener('scroll', () => {
+                if (this.isLowPower) {
+                    this.scrollPauseUntil = performance.now() + 120;
+                }
+            }, { passive: true });
             document.addEventListener('visibilitychange', () => {
                 this.isPaused = document.hidden;
             });
@@ -82,9 +90,15 @@
         }
 
         init() {
-            this.signals.forEach((el, index) => {
+            const shuffledSignals = [...this.signals].sort(() => Math.random() - 0.5);
+            const animatedCount = this.isLowPower
+                ? Math.max(8, Math.floor(shuffledSignals.length * 0.6))
+                : shuffledSignals.length;
+
+            shuffledSignals.forEach((el, index) => {
                 const isFalling = Math.random() < this.config.downFlowChance;
                 const radius = this.getRadius(el);
+                const isAnimated = index < animatedCount;
                 
                 Object.assign(el.style, {
                     position: 'absolute',
@@ -104,7 +118,7 @@
                 const baseVy = isFalling ? speed : -speed;
 
                 const particle = {
-                    el, x, y, radius, vx: 0, vy: baseVy, baseVy, mass: radius, active: false, isFalling
+                    el, x, y, radius, vx: 0, vy: baseVy, baseVy, mass: radius, active: false, isFalling, isAnimated
                 };
 
                 this.particles.push(particle);
@@ -112,9 +126,10 @@
                 const activationDelay = 500 + (index * 1400); 
                 
                 setTimeout(() => {
-                    particle.active = true;
+                    particle.active = particle.isAnimated;
                     requestAnimationFrame(() => {
-                        particle.el.style.opacity = '0.2';
+                        particle.el.style.opacity = particle.isAnimated ? '0.2' : '0.08';
+                        particle.el.style.transform = `translate3d(${particle.x - particle.radius}px, ${particle.y - particle.radius}px, 0)`;
                     });
                 }, activationDelay);
             });
@@ -125,11 +140,23 @@
             this.height = window.innerHeight;
         }
 
-        animate() {
+        animate(ts) {
+            const now = typeof ts === 'number' ? ts : performance.now();
             if (this.isPaused || document.body.classList.contains('ai-open')) {
                 requestAnimationFrame(this.animate);
                 return;
             }
+
+            if (this.isLowPower && now < this.scrollPauseUntil) {
+                requestAnimationFrame(this.animate);
+                return;
+            }
+
+            if (this.minFrameInterval && (now - this.lastFrameTs) < this.minFrameInterval) {
+                requestAnimationFrame(this.animate);
+                return;
+            }
+            this.lastFrameTs = now;
 
             this.particles.forEach(p => {
                 if (!p.active) return;
@@ -144,10 +171,12 @@
             });
 
             // Adaptive Physics Throttling
-            for (let k = 0; k < this.config.physicsPasses; k++) {
-                for (let i = 0; i < this.particles.length; i++) {
-                    for (let j = i + 1; j < this.particles.length; j++) {
-                        this.resolveCollision(this.particles[i], this.particles[j]);
+            if (this.config.physicsPasses > 0) {
+                for (let k = 0; k < this.config.physicsPasses; k++) {
+                    for (let i = 0; i < this.particles.length; i++) {
+                        for (let j = i + 1; j < this.particles.length; j++) {
+                            this.resolveCollision(this.particles[i], this.particles[j]);
+                        }
                     }
                 }
             }

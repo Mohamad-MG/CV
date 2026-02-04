@@ -173,7 +173,70 @@ class IgnitionMetrics {
     }
 }
 
-// --- 3. DRAGGABLE MARQUEE (Physics Based) ---
+// --- 3. DYNAMIC MARQUEE ENGINE (2026 Seamless Edition) ---
+const initMarqueeSystem = () => {
+    const tracks = document.querySelectorAll('.skills-track, .marquee-track');
+
+    const parseDurationToSeconds = (durationValue) => {
+        if (!durationValue) return 0;
+        const firstValue = durationValue.split(',')[0].trim();
+        if (firstValue.endsWith('ms')) {
+            return parseFloat(firstValue) / 1000;
+        }
+        if (firstValue.endsWith('s')) {
+            return parseFloat(firstValue);
+        }
+        return parseFloat(firstValue) || 0;
+    };
+
+    const isAlreadyDuplicated = (track) => {
+        const children = Array.from(track.children);
+        if (children.length < 2 || children.length % 2 !== 0) {
+            return false;
+        }
+
+        const half = children.length / 2;
+        for (let i = 0; i < half; i += 1) {
+            if (children[i].outerHTML !== children[i + half].outerHTML) {
+                return false;
+            }
+        }
+
+        return true;
+    };
+
+    tracks.forEach(track => {
+        if (track.getAttribute('data-duplicated')) return;
+
+        // 1. Duplicate only when markup is not already manually mirrored
+        if (!isAlreadyDuplicated(track)) {
+            track.innerHTML += track.innerHTML;
+        }
+
+        track.setAttribute('data-duplicated', 'true');
+
+        // 2. Calculate speed using CSS baseline to keep section ratios stable
+        const container = track.closest('.marquee-container, .skills-marquee');
+        const computedDuration = parseDurationToSeconds(window.getComputedStyle(track).animationDuration);
+        const baseDuration = computedDuration || 40;
+        const speedAttr = container ? parseFloat(container.dataset.speed) : 1;
+
+        // 3. Add subtle randomization (±10%) to make multiple rows look organic
+        const randomFactor = 0.9 + Math.random() * 0.2;
+        const speed = (Math.abs(speedAttr) || 1) * randomFactor;
+
+        // 4. Apply final duration and direction
+        const finalDuration = baseDuration / speed;
+        track.style.animationDuration = `${finalDuration}s`;
+        track.style.display = 'flex';
+        track.style.willChange = 'transform';
+
+        if (speedAttr < 0) {
+            track.style.animationDirection = 'reverse';
+        }
+    });
+};
+
 // --- 4. SPATIAL DEPTH ENGINE (3D & Reflections) ---
 const initSpatialDepth = () => {
     const glassPanels = document.querySelectorAll('.identity-card, .stat-card, .exp-card, .industry-card, .future-card');
@@ -300,6 +363,19 @@ const initScrollReveal = () => {
 const initVideo = () => {
     const video = document.getElementById('showreelVideo');
     if (!video) return;
+
+    const isMobileLite =
+        document.body.classList.contains('mobile-lite') ||
+        window.matchMedia('(max-width: 768px)').matches ||
+        window.matchMedia('(pointer: coarse)').matches;
+
+    // Keep the section visual, but avoid continuous decoding/render on phones.
+    if (isMobileLite) {
+        video.autoplay = false;
+        video.removeAttribute('autoplay');
+        video.preload = 'none';
+        video.pause();
+    }
 
     const videoContainer = video.closest('.ipad-mockup');
     const togglePlayback = () => {
@@ -518,10 +594,17 @@ const initStoryInteractives = () => {
 
 // --- MASTER BOOT ---
 document.addEventListener('DOMContentLoaded', () => {
-    const isLowPowerDevice =
+    const isMobileViewport =
         window.matchMedia("(max-width: 768px)").matches ||
+        window.matchMedia("(pointer: coarse)").matches;
+    const isLowPowerDevice =
+        isMobileViewport ||
         (navigator.deviceMemory && navigator.deviceMemory <= 4) ||
         (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4);
+
+    if (isMobileViewport) {
+        document.body.classList.add('mobile-lite');
+    }
     if (isLowPowerDevice) {
         document.body.classList.add('perf-lite');
     }
@@ -533,11 +616,16 @@ document.addEventListener('DOMContentLoaded', () => {
     new IgnitionMetrics();
 
     // Interaction
-    initSpatialDepth();
-    initLiveHUD();
+    if (!isMobileViewport) {
+        initSpatialDepth();
+        initLiveHUD();
+    }
     initScrollReveal();
+    initMarqueeSystem();
     initVideo();
     initCarousel();
     initStoryInteractives();
-    new SmartPulseEngine();
+    if (!isMobileViewport) {
+        new SmartPulseEngine();
+    }
 });

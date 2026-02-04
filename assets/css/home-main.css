@@ -1402,34 +1402,33 @@ h4 {
   opacity: 0.8;
 }
 
-/* --- 🛠️ MARQUEE (Clean Alpha Fade) --- */
+/* --- 🛠️ MARQUEE (Ultra Smooth Fade) --- */
 .marquee-container {
-  padding: 30px 0;
-  background: transparent; /* Removed solid dark gradient */
-  mask-image: linear-gradient(90deg, transparent, black 15%, black 85%, transparent);
-  -webkit-mask-image: linear-gradient(90deg, transparent, black 15%, black 85%, transparent);
+  padding: 12px 0; /* Reduced from 40px for tighter layout */
+  background: transparent;
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 10%,
+    black 90%,
+    transparent
+  );
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 10%,
+    black 90%,
+    transparent
+  );
   overflow: hidden;
 }
 
 .marquee-track {
   display: flex;
-  gap: 80px;
+  gap: 60px; /* Reduced gap slightly for density */
   width: max-content;
   will-change: transform;
-  animation: marquee-scroll 40s linear infinite; /* Smooth continuous loop */
-}
-
-@keyframes marquee-scroll {
-  0% {
-    transform: translate3d(0, 0, 0);
-  }
-  100% {
-    transform: translate3d(-50%, 0, 0); /* Moves half the tripled content */
-  }
-}
-
-.marquee-container:hover .marquee-track {
-  animation-play-state: paused; /* Sophisticated pause on hover */
+  animation: marquee-scroll 40s linear infinite;
 }
 
 .client-item {
@@ -1465,82 +1464,89 @@ h4 {
   align-items: center;
   gap: 16px;
   padding: 18px 32px;
-  background: rgba(255, 255, 255, 0.02);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  border-radius: 100px; /* Pill shape for 2026 look */
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  border-radius: 100px;
   color: #fff;
   font-family: var(--font-display);
-  font-size: 0.95rem;
-  font-weight: 500;
+  font-size: 0.9rem;
+  font-weight: 400;
   white-space: nowrap;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-  transition: all 0.5s var(--ease-smooth);
+  box-shadow: var(--glass-shadow);
+  transition: all 0.6s var(--ease-smooth);
   cursor: pointer;
   user-select: none;
   position: relative;
   overflow: hidden;
+  will-change: transform, border-color;
 }
 
 .skill-card i {
   font-size: 1.2rem;
   color: var(--color-accent);
   opacity: 0.8;
+  transition: transform 0.4s var(--ease-smooth);
 }
 
-/* Glass Sheen Effect */
-.skill-card::before {
+/* Glass Sheen Effect - Refined */
+.skill-card::after {
   content: '';
   position: absolute;
-  top: 0;
-  left: -100%;
-  width: 50%;
-  height: 100%;
+  inset: 0;
   background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(255, 255, 255, 0.05),
-    transparent
+    110deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.03) 45%,
+    rgba(255, 255, 255, 0.08) 50%,
+    rgba(255, 255, 255, 0.03) 55%,
+    transparent 100%
   );
-  transform: skewX(-25deg);
-  transition: 0.5s;
+  transform: translateX(-100%);
+  transition: transform 0.8s var(--ease-smooth);
 }
 
-.skill-card:hover::before {
-  left: 150%;
+.skill-card:hover::after {
+  transform: translateX(100%);
 }
 
 .skill-card:hover {
-  background: rgba(255, 255, 255, 0.06);
-  border-color: rgba(59, 130, 246, 0.3);
-  transform: translateY(-3px) scale(1.02);
-  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4), 0 0 20px rgba(59, 130, 246, 0.1);
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(59, 130, 246, 0.5);
+  transform: translateY(-5px) scale(1.03);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), 0 0 25px rgba(59, 130, 246, 0.2);
+}
+
+.skill-card:hover i {
+  transform: rotate(12deg) scale(1.1);
 }
 
 /* Skills Marquee System */
 .skills-marquee {
   width: 100%;
   overflow: hidden;
-  padding: 40px 0;
+  padding: 60px 0;
   mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
   -webkit-mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+  position: relative;
 }
 
 .skills-track {
   display: flex;
-  gap: 24px;
+  gap: 32px;
   width: max-content;
-  animation: skills-scroll 60s linear infinite;
-  padding-left: 24px;
+  animation: marquee-scroll 40s linear infinite;
+  will-change: transform;
 }
 
-@keyframes skills-scroll {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
+@keyframes marquee-scroll {
+  0% { transform: translate3d(0, 0, 0); }
+  100% { transform: translate3d(-50%, 0, 0); }
 }
 
-.skills-marquee:hover .skills-track {
+.skills-marquee:hover .skills-track,
+.marquee-container:hover .marquee-track {
   animation-play-state: paused;
 }
 
@@ -1831,31 +1837,62 @@ h4 {
   box-shadow: var(--glass-shadow);
 }
 
-/* --- 🔮 FUTURE CARDS --- */
+/* --- 🔮 FUTURE CARDS (Ultra Modern 2026) --- */
 .future-card {
-  min-width: 300px;
-  height: 200px;
+  min-width: 320px;
+  height: 220px;
   background: var(--glass-bg);
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
   border: 1px solid var(--glass-border);
   box-shadow: var(--glass-shadow);
-  border-radius: 16px;
+  border-radius: 24px;
   padding: 32px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  transition: all 0.6s var(--ease-smooth);
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.future-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    600px circle at var(--reflect-x, 50%) var(--reflect-y, 50%),
+    rgba(255, 255, 255, 0.08),
+    transparent 40%
+  );
+  opacity: 0;
+  transition: opacity 0.5s;
+  pointer-events: none;
+}
+
+.future-card:hover::before {
+  opacity: 1;
+}
+
+.future-card:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.2);
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.7);
 }
 
 .future-card h3 {
-  font-size: 1.2rem;
-  font-weight: 500; /* Added */
+  font-size: 1.25rem;
+  font-weight: 500;
   color: #fff;
+  line-height: 1.4;
+  font-family: var(--font-display);
 }
 
 .card-icon {
-  color: var(--highlight);
-  opacity: 0.8;
+  color: var(--color-accent);
+  opacity: 0.9;
 }
 
 /* --- 🦶 FOOTER (THE DOCK) --- */
@@ -2153,6 +2190,30 @@ h4 {
   }
 }
 
+/* --- 📱 MOBILE LITE TIER (Keep Identity, reduce per-frame cost) --- */
+@media (max-width: 768px) {
+  body.mobile-lite section {
+    content-visibility: auto;
+    contain-intrinsic-size: 1px 900px;
+  }
+
+  body.mobile-lite .identity-card,
+  body.mobile-lite .stat-card,
+  body.mobile-lite .exp-card,
+  body.mobile-lite .industry-card,
+  body.mobile-lite .future-card,
+  body.mobile-lite .ipad-mockup {
+    backdrop-filter: blur(12px) saturate(125%);
+    -webkit-backdrop-filter: blur(12px) saturate(125%);
+    box-shadow: 0 12px 26px -12px rgba(0, 0, 0, 0.6);
+  }
+
+  body.mobile-lite .marquee-track,
+  body.mobile-lite .skills-track {
+    animation-duration: 55s !important;
+  }
+}
+
 /* --- ⚙️ PERF LITE (Lower blur/shadows for smoother frames) --- */
 body.perf-lite .header-container {
   backdrop-filter: blur(10px);
@@ -2186,6 +2247,15 @@ body.perf-lite .tool-tag,
 body.perf-lite .ipad-mockup {
   backdrop-filter: blur(8px) saturate(120%);
   -webkit-backdrop-filter: blur(8px) saturate(120%);
+}
+
+@media (prefers-reduced-motion: reduce) and (max-width: 768px) {
+  .signal,
+  .marquee-track,
+  .skills-track,
+  .pulse-path {
+    animation: none !important;
+  }
 }
 
 /* --- 📱 MOBILE NAV --- */

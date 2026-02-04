@@ -23,7 +23,7 @@
 
     <!-- Scripts -->
     <script src="../assets/js/header.js" defer></script>
-    <script src="../assets/js/home-main.js?v=2.1" defer></script>
+    <script src="../assets/js/page-effects.js?v=1.0" defer></script>
     <script src="../assets/js/portfolio.js" defer></script>
 </head>
 
@@ -39,9 +39,9 @@
     <header class="site-header">
         <div class="header-container">
             <nav id="primaryNav" class="header-nav">
-                <a href="../" class="nav-link">Home</a>
-                <a href="./" class="nav-link active">Portfolio</a>
-                <a href="../achievements/" class="nav-link">Achievements</a>
+                <a href="../index.html" class="nav-link">Home</a>
+                <a href="./index.html" class="nav-link active">Portfolio</a>
+                <a href="../achievements/index.html" class="nav-link">Achievements</a>
             </nav>
             <button class="mobile-menu-toggle" aria-label="Open menu" aria-expanded="false" aria-controls="primaryNav">
                 <i class="ri-menu-3-line"></i>
@@ -82,8 +82,8 @@
         <!-- Controls -->
         <div class="content-wrap reveal" style="margin-bottom: 40px; text-align: center;">
             <div class="portfolio-tabs" style="display: inline-flex; background: var(--glass-bg); padding: 6px; border-radius: 100px; border: 1px solid var(--glass-border);">
-                <button class="tab-btn active" data-tab="images" style="padding: 10px 24px; border-radius: 100px; border: none; background: rgba(255,255,255,0.1); color: #fff; font-weight: 600; cursor: pointer; transition: 0.3s;">Images</button>
-                <button class="tab-btn" data-tab="videos" style="padding: 10px 24px; border-radius: 100px; border: none; background: transparent; color: var(--text-muted); font-weight: 600; cursor: pointer; transition: 0.3s;">Reels</button>
+                <button class="tab-btn active" type="button" data-tab="images">Images</button>
+                <button class="tab-btn" type="button" data-tab="videos">Reels</button>
             </div>
         </div>
 
@@ -91,95 +91,278 @@
         <section class="gallery-section tab-content" id="imagesSection">
             <div class="content-wrap content-wrap--wide">
                 <div class="gallery-grid" id="galleryGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 24px;">
-                    
-                    <!-- Gallery Items (Glass Style) -->
-                    <!-- Loop through your original items here, adding 'industry-card' class for the glass effect -->
-                    
-                    <!-- العربية للعود -->
-                    <div class="gallery-item industry-card" style="padding: 0; overflow: hidden; height: 300px; cursor: pointer;">
-                        <img src="https://i.ibb.co/2015sCSk/image.jpg" alt="Arabian Oud" style="width: 100%; height: 100%; object-fit: cover; transition: 0.5s;">
-                        <div class="gallery-overlay" style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.9), transparent); display: flex; flex-direction: column; justify-content: flex-end; padding: 20px; opacity: 0; transition: 0.3s;">
-                            <h4 style="color: #fff; margin: 0;">العربية للعود</h4>
-                            <span style="color: var(--text-muted); font-size: 0.8rem;">E-commerce & Branding</span>
+                    <div class="gallery-item" data-category="ecommerce">
+                        <img src="new/العربية للعود.JPG" alt="Arabian Oud Campaign" loading="lazy">
+                        <div class="gallery-overlay">
+                            <h4>العربية للعود</h4>
+                            <span>E-commerce & Branding</span>
                         </div>
                     </div>
 
-                    <div class="gallery-item industry-card" style="padding: 0; overflow: hidden; height: 300px; cursor: pointer;">
-                        <img src="https://i.ibb.co/bgkCY4zD/image.jpg" alt="Qyadat" style="width: 100%; height: 100%; object-fit: cover; transition: 0.5s;">
-                        <div class="gallery-overlay" style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.9), transparent); display: flex; flex-direction: column; justify-content: flex-end; padding: 20px; opacity: 0; transition: 0.3s;">
-                            <h4 style="color: #fff; margin: 0;">قيادات</h4>
-                            <span style="color: var(--text-muted); font-size: 0.8rem;">B2B Marketing</span>
+                    <div class="gallery-item" data-category="b2b">
+                        <img src="new/قيادات.JPG" alt="Qyadat Campaign" loading="lazy">
+                        <div class="gallery-overlay">
+                            <h4>قيادات</h4>
+                            <span>B2B Marketing</span>
+                        </div>
+                    </div>
+                    <div class="gallery-item" data-category="b2b">
+                        <img src="new/قيادات2.JPG" alt="Qyadat Campaign 2" loading="lazy">
+                        <div class="gallery-overlay">
+                            <h4>قيادات</h4>
+                            <span>B2B Marketing</span>
+                        </div>
+                    </div>
+                    <div class="gallery-item" data-category="b2b">
+                        <img src="new/قيادات3.JPG" alt="Qyadat Campaign 3" loading="lazy">
+                        <div class="gallery-overlay">
+                            <h4>قيادات</h4>
+                            <span>B2B Marketing</span>
                         </div>
                     </div>
 
-                    <div class="gallery-item industry-card" style="padding: 0; overflow: hidden; height: 300px; cursor: pointer;">
-                        <img src="https://i.ibb.co/Y4dvBhBt/2.jpg" alt="Qyadat 2" style="width: 100%; height: 100%; object-fit: cover; transition: 0.5s;">
-                        <div class="gallery-overlay" style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.9), transparent); display: flex; flex-direction: column; justify-content: flex-end; padding: 20px; opacity: 0; transition: 0.3s;">
-                            <h4 style="color: #fff; margin: 0;">قيادات</h4>
-                            <span style="color: var(--text-muted); font-size: 0.8rem;">B2B Marketing</span>
+                    <div class="gallery-item" data-category="tech">
+                        <img src="new/ديجيمورا.JPG" alt="DigiMora Campaign" loading="lazy">
+                        <div class="gallery-overlay">
+                            <h4>ديجيمورا</h4>
+                            <span>Digital Solutions</span>
+                        </div>
+                    </div>
+                    <div class="gallery-item" data-category="tech">
+                        <img src="new/ديجيمورا 1.JPG" alt="DigiMora Campaign 1" loading="lazy">
+                        <div class="gallery-overlay">
+                            <h4>ديجيمورا</h4>
+                            <span>Digital Solutions</span>
+                        </div>
+                    </div>
+                    <div class="gallery-item" data-category="tech">
+                        <img src="new/ديجيمورا 2.JPG" alt="DigiMora Campaign 2" loading="lazy">
+                        <div class="gallery-overlay">
+                            <h4>ديجيمورا</h4>
+                            <span>Digital Solutions</span>
+                        </div>
+                    </div>
+                    <div class="gallery-item" data-category="tech">
+                        <img src="new/ديجيمورا 3.JPG" alt="DigiMora Campaign 3" loading="lazy">
+                        <div class="gallery-overlay">
+                            <h4>ديجيمورا</h4>
+                            <span>Digital Solutions</span>
+                        </div>
+                    </div>
+                    <div class="gallery-item" data-category="tech">
+                        <img src="new/ديجيمورا 4.JPG" alt="DigiMora Campaign 4" loading="lazy">
+                        <div class="gallery-overlay">
+                            <h4>ديجيمورا</h4>
+                            <span>Digital Solutions</span>
                         </div>
                     </div>
 
-                    <!-- Mora -->
-                    <div class="gallery-item industry-card" style="padding: 0; overflow: hidden; height: 300px; cursor: pointer;">
-                        <img src="https://i.ibb.co/VWzzfDMJ/image.jpg" alt="Mora" style="width: 100%; height: 100%; object-fit: cover; transition: 0.5s;">
-                        <div class="gallery-overlay" style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.9), transparent); display: flex; flex-direction: column; justify-content: flex-end; padding: 20px; opacity: 0; transition: 0.3s;">
-                            <h4 style="color: #fff; margin: 0;">مورا</h4>
-                            <span style="color: var(--text-muted); font-size: 0.8rem;">SaaS Platform</span>
+                    <div class="gallery-item" data-category="tech">
+                        <img src="new/مورا.JPG" alt="Mora Platform" loading="lazy">
+                        <div class="gallery-overlay">
+                            <h4>مورا</h4>
+                            <span>SaaS Platform</span>
                         </div>
                     </div>
 
-                     <!-- Al Hayat -->
-                     <div class="gallery-item industry-card" style="padding: 0; overflow: hidden; height: 300px; cursor: pointer;">
-                        <img src="https://i.ibb.co/tMFQSLDR/image.jpg" alt="Al Hayat" style="width: 100%; height: 100%; object-fit: cover; transition: 0.5s;">
-                        <div class="gallery-overlay" style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.9), transparent); display: flex; flex-direction: column; justify-content: flex-end; padding: 20px; opacity: 0; transition: 0.3s;">
-                            <h4 style="color: #fff; margin: 0;">مستشفيات الحياة</h4>
-                            <span style="color: var(--text-muted); font-size: 0.8rem;">Healthcare</span>
+                    <div class="gallery-item" data-category="tech">
+                        <img src="new/شات مورا.JPG" alt="Chat Mora" loading="lazy">
+                        <div class="gallery-overlay">
+                            <h4>شات مورا</h4>
+                            <span>WhatsApp Solutions</span>
+                        </div>
+                    </div>
+                    <div class="gallery-item" data-category="tech">
+                        <img src="new/شات مورا1.JPG" alt="Chat Mora 1" loading="lazy">
+                        <div class="gallery-overlay">
+                            <h4>شات مورا</h4>
+                            <span>WhatsApp Solutions</span>
                         </div>
                     </div>
 
-                    <!-- Sarh Schools -->
-                    <div class="gallery-item industry-card" style="padding: 0; overflow: hidden; height: 300px; cursor: pointer;">
-                        <img src="https://i.ibb.co/ynPKwgbW/1.jpg" alt="Sarh Schools" style="width: 100%; height: 100%; object-fit: cover; transition: 0.5s;">
-                        <div class="gallery-overlay" style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.9), transparent); display: flex; flex-direction: column; justify-content: flex-end; padding: 20px; opacity: 0; transition: 0.3s;">
-                            <h4 style="color: #fff; margin: 0;">مدارس صرح المستقبل</h4>
-                            <span style="color: var(--text-muted); font-size: 0.8rem;">Education</span>
+                    <div class="gallery-item" data-category="healthcare">
+                        <img src="new/مستشفيات الحياه الوطني.JPG" alt="Al Hayat National Hospitals" loading="lazy">
+                        <div class="gallery-overlay">
+                            <h4>مستشفيات الحياة الوطني</h4>
+                            <span>Healthcare Marketing</span>
+                        </div>
+                    </div>
+                    <div class="gallery-item" data-category="healthcare">
+                        <img src="new/مستشفيات الحياه الوطني2.JPG" alt="Al Hayat National Hospitals 2" loading="lazy">
+                        <div class="gallery-overlay">
+                            <h4>مستشفيات الحياة الوطني</h4>
+                            <span>Healthcare Marketing</span>
                         </div>
                     </div>
 
-                     <!-- Vinofy -->
-                     <div class="gallery-item industry-card" style="padding: 0; overflow: hidden; height: 300px; cursor: pointer;">
-                        <img src="https://i.ibb.co/1NnHkbJ/image.jpg" alt="Vinofy" style="width: 100%; height: 100%; object-fit: cover; transition: 0.5s;">
-                        <div class="gallery-overlay" style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.9), transparent); display: flex; flex-direction: column; justify-content: flex-end; padding: 20px; opacity: 0; transition: 0.3s;">
-                            <h4 style="color: #fff; margin: 0;">فينوفاي</h4>
-                            <span style="color: var(--text-muted); font-size: 0.8rem;">E-commerce</span>
+                    <div class="gallery-item" data-category="education">
+                        <img src="new/مدارس صرح المستقبل.JPG" alt="Sarh Al Mustaqbal Schools" loading="lazy">
+                        <div class="gallery-overlay">
+                            <h4>مدارس صرح المستقبل</h4>
+                            <span>Education Sector</span>
+                        </div>
+                    </div>
+                    <div class="gallery-item" data-category="education">
+                        <img src="new/مدارس صرح المستقبل1.JPG" alt="Sarh Al Mustaqbal Schools 1" loading="lazy">
+                        <div class="gallery-overlay">
+                            <h4>مدارس صرح المستقبل</h4>
+                            <span>Education Sector</span>
                         </div>
                     </div>
 
-                    <!-- Tatweeq -->
-                    <div class="gallery-item industry-card" style="padding: 0; overflow: hidden; height: 300px; cursor: pointer;">
-                        <img src="https://i.ibb.co/6cP7j9Hh/2.jpg" alt="Tatweeq" style="width: 100%; height: 100%; object-fit: cover; transition: 0.5s;">
-                        <div class="gallery-overlay" style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.9), transparent); display: flex; flex-direction: column; justify-content: flex-end; padding: 20px; opacity: 0; transition: 0.3s;">
-                            <h4 style="color: #fff; margin: 0;">تطويق</h4>
-                            <span style="color: var(--text-muted); font-size: 0.8rem;">Branding</span>
+                    <div class="gallery-item" data-category="education">
+                        <img src="new/مدرسة علوم الإرتقاء.JPG" alt="Ertiqaa Science School" loading="lazy">
+                        <div class="gallery-overlay">
+                            <h4>مدرسة علوم الإرتقاء</h4>
+                            <span>Education Sector</span>
                         </div>
                     </div>
 
-                    <!-- Huawei -->
-                    <div class="gallery-item industry-card" style="padding: 0; overflow: hidden; height: 300px; cursor: pointer;">
-                        <img src="https://i.ibb.co/FbMwLSJJ/4.jpg" alt="Huawei" style="width: 100%; height: 100%; object-fit: cover; transition: 0.5s;">
-                        <div class="gallery-overlay" style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.9), transparent); display: flex; flex-direction: column; justify-content: flex-end; padding: 20px; opacity: 0; transition: 0.3s;">
-                            <h4 style="color: #fff; margin: 0;">هواوي</h4>
-                            <span style="color: var(--text-muted); font-size: 0.8rem;">Technology</span>
+                    <div class="gallery-item" data-category="b2b">
+                        <img src="new/الدار السعودية للإستقدام.JPG" alt="Saudi Recruitment House" loading="lazy">
+                        <div class="gallery-overlay">
+                            <h4>الدار السعودية للإستقدام</h4>
+                            <span>Recruitment Services</span>
+                        </div>
+                    </div>
+                    <div class="gallery-item" data-category="b2b">
+                        <img src="new/الدار السعودية للإستقدام1.JPG" alt="Saudi Recruitment House 1" loading="lazy">
+                        <div class="gallery-overlay">
+                            <h4>الدار السعودية للإستقدام</h4>
+                            <span>Recruitment Services</span>
                         </div>
                     </div>
 
-                    <!-- Nokhbat Al Oud -->
-                    <div class="gallery-item industry-card" style="padding: 0; overflow: hidden; height: 300px; cursor: pointer;">
-                        <img src="https://i.ibb.co/sp4x0DqL/1.jpg" alt="Nokhbat Oud" style="width: 100%; height: 100%; object-fit: cover; transition: 0.5s;">
-                        <div class="gallery-overlay" style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.9), transparent); display: flex; flex-direction: column; justify-content: flex-end; padding: 20px; opacity: 0; transition: 0.3s;">
-                            <h4 style="color: #fff; margin: 0;">نخبة العود</h4>
-                            <span style="color: var(--text-muted); font-size: 0.8rem;">Perfumes</span>
+                    <div class="gallery-item" data-category="ecommerce">
+                        <img src="new/فينوفاي.JPG" alt="Vinofy" loading="lazy">
+                        <div class="gallery-overlay">
+                            <h4>فينوفاي</h4>
+                            <span>E-commerce</span>
+                        </div>
+                    </div>
+                    <div class="gallery-item" data-category="ecommerce">
+                        <img src="new/فينوفاي1.JPG" alt="Vinofy 1" loading="lazy">
+                        <div class="gallery-overlay">
+                            <h4>فينوفاي</h4>
+                            <span>E-commerce</span>
+                        </div>
+                    </div>
+                    <div class="gallery-item" data-category="ecommerce">
+                        <img src="new/فينوفاي2.JPG" alt="Vinofy 2" loading="lazy">
+                        <div class="gallery-overlay">
+                            <h4>فينوفاي</h4>
+                            <span>E-commerce</span>
+                        </div>
+                    </div>
+
+                    <div class="gallery-item" data-category="branding">
+                        <img src="new/تطويق.JPG" alt="Tatweeq" loading="lazy">
+                        <div class="gallery-overlay">
+                            <h4>تطويق</h4>
+                            <span>Branding</span>
+                        </div>
+                    </div>
+                    <div class="gallery-item" data-category="branding">
+                        <img src="new/تطويق 1.JPG" alt="Tatweeq 1" loading="lazy">
+                        <div class="gallery-overlay">
+                            <h4>تطويق</h4>
+                            <span>Branding</span>
+                        </div>
+                    </div>
+
+                    <div class="gallery-item" data-category="tech">
+                        <img src="new/هواوي.JPG" alt="Huawei Campaign" loading="lazy">
+                        <div class="gallery-overlay">
+                            <h4>هواوي</h4>
+                            <span>Technology</span>
+                        </div>
+                    </div>
+
+                    <div class="gallery-item" data-category="tech">
+                        <img src="new/سونوف.JPG" alt="Sonof" loading="lazy">
+                        <div class="gallery-overlay">
+                            <h4>سونوف</h4>
+                            <span>Smart Home</span>
+                        </div>
+                    </div>
+
+                    <div class="gallery-item" data-category="ecommerce">
+                        <img src="new/توليجور.JPG" alt="Tolegor" loading="lazy">
+                        <div class="gallery-overlay">
+                            <h4>توليجور</h4>
+                            <span>E-commerce</span>
+                        </div>
+                    </div>
+
+                    <div class="gallery-item" data-category="travel">
+                        <img src="new/سفرك.JPG" alt="Safark Travel" loading="lazy">
+                        <div class="gallery-overlay">
+                            <h4>سفرك</h4>
+                            <span>Travel & Tourism</span>
+                        </div>
+                    </div>
+
+                    <div class="gallery-item" data-category="ecommerce">
+                        <img src="new/لونا.JPG" alt="Luna" loading="lazy">
+                        <div class="gallery-overlay">
+                            <h4>لونا</h4>
+                            <span>E-commerce</span>
+                        </div>
+                    </div>
+
+                    <div class="gallery-item" data-category="ecommerce">
+                        <img src="new/نخبة العود.JPG" alt="Nokhbat Al Oud" loading="lazy">
+                        <div class="gallery-overlay">
+                            <h4>نخبة العود</h4>
+                            <span>Perfumes & Oud</span>
+                        </div>
+                    </div>
+
+                    <div class="gallery-item" data-category="ecommerce">
+                        <img src="new/الشماسي للحقائب.JPG" alt="Al Shamasi Bags" loading="lazy">
+                        <div class="gallery-overlay">
+                            <h4>الشماسي للحقائب</h4>
+                            <span>Fashion & Accessories</span>
+                        </div>
+                    </div>
+
+                    <div class="gallery-item" data-category="ecommerce">
+                        <img src="new/فاشون.JPG" alt="Fashion Campaign" loading="lazy">
+                        <div class="gallery-overlay">
+                            <h4>فاشون</h4>
+                            <span>Fashion & Lifestyle</span>
+                        </div>
+                    </div>
+
+                    <div class="gallery-item" data-category="branding">
+                        <img src="new/ان هاوس.JPG" alt="In House" loading="lazy">
+                        <div class="gallery-overlay">
+                            <h4>ان هاوس</h4>
+                            <span>Interior Design</span>
+                        </div>
+                    </div>
+
+                    <div class="gallery-item" data-category="b2b">
+                        <img src="new/الخزائن المتحدة.JPG" alt="United Safes" loading="lazy">
+                        <div class="gallery-overlay">
+                            <h4>الخزائن المتحدة</h4>
+                            <span>Security Solutions</span>
+                        </div>
+                    </div>
+
+                    <div class="gallery-item" data-category="retail">
+                        <img src="new/متجر خمسات للإتصالات.JPG" alt="Khamsat Telecom" loading="lazy">
+                        <div class="gallery-overlay">
+                            <h4>متجر خمسات للإتصالات</h4>
+                            <span>Telecom Retail</span>
+                        </div>
+                    </div>
+
+                    <div class="gallery-item" data-category="ecommerce">
+                        <img src="new/C2C.JPG" alt="C2C Platform" loading="lazy">
+                        <div class="gallery-overlay">
+                            <h4>C2C</h4>
+                            <span>Marketplace</span>
                         </div>
                     </div>
                 </div>
@@ -191,7 +374,7 @@
             <div class="content-wrap content-wrap--wide">
                 <div class="gallery-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 24px;">
                     <!-- Video Items -->
-                    <div class="video-item industry-card" data-video-index="0" style="padding: 0; overflow: hidden; height: 400px; cursor: pointer;">
+                    <div class="video-item industry-card" data-video-index="0" data-title="Arabian Oud Reel" data-desc="Performance creative reel" style="padding: 0; overflow: hidden; height: 400px; cursor: pointer;">
                         <video src="https://res.cloudinary.com/dnvdj0shd/video/upload/v1769014449/%D8%A7%D9%84%D8%B9%D8%B1%D8%A8%D9%8A%D8%A9_%D9%84%D9%84%D8%B9%D9%88%D8%AF_vqax64.mp4" poster="https://i.ibb.co/ns48zgnt/image.png" style="width: 100%; height: 100%; object-fit: cover;"></video>
                         <div class="gallery-overlay" style="position: absolute; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center;">
                             <div style="width: 50px; height: 50px; background: rgba(255,255,255,0.2); backdrop-filter: blur(10px); border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(255,255,255,0.3);">
@@ -200,7 +383,7 @@
                         </div>
                     </div>
                     
-                    <div class="video-item industry-card" data-video-index="1" style="padding: 0; overflow: hidden; height: 400px; cursor: pointer;">
+                    <div class="video-item industry-card" data-video-index="1" data-title="Arabian Oud Reel 2" data-desc="Creative variation" style="padding: 0; overflow: hidden; height: 400px; cursor: pointer;">
                         <video src="https://res.cloudinary.com/dnvdj0shd/video/upload/v1769014434/%D8%A7%D9%84%D8%B9%D8%B1%D8%A8%D9%8A%D8%A9_%D9%84%D9%84%D8%B9%D9%88%D8%AF1_vzuuqr.mp4" poster="https://i.ibb.co/xqdzmDcy/image.png" style="width: 100%; height: 100%; object-fit: cover;"></video>
                         <div class="gallery-overlay" style="position: absolute; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center;">
                              <div style="width: 50px; height: 50px; background: rgba(255,255,255,0.2); backdrop-filter: blur(10px); border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(255,255,255,0.3);">
@@ -209,7 +392,7 @@
                         </div>
                     </div>
 
-                    <div class="video-item industry-card" data-video-index="5" style="padding: 0; overflow: hidden; height: 400px; cursor: pointer;">
+                    <div class="video-item industry-card" data-video-index="5" data-title="Qyadat Reel" data-desc="B2B awareness reel" style="padding: 0; overflow: hidden; height: 400px; cursor: pointer;">
                         <video src="https://res.cloudinary.com/dnvdj0shd/video/upload/v1769014432/%D9%82%D9%8A%D8%A7%D8%AF%D8%A7%D8%AA_dsvpdh.mp4" poster="https://i.ibb.co/bg78vn6t/7.png" style="width: 100%; height: 100%; object-fit: cover;"></video>
                         <div class="gallery-overlay" style="position: absolute; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center;">
                              <div style="width: 50px; height: 50px; background: rgba(255,255,255,0.2); backdrop-filter: blur(10px); border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(255,255,255,0.3);">
@@ -218,7 +401,7 @@
                         </div>
                     </div>
 
-                    <div class="video-item industry-card" data-video-index="8" style="padding: 0; overflow: hidden; height: 400px; cursor: pointer;">
+                    <div class="video-item industry-card" data-video-index="8" data-title="Madaris Al-Irtiqaa Reel" data-desc="Education campaign reel" style="padding: 0; overflow: hidden; height: 400px; cursor: pointer;">
                         <video src="https://res.cloudinary.com/dnvdj0shd/video/upload/v1769014437/%D9%85%D8%AF%D8%A7%D8%B1%D8%B3_%D8%B9%D9%84%D9%88%D9%85_%D8%A7%D9%84%D8%A5%D8%B1%D8%AA%D9%82%D8%A7%D8%A1-1_sk4o4k.mp4" poster="https://i.ibb.co/Zzkbfjbp/2.png" style="width: 100%; height: 100%; object-fit: cover;"></video>
                         <div class="gallery-overlay" style="position: absolute; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center;">
                              <div style="width: 50px; height: 50px; background: rgba(255,255,255,0.2); backdrop-filter: blur(10px); border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(255,255,255,0.3);">
@@ -227,7 +410,7 @@
                         </div>
                     </div>
 
-                    <div class="video-item industry-card" data-video-index="10" style="padding: 0; overflow: hidden; height: 400px; cursor: pointer;">
+                    <div class="video-item industry-card" data-video-index="10" data-title="Wall Street English Reel" data-desc="Lead generation reel" style="padding: 0; overflow: hidden; height: 400px; cursor: pointer;">
                         <video src="https://res.cloudinary.com/dnvdj0shd/video/upload/v1769014431/%D9%88%D9%88%D9%84_%D8%B3%D8%AA%D8%B1%D9%8A%D8%AA_%D8%A7%D9%86%D8%AC%D9%84%D9%8A%D8%B4_a5p0jx.mp4" poster="https://i.ibb.co/DHrPs71K/1.png" style="width: 100%; height: 100%; object-fit: cover;"></video>
                         <div class="gallery-overlay" style="position: absolute; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center;">
                              <div style="width: 50px; height: 50px; background: rgba(255,255,255,0.2); backdrop-filter: blur(10px); border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(255,255,255,0.3);">
@@ -252,7 +435,7 @@
 
             <!-- Center: Actions -->
             <div class="footer-actions">
-                <a href="../" class="dock-link">Home</a>
+                <a href="../index.html" class="dock-link">Home</a>
                 <a href="https://www.linkedin.com/in/mohamadgamal/" target="_blank" rel="noopener" class="dock-link">LinkedIn</a>
                 <a href="https://wa.me/201555141282" target="_blank" rel="noopener" class="dock-link">WhatsApp</a>
             </div>
@@ -266,62 +449,34 @@
     </footer>
 
     <!-- Lightboxes (Hidden) -->
-    <div id="lightbox" style="display:none; position: fixed; inset: 0; z-index: 2000; background: rgba(0,0,0,0.9); backdrop-filter: blur(10px); align-items: center; justify-content: center;">
-        <img id="lightboxImg" src="" style="max-width: 90%; max-height: 90vh; border-radius: 12px; box-shadow: 0 0 50px rgba(0,0,0,0.5);">
-        <button id="closeLightbox" style="position: absolute; top: 30px; right: 30px; background: none; border: none; color: #fff; font-size: 30px; cursor: pointer;">&times;</button>
+    <div id="lightbox" class="lightbox" aria-hidden="true">
+        <button class="lightbox-nav lightbox-prev" type="button" aria-label="Previous image">
+            <i class="ri-arrow-left-s-line"></i>
+        </button>
+        <img id="lightboxImg" src="" alt="Portfolio preview">
+        <button class="lightbox-nav lightbox-next" type="button" aria-label="Next image">
+            <i class="ri-arrow-right-s-line"></i>
+        </button>
+        <button class="lightbox-close" type="button" aria-label="Close image viewer">&times;</button>
     </div>
 
-    <!-- Scripts for Interaction -->
-    <script>
-        // Simple Tab Switcher
-        document.querySelectorAll('.tab-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                // Remove active class
-                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-                document.querySelectorAll('.tab-btn').forEach(b => b.style.background = 'transparent');
-                document.querySelectorAll('.tab-btn').forEach(b => b.style.color = 'var(--text-muted)');
-                
-                // Add active class
-                btn.classList.add('active');
-                btn.style.background = 'rgba(255,255,255,0.1)';
-                btn.style.color = '#fff';
-
-                // Show Content
-                const tab = btn.dataset.tab;
-                if(tab === 'images') {
-                    document.getElementById('imagesSection').style.display = 'block';
-                    document.getElementById('videosSection').style.display = 'none';
-                } else {
-                    document.getElementById('imagesSection').style.display = 'none';
-                    document.getElementById('videosSection').style.display = 'block';
-                }
-            });
-        });
-
-        // Hover Effect for Items
-        document.querySelectorAll('.gallery-item').forEach(item => {
-            item.addEventListener('mouseenter', () => {
-                item.querySelector('img').style.transform = 'scale(1.1)';
-                item.querySelector('.gallery-overlay').style.opacity = '1';
-            });
-            item.addEventListener('mouseleave', () => {
-                item.querySelector('img').style.transform = 'scale(1)';
-                item.querySelector('.gallery-overlay').style.opacity = '0';
-            });
-            
-            // Lightbox
-            item.addEventListener('click', () => {
-                const src = item.querySelector('img').src;
-                const lightbox = document.getElementById('lightbox');
-                const lbImg = document.getElementById('lightboxImg');
-                lbImg.src = src;
-                lightbox.style.display = 'flex';
-            });
-        });
-
-        document.getElementById('closeLightbox').addEventListener('click', () => {
-            document.getElementById('lightbox').style.display = 'none';
-        });
-    </script>
+    <div id="videoLightbox" class="video-lightbox" aria-hidden="true">
+        <div class="video-lightbox-panel">
+            <button class="lightbox-close" type="button" aria-label="Close video viewer">&times;</button>
+            <video id="lightboxVideo" controls playsinline></video>
+            <div class="video-lightbox-meta">
+                <h3 id="videoLightboxTitle"></h3>
+                <p id="videoLightboxDesc"></p>
+            </div>
+            <div class="video-lightbox-controls">
+                <button class="video-nav-prev" type="button" aria-label="Previous video">
+                    <i class="ri-arrow-left-s-line"></i> Prev
+                </button>
+                <button class="video-nav-next" type="button" aria-label="Next video">
+                    Next <i class="ri-arrow-right-s-line"></i>
+                </button>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

@@ -21,7 +21,7 @@
     
     <!-- Scripts -->
     <script src="../assets/js/header.js" defer></script>
-    <script src="../assets/js/home-main.js?v=2.1" defer></script>
+    <script src="../assets/js/page-effects.js?v=1.0" defer></script>
 </head>
 
 <body>
@@ -36,9 +36,9 @@
     <header class="site-header">
         <div class="header-container">
             <nav id="primaryNav" class="header-nav">
-                <a href="../" class="nav-link">Home</a>
-                <a href="../portfolio/" class="nav-link">Portfolio</a>
-                <a href="./" class="nav-link active">Achievements</a>
+                <a href="../index.html" class="nav-link">Home</a>
+                <a href="../portfolio/index.html" class="nav-link">Portfolio</a>
+                <a href="./index.html" class="nav-link active">Achievements</a>
             </nav>
             <button class="mobile-menu-toggle" aria-label="Open menu" aria-expanded="false" aria-controls="primaryNav">
                 <i class="ri-menu-3-line"></i>
@@ -48,192 +48,444 @@
 
     <main>
         <!-- Hero Section -->
-        <section class="hero" style="min-height: auto; padding-top: 140px; padding-bottom: 60px;">
+        <section class="achievements-hero">
             <div class="hero-orb"></div>
-            <div class="content-wrap content-wrap--wide" style="text-align: center;">
-                <div class="section-header reveal" style="margin: 0 auto; text-align: center;">
-                    <p class="overline" style="justify-content: center;">Hall of Impact</p>
-                    <h1 class="tagline kinetic-text" style="font-size: clamp(2.5rem, 5vw, 4rem);">
+            <div class="content-wrap content-wrap--wide">
+                <div class="section-header reveal">
+                    <p class="overline">The Hall of Impact</p>
+                    <h1 class="kinetic-text">
                         Milestones That<br>Defied Expectations
                     </h1>
                 </div>
 
-                <!-- Stats Grid (Reused from Home) -->
-                <div class="stats-grid reveal" style="margin-top: 60px;">
-                    <div class="stat-card stagger-item">
-                        <div class="stat-number">6x</div>
-                        <div class="stat-label">Sales Growth</div>
-                        <div class="stat-context">Organic SEO Impact</div>
+                <!-- Stats HUD -->
+                <div class="stats-hud reveal">
+                    <div class="stat-unit stagger-item">
+                        <div class="unit-value">6x</div>
+                        <div class="unit-label">Sales Growth</div>
                     </div>
-                    <div class="stat-card stagger-item">
-                        <div class="stat-number">$478M</div>
-                        <div class="stat-label">Retail Value</div>
-                        <div class="stat-context">FY2019 Est. Sales</div>
+                    <div class="stat-unit stagger-item">
+                        <div class="unit-value">$478M</div>
+                        <div class="unit-label">Retail Value</div>
                     </div>
-                    <div class="stat-card stagger-item">
-                        <div class="stat-number">900+</div>
-                        <div class="stat-label">Unified Stores</div>
-                        <div class="stat-context">Omnichannel System</div>
+                    <div class="stat-unit stagger-item">
+                        <div class="unit-value">900+</div>
+                        <div class="unit-label">Unified Stores</div>
                     </div>
-                    <div class="stat-card stagger-item">
-                        <div class="stat-number">12+</div>
-                        <div class="stat-label">Leadership Years</div>
-                        <div class="stat-context">Team Building</div>
+                    <div class="stat-unit stagger-item">
+                        <div class="unit-value">12+</div>
+                        <div class="unit-label">Leadership</div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- The Record (Guinness) -->
-        <section class="story-section">
+        <!-- The Master Record (Guinness) -->
+        <section class="record-showcase">
             <div class="content-wrap content-wrap--wide">
-                <div class="identity-card reveal" style="max-width: 100%; padding: 60px; display: grid; grid-template-columns: 1fr 0.5fr; gap: 40px; align-items: center;">
-                    <div class="record-content">
-                        <div class="hero-badge-row">
-                             <div class="status-indicator" style="color: #fbbf24; background: rgba(251, 191, 36, 0.1); border: 1px solid rgba(251, 191, 36, 0.2);">
-                                <i class="ri-trophy-fill"></i> Guinness World Records
-                            </div>
+                <div class="guinness-panel reveal">
+                    <div class="panel-blur-bg"></div>
+                    <div class="panel-content">
+                        <div class="badge-gold">
+                            <i class="ri-trophy-fill"></i> Guinness World Record
                         </div>
-                        <h2 style="font-size: 2.5rem; margin-bottom: 24px; color: #fff;">World's Largest Premium Unisex Fragrance Brand</h2>
-                        <p style="color: var(--text-muted); margin-bottom: 20px; font-size: 1.1rem; line-height: 1.8;">
-                            Guinness World Records recognized Arabian Oud in January 2020. The assessment covered a full 12-month fiscal year, reflecting unprecedented scale in the luxury retail sector.
+                        <h2>World's Largest Premium <br>Unisex Fragrance Brand</h2>
+                        <p class="panel-desc">
+                            Recognized in January 2020. A testament to massive scale and strategic dominance in the luxury retail sector globally.
                         </p>
-                         <p style="color: #fff; font-weight: 600; font-size: 1.2rem; margin-bottom: 30px;">
-                            Estimated Retail Sales Value ≈ $478M
-                        </p>
-                        <a href="https://www.guinnessworldrecords.ae/news/commercial/2020/1/arabian-oud-gets-crowned-as-the-largest-premium-unisex-fragrance-brand-in-the-wor-607327" target="_blank" rel="noopener" class="stealth-link" style="color: #fbbf24; border-bottom: 1px solid #fbbf24;">View Official Record <i class="ri-arrow-right-up-line"></i></a>
+                        <div class="panel-metrics">
+                            <span class="metric-highlight">Est. Sales Value: $478M+</span>
+                        </div>
+                        <a href="https://www.guinnessworldrecords.ae/news/commercial/2020/1/arabian-oud-gets-crowned-as-the-largest-premium-unisex-fragrance-brand-in-the-wor-607327" target="_blank" rel="noopener" class="premium-link">
+                            Official Verification <i class="ri-arrow-right-up-line"></i>
+                        </a>
                     </div>
-                    <div class="record-visual" style="display: flex; justify-content: center; position: relative;">
-                        <!-- Abstract Gold Ring -->
-                         <div style="width: 200px; height: 200px; border: 2px solid rgba(251, 191, 36, 0.3); border-radius: 50%; position: absolute; animation: spin 10s linear infinite;"></div>
-                         <div style="width: 160px; height: 160px; border: 2px solid rgba(251, 191, 36, 0.5); border-radius: 50%; position: absolute; animation: spin 15s linear infinite reverse;"></div>
-                         <i class="ri-medal-fill" style="font-size: 80px; color: #fbbf24; z-index: 2; text-shadow: 0 0 30px rgba(251, 191, 36, 0.6);"></i>
+                    <div class="panel-visual">
+                        <div class="orbit-system">
+                            <div class="orbit ring-1"></div>
+                            <div class="orbit ring-2"></div>
+                            <div class="orbit ring-3"></div>
+                            <i class="ri-medal-fill medal-icon"></i>
+                        </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Success Stories Grid -->
-        <section class="tools-section">
+        <!-- Bento Impact Grid -->
+        <section class="impact-grid-section">
             <div class="content-wrap content-wrap--wide">
                 <div class="section-header reveal">
-                    <p class="overline">Case Studies</p>
-                    <h2>Transformations</h2>
+                    <p class="overline">Evidence of Success</p>
+                    <h2>Transformative Cases</h2>
                 </div>
 
-                <div class="industries-grid reveal">
-                    <!-- Card 1 -->
-                    <div class="industry-card stagger-item">
-                        <div class="industry-icon">
-                            <i class="ri-question-answer-line" style="font-size: 24px;"></i>
+                <div class="bento-grid reveal">
+                    <!-- Qyadat: Large Case -->
+                    <div class="bento-item featured stagger-item">
+                        <div class="bento-icon"><i class="ri-question-answer-line"></i></div>
+                        <div class="bento-body">
+                            <h3>Qyadat Transformation</h3>
+                            <p class="meta">The SLA Shift</p>
+                            <p>Radically shifted from selling services to selling guaranteed outcomes. Secured 3 major government contracts in 8 months, outperforming the previous 2 years combined.</p>
                         </div>
-                        <h4>Qyadat Transformation</h4>
-                        <p style="margin-bottom: 12px; color: #fff;">The SLA Shift</p>
-                        <p>Shifted from selling services to selling guaranteed outcomes. Result: 3 government contracts in 8 months worth more than the previous 2 years combined.</p>
                     </div>
 
-                    <!-- Card 2 -->
-                    <div class="industry-card stagger-item">
-                        <div class="industry-icon">
-                            <i class="ri-file-settings-line" style="font-size: 24px;"></i>
+                    <!-- 900 Stores: Medium Case -->
+                    <div class="bento-item stagger-item">
+                        <div class="bento-icon"><i class="ri-store-2-line"></i></div>
+                        <div class="bento-body">
+                            <h3>Omnichannel Mastery</h3>
+                            <p class="meta">900+ Stores Unified</p>
+                            <p>Engineered a unified data layer connecting retail points with e-commerce, resulting in a 35% increase in Customer Lifetime Value (CLV).</p>
                         </div>
-                        <h4>ISO Automation</h4>
-                        <p style="margin-bottom: 12px; color: #fff;">GovTech Efficiency</p>
-                        <p>Built a "Digital Readiness Framework" for ministries. Reduced ISO audit prep time from 6 months to 6 weeks. 100% certification pass rate.</p>
                     </div>
 
-                    <!-- Card 3 -->
-                    <div class="industry-card stagger-item">
-                        <div class="industry-icon">
-                            <i class="ri-store-2-line" style="font-size: 24px;"></i>
+                    <!-- ISO Automation: Small Case -->
+                    <div class="bento-item stagger-item">
+                        <div class="bento-icon"><i class="ri-file-settings-line"></i></div>
+                        <div class="bento-body">
+                            <h3>GovTech Efficiency</h3>
+                            <p class="meta">ISO Automation</p>
+                            <p>Built a Digital Readiness Framework that reduced ministry audit prep time from 6 months to 6 weeks with a 100% pass rate.</p>
                         </div>
-                        <h4>900 Stores Unified</h4>
-                        <p style="margin-bottom: 12px; color: #fff;">Omnichannel Data</p>
-                        <p>Connected 900+ retail points with e-commerce data. CLV increased 35% by understanding cross-channel behavior.</p>
                     </div>
 
-                    <!-- Card 4 -->
-                    <div class="industry-card stagger-item">
-                        <div class="industry-icon">
-                            <i class="ri-rocket-line" style="font-size: 24px;"></i>
+                    <!-- DigiMora: Small Case -->
+                    <div class="bento-item stagger-item">
+                        <div class="bento-icon"><i class="ri-rocket-line"></i></div>
+                        <div class="bento-body">
+                            <h3>Agency Scaling</h3>
+                            <p class="meta">7x Growth</p>
+                            <p>Productized services and built a robust referral engine, achieving 7x contract growth in just 12 months.</p>
                         </div>
-                        <h4>DigiMora Growth</h4>
-                        <p style="margin-bottom: 12px; color: #fff;">Agency Scaling</p>
-                        <p>Productized services and built a referral engine. 7x contract growth in 1 year. Shifted from projects to retainers.</p>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Career Timeline (Vertical List style for variety) -->
-        <section class="experience-section">
-             <div class="content-wrap content-wrap--wide">
+        <!-- Journey Path -->
+        <section class="journey-path-section">
+            <div class="content-wrap">
                 <div class="section-header reveal">
-                    <p class="overline">The Path</p>
-                    <h2>Full Journey</h2>
+                    <p class="overline">The Career Orbit</p>
+                    <h2>Professional Path</h2>
                 </div>
 
-                <div class="journey-list" style="display: flex; flex-direction: column; gap: 20px; max-width: 800px; margin: 0 auto;">
-                    
-                    <div class="identity-card reveal" style="flex-direction: row; align-items: center; padding: 24px;">
-                        <div style="min-width: 80px; color: var(--highlight); font-weight: 700;">2023</div>
-                        <div style="width: 1px; height: 40px; background: rgba(255,255,255,0.1); margin: 0 24px;"></div>
-                        <div>
-                            <h3 style="font-size: 1.2rem; color: #fff;">Qyadat</h3>
-                            <p style="color: var(--text-muted); font-size: 0.9rem;">Marketing Manager • Riyadh</p>
+                <div class="path-container reveal">
+                    <div class="path-item stagger-item">
+                        <div class="path-year">2023</div>
+                        <div class="path-dot"></div>
+                        <div class="path-info">
+                            <h3>Qyadat</h3>
+                            <p>Marketing Manager • Riyadh</p>
                         </div>
                     </div>
-
-                    <div class="identity-card reveal" style="flex-direction: row; align-items: center; padding: 24px;">
-                        <div style="min-width: 80px; color: var(--highlight); font-weight: 700;">2023</div>
-                        <div style="width: 1px; height: 40px; background: rgba(255,255,255,0.1); margin: 0 24px;"></div>
-                        <div>
-                            <h3 style="font-size: 1.2rem; color: #fff;">Gento Shop</h3>
-                            <p style="color: var(--text-muted); font-size: 0.9rem;">E-commerce Supervisor • Electronics</p>
+                    <div class="path-item stagger-item">
+                        <div class="path-year">2023</div>
+                        <div class="path-dot"></div>
+                        <div class="path-info">
+                            <h3>Gento Shop</h3>
+                            <p>E-commerce Supervisor • Electronics</p>
                         </div>
                     </div>
-
-                    <div class="identity-card reveal" style="flex-direction: row; align-items: center; padding: 24px;">
-                        <div style="min-width: 80px; color: var(--highlight); font-weight: 700;">2022</div>
-                        <div style="width: 1px; height: 40px; background: rgba(255,255,255,0.1); margin: 0 24px;"></div>
-                        <div>
-                            <h3 style="font-size: 1.2rem; color: #fff;">DigiMora</h3>
-                            <p style="color: var(--text-muted); font-size: 0.9rem;">Business Dev Lead • Digital Solutions</p>
+                    <div class="path-item stagger-item">
+                        <div class="path-year">2022</div>
+                        <div class="path-dot"></div>
+                        <div class="path-info">
+                            <h3>DigiMora</h3>
+                            <p>Business Dev Lead • Digital Solutions</p>
                         </div>
                     </div>
-
-                    <div class="identity-card reveal" style="flex-direction: row; align-items: center; padding: 24px;">
-                        <div style="min-width: 80px; color: var(--highlight); font-weight: 700;">2021</div>
-                        <div style="width: 1px; height: 40px; background: rgba(255,255,255,0.1); margin: 0 24px;"></div>
-                        <div>
-                            <h3 style="font-size: 1.2rem; color: #fff;">Kuwait Finance House</h3>
-                            <p style="color: var(--text-muted); font-size: 0.9rem;">Digital Strategist • Banking</p>
+                    <div class="path-item stagger-item">
+                        <div class="path-year">2021</div>
+                        <div class="path-dot"></div>
+                        <div class="path-info">
+                            <h3>KFH</h3>
+                            <p>Digital Strategist • Banking</p>
                         </div>
                     </div>
-
-                     <div class="identity-card reveal" style="flex-direction: row; align-items: center; padding: 24px;">
-                        <div style="min-width: 80px; color: var(--highlight); font-weight: 700;">2014</div>
-                        <div style="width: 1px; height: 40px; background: rgba(255,255,255,0.1); margin: 0 24px;"></div>
-                        <div>
-                            <h3 style="font-size: 1.2rem; color: #fff;">Arabian Oud</h3>
-                            <p style="color: var(--text-muted); font-size: 0.9rem;">Marketing Supervisor • Retail</p>
+                    <div class="path-item stagger-item">
+                        <div class="path-year">2014</div>
+                        <div class="path-dot"></div>
+                        <div class="path-info">
+                            <h3>Arabian Oud</h3>
+                            <p>Marketing Supervisor • Retail</p>
                         </div>
                     </div>
-
-                     <div class="identity-card reveal" style="flex-direction: row; align-items: center; padding: 24px;">
-                        <div style="min-width: 80px; color: var(--highlight); font-weight: 700;">2011</div>
-                        <div style="width: 1px; height: 40px; background: rgba(255,255,255,0.1); margin: 0 24px;"></div>
-                        <div>
-                            <h3 style="font-size: 1.2rem; color: #fff;">TwinExcel</h3>
-                            <p style="color: var(--text-muted); font-size: 0.9rem;">Digital Specialist • Agency</p>
-                        </div>
-                    </div>
-
                 </div>
-             </div>
+            </div>
         </section>
-
     </main>
+
+    <style>
+        /* Achievements Page Specific Styles (2026 Core) */
+        .achievements-hero {
+            padding: 160px 0 80px;
+            position: relative;
+            text-align: center;
+        }
+
+        .stats-hud {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 60px;
+        }
+
+        .stat-unit {
+            padding: 30px;
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            transition: all 0.5s var(--ease-smooth);
+        }
+
+        .stat-unit:hover {
+            transform: translateY(-5px);
+            border-color: var(--color-accent);
+            background: rgba(255,255,255,0.06);
+        }
+
+        .unit-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            font-family: var(--font-display);
+            color: #fff;
+            margin-bottom: 8px;
+        }
+
+        .unit-label {
+            color: var(--color-text-muted);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        /* Guinness Panel */
+        .guinness-panel {
+            position: relative;
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            gap: 40px;
+            background: rgba(251, 191, 36, 0.03);
+            border: 1px solid rgba(251, 191, 36, 0.1);
+            border-radius: 40px;
+            padding: 60px;
+            overflow: hidden;
+            align-items: center;
+        }
+
+        .badge-gold {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: rgba(251, 191, 36, 0.1);
+            border: 1px solid rgba(251, 191, 36, 0.2);
+            color: #fbbf24;
+            border-radius: 100px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 24px;
+        }
+
+        .guinness-panel h2 {
+            font-size: clamp(1.8rem, 4vw, 2.8rem);
+            color: #fff;
+            line-height: 1.2;
+            margin-bottom: 24px;
+        }
+
+        .panel-desc {
+            color: var(--color-text-muted);
+            font-size: 1.1rem;
+            line-height: 1.8;
+            margin-bottom: 30px;
+            max-width: 500px;
+        }
+
+        .metric-highlight {
+            display: block;
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 32px;
+        }
+
+        .premium-link {
+            color: #fbbf24;
+            text-decoration: none;
+            font-weight: 600;
+            border-bottom: 1px solid rgba(251, 191, 36, 0.3);
+            padding-bottom: 4px;
+            transition: all 0.3s;
+        }
+
+        .premium-link:hover {
+            border-color: #fbbf24;
+            gap: 12px;
+        }
+
+        /* Orbit Visual */
+        .orbit-system {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .orbit {
+            position: absolute;
+            border-radius: 50%;
+            border: 1px solid rgba(251, 191, 36, 0.1);
+        }
+
+        .ring-1 { width: 100%; height: 100%; animation: spin 20s linear infinite; border-width: 2px; border-style: dashed; }
+        .ring-2 { width: 80%; height: 80%; animation: spin 15s linear infinite reverse; }
+        .ring-3 { width: 60%; height: 60%; animation: spin 10s linear infinite; border-color: rgba(251, 191, 36, 0.3); }
+
+        .medal-icon {
+            font-size: 100px;
+            color: #fbbf24;
+            filter: drop-shadow(0 0 30px rgba(251, 191, 36, 0.4));
+            z-index: 5;
+        }
+
+        /* Bento Grid */
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-auto-rows: 280px;
+            gap: 24px;
+            margin-top: 40px;
+        }
+
+        .bento-item {
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--glass-border);
+            border-radius: 32px;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            transition: all 0.6s var(--ease-smooth);
+            cursor: pointer;
+        }
+
+        .bento-item.featured {
+            grid-column: span 2;
+            grid-row: span 1;
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.05), rgba(0,0,0,0));
+        }
+
+        .bento-item:hover {
+            background: rgba(255,255,255,0.06);
+            transform: scale(1.02);
+            border-color: var(--color-accent);
+        }
+
+        .bento-icon {
+            font-size: 2rem;
+            color: var(--color-accent);
+            margin-bottom: auto;
+        }
+
+        .bento-body h3 {
+            font-size: 1.4rem;
+            color: #fff;
+            margin-bottom: 8px;
+        }
+
+        .bento-body .meta {
+            color: var(--color-accent);
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+        }
+
+        .bento-body p {
+            color: var(--color-text-muted);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        /* Journey Path */
+        .path-container {
+            max-width: 800px;
+            margin: 60px auto 0;
+            position: relative;
+        }
+
+        .path-container::before {
+            content: '';
+            position: absolute;
+            left: 40px;
+            top: 0;
+            bottom: 0;
+            width: 1px;
+            background: linear-gradient(to bottom, transparent, var(--glass-border), transparent);
+        }
+
+        .path-item {
+            display: flex;
+            align-items: center;
+            gap: 40px;
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .path-year {
+            font-family: var(--font-display);
+            font-weight: 700;
+            color: var(--color-accent);
+            min-width: 80px;
+            text-align: right;
+        }
+
+        .path-dot {
+            width: 12px;
+            height: 12px;
+            background: var(--color-accent);
+            border-radius: 50%;
+            box-shadow: 0 0 20px var(--color-accent);
+            z-index: 2;
+        }
+
+        .path-info {
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            padding: 24px 32px;
+            border-radius: 20px;
+            border: 1px solid var(--glass-border);
+            flex: 1;
+            transition: all 0.4s;
+        }
+
+        .path-item:hover .path-info {
+            background: rgba(255,255,255,0.06);
+            transform: translateX(10px);
+            border-color: var(--color-accent);
+        }
+
+        .path-info h3 { font-size: 1.2rem; color: #fff; margin-bottom: 4px; }
+        .path-info p { color: var(--color-text-muted); font-size: 0.9rem; }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        @media (max-width: 1024px) {
+            .bento-grid { grid-template-columns: 1fr; grid-auto-rows: auto; }
+            .bento-item.featured { grid-column: span 1; }
+            .guinness-panel { grid-template-columns: 1fr; text-align: center; }
+            .guinness-panel .panel-desc { margin: 0 auto 30px; }
+            .orbit-system { margin: 0 auto; }
+        }
+    </style>
 
     <!-- Footer (The Dock) -->
     <footer class="site-footer-2026">
@@ -245,7 +497,7 @@
 
             <!-- Center: Actions -->
             <div class="footer-actions">
-                <a href="../" class="dock-link">Home</a>
+                <a href="../index.html" class="dock-link">Home</a>
                 <a href="https://www.linkedin.com/in/mohamadgamal/" target="_blank" rel="noopener" class="dock-link">LinkedIn</a>
                 <a href="https://wa.me/201555141282" target="_blank" rel="noopener" class="dock-link">WhatsApp</a>
             </div>

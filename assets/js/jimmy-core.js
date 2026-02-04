@@ -55,7 +55,7 @@ class JimmyEngine {
                 <div id="j-backdrop" class="j-console-backdrop"></div>
 
                 <!-- 2. CONSOLE (Center Stage) -->
-                <div id="j-console" class="j-console" role="dialog" aria-modal="true">
+                <div id="j-console" class="j-console" role="dialog" aria-modal="true" aria-hidden="true">
                     
                     <!-- Header -->
                     <div class="j-header">
@@ -95,7 +95,7 @@ class JimmyEngine {
                 </div>
 
                 <!-- 3. LAUNCHER (The Summoner) -->
-                <div id="j-launcher" class="j-launcher" role="button" aria-label="Summon Jimmy">
+                <div id="j-launcher" class="j-launcher" role="button" tabindex="0" aria-label="Summon Jimmy" aria-controls="j-console" aria-expanded="false">
                     <video src="${J_CORE.config.videoSrc}" autoplay loop muted playsinline></video>
                 </div>
             </div>
@@ -123,6 +123,12 @@ class JimmyEngine {
         // Core Toggle
         const toggle = () => this.setOpen(!this.ctx.isOpen);
         this.dom.launcher.onclick = toggle;
+        this.dom.launcher.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                toggle();
+            }
+        });
         this.dom.close.onclick = toggle;
         this.dom.backdrop.onclick = toggle;
 
@@ -185,6 +191,8 @@ class JimmyEngine {
 
     setOpen(shouldOpen) {
         this.ctx.isOpen = shouldOpen;
+        this.dom.launcher.setAttribute('aria-expanded', shouldOpen ? 'true' : 'false');
+        this.dom.console.setAttribute('aria-hidden', shouldOpen ? 'false' : 'true');
 
         // Notify System
         document.body.classList.toggle('ai-open', shouldOpen);
@@ -210,10 +218,24 @@ class JimmyEngine {
             this.dom.root.classList.remove('is-open');
             this.dom.launcher.classList.remove('active');
             this.dom.root.setAttribute('aria-hidden', 'true');
+            this.dom.launcher.focus();
         }
     }
 
     /* --- MESSAGING & NETWORK --- */
+
+    renderSafeText(target, text) {
+        const value = typeof text === 'string' ? text : String(text ?? '');
+        const lines = value.split('\n');
+        target.textContent = '';
+
+        lines.forEach((line, index) => {
+            if (index > 0) {
+                target.appendChild(document.createElement('br'));
+            }
+            target.appendChild(document.createTextNode(line));
+        });
+    }
 
     async handleSend(textOverride = null) {
         const text = textOverride || this.dom.input.value.trim();
@@ -345,7 +367,7 @@ class JimmyEngine {
             retry.onclick = () => this.handleSend(this.ctx.thread[this.ctx.thread.length - 1]?.text);
             bubble.appendChild(retry);
         } else {
-            bubble.innerHTML = text.replace(/\n/g, '<br>');
+            this.renderSafeText(bubble, text);
         }
 
         row.appendChild(bubble);
