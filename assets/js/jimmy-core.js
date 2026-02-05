@@ -296,7 +296,10 @@ class JimmyEngine {
                 } catch {
                     try { detail = (await res.text() || '').trim(); } catch {}
                 }
-                throw new Error(`HTTP ${res.status}${detail ? ` - ${detail}` : ''}`);
+                const err = new Error(`HTTP ${res.status}${detail ? ` - ${detail}` : ''}`);
+                err.status = res.status;
+                err.detail = detail;
+                throw err;
             }
             const data = await res.json();
 
@@ -312,8 +315,36 @@ class JimmyEngine {
         } catch (err) {
             console.error('Jimmy Error:', err);
             this.setThinking(false);
-            this.addMessage('ai', J_CORE.i18n[this.ctx.lang].error, true);
+            this.addMessage('ai', this.mapErrorToUserMessage(err), true);
         }
+    }
+
+    mapErrorToUserMessage(err) {
+        const lang = this.ctx.lang;
+        const status = Number(err?.status || 0);
+        const detail = String(err?.detail || err?.message || '').toLowerCase();
+
+        if (status === 429 || detail.includes('quota')) {
+            return lang === 'ar'
+                ? 'الخدمة وصلت حد الاستخدام الحالي. جرّب تاني بعد شوية.'
+                : 'Usage quota is currently exhausted. Please retry shortly.';
+        }
+        if (status === 401 || status === 403) {
+            return lang === 'ar'
+                ? 'الاتصال مرفوض من السيرفر. محتاج مراجعة إعدادات الحماية.'
+                : 'Request blocked by server security settings.';
+        }
+        if (detail.includes('not found') && detail.includes('model')) {
+            return lang === 'ar'
+                ? 'في مشكلة إعدادات بالموديل على السيرفر (Model not found).'
+                : 'Server model configuration error (model not found).';
+        }
+        if (status === 502 || status === 503) {
+            return lang === 'ar'
+                ? 'الخدمة مش متاحة حالياً من مزود الذكاء. حاول بعد دقائق.'
+                : 'AI upstream is temporarily unavailable. Try again in a few minutes.';
+        }
+        return J_CORE.i18n[lang].error;
     }
 
     setThinking(isThinking) {

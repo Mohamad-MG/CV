@@ -16,218 +16,304 @@
     <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
 
     <!-- Core Styles -->
+    <link rel="stylesheet" href="../assets/css/home-main.css?v=6.1">
     <link rel="stylesheet" href="../assets/css/jimmy-core.css?v=5.1">
-    <link rel="stylesheet" href="../assets/css/achievements.css?v=2.5">
+    <link rel="stylesheet" href="../assets/css/achievements.css?v=2.6">
 
     <!-- Core System Scripts -->
     <script src="../assets/js/header.js" defer></script>
-    <script src="../assets/js/achievements-2026.js" defer></script>
+    <script src="../assets/js/achievements-2026.js?v=1.1" defer></script>
 </head>
 
 <body>
-    <div class="noise-overlay"></div>
+    <!-- Background Foundation (Matching Home) -->
     <div class="bg-void-layer"></div>
+    <div class="bg-ambient-glow"></div>
+    <div class="bg-micro-dust"></div>
+    <div class="bg-glass-haze"></div>
+    <div class="bg-vignette"></div>
+
+    <!-- 2026 Refraction Engine -->
+    <svg style="display: none;">
+        <filter id="refraction-filter">
+            <feTurbulence type="fractalNoise" baseFrequency="0.01" numOctaves="3" result="noise" />
+            <feDisplacementMap in="SourceGraphic" in2="noise" scale="5" />
+        </filter>
+    </svg>
 
     <header class="site-header">
         <div class="header-container">
             <nav id="primaryNav" class="header-nav">
-                <a href="../index.html" class="nav-link">Origin</a>
+                <a href="../index.html" class="nav-link">Home</a>
                 <a href="../portfolio/index.html" class="nav-link">Portfolio</a>
-                <a href="./index.html" class="nav-link active">Archive</a>
+                <a href="./index.html" class="nav-link active">Achievements</a>
             </nav>
         </div>
     </header>
 
     <main>
-        <!-- Hero Section -->
+        <!-- REBUILT 2026 HERO: THE CHRONOS CONSOLE -->
         <section class="archive-hero">
-            <div class="hero-chronos-core"></div>
-            <div class="hero-content">
-                <div class="hero-badge reveal">
-                    <span class="status-pulse"></span>
-                    System Level: Architect v2.6
-                </div>
-                <h1 class="hero-title reveal">
-                    <span>RECORDING</span>
-                    <span class="accent-text">IMPACT.</span>
-                </h1>
-                <p class="hero-description reveal">Evidence of growth systems designed to scale beyond the limits of traditional digital frameworks.</p>
-                <div class="hero-actions reveal">
-                    <div class="gwr-artifact-wrapper">
-                        <a href="https://www.guinnessworldrecords.ae/news/commercial/2020/1/arabian-oud-gets-crowned-as-the-largest-premium-unisex-fragrance-brand-in-the-wor-607327" target="_blank" class="gwr-monolith">
-                            <div class="monolith-glow"></div>
-                            <div class="monolith-content" style="display: flex; align-items: center; gap: 20px;">
-                                <i class="ri-medal-fill monolith-icon"></i>
-                                <div class="monolith-info">
-                                    <span class="m-status">Official Record Holder</span>
-                                    <span class="m-title">GUINNESS WORLD RECORD</span>
-                                </div>
-                                <div class="monolith-scanner"></div>
+            <!-- New Background Depth Layers -->
+            <div class="hero-nebula-core"></div>
+            <div class="hero-data-stream"></div>
+            
+            <div class="hero-grid content-wrap--wide">
+                
+                <!-- Left: The Neural Statement -->
+                <div class="hero-statement">
+                    <div class="system-status-row reveal">
+                        <div class="protocol-badge">
+                            <span class="p-dot"></span>
+                            <span class="p-text">PROTOCOL_2026_ACTIVE</span>
+                        </div>
+                        <div class="system-time" id="systemClock">00:00:00</div>
+                    </div>
+                    
+                    <div class="main-heading-container">
+                        <h1 class="tagline kinetic-text" data-split>
+                            Materializing Strategic Impact
+                        </h1>
+                        <div class="heading-accent-line"></div>
+                    </div>
+                    
+                    <div class="hero-stats-console reveal">
+                        <div class="console-item">
+                            <div class="c-label">TRAJECTORY</div>
+                            <div class="c-value"><span class="counter" data-target="14">0</span>Y+</div>
+                            <div class="c-bar"><div class="c-fill" style="width: 85%;"></div></div>
+                        </div>
+                        <div class="console-item">
+                            <div class="c-label">EFFICIENCY</div>
+                            <div class="c-value"><span class="counter" data-target="80">0</span>%</div>
+                            <div class="c-bar"><div class="c-fill" style="width: 80%;"></div></div>
+                        </div>
+                        <div class="console-item">
+                            <div class="c-label">NODES</div>
+                            <div class="c-value"><span class="counter" data-target="24">0</span>+</div>
+                            <div class="c-bar"><div class="c-fill" style="width: 70%;"></div></div>
+                        </div>
+                    </div>
+
+                    <p class="hero-description reveal">
+                        A curated evidence layer documenting 14+ years of digital evolution, system interventions, and high-velocity growth engineering across the MENA region.
+                    </p>
+
+                    <div class="hero-cta-group reveal">
+                        <div class="scroll-indicator-2026">
+                            <span class="s-label">EXPLORE ARCHIVE</span>
+                            <div class="s-mouse">
+                                <div class="s-wheel"></div>
                             </div>
-                            <div class="fragment f1">2020</div>
-                            <div class="fragment f2">GLOBAL_RETAIL</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: The Neural Artifact (3D GWR Console) -->
+                <div class="hero-artifact-zone">
+                    <div class="artifact-perspective-wrapper" id="artifact3D">
+                        <div class="holographic-base"></div>
+                        <a href="https://www.guinnessworldrecords.ae/news/commercial/2020/1/arabian-oud-gets-crowned-as-the-largest-premium-unisex-fragrance-brand-in-the-wor-607327" target="_blank" class="gwr-artifact-core">
+                            <div class="artifact-glare"></div>
+                            <div class="artifact-content">
+                                <div class="artifact-badge-box">
+                                    <i class="ri-medal-line"></i>
+                                </div>
+                                <div class="artifact-text">
+                                    <span class="a-eyebrow">GUINNESS WORLD RECORDS™</span>
+                                    <h2 class="a-title">OFFICIAL RECORD HOLDER</h2>
+                                    <div class="a-meta">
+                                        <span class="a-id">#607327</span>
+                                        <span class="a-sep">|</span>
+                                        <span class="a-loc">GLOBAL_RETAIL</span>
+                                    </div>
+                                </div>
+                                <div class="artifact-scanner-line"></div>
+                            </div>
+                            
+                            <!-- Floating HUD Interface Elements -->
+                            <div class="hud-element h-top">SCANNING_AUTHENTICITY...</div>
+                            <div class="hud-element h-bottom">VERIFIED_2020_JAN</div>
+                            <div class="hud-element h-side">6X_GROWTH_SYNC</div>
                         </a>
                     </div>
                 </div>
+
             </div>
         </section>
 
-        <!-- Strategic Nodes Grid -->
-        <section class="impact-section content-wrap--wide">
-            <div class="section-header reveal">
-                <span class="hero-badge">Evidence Layer</span>
-                <h2 class="hero-title" style="font-size: clamp(2rem, 5vw, 4.2rem);">Strategic <span class="accent-text">Nodes</span></h2>
-            </div>
-
-            <div class="quantum-grid">
-                <!-- 01. Qyadat Group (Featured - 8 Cols) -->
-                <div class="quantum-card featured qyadat-engine reveal">
-                    <div class="engine-core"></div>
-                    <div class="hud-overlay">
-                        <div class="hud-corner top-left"></div>
-                        <div class="hud-corner bottom-right"></div>
-                    </div>
-                    <div class="card-content-top">
-                        <span class="card-tag"><i class="ri-pulse-line"></i> ACTIVE_STRATEGY_NODE</span>
-                        <h3 class="card-title">Qyadat Group<br><span class="accent-text">Transformation</span></h3>
-                        <p class="card-desc">Architecting the 2026 readiness roadmap. Orchestrating a complete paradigm shift into outcome-driven digital ecosystems for government-linked enterprises.</p>
-                    </div>
-                    <div class="card-metrics">
-                        <div class="metric-item highlight">
-                            <span class="val">8<small>mo</small></span>
-                            <span class="label">Pivot Velocity</span>
-                        </div>
-                        <div class="metric-item">
-                            <span class="val">3</span>
-                            <span class="label">Gov Entities</span>
-                        </div>
-                    </div>
+        <!-- Strategic Nodes Grid (Bento Style) -->
+        <section class="impact-section">
+            <div class="content-wrap--wide">
+                <div class="section-header reveal">
+                    <p class="overline">Evidence Layer</p>
+                    <h2>Strategic Nodes</h2>
                 </div>
 
-                <!-- 02. Arabian Oud (4 Cols) -->
-                <div class="quantum-card reveal">
-                    <div class="card-content-top">
-                        <span class="card-tag">Retail Tech</span>
-                        <h3 class="card-title">900+ Store<br>Neural Hub</h3>
-                        <p class="card-desc">Unified global retail fragmentation into a centralized neural data hub for Arabian Oud expansion.</p>
-                    </div>
-                    <div class="card-metrics">
-                        <div class="metric-item">
-                            <span class="val">+35%</span>
-                            <span class="label">Retention</span>
+                <div class="quantum-grid reveal">
+                    <!-- 01. Qyadat Group -->
+                    <div class="quantum-card featured stagger-item">
+                        <div class="card-content">
+                            <span class="card-tag">Systems Architecture</span>
+                            <h3 class="card-title">Qyadat Group</h3>
+                            <p class="card-desc">Architecting growth for Riyadh's top-tier entities. Standardizing multi-industry marketing operations with high-fidelity playbooks and outcome-driven SaaS reframing (Mora WhatsApp/SMS).</p>
+                            
+                            <div class="card-metrics">
+                                <div class="metric-item">
+                                    <span class="val">9+</span>
+                                    <span class="label">Team Size</span>
+                                </div>
+                                <div class="metric-item">
+                                    <span class="val">6+</span>
+                                    <span class="label">Industries</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- 03. KFH (4 Cols) -->
-                <div class="quantum-card reveal">
-                    <div class="card-content-top">
-                        <span class="card-tag">FinTech</span>
-                        <h3 class="card-title">KFH Digital<br>Adoption</h3>
-                        <p class="card-desc">Engineered next-gen banking acquisition strategies for Kuwait Finance House digital shift.</p>
-                    </div>
-                    <div class="card-metrics">
-                        <div class="metric-item">
-                            <span class="val">+22%</span>
-                            <span class="label">Acquisition</span>
+                    <!-- 02. Gento Shop -->
+                    <div class="quantum-card stagger-item">
+                        <div class="card-content">
+                            <span class="card-tag">Ops Automation</span>
+                            <h3 class="card-title">Gento Shop</h3>
+                            <p class="card-desc">Unified multi-warehouse inventory into a single neural view, reducing manual chasing by 80% through mobile-first operational layers.</p>
+                            <div class="card-metrics">
+                                <div class="metric-item">
+                                    <span class="val">80%</span>
+                                    <span class="label">Manual Ops Cut</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- 04. DigiMora (4 Cols) -->
-                <div class="quantum-card reveal">
-                    <div class="card-content-top">
-                        <span class="card-tag">Growth Systems</span>
-                        <h3 class="card-title">DigiMora<br>Engine</h3>
-                        <p class="card-desc">Productized high-ticket services into autonomous digital assets, yielding revenue scaling.</p>
-                    </div>
-                    <div class="card-metrics">
-                        <div class="metric-item">
-                            <span class="val">700%</span>
-                            <span class="label">Revenue Lift</span>
+                    <!-- 03. Arabian Oud -->
+                    <div class="quantum-card stagger-item">
+                        <div class="card-content">
+                            <span class="card-tag">Growth Engine</span>
+                            <h3 class="card-title">6x Revenue</h3>
+                            <p class="card-desc">Scaled 6 MENA markets with a $20k/day spend baseline, achieving exponential organic growth through systematic optimization.</p>
+                            <div class="card-metrics">
+                                <div class="metric-item">
+                                    <span class="val">6X</span>
+                                    <span class="label">Organic Growth</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- 05. ISO Framework (4 Cols) -->
-                <div class="quantum-card reveal">
-                    <div class="card-content-top">
-                        <span class="card-tag">Audit Automation</span>
-                        <h3 class="card-title">ISO<br>Compliance</h3>
-                        <p class="card-desc">Streamlined complex governmental audit workflows through intelligent framework automation.</p>
+                    <!-- 04. Tatweeq Real Estate -->
+                    <div class="quantum-card stagger-item">
+                        <div class="card-content">
+                            <span class="card-tag">Productization</span>
+                            <h3 class="card-title">Tatweeq</h3>
+                            <p class="card-desc">Transformed high-ticket services into autonomous digital assets, scaling contract performance by 7x in one fiscal year.</p>
+                            <div class="card-metrics">
+                                <div class="metric-item">
+                                    <span class="val">7X</span>
+                                    <span class="label">Scale Factor</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="card-metrics">
-                        <div class="metric-item">
-                            <span class="val">100%</span>
-                            <span class="label">Efficiency</span>
+
+                    <!-- 05. ISO Framework -->
+                    <div class="quantum-card stagger-item">
+                        <div class="card-content">
+                            <span class="card-tag">Engineering</span>
+                            <h3 class="card-title">ISO Digital</h3>
+                            <p class="card-desc">Engineered trackable digital paths for quality workflows, cutting operational waste by 20% across enterprise environments like Al Abbasi.</p>
+                            <div class="card-metrics">
+                                <div class="metric-item">
+                                    <span class="val">20%</span>
+                                    <span class="label">Waste Cut</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Chronology Section -->
-        <section class="trajectory-section content-wrap">
-            <div class="section-header reveal" style="text-align: center;">
-                <span class="hero-badge">Chronology</span>
-                <h2 class="hero-title" style="font-size: clamp(2rem, 5vw, 4rem);">The <span class="accent-text">Path</span></h2>
-            </div>
-            <div class="flow-container">
-                <div class="flow-node reveal">
-                    <div class="flow-date">2023 — 2026</div>
-                    <div class="flow-marker"></div>
-                    <div class="flow-content">
-                        <h4>Qyadat Group</h4>
-                        <p>Head of Digital Transformation • Strategic Marketing</p>
-                    </div>
+        <!-- Trajectory Section -->
+        <section class="trajectory-section">
+            <div class="content-wrap">
+                <div class="section-header reveal" style="text-align: center;">
+                    <p class="overline">Chronology</p>
+                    <h2>The Path</h2>
                 </div>
-                <div class="flow-node reveal">
-                    <div class="flow-date">2023</div>
-                    <div class="flow-marker"></div>
-                    <div class="flow-content">
-                        <h4>Gento Shop</h4>
-                        <p>E-commerce Systems Lead • Electronics Division</p>
+
+                <div class="flow-container">
+                    <div class="flow-node reveal">
+                        <div class="flow-marker"></div>
+                        <div class="flow-content">
+                            <span class="flow-date">2023 — 2026</span>
+                            <h4>Qyadat Group</h4>
+                            <p>Marketing Manager • Leading 9-person team for Gov & Private sectors.</p>
+                        </div>
                     </div>
-                </div>
-                <div class="flow-node reveal">
-                    <div class="flow-date">2022</div>
-                    <div class="flow-marker"></div>
-                    <div class="flow-content">
-                        <h4>DigiMora</h4>
-                        <p>Growth Strategy Lead • Digital Productization</p>
+                    <div class="flow-node reveal">
+                        <div class="flow-marker"></div>
+                        <div class="flow-content">
+                            <span class="flow-date">2023 — 2025</span>
+                            <h4>Gento Shop</h4>
+                            <p>E-commerce Supervisor • Built unified warehouse + mobile ops system.</p>
+                        </div>
                     </div>
-                </div>
-                <div class="flow-node reveal">
-                    <div class="flow-date">2021</div>
-                    <div class="flow-marker"></div>
-                    <div class="flow-content">
-                        <h4>KFH</h4>
-                        <p>Digital Strategy Consultant • Strategic Acquisition</p>
+                    <div class="flow-node reveal">
+                        <div class="flow-marker"></div>
+                        <div class="flow-content">
+                            <span class="flow-date">2022 — 2024</span>
+                            <h4>Tatweeq Real Estate</h4>
+                            <p>Growth Strategy Lead • 7x revenue growth via service productization.</p>
+                        </div>
                     </div>
-                </div>
-                <div class="flow-node reveal">
-                    <div class="flow-date">2014 — 2020</div>
-                    <div class="flow-marker"></div>
-                    <div class="flow-content">
-                        <h4>Arabian Oud</h4>
-                        <p>Marketing Operations Supervisor • Global Retail Expansion</p>
+                    <div class="flow-node reveal">
+                        <div class="flow-marker"></div>
+                        <div class="flow-content">
+                            <span class="flow-date">2021</span>
+                            <h4>Kuwait Finance House</h4>
+                            <p>Digital Transformation Strategist • Streamlining banking workflows.</p>
+                        </div>
+                    </div>
+                    <div class="flow-node reveal">
+                        <div class="flow-marker"></div>
+                        <div class="flow-content">
+                            <span class="flow-date">2014 — 2023</span>
+                            <h4>Arabian Oud</h4>
+                            <p>Marketing Operations Supervisor • 6x organic growth & GWR recognition.</p>
+                        </div>
+                    </div>
+                    <div class="flow-node reveal">
+                        <div class="flow-marker"></div>
+                        <div class="flow-content">
+                            <span class="flow-date">2018 — 2023</span>
+                            <h4>Iso-tec.com</h4>
+                            <p>Digital Transformation Specialist • Workflow engineering for ISO readiness.</p>
+                        </div>
+                    </div>
+                    <div class="flow-node reveal">
+                        <div class="flow-marker"></div>
+                        <div class="flow-content">
+                            <span class="flow-date">2011 — 2017</span>
+                            <h4>TwinExcel</h4>
+                            <p>Digital Specialist • Establishing the performance-first mindset.</p>
+                        </div>
                     </div>
                 </div>
             </div>
         </section>
     </main>
 
-    <footer class="site-footer-2026 reveal">
-        <div class="footer-dock">
-            <div class="footer-nav">
-                <a href="../index.html" class="footer-link">Home</a>
-                <a href="../portfolio/index.html" class="footer-link">Portfolio</a>
-                <a href="https://www.linkedin.com/in/mohamadgamal/" target="_blank" class="footer-link">LinkedIn</a>
-                <a href="https://wa.me/201555141282" target="_blank" class="footer-link">WhatsApp</a>
+    <footer class="site-footer-2026">
+        <div class="footer-dock content-wrap reveal">
+            <div class="footer-brand">
+                <img src="../assets/images/logo.png" alt="Logo" class="footer-logo-img">
             </div>
-            <div class="footer-status">
-                <div class="status-dot"></div>
-                <span class="status-label">Neural Node Active</span>
+            <div class="footer-actions">
+                <a href="../index.html" class="dock-link">Home</a>
+                <a href="../portfolio/index.html" class="dock-link">Portfolio</a>
+                <a href="https://www.linkedin.com/in/mohamadgamal/" target="_blank" class="dock-link">LinkedIn</a>
+                <a href="https://wa.me/201555141282" target="_blank" class="dock-link">WhatsApp</a>
             </div>
         </div>
     </footer>

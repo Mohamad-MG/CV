@@ -44,11 +44,12 @@ const GEMINI_KEY_POOL = [
   "digimoraeg", "mogamal", "qyadat"
 ];
 
-const MODELS = {
+const DEFAULT_MODELS = {
   FLASH: "gemini-2.0-flash",
   EXPERT: "gemini-2.0-flash",  // Using flash for both until 2.0-pro is stable
-  FAILOVER: "gemini-1.5-flash",
+  FAILOVER: "",
 };
+const DEFAULT_GEMINI_API_VERSION = "v1beta";
 
 const TIMEOUT_MS = 10000;
 const RATE_LIMIT_WINDOW_MS = 60_000;
@@ -489,6 +490,29 @@ function shuffle(arr) {
   return [...arr].sort(() => Math.random() - 0.5);
 }
 
+function normalizeModelName(value) {
+  if (typeof value !== "string") return "";
+  const trimmed = value.trim();
+  return /^[a-z0-9.\-_]+$/i.test(trimmed) ? trimmed : "";
+}
+
+function resolveModels(env) {
+  const flash = normalizeModelName(env.GEMINI_MODEL_FLASH) || DEFAULT_MODELS.FLASH;
+  const expert = normalizeModelName(env.GEMINI_MODEL_EXPERT) || flash;
+  const failover = normalizeModelName(env.GEMINI_MODEL_FAILOVER) || DEFAULT_MODELS.FAILOVER;
+
+  return {
+    FLASH: flash,
+    EXPERT: expert,
+    FAILOVER: failover && failover !== flash ? failover : "",
+  };
+}
+
+function resolveApiVersion(env) {
+  const value = String(env.GEMINI_API_VERSION || DEFAULT_GEMINI_API_VERSION).trim();
+  return /^[a-z0-9]+$/i.test(value) ? value : DEFAULT_GEMINI_API_VERSION;
+}
+
 function detectLanguage(text) {
   const ar = /[\u0600-\u06FF\u0750-\u077F]/;
   return ar.test(text) ? "ar" : "en";
@@ -769,7 +793,7 @@ ${langLock}
 // =====================================================================
 // Gemini Call (join all parts)
 // =====================================================================
-async function tryGenerate({ model, apiKey, systemPrompt, messages, mode }) {
+async function tryGenerate({ model, apiKey, apiVersion, systemPrompt, messages, mode }) {
   const payload = {
     contents: normalizeMessages(messages),
     system_instruction: { parts: [{ text: systemPrompt }] },
@@ -788,7 +812,7 @@ async function tryGenerate({ model, apiKey, systemPrompt, messages, mode }) {
 
   try {
     const res = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`,
+      `https://generativelanguage.googleapis.com/${apiVersion}/models/${model}:generateContent?key=${apiKey}`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -836,6 +860,45 @@ function summarizeFailures(failures, max = 8) {
     const detail = String(f?.detail || "").replace(/\s+/g, " ").trim().slice(0, 110);
     return `${f?.model || "unknown"}[${f?.status ?? "ERR"}]${detail ? ` ${detail}` : ""}`;
   }).join(" | ");
+}
+
+function classifyUpstreamFailure(failures) {
+  if (!Array.isArray(failures) || failures.length === 0) {
+    return {
+      status: 500,
+      error: "Worker misconfigured",
+      details: "No valid Gemini API keys were found in Worker secrets.",
+    };
+  }
+
+  const has429 = failures.some(f => f?.status === 429);
+  const has404 = failures.some(f => f?.status === 404);
+  const only429or404 = failures.every(f => f?.status === 429 || f?.status === 404);
+  const all404 = failures.every(f => f?.status === 404);
+
+  if (all404) {
+    return {
+      status: 500,
+      error: "Upstream model misconfigured",
+      details: "Configured model is not available for this API/project.",
+    };
+  }
+
+  if (has429 && only429or404) {
+    return {
+      status: 429,
+      error: "Upstream quota exceeded",
+      details: has404
+        ? "Gemini quota exceeded and failover model is invalid."
+        : "Gemini quota exceeded on all configured keys.",
+    };
+  }
+
+  return {
+    status: 502,
+    error: "Upstream AI unavailable",
+    details: "Gemini upstream request failed.",
+  };
 }
 
 // =====================================================================
@@ -980,7 +1043,9 @@ export default {
         marketCtx
       });
 
-      const selectedModel = mode === "expert" ? MODELS.EXPERT : MODELS.FLASH;
+      const models = resolveModels(env);
+      const apiVersion = resolveApiVersion(env);
+      const selectedModel = mode === "expert" ? models.EXPERT : models.FLASH;
 
       // 7) Generate (failover)
       const keys = shuffle(GEMINI_KEY_POOL);
@@ -993,6 +1058,7 @@ export default {
         const result = await tryGenerate({
           model: selectedModel,
           apiKey,
+          apiVersion,
           systemPrompt,
           messages,
           mode
@@ -1004,13 +1070,17 @@ export default {
         if (result) upstreamFailures.push(result);
       }
 
-      if (!responseText) {
+      const primaryOnlyQuota = upstreamFailures.length > 0 && upstreamFailures.every(f => f?.status === 429);
+      const canTryFailover = !!models.FAILOVER && !primaryOnlyQuota;
+
+      if (!responseText && canTryFailover) {
         for (const k of keys) {
           const apiKey = env[k];
           if (!apiKey) continue;
           const result = await tryGenerate({
-            model: MODELS.FAILOVER,
+            model: models.FAILOVER,
             apiKey,
+            apiVersion,
             systemPrompt,
             messages,
             mode: "flash"
@@ -1024,7 +1094,15 @@ export default {
       }
 
       if (!responseText) {
-        throw new Error(`Service Unavailable :: ${summarizeFailures(upstreamFailures)}`);
+        const classification = classifyUpstreamFailure(upstreamFailures);
+        return json(
+          {
+            error: classification.error,
+            details: `${classification.details} :: ${summarizeFailures(upstreamFailures)}`,
+          },
+          classification.status,
+          corsHeaders
+        );
       }
 
       // 8) Post process
@@ -1063,15 +1141,6 @@ export default {
       }, 200, corsHeaders);
 
     } catch (err) {
-      const msg = String(err?.message || "");
-      if (msg.startsWith("Service Unavailable ::")) {
-        const detail = msg.replace("Service Unavailable ::", "").trim();
-        return json(
-          { error: "Upstream AI unavailable", details: detail || "No upstream response" },
-          502,
-          corsHeaders
-        );
-      }
       return json({ error: "System Busy", details: "Retrying neural link..." }, 503, corsHeaders);
     }
   }
