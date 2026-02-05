@@ -23,6 +23,9 @@ const J_CORE = {
 
 class JimmyEngine {
     constructor() {
+        this.isMobileLite =
+            window.matchMedia('(max-width: 768px)').matches ||
+            window.matchMedia('(pointer: coarse)').matches;
         this.ctx = {
             isOpen: false,
             isThinking: false,
@@ -49,6 +52,12 @@ class JimmyEngine {
 
     injectStructure() {
         const t = J_CORE.i18n[this.ctx.lang];
+        const avatarMedia = this.isMobileLite
+            ? `<img src="assets/images/logo.png" alt="Captain Jimmy" loading="lazy" decoding="async">`
+            : `<video src="${J_CORE.config.videoSrc}" autoplay loop muted playsinline preload="metadata"></video>`;
+        const launcherMedia = this.isMobileLite
+            ? `<img src="assets/images/logo.png" alt="Open Jimmy" loading="lazy" decoding="async">`
+            : `<video src="${J_CORE.config.videoSrc}" autoplay loop muted playsinline preload="metadata"></video>`;
         const html = `
             <div id="jimmy-root" aria-hidden="true">
                 <!-- 1. BACKDROP (Click to close) -->
@@ -61,7 +70,7 @@ class JimmyEngine {
                     <div class="j-header">
                         <div class="j-identity">
                             <div class="j-avatar-sm">
-                                <video src="${J_CORE.config.videoSrc}" autoplay loop muted playsinline></video>
+                                ${avatarMedia}
                             </div>
                             <div class="j-hud-data">
                                 <span class="j-title">${t.status}</span>
@@ -96,7 +105,7 @@ class JimmyEngine {
 
                 <!-- 3. LAUNCHER (The Summoner) -->
                 <div id="j-launcher" class="j-launcher" role="button" tabindex="0" aria-label="Summon Jimmy" aria-controls="j-console" aria-expanded="false">
-                    <video src="${J_CORE.config.videoSrc}" autoplay loop muted playsinline></video>
+                    ${launcherMedia}
                 </div>
             </div>
         `;
@@ -179,7 +188,9 @@ class JimmyEngine {
         }, 3000);
 
         // Subtile Parallax (5% Intensity)
-        window.addEventListener('mousemove', (e) => this.handleParallax(e));
+        if (!this.isMobileLite) {
+            window.addEventListener('mousemove', (e) => this.handleParallax(e));
+        }
     }
 
     handleParallax(e) {
@@ -277,7 +288,16 @@ class JimmyEngine {
 
             clearTimeout(toId);
 
-            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            if (!res.ok) {
+                let detail = '';
+                try {
+                    const errJson = await res.json();
+                    detail = errJson?.details || errJson?.error || '';
+                } catch {
+                    try { detail = (await res.text() || '').trim(); } catch {}
+                }
+                throw new Error(`HTTP ${res.status}${detail ? ` - ${detail}` : ''}`);
+            }
             const data = await res.json();
 
             if (data.meta) this.ctx.meta = data.meta;

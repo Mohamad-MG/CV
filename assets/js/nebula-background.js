@@ -105,7 +105,6 @@
                     left: '0',
                     top: '0',
                     margin: '0',
-                    willChange: 'transform',
                     opacity: '0',
                     transition: 'opacity 5s ease' 
                 });
@@ -128,6 +127,11 @@
                 setTimeout(() => {
                     particle.active = particle.isAnimated;
                     requestAnimationFrame(() => {
+                        if (particle.isAnimated) {
+                            particle.el.style.willChange = 'transform';
+                        } else {
+                            particle.el.style.willChange = 'auto';
+                        }
                         particle.el.style.opacity = particle.isAnimated ? '0.2' : '0.08';
                         particle.el.style.transform = `translate3d(${particle.x - particle.radius}px, ${particle.y - particle.radius}px, 0)`;
                     });

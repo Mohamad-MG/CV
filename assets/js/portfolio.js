@@ -252,6 +252,10 @@ document.addEventListener('DOMContentLoaded', () => {
             videosSection.style.display = tab === 'videos' ? 'block' : 'none';
         }
 
+        if (tab === 'videos') {
+            videoItems.forEach((item) => item.classList.add('visible'));
+        }
+
         if (tab !== 'images') {
             closeImageLightbox();
         }

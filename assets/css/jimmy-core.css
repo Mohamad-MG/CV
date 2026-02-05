@@ -81,8 +81,9 @@
     /* Hide when open */
 }
 
-/* Video within launcher */
-.j-launcher video {
+/* Media within launcher */
+.j-launcher video,
+.j-launcher img {
     width: 130%;
     height: 130%;
     object-fit: cover;
