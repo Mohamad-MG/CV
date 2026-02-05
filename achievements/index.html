@@ -4,214 +4,1093 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mohamed Gamal | Achievements</title>
-    <meta name="description" content="Awards, recognitions, and major milestones in digital marketing and business growth. Guinness World Record holder.">
-    
-    <!-- Fonts -->
+    <title>Mohamed Gamal | Hall of Achievements</title>
+    <meta name="description"
+        content="Awards, recognitions, and major milestones in digital marketing and business growth.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/theme.css">
+    <link rel="stylesheet" href="../assets/css/header.css">
+    <link rel="stylesheet" href="../assets/css/motion-effects.css">
 
-    <!-- Icons -->
-    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
-
-    <!-- Core Styles (Unified) -->
-    <link rel="stylesheet" href="../assets/css/home-main.css?v=6.0">
-    <link rel="stylesheet" href="../assets/css/jimmy-core.css?v=5.0">
-    
-    <!-- Scripts -->
+    <script src="../assets/js/motion-effects.js" defer></script>
     <script src="../assets/js/header.js" defer></script>
-    <script src="../assets/js/page-effects.js?v=1.0" defer></script>
+    <style>
+        /* :root variables imported from theme.css */
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            line-height: 1.7;
+            animation: pageLoad 1s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes pageLoad {
+            from {
+                opacity: 0;
+                filter: blur(10px);
+                transform: scale(0.98);
+            }
+
+            to {
+                opacity: 1;
+                filter: blur(0);
+                transform: scale(1);
+            }
+        }
+
+        /* Ambient Background - Dual Glow */
+        .ambient-glow {
+            position: fixed;
+            width: min(1000px, 100vw);
+            height: min(1000px, 100vw);
+            background: radial-gradient(circle, rgba(43, 155, 155, 0.12) 0%, transparent 60%);
+            border-radius: 50%;
+            top: -300px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 0;
+            pointer-events: none;
+            animation: pulseGlow 10s ease-in-out infinite;
+            mix-blend-mode: screen;
+        }
+
+        .ambient-glow::after {
+            content: '';
+            position: absolute;
+            width: min(600px, 80vw);
+            height: min(600px, 80vw);
+            background: radial-gradient(circle, rgba(139, 106, 175, 0.1) 0%, transparent 60%);
+            border-radius: 50%;
+            bottom: -100px;
+            right: -200px;
+            animation: pulseGlow 12s ease-in-out infinite reverse;
+        }
+
+        @keyframes pulseGlow {
+
+            0%,
+            100% {
+                opacity: 0.6;
+                transform: translateX(-50%) scale(1) rotate(0deg);
+            }
+
+            50% {
+                opacity: 1;
+                transform: translateX(-50%) scale(1.15) rotate(5deg);
+            }
+        }
+
+        /* Navigation - Premium */
+        .back-nav {
+            position: fixed;
+            top: 30px;
+            left: 30px;
+            z-index: 1000;
+        }
+
+        .back-nav a {
+            text-decoration: none;
+            color: var(--text-primary);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1rem;
+            padding: 12px 20px;
+            background: var(--bg-glass);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
+            border-radius: 50px;
+            transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .back-nav a:hover {
+            background: var(--bg-card);
+            border-color: var(--teal-primary);
+            transform: translateX(-5px);
+            box-shadow: 0 8px 30px rgba(43, 155, 155, 0.15);
+        }
+
+        /* Hero Section - Premium */
+        .hero-section {
+            min-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+            z-index: 10;
+            padding: 0 20px;
+        }
+
+        .hero-label {
+            font-size: 0.85rem;
+            letter-spacing: 5px;
+            text-transform: uppercase;
+            color: var(--teal-primary);
+            font-weight: 600;
+            margin-bottom: 25px;
+            opacity: 0;
+            animation: fadeDown 1s ease forwards 0.2s;
+        }
+
+        h1 {
+            font-size: clamp(2.8rem, 7vw, 5.5rem);
+            font-weight: 800;
+            line-height: 1.05;
+            margin-bottom: 35px;
+            background: linear-gradient(135deg, var(--text-primary) 0%, var(--teal-deep) 50%, var(--purple-deep) 100%);
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            opacity: 0;
+            animation: fadeUp 1s ease forwards 0.4s, gradientShift 8s ease-in-out infinite;
+        }
+
+        @keyframes gradientShift {
+
+            0%,
+            100% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+        }
+
+        .hero-desc {
+            font-size: 1.15rem;
+            color: var(--text-secondary);
+            max-width: 650px;
+            margin: 0 auto;
+            font-weight: 400;
+            opacity: 0;
+            animation: fadeUp 1s ease forwards 0.6s;
+        }
+
+        /* Stats Grid - Glassmorphism */
+        .stats-container {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 60px;
+            flex-wrap: wrap;
+            opacity: 0;
+            animation: fadeUp 1s ease forwards 0.8s;
+        }
+
+        .stat-box {
+            text-align: center;
+            padding: 30px 40px;
+            background: var(--bg-glass);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--teal-primary), var(--purple-primary));
+            background-size: 200% 100%;
+            animation: gradientShift 4s ease infinite;
+        }
+
+        .stat-box:hover {
+            transform: translateY(-8px) scale(1.02);
+            border-color: rgba(43, 155, 155, 0.4);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2), 0 0 40px rgba(43, 155, 155, 0.1);
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--teal-primary) 0%, var(--purple-primary) 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            position: relative;
+            margin-bottom: 8px;
+            line-height: 1.2;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 500;
+        }
+
+        /* The Crown Jewel - Record Section */
+        .record-section {
+            padding: 80px 20px 120px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .record-card {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: linear-gradient(145deg, rgba(196, 169, 98, 0.08) 0%, rgba(0, 0, 0, 0) 100%);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(196, 169, 98, 0.25);
+            border-radius: 32px;
+            padding: 60px;
+            display: grid;
+            grid-template-columns: 1.3fr 0.7fr;
+            gap: 50px;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        /* Shine sweep on hover */
+        .record-card::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg,
+                    transparent 40%,
+                    rgba(196, 169, 98, 0.05) 50%,
+                    transparent 60%);
+            transform: translateX(-100%) rotate(45deg);
+            transition: transform 1s ease;
+            pointer-events: none;
+        }
+
+        .record-card:hover::after {
+            transform: translateX(100%) rotate(45deg);
+        }
+
+        .record-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(196, 169, 98, 0.5);
+            box-shadow:
+                0 30px 80px rgba(0, 0, 0, 0.3),
+                0 0 60px rgba(196, 169, 98, 0.1);
+        }
+
+        .record-content h2 {
+            font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+            font-weight: 700;
+            margin-bottom: 25px;
+            color: var(--gold);
+            line-height: 1.2;
+        }
+
+        .record-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 20px;
+            background: rgba(196, 169, 98, 0.12);
+            border: 1px solid rgba(196, 169, 98, 0.4);
+            border-radius: 50px;
+            color: var(--gold);
+            font-weight: 600;
+            font-size: 0.85rem;
+            margin-bottom: 25px;
+            letter-spacing: 0.5px;
+        }
+
+        .record-desc {
+            font-size: 1.05rem;
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+            line-height: 1.8;
+        }
+
+        .record-desc strong {
+            color: var(--gold);
+        }
+
+        .record-visual {
+            position: relative;
+            height: 280px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .gold-ring {
+            position: absolute;
+            width: 220px;
+            height: 220px;
+            border: 2px solid rgba(196, 169, 98, 0.25);
+            border-radius: 50%;
+            animation: spin 12s linear infinite;
+        }
+
+        .gold-ring::after {
+            content: '';
+            position: absolute;
+            top: -6px;
+            left: 50%;
+            width: 12px;
+            height: 12px;
+            background: var(--gold);
+            border-radius: 50%;
+            box-shadow: 0 0 25px var(--gold), 0 0 50px rgba(196, 169, 98, 0.5);
+        }
+
+        .gold-ring:nth-child(2) {
+            width: 160px;
+            height: 160px;
+            animation-duration: 18s;
+            animation-direction: reverse;
+            border-color: rgba(196, 169, 98, 0.5);
+        }
+
+        /* Achievements Grid - Premium */
+        .grid-section {
+            padding: 40px 20px 120px;
+            max-width: 1300px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 10;
+        }
+
+        .achieve-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+            gap: 28px;
+        }
+
+        .achieve-card {
+            background: var(--bg-glass);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
+            border-radius: 28px;
+            padding: 42px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+            opacity: 0;
+            transform: translateY(40px) scale(0.97);
+            filter: blur(5px);
+        }
+
+        .achieve-card.visible {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            filter: blur(0);
+        }
+
+        /* Staggered reveal */
+        .achieve-card:nth-child(1) {
+            transition-delay: 0.1s;
+        }
+
+        .achieve-card:nth-child(2) {
+            transition-delay: 0.2s;
+        }
+
+        .achieve-card:nth-child(3) {
+            transition-delay: 0.3s;
+        }
+
+        .achieve-card:nth-child(4) {
+            transition-delay: 0.4s;
+        }
+
+        .achieve-card:nth-child(5) {
+            transition-delay: 0.5s;
+        }
+
+        .achieve-card:nth-child(6) {
+            transition-delay: 0.6s;
+        }
+
+        .achieve-card.visible {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            filter: blur(0);
+        }
+
+        /* Gradient border on hover */
+        .achieve-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--teal-primary), var(--purple-primary));
+            transform: scaleX(0);
+            transition: transform 0.4s ease;
+        }
+
+        .achieve-card:hover::after {
+            transform: scaleX(1);
+        }
+
+        .achieve-card:hover {
+            background: var(--bg-card);
+            border-color: rgba(43, 155, 155, 0.3);
+            transform: translateY(-12px) scale(1.01);
+            box-shadow:
+                0 25px 60px rgba(0, 0, 0, 0.25),
+                0 0 40px rgba(43, 155, 155, 0.08);
+        }
+
+        .card-icon {
+            width: 65px;
+            height: 65px;
+            border-radius: 18px;
+            background: linear-gradient(135deg, var(--teal-primary), rgba(43, 155, 155, 0.3));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.7rem;
+            color: white;
+            /* Ensure SVG stroke is white */
+            margin-bottom: 28px;
+            box-shadow: 0 12px 35px rgba(43, 155, 155, 0.25);
+            transition: transform 0.4s ease;
+        }
+
+        .achieve-card:hover .card-icon {
+            transform: scale(1.1) rotate(-5deg);
+        }
+
+        .achieve-card:nth-child(2) .card-icon {
+            background: linear-gradient(135deg, var(--purple-primary), rgba(139, 106, 175, 0.3));
+            box-shadow: 0 12px 35px rgba(139, 106, 175, 0.25);
+        }
+
+        .achieve-card:nth-child(4) .card-icon {
+            background: linear-gradient(135deg, var(--gold), rgba(196, 169, 98, 0.3));
+            box-shadow: 0 12px 35px rgba(196, 169, 98, 0.25);
+        }
+
+        .achieve-card h3 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 18px;
+            color: var(--text-primary);
+            line-height: 1.3;
+        }
+
+        .achieve-card p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+
+        .achieve-card p strong {
+            color: var(--teal-primary);
+            font-weight: 600;
+        }
+
+        /* Mouse Spotlight Effect */
+        .achieve-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(600px circle at var(--mouse-x) var(--mouse-y), rgba(43, 155, 155, 0.08), transparent 40%);
+            z-index: 0;
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+
+        .achieve-card:hover::before {
+            opacity: 1;
+        }
+
+        /* Footer */
+        footer {
+            border-top: 1px solid var(--border-color);
+            padding: 40px;
+            text-align: center;
+            position: relative;
+            z-index: 10;
+            background: var(--bg-body);
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 20px;
+        }
+
+        .footer-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: white;
+        }
+
+        /* Animations */
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 900px) {
+            .record-card {
+                grid-template-columns: 1fr;
+                text-align: center;
+                padding: 40px;
+            }
+
+            .record-badge {
+                margin: 0 auto 20px;
+            }
+
+            .record-visual {
+                height: 200px;
+            }
+        }
+
+        /* Contact Floating Button */
+        .contact-fab {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--teal-primary), var(--purple-primary));
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(45, 180, 180, 0.35);
+            z-index: 999;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .contact-fab:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 8px 30px rgba(45, 180, 180, 0.45);
+            border-radius: 20px;
+        }
+
+        .contact-fab svg {
+            width: 24px;
+            height: 24px;
+            fill: white;
+        }
+
+        /* Contact Modal */
+        .contact-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(10, 15, 20, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .contact-modal-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .contact-modal {
+            position: relative;
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border-radius: 32px;
+            padding: 40px 30px;
+            max-width: 420px;
+            width: 90%;
+            text-align: center;
+            transform: scale(0.9) translateY(20px);
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow:
+                0 40px 80px rgba(0, 0, 0, 0.15),
+                0 10px 30px rgba(0, 0, 0, 0.05),
+                inset 0 0 0 1px rgba(255, 255, 255, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .contact-modal-overlay.show .contact-modal {
+            transform: scale(1) translateY(0);
+        }
+
+        .contact-modal h3 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 25px;
+            letter-spacing: -0.02em;
+        }
+
+        .modal-buttons {
+            display: flex;
+            flex-direction: row;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .modal-btn {
+            flex: 1;
+            padding: 12px 10px;
+            border: 1px solid transparent;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease-out;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            text-decoration: none;
+            letter-spacing: -0.01em;
+            min-width: 90px;
+        }
+
+        .modal-btn.call {
+            background: #111111;
+            color: #ffffff;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .modal-btn.call:hover {
+            background: #000000;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .modal-btn.whatsapp {
+            background: #25D366;
+            color: #ffffff;
+            box-shadow: 0 2px 8px rgba(37, 211, 102, 0.15);
+        }
+
+        .modal-btn.whatsapp:hover {
+            background: #20BD5A;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(37, 211, 102, 0.25);
+        }
+
+        .modal-btn svg {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            width: 32px;
+            height: 32px;
+            background: rgba(0, 0, 0, 0.05);
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1rem;
+            color: var(--text-muted);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-close:hover {
+            background: rgba(0, 0, 0, 0.1);
+            color: var(--text-primary);
+            transform: scale(1.1);
+        }
+    </style>
 </head>
 
 <body>
-    <!-- Background Foundation (Nebula System) -->
-    <div class="bg-void-layer"></div>
-    <div class="bg-ambient-glow"></div>
-    <div class="bg-micro-dust"></div>
-    <div class="bg-glass-haze"></div>
-    <div class="bg-vignette"></div>
+    <div class="ambient-glow"></div>
 
-    <!-- Premium Header (Nav Only) -->
+    <!-- Progress Line -->
+    <div class="progress-line" id="progressLine"></div>
+
+    <!-- Premium Header -->
     <header class="site-header">
         <div class="header-container">
-            <nav id="primaryNav" class="header-nav">
-                <a href="../index.html" class="nav-link">Home</a>
-                <a href="../portfolio/index.html" class="nav-link">Portfolio</a>
-                <a href="./index.html" class="nav-link active">Achievements</a>
+            <!-- Logo/Brand -->
+            <a href="/CV/" class="header-logo">
+                <img src="../assets/images/Eng-logo-mg2.png" alt="Mohamed Gamal Logo" class="logo-img">
+            </a>
+
+            <!-- Navigation -->
+            <nav class="header-nav">
+                <a href="/CV/" class="nav-link">Home</a>
+                <a href="/CV/portfolio/" class="nav-link">Portfolio</a>
+                <a href="/CV/achievements/" class="nav-link active">Achievements</a>
+                <div class="nav-indicator"></div>
             </nav>
-            <button class="mobile-menu-toggle" aria-label="Open menu" aria-expanded="false" aria-controls="primaryNav">
-                <i class="ri-menu-3-line"></i>
+
+            <!-- Mobile Menu Toggle -->
+            <button class="mobile-menu-toggle" aria-label="Toggle menu">
+                <span></span>
+                <span></span>
+                <span></span>
             </button>
         </div>
     </header>
 
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="hero-label">Results are the Evidence</div>
+        <h1>Moments That Shaped<br>My Career</h1>
+        <p class="hero-desc">Every number tells a story. Every milestone started with a problem someone said was "impossible to solve." Here is what happened when I decided to try anyway.</p>
+
+        <div class="stats-container">
+            <div class="stat-box visible">
+                <div class="stat-number" data-val="6x">6x</div>
+                <div class="stat-label">Sales Growth (SEO)</div>
+            </div>
+            <div class="stat-box visible">
+                <div class="stat-number" data-val="478M">≈ $478M</div>
+                <div class="stat-label">Estimated annual retail sales value (FY2019)</div>
+            </div>
+            <div class="stat-box visible">
+                <div class="stat-number" data-val="900+">900+</div>
+                <div class="stat-label">Unified Stores</div>
+            </div>
+            <div class="stat-box visible">
+                <div class="stat-number" data-val="12+">12+</div>
+                <div class="stat-label">Leadership Years</div>
+            </div>
+        </div>
+    </section>
+
     <main>
-        <!-- Hero Section -->
-        <section class="achievements-hero">
-            <div class="hero-orb"></div>
-            <div class="content-wrap content-wrap--wide">
-                <div class="section-header reveal">
-                    <p class="overline">The Hall of Impact</p>
-                    <h1 class="kinetic-text">
-                        Milestones That<br>Defied Expectations
-                    </h1>
+        <!-- The Record -->
+        <section class="record-section">
+            <div class="record-card">
+                <div class="record-content">
+                    <div class="record-badge">
+                        <span>🏆 Guinness World Records Recognition</span>
+                    </div>
+                    <h2>Guinness World Records Recognition</h2>
+                    <p class="record-desc">
+                        Guinness World Records recognized Arabian Oud in January 2020 as the world's largest premium
+                        unisex fragrance brand, based on estimated annual retail sales value.
+                    </p>
+                    <p class="record-desc">
+                        The assessment covered a full 12-month fiscal year; the announcement was January 2020 and the
+                        data reflect 2019 sales.
+                    </p>
+                    <p class="record-desc" style="color: white; font-weight: 500;">
+                        Estimated Retail Sales Value ≈ $478M.
+                        <a href="https://www.guinnessworldrecords.ae/news/commercial/2020/1/arabian-oud-gets-crowned-as-the-largest-premium-unisex-fragrance-brand-in-the-wor-607327" target="_blank" rel="noopener">Source: Guinness World Records – January 2020</a>
+                    </p>
                 </div>
-
-                <!-- Stats HUD -->
-                <div class="stats-hud reveal">
-                    <div class="stat-unit stagger-item">
-                        <div class="unit-value">6x</div>
-                        <div class="unit-label">Sales Growth</div>
-                    </div>
-                    <div class="stat-unit stagger-item">
-                        <div class="unit-value">$478M</div>
-                        <div class="unit-label">Retail Value</div>
-                    </div>
-                    <div class="stat-unit stagger-item">
-                        <div class="unit-value">900+</div>
-                        <div class="unit-label">Unified Stores</div>
-                    </div>
-                    <div class="stat-unit stagger-item">
-                        <div class="unit-value">12+</div>
-                        <div class="unit-label">Leadership</div>
-                    </div>
+                <div class="record-visual">
+                    <div class="gold-ring"></div>
+                    <div class="gold-ring"></div>
+                    <div style="font-size: 4rem; z-index: 2;">👑</div>
                 </div>
             </div>
         </section>
 
-        <!-- The Master Record (Guinness) -->
-        <section class="record-showcase">
-            <div class="content-wrap content-wrap--wide">
-                <div class="guinness-panel reveal">
-                    <div class="panel-blur-bg"></div>
-                    <div class="panel-content">
-                        <div class="badge-gold">
-                            <i class="ri-trophy-fill"></i> Guinness World Record
-                        </div>
-                        <h2>World's Largest Premium <br>Unisex Fragrance Brand</h2>
-                        <p class="panel-desc">
-                            Recognized in January 2020. A testament to massive scale and strategic dominance in the luxury retail sector globally.
-                        </p>
-                        <div class="panel-metrics">
-                            <span class="metric-highlight">Est. Sales Value: $478M+</span>
-                        </div>
-                        <a href="https://www.guinnessworldrecords.ae/news/commercial/2020/1/arabian-oud-gets-crowned-as-the-largest-premium-unisex-fragrance-brand-in-the-wor-607327" target="_blank" rel="noopener" class="premium-link">
-                            Official Verification <i class="ri-arrow-right-up-line"></i>
-                        </a>
+        <!-- Other Achievements -->
+        <section class="grid-section">
+            <div class="achieve-grid">
+
+                <!-- Card 1 - Qyadat Transformation -->
+                <div class="achieve-card">
+                    <div class="card-icon">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path
+                                d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z">
+                            </path>
+                            <path
+                                d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z">
+                            </path>
+                            <path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"></path>
+                            <path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"></path>
+                        </svg>
                     </div>
-                    <div class="panel-visual">
-                        <div class="orbit-system">
-                            <div class="orbit ring-1"></div>
-                            <div class="orbit ring-2"></div>
-                            <div class="orbit ring-3"></div>
-                            <i class="ri-medal-fill medal-icon"></i>
-                        </div>
-                    </div>
+                    <h3>The Question That Changed Everything</h3>
+                    <p><strong>The Problem:</strong> At Qyadat, we were competing on price. Every proposal was a race to
+                        the bottom.</p>
+                    <p style="margin-top: 12px;"><strong>The Moment:</strong> I asked in a meeting: "Why would a
+                        ministry pay us double?" The room went silent. Then we rebuilt everything.</p>
+                    <p style="margin-top: 12px;"><strong>The Result:</strong> We stopped selling services. We started
+                        selling guaranteed outcomes with SLAs. Within 8 months, we signed 3 government contracts worth
+                        more than the previous 2 years combined.</p>
                 </div>
+
+                <!-- Card 2 - ISO Digital Framework -->
+                <div class="achieve-card">
+                    <div class="card-icon">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M3 21h18" />
+                            <path d="M5 21V7l8-4 8 4v14" />
+                            <path d="M17 21v-8.5a.5.5 0 0 0-.5-.5h-5a.5.5 0 0 0-.5.5V21" />
+                            <path d="M12 17h.01" />
+                            <path d="M12 12h.01" />
+                            <path d="M8 12h.01" />
+                            <path d="M8 17h.01" />
+                            <path d="M16 12h.01" />
+                            <path d="M16 17h.01" />
+                        </svg>
+                    </div>
+                    <h3>When Bureaucracy Met Automation</h3>
+                    <p><strong>The Problem:</strong> Government agencies were spending months preparing for ISO audits.
+                        Paperwork chaos. Staff burnout.</p>
+                    <p style="margin-top: 12px;"><strong>The Solution:</strong> I built a "Digital Readiness Framework"
+                        at Iso-tec. Not just templates — a living system that auto-updates, flags gaps, and generates
+                        reports.</p>
+                    <p style="margin-top: 12px;"><strong>The Result:</strong> 4 ministries and 2 universities passed ISO
+                        certification on first attempt. Average prep time dropped from 6 months to 6 weeks.</p>
+                </div>
+
+                <!-- Card 3 - Arabian Oud Omnichannel -->
+                <div class="achieve-card">
+                    <div class="card-icon">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10" />
+                            <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20" />
+                            <path d="M2 12h20" />
+                            <path d="M12 12m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0" />
+                        </svg>
+                    </div>
+                    <h3>900 Stores, One Customer Brain</h3>
+                    <p><strong>The Problem:</strong> Arabian Oud had 900+ retail stores and an e-commerce site. But they
+                        couldn't tell if the same customer bought in both. Marketing was shooting blind.</p>
+                    <p style="margin-top: 12px;"><strong>The Build:</strong> Unified customer data layer. Cross-channel
+                        behavior tracking. Personalized messaging based on shopping patterns.</p>
+                    <p style="margin-top: 12px;"><strong>The Impact:</strong> Customer Lifetime Value increased 35%.
+                        Repeat purchase rate jumped 22%. The CMO finally knew who was actually buying.</p>
+                </div>
+
+                <!-- Card 4 - DigiMora Growth -->
+                <div class="achieve-card">
+                    <div class="card-icon">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M3 3v18h18" />
+                            <path d="m19 9-5 5-4-4-3 3" />
+                            <path d="M19 9h-5" />
+                            <path d="M19 9v5" />
+                        </svg>
+                    </div>
+                    <h3>From 2 Clients to 14 in One Year</h3>
+                    <p><strong>The Starting Point:</strong> DigiMora was a small agency with big ambitions but no sales
+                        engine.</p>
+                    <p style="margin-top: 12px;"><strong>The Strategy:</strong> Productized services. Built case studies
+                        that sold themselves. Created a referral system that turned clients into salespeople.</p>
+                    <p style="margin-top: 12px;"><strong>The Growth:</strong> 7x contract growth in 12 months. Revenue
+                        per client increased 40% by focusing on retainers over projects.</p>
+                </div>
+
+                <!-- Card 5 - Team Building -->
+                <div class="achieve-card">
+                    <div class="card-icon">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                            <circle cx="9" cy="7" r="4" />
+                            <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                        </svg>
+                    </div>
+                    <h3>Building Teams That Outlast Me</h3>
+                    <p><strong>My Philosophy:</strong> A leader's real test isn't what happens when they're there — it's
+                        what happens when they leave.</p>
+                    <p style="margin-top: 12px;"><strong>The Practice:</strong> At every company, I've built training
+                        systems, documented processes, and promoted internal talent. Not because it looks good — because
+                        scaling depends on it.</p>
+                    <p style="margin-top: 12px;"><strong>The Proof:</strong> Teams I've built at Arabian Oud, DigiMora,
+                        and Qyadat still operate using systems I designed. Some are leading departments now.</p>
+                </div>
+
+                <!-- Card 6 - Intrapreneurship -->
+                <div class="achieve-card">
+                    <div class="card-icon">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path
+                                d="M12 2a7 7 0 0 1 7 7c0 2.38-1.19 4.47-3 5.74V17a2 2 0 0 1-2 2H10a2 2 0 0 1-2-2v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 0 1 7-7Z" />
+                            <path d="M9 21h6" />
+                        </svg>
+                    </div>
+                    <h3>Startups Inside Companies</h3>
+                    <p><strong>The Insight:</strong> You don't always need to start a company to build something new.
+                        Sometimes the best "startup" is a new division inside an existing business.</p>
+                    <p style="margin-top: 12px;"><strong>The Approach:</strong> I've launched internal e-commerce units,
+                        digital marketing departments, and new service lines — all with company resources but startup
+                        mindset.</p>
+                    <p style="margin-top: 12px;"><strong>The Learning:</strong> Intrapreneurship is underrated. Lower
+                        risk. Faster resources. Same satisfaction of building from zero.</p>
+                </div>
+
             </div>
         </section>
 
-        <!-- Bento Impact Grid -->
-        <section class="impact-grid-section">
-            <div class="content-wrap content-wrap--wide">
-                <div class="section-header reveal">
-                    <p class="overline">Evidence of Success</p>
-                    <h2>Transformative Cases</h2>
-                </div>
-
-                <div class="bento-grid reveal">
-                    <!-- Qyadat: Large Case -->
-                    <div class="bento-item featured stagger-item">
-                        <div class="bento-icon"><i class="ri-question-answer-line"></i></div>
-                        <div class="bento-body">
-                            <h3>Qyadat Transformation</h3>
-                            <p class="meta">The SLA Shift</p>
-                            <p>Radically shifted from selling services to selling guaranteed outcomes. Secured 3 major government contracts in 8 months, outperforming the previous 2 years combined.</p>
-                        </div>
-                    </div>
-
-                    <!-- 900 Stores: Medium Case -->
-                    <div class="bento-item stagger-item">
-                        <div class="bento-icon"><i class="ri-store-2-line"></i></div>
-                        <div class="bento-body">
-                            <h3>Omnichannel Mastery</h3>
-                            <p class="meta">900+ Stores Unified</p>
-                            <p>Engineered a unified data layer connecting retail points with e-commerce, resulting in a 35% increase in Customer Lifetime Value (CLV).</p>
-                        </div>
-                    </div>
-
-                    <!-- ISO Automation: Small Case -->
-                    <div class="bento-item stagger-item">
-                        <div class="bento-icon"><i class="ri-file-settings-line"></i></div>
-                        <div class="bento-body">
-                            <h3>GovTech Efficiency</h3>
-                            <p class="meta">ISO Automation</p>
-                            <p>Built a Digital Readiness Framework that reduced ministry audit prep time from 6 months to 6 weeks with a 100% pass rate.</p>
-                        </div>
-                    </div>
-
-                    <!-- DigiMora: Small Case -->
-                    <div class="bento-item stagger-item">
-                        <div class="bento-icon"><i class="ri-rocket-line"></i></div>
-                        <div class="bento-body">
-                            <h3>Agency Scaling</h3>
-                            <p class="meta">7x Growth</p>
-                            <p>Productized services and built a robust referral engine, achieving 7x contract growth in just 12 months.</p>
-                        </div>
-                    </div>
-                </div>
+        <!-- Full Career Journey Section -->
+        <section class="journey-section">
+            <div class="journey-header">
+                <h2>The Full Journey</h2>
+                <p>Every role, every company, every step of the way.</p>
             </div>
-        </section>
 
-        <!-- Journey Path -->
-        <section class="journey-path-section">
-            <div class="content-wrap">
-                <div class="section-header reveal">
-                    <p class="overline">The Career Orbit</p>
-                    <h2>Professional Path</h2>
+            <div class="journey-timeline">
+                <!-- Qyadat -->
+                <div class="journey-item">
+                    <div class="journey-year">2023</div>
+                    <div class="journey-marker"></div>
+                    <div class="journey-content">
+                        <h4>Qyadat</h4>
+                        <span>Marketing Manager</span>
+                        <p>Riyadh • Present</p>
+                    </div>
                 </div>
 
-                <div class="path-container reveal">
-                    <div class="path-item stagger-item">
-                        <div class="path-year">2023</div>
-                        <div class="path-dot"></div>
-                        <div class="path-info">
-                            <h3>Qyadat</h3>
-                            <p>Marketing Manager • Riyadh</p>
-                        </div>
+                <!-- Gento Shop -->
+                <div class="journey-item">
+                    <div class="journey-year">2023</div>
+                    <div class="journey-marker"></div>
+                    <div class="journey-content">
+                        <h4>Gento Shop</h4>
+                        <span>E-commerce Supervisor</span>
+                        <p>Electronics Sector • 2 Years</p>
                     </div>
-                    <div class="path-item stagger-item">
-                        <div class="path-year">2023</div>
-                        <div class="path-dot"></div>
-                        <div class="path-info">
-                            <h3>Gento Shop</h3>
-                            <p>E-commerce Supervisor • Electronics</p>
-                        </div>
+                </div>
+
+                <!-- DigiMora -->
+                <div class="journey-item">
+                    <div class="journey-year">2022</div>
+                    <div class="journey-marker"></div>
+                    <div class="journey-content">
+                        <h4>DigiMora</h4>
+                        <span>Business Development Lead</span>
+                        <p>Digital Solutions • 2 Years</p>
                     </div>
-                    <div class="path-item stagger-item">
-                        <div class="path-year">2022</div>
-                        <div class="path-dot"></div>
-                        <div class="path-info">
-                            <h3>DigiMora</h3>
-                            <p>Business Dev Lead • Digital Solutions</p>
-                        </div>
+                </div>
+
+                <!-- Kuwait Finance House -->
+                <div class="journey-item">
+                    <div class="journey-year">2021</div>
+                    <div class="journey-marker"></div>
+                    <div class="journey-content">
+                        <h4>Kuwait Finance House</h4>
+                        <span>Digital Transformation Strategist</span>
+                        <p>Banking Sector • 10 Months</p>
                     </div>
-                    <div class="path-item stagger-item">
-                        <div class="path-year">2021</div>
-                        <div class="path-dot"></div>
-                        <div class="path-info">
-                            <h3>KFH</h3>
-                            <p>Digital Strategist • Banking</p>
-                        </div>
+                </div>
+
+                <!-- PeoplePerHour -->
+                <div class="journey-item">
+                    <div class="journey-year">2019</div>
+                    <div class="journey-marker"></div>
+                    <div class="journey-content">
+                        <h4>PeoplePerHour</h4>
+                        <span>Junior Marketing Specialist</span>
+                        <p>Freelance Marketplace • 3 Years</p>
                     </div>
-                    <div class="path-item stagger-item">
-                        <div class="path-year">2014</div>
-                        <div class="path-dot"></div>
-                        <div class="path-info">
-                            <h3>Arabian Oud</h3>
-                            <p>Marketing Supervisor • Retail</p>
-                        </div>
+                </div>
+
+                <!-- Iso-tec -->
+                <div class="journey-item">
+                    <div class="journey-year">2018</div>
+                    <div class="journey-marker"></div>
+                    <div class="journey-content">
+                        <h4>Iso-tec</h4>
+                        <span>Digital Transformation Specialist</span>
+                        <p>Quality Management • 5 Years</p>
+                    </div>
+                </div>
+
+                <!-- Arabian Oud -->
+                <div class="journey-item">
+                    <div class="journey-year">2014</div>
+                    <div class="journey-marker"></div>
+                    <div class="journey-content">
+                        <h4>Arabian Oud</h4>
+                        <span>Digital Marketing Supervisor</span>
+                        <p>Retail & Perfumes • 9 Years</p>
+                    </div>
+                </div>
+
+                <!-- TwinExcel -->
+                <div class="journey-item">
+                    <div class="journey-year">2011</div>
+                    <div class="journey-marker"></div>
+                    <div class="journey-content">
+                        <h4>TwinExcel</h4>
+                        <span>Digital Marketing Specialist</span>
+                        <p>Agency • 6 Years</p>
                     </div>
                 </div>
             </div>
@@ -219,313 +1098,366 @@
     </main>
 
     <style>
-        /* Achievements Page Specific Styles (2026 Core) */
-        .achievements-hero {
-            padding: 160px 0 80px;
+        /* Embedded        /* Journey Timeline - Enhanced */
+        .journey-section {
+            padding: 80px 20px 100px;
+            max-width: 900px;
+            margin: 0 auto;
             position: relative;
+            z-index: 10;
+        }
+
+        .journey-header {
             text-align: center;
+            margin-bottom: 70px;
         }
 
-        .stats-hud {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin-top: 60px;
-        }
-
-        .stat-unit {
-            padding: 30px;
-            background: var(--glass-bg);
-            backdrop-filter: var(--glass-blur);
-            border: 1px solid var(--glass-border);
-            border-radius: 24px;
-            transition: all 0.5s var(--ease-smooth);
-        }
-
-        .stat-unit:hover {
-            transform: translateY(-5px);
-            border-color: var(--color-accent);
-            background: rgba(255,255,255,0.06);
-        }
-
-        .unit-value {
-            font-size: 2.5rem;
+        .journey-header h2 {
+            font-size: clamp(2rem, 4vw, 3rem);
             font-weight: 700;
-            font-family: var(--font-display);
-            color: #fff;
-            margin-bottom: 8px;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, var(--teal-primary), var(--purple-primary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
-        .unit-label {
-            color: var(--color-text-muted);
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-        }
-
-        /* Guinness Panel */
-        .guinness-panel {
-            position: relative;
-            display: grid;
-            grid-template-columns: 1.2fr 0.8fr;
-            gap: 40px;
-            background: rgba(251, 191, 36, 0.03);
-            border: 1px solid rgba(251, 191, 36, 0.1);
-            border-radius: 40px;
-            padding: 60px;
-            overflow: hidden;
-            align-items: center;
-        }
-
-        .badge-gold {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 8px 16px;
-            background: rgba(251, 191, 36, 0.1);
-            border: 1px solid rgba(251, 191, 36, 0.2);
-            color: #fbbf24;
-            border-radius: 100px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            margin-bottom: 24px;
-        }
-
-        .guinness-panel h2 {
-            font-size: clamp(1.8rem, 4vw, 2.8rem);
-            color: #fff;
-            line-height: 1.2;
-            margin-bottom: 24px;
-        }
-
-        .panel-desc {
-            color: var(--color-text-muted);
+        .journey-header p {
             font-size: 1.1rem;
-            line-height: 1.8;
-            margin-bottom: 30px;
-            max-width: 500px;
+            color: var(--text-secondary);
         }
 
-        .metric-highlight {
-            display: block;
-            font-size: 1.4rem;
-            font-weight: 700;
-            color: #fff;
-            margin-bottom: 32px;
-        }
-
-        .premium-link {
-            color: #fbbf24;
-            text-decoration: none;
-            font-weight: 600;
-            border-bottom: 1px solid rgba(251, 191, 36, 0.3);
-            padding-bottom: 4px;
-            transition: all 0.3s;
-        }
-
-        .premium-link:hover {
-            border-color: #fbbf24;
-            gap: 12px;
-        }
-
-        /* Orbit Visual */
-        .orbit-system {
+        .journey-timeline {
             position: relative;
-            width: 300px;
-            height: 300px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            padding-left: 60px;
         }
 
-        .orbit {
-            position: absolute;
-            border-radius: 50%;
-            border: 1px solid rgba(251, 191, 36, 0.1);
-        }
-
-        .ring-1 { width: 100%; height: 100%; animation: spin 20s linear infinite; border-width: 2px; border-style: dashed; }
-        .ring-2 { width: 80%; height: 80%; animation: spin 15s linear infinite reverse; }
-        .ring-3 { width: 60%; height: 60%; animation: spin 10s linear infinite; border-color: rgba(251, 191, 36, 0.3); }
-
-        .medal-icon {
-            font-size: 100px;
-            color: #fbbf24;
-            filter: drop-shadow(0 0 30px rgba(251, 191, 36, 0.4));
-            z-index: 5;
-        }
-
-        /* Bento Grid */
-        .bento-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            grid-auto-rows: 280px;
-            gap: 24px;
-            margin-top: 40px;
-        }
-
-        .bento-item {
-            background: var(--glass-bg);
-            backdrop-filter: var(--glass-blur);
-            border: 1px solid var(--glass-border);
-            border-radius: 32px;
-            padding: 40px;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-end;
-            transition: all 0.6s var(--ease-smooth);
-            cursor: pointer;
-        }
-
-        .bento-item.featured {
-            grid-column: span 2;
-            grid-row: span 1;
-            background: linear-gradient(135deg, rgba(59, 130, 246, 0.05), rgba(0,0,0,0));
-        }
-
-        .bento-item:hover {
-            background: rgba(255,255,255,0.06);
-            transform: scale(1.02);
-            border-color: var(--color-accent);
-        }
-
-        .bento-icon {
-            font-size: 2rem;
-            color: var(--color-accent);
-            margin-bottom: auto;
-        }
-
-        .bento-body h3 {
-            font-size: 1.4rem;
-            color: #fff;
-            margin-bottom: 8px;
-        }
-
-        .bento-body .meta {
-            color: var(--color-accent);
-            font-size: 0.85rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            margin-bottom: 12px;
-        }
-
-        .bento-body p {
-            color: var(--color-text-muted);
-            font-size: 0.95rem;
-            line-height: 1.6;
-        }
-
-        /* Journey Path */
-        .path-container {
-            max-width: 800px;
-            margin: 60px auto 0;
-            position: relative;
-        }
-
-        .path-container::before {
+        /* Timeline vertical line */
+        .journey-timeline::before {
             content: '';
             position: absolute;
-            left: 40px;
+            left: 20px;
             top: 0;
             bottom: 0;
-            width: 1px;
-            background: linear-gradient(to bottom, transparent, var(--glass-border), transparent);
+            width: 2px;
+            background: linear-gradient(180deg,
+                    transparent,
+                    rgba(43, 155, 155, 0.3) 10%,
+                    rgba(43, 155, 155, 0.3) 90%,
+                    transparent);
         }
 
-        .path-item {
-            display: flex;
-            align-items: center;
-            gap: 40px;
-            margin-bottom: 40px;
+        .journey-item {
             position: relative;
+            margin-bottom: 50px;
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 30px;
+            align-items: start;
+            opacity: 0;
+            transform: translateX(-30px);
+            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        .path-year {
-            font-family: var(--font-display);
+        .journey-item.visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .journey-year {
+            position: absolute;
+            left: -60px;
+            top: 0;
+            font-size: 0.95rem;
             font-weight: 700;
-            color: var(--color-accent);
-            min-width: 80px;
-            text-align: right;
+            color: var(--teal-primary);
+            background: var(--bg-body);
+            padding: 4px 8px;
+            border-radius: 6px;
         }
 
-        .path-dot {
-            width: 12px;
-            height: 12px;
-            background: var(--color-accent);
+        .journey-marker {
+            position: absolute;
+            left: -60px;
+            top: 8px;
+            width: 16px;
+            height: 16px;
+            background: var(--teal-primary);
+            border: 3px solid var(--bg-body);
             border-radius: 50%;
-            box-shadow: 0 0 20px var(--color-accent);
+            box-shadow: 0 0 0 4px rgba(43, 155, 155, 0.2);
             z-index: 2;
         }
 
-        .path-info {
-            background: var(--glass-bg);
-            backdrop-filter: var(--glass-blur);
-            padding: 24px 32px;
-            border-radius: 20px;
-            border: 1px solid var(--glass-border);
-            flex: 1;
-            transition: all 0.4s;
+        .journey-content {
+            background: var(--bg-glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 25px 28px;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        .path-item:hover .path-info {
-            background: rgba(255,255,255,0.06);
-            transform: translateX(10px);
-            border-color: var(--color-accent);
+        .journey-content:hover {
+            transform: translateX(8px);
+            border-color: rgba(43, 155, 155, 0.4);
+            box-shadow: 0 8px 30px rgba(43, 155, 155, 0.15);
         }
 
-        .path-info h3 { font-size: 1.2rem; color: #fff; margin-bottom: 4px; }
-        .path-info p { color: var(--color-text-muted); font-size: 0.9rem; }
+        .journey-content h4 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
 
-        @keyframes spin { to { transform: rotate(360deg); } }
+        .journey-content span {
+            display: block;
+            font-size: 1rem;
+            color: var(--teal-primary);
+            font-weight: 500;
+            font-size: 0.95rem;
+            margin-bottom: 4px;
+        }
 
-        @media (max-width: 1024px) {
-            .bento-grid { grid-template-columns: 1fr; grid-auto-rows: auto; }
-            .bento-item.featured { grid-column: span 1; }
-            .guinness-panel { grid-template-columns: 1fr; text-align: center; }
-            .guinness-panel .panel-desc { margin: 0 auto 30px; }
-            .orbit-system { margin: 0 auto; }
+        .journey-content p {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        @media (max-width: 900px) {
+            .journey-timeline {
+                padding-left: 45px;
+            }
+
+            .journey-year {
+                left: 0;
+            }
+
+            .journey-marker {
+                left: 0;
+            }
+
+            .journey-content {
+                margin-left: 24px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .journey-timeline::before {
+                left: 20px;
+            }
+
+            .journey-year {
+                display: none;
+                /* Hide year on side for mobile, maybe move inside? */
+            }
+
+            .journey-marker {
+                left: 15px;
+            }
+
+            .journey-content {
+                margin-left: 35px;
+            }
         }
     </style>
 
-    <!-- Footer (The Dock) -->
-    <footer class="site-footer-2026">
-        <div class="footer-dock content-wrap reveal">
-            <!-- Left: Brand -->
-            <div class="footer-brand">
-                <img src="../assets/images/logo.png" alt="Mohamed Gamal Logo" class="footer-logo-img" loading="lazy">
-            </div>
+    <footer class="portfolio-footer">
+        <div class="footer-container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <a href="/CV/" class="footer-logo">
+                        <img src="../assets/images/Eng-logo-mg2.png" alt="Mohamed Gamal Logo" class="logo-img">
+                    </a>
+                    <p class="brand-tagline">Digital Growth Architect building scalable systems across the MENA region.</p>
+                </div>
 
-            <!-- Center: Actions -->
-            <div class="footer-actions">
-                <a href="../index.html" class="dock-link">Home</a>
-                <a href="https://www.linkedin.com/in/mohamadgamal/" target="_blank" rel="noopener" class="dock-link">LinkedIn</a>
-                <a href="https://wa.me/201555141282" target="_blank" rel="noopener" class="dock-link">WhatsApp</a>
-            </div>
+                <div class="footer-nav-group">
+                    <h5 class="footer-title">Explore</h5>
+                    <ul class="footer-links">
+                        <li><a href="/CV/" class="footer-link">Home</a></li>
+                        <li><a href="/CV/portfolio/" class="footer-link">Portfolio</a></li>
+                        <li><a href="/CV/achievements/" class="footer-link">Achievements</a></li>
+                    </ul>
+                </div>
 
-            <!-- Right: Status -->
-            <div class="footer-status">
-                <span class="status-dot"></span>
-                <span class="status-text">Open for Projects</span>
+                <div class="footer-nav-group">
+                    <h5 class="footer-title">Connect</h5>
+                    <ul class="footer-links">
+                        <li><a href="https://www.linkedin.com/in/mohamadgamal/" target="_blank" rel="noopener" class="footer-link">LinkedIn</a></li>
+                        <li><a href="https://wa.me/201555141282" target="_blank" rel="noopener" class="footer-link">WhatsApp</a></li>
+                    </ul>
+                </div>
             </div>
         </div>
     </footer>
 
-    <style>
-        @keyframes spin {
-            to { transform: rotate(360deg); }
+    <script>
+        const ensureScrollLock = () => {
+            if (window.MGScrollLock) return window.MGScrollLock;
+            const getCount = () => parseInt(document.body.dataset.scrollLockCount || '0', 10) || 0;
+            const setCount = (val) => {
+                document.body.dataset.scrollLockCount = String(val);
+            };
+            const lock = () => {
+                const next = getCount() + 1;
+                setCount(next);
+                if (next === 1) {
+                    document.body.style.overflow = 'hidden';
+                }
+            };
+            const unlock = () => {
+                const next = Math.max(0, getCount() - 1);
+                setCount(next);
+                if (next === 0) {
+                    document.body.style.overflow = '';
+                }
+            };
+            window.MGScrollLock = { lock, unlock };
+            return window.MGScrollLock;
+        };
+        const scrollLock = ensureScrollLock();
+
+        // Spotlight Effect (throttled)
+        const gridSection = document.querySelector('.grid-section');
+        const achieveCards = Array.from(document.getElementsByClassName("achieve-card"));
+        if (gridSection && achieveCards.length) {
+            let rafId = null;
+            let lastEvent = null;
+
+            const updateSpotlight = () => {
+                if (!lastEvent) return;
+                const { clientX, clientY } = lastEvent;
+                achieveCards.forEach(card => {
+                    const rect = card.getBoundingClientRect();
+                    const x = clientX - rect.left;
+                    const y = clientY - rect.top;
+                    card.style.setProperty("--mouse-x", `${x}px`);
+                    card.style.setProperty("--mouse-y", `${y}px`);
+                });
+                rafId = null;
+            };
+
+            gridSection.addEventListener('mousemove', (e) => {
+                lastEvent = e;
+                if (!rafId) {
+                    rafId = requestAnimationFrame(updateSpotlight);
+                }
+            });
+
+            gridSection.addEventListener('mouseleave', () => {
+                lastEvent = null;
+                if (rafId) {
+                    cancelAnimationFrame(rafId);
+                    rafId = null;
+                }
+            });
         }
-        @media (max-width: 768px) {
-            .record-content {
-                text-align: center;
-            }
-            .identity-card {
-                grid-template-columns: 1fr !important;
-                text-align: center;
-            }
-             .record-visual {
-                margin-top: 20px;
-            }
+
+    </script>
+    <!-- Contact Floating Button -->
+    <div class="contact-fab" onclick="showContactModal()">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path
+                d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" />
+        </svg>
+    </div>
+
+    <!-- Contact Modal -->
+    <div class="contact-modal-overlay" id="contactModal">
+        <div class="contact-modal">
+            <button class="modal-close" onclick="hideContactModal()">✕</button>
+            <h3>Let's Connect</h3>
+            <div class="modal-buttons">
+                <a href="tel:+201555141282" class="modal-btn call">
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                            d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56a.977.977 0 00-1.01.24l-1.57 1.97c-2.83-1.35-5.48-3.9-6.89-6.83l1.95-1.66c.27-.28.35-.67.24-1.02-.37-1.11-.56-2.3-.56-3.53 0-.54-.45-.99-.99-.99H4.19C3.65 3 3 3.24 3 3.99 3 13.28 10.73 21 20.01 21c.71 0 .99-.63.99-1.18v-3.45c0-.54-.45-.99-.99-.99z" />
+                    </svg>
+                    Call
+                </a>
+                <a href="https://wa.me/201555141282?text=Hi%20Mohamed,%20I'd%20like%20to%20connect%20with%20you"
+                    target="_blank" rel="noopener" class="modal-btn whatsapp">
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                            d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+                    </svg>
+                    WhatsApp
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Contact Modal Functions
+        function showContactModal() {
+            const modal = document.getElementById('contactModal');
+            if (!modal) return;
+            modal.classList.add('show');
+            scrollLock.lock();
         }
-    </style>
+
+        function hideContactModal() {
+            const modal = document.getElementById('contactModal');
+            if (!modal) return;
+            modal.classList.remove('show');
+            scrollLock.unlock();
+        }
+
+        // Close modal on background click
+        document.getElementById('contactModal').addEventListener('click', function (e) {
+            if (e.target === this) hideContactModal();
+        });
+
+        // Close on escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                hideContactModal();
+            }
+        });
+
+        // Scroll-triggered animations
+        const observerOptions = {
+            threshold: 0.15,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const scrollObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    scrollObserver.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        // Observe journey items
+        document.querySelectorAll('.journey-item').forEach(item => {
+            scrollObserver.observe(item);
+        });
+
+        // Observe achievement cards
+        document.querySelectorAll('.achieve-card').forEach(card => {
+            scrollObserver.observe(card);
+        });
+
+        // Observe record section
+        const recordSection = document.querySelector('.record-section');
+        if (recordSection) {
+            scrollObserver.observe(recordSection);
+        }
+
+        // Add stagger animation classes to journey items
+        document.querySelectorAll('.journey-item').forEach((item, index) => {
+            item.style.transitionDelay = `${index * 0.1}s`;
+        });
+
+        // Add stagger animation classes to achievement cards
+        document.querySelectorAll('.achieve-card').forEach((card, index) => {
+            card.style.transitionDelay = `${index * 0.15}s`;
+        });
+    </script>
 </body>
+
 </html>
