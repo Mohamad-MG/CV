@@ -50,28 +50,28 @@
     position: fixed;
     bottom: 32px;
     right: 32px;
-    width: 68px;
-    height: 68px;
+    width: 75px;
+    height: 75px;
     pointer-events: auto;
     cursor: pointer;
     z-index: 10001;
     /* Above almost everything */
 
-    /* Container styling */
-    border-radius: 50%;
-    background: #000;
-    border: 1px solid var(--j-glass-border);
-    box-shadow: 0 12px 40px -8px rgba(0, 0, 0, 0.8);
+    /* PURE ICON MODE (No Frame) */
+    border-radius: 0;
+    background: transparent;
+    border: none;
+    box-shadow: none;
 
     transition: transform 0.4s var(--j-ease-snap), opacity 0.3s ease;
     will-change: transform;
-    overflow: hidden;
+    overflow: visible;
 }
 
 .j-launcher:hover {
     transform: translateY(-4px) scale(1.05);
-    border-color: rgba(59, 130, 246, 0.3);
-    box-shadow: 0 20px 60px -10px rgba(59, 130, 246, 0.25);
+    border: none;
+    box-shadow: none;
 }
 
 .j-launcher.active {
@@ -84,9 +84,9 @@
 /* Media within launcher */
 .j-launcher video,
 .j-launcher img {
-    width: 130%;
-    height: 130%;
-    object-fit: cover;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
     position: absolute;
     top: 50%;
     left: 50%;
@@ -197,40 +197,29 @@
 }
 
 .j-avatar-sm {
-    width: 40px;
-    /* Upscaled */
-    height: 40px;
-    border-radius: 50%;
-    overflow: hidden;
+    width: 60px;
+    /* Slightly larger for visibility */
+    height: 60px;
+    border-radius: 0;
+    overflow: visible;
     position: relative;
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    background: #000;
+    border: none;
+    background: transparent;
 }
 
-/* Orbital Viewfinder Frame */
+/* Orbital Viewfinder Frame - REMOVED */
 .j-avatar-sm::before {
-    content: '';
-    position: absolute;
-    inset: -2px;
-    border: 1px solid var(--j-accent);
-    border-radius: 50%;
-    opacity: 0.3;
-    border-bottom-color: transparent;
-    border-left-color: transparent;
-    animation: j-orbital-rotate 4s linear infinite;
-    pointer-events: none;
-    z-index: 2;
+    display: none;
 }
 
 .j-avatar-sm img,
 .j-avatar-sm video {
     width: 100%;
     height: 100%;
-    object-fit: cover;
-    transform: scale(2.8);
-    /* Deeper Neural focus */
-    transform-origin: 50% 35%;
-    filter: brightness(1.1) contrast(1.1);
+    object-fit: contain;
+    transform: none;
+    transform-origin: center;
+    filter: none;
 }
 
 @keyframes j-orbital-rotate {

@@ -1,166 +1,140 @@
 /**
- * ULTRA 2026 - ARCHIVE SYSTEM CORE
- * Refined for the Strategic Archive / Achievements Page.
+ * ULTRA 2026 - ARCHIVE SYSTEM CORE v3.0
+ * Pure Kinetic Motion & Scroll Intelligence.
  */
 
-// --- 1. KINETIC TEXT ENGINE ---
-class KineticText {
+class AchievementsEngine {
     constructor() {
-        this.elements = document.querySelectorAll('.kinetic-text');
-        this.init();
+        this.initKineticText();
+        this.initScrollReveal();
+        this.initMetricCounters();
+        this.initMouseInteractions();
     }
 
-    init() {
-        this.elements.forEach(el => {
+    // --- 1. KINETIC TYPOGRAPHY ---
+    initKineticText() {
+        const elements = document.querySelectorAll('.kinetic-text');
+        elements.forEach(el => {
             const text = el.innerText.trim();
-            if (!text) return;
             el.innerHTML = '';
             el.style.opacity = '1';
             el.style.visibility = 'visible';
 
-            const words = text.split(/\s+/);
-            words.forEach((word, wordIdx) => {
+            text.split(/\s+/).forEach((word, wordIdx) => {
                 const wordSpan = document.createElement('span');
                 wordSpan.className = 'word';
-                wordSpan.style.display = 'inline-block';
                 word.split('').forEach((char, charIdx) => {
                     const charSpan = document.createElement('span');
                     charSpan.className = 'char';
                     charSpan.innerText = char;
-                    charSpan.style.transitionDelay = `${(wordIdx * 0.05) + (charIdx * 0.02)}s`;
+                    charSpan.style.transitionDelay = `${(wordIdx * 0.08) + (charIdx * 0.02)}s`;
                     wordSpan.appendChild(charSpan);
                 });
                 el.appendChild(wordSpan);
-                if (wordIdx < words.length - 1) el.appendChild(document.createTextNode(' '));
+                el.appendChild(document.createTextNode(' '));
+            });
+        });
+    }
+
+    // --- 2. SCROLL REVEAL ---
+    initScrollReveal() {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.15 });
+
+        document.querySelectorAll('.reveal, .ledger-card, .path-item').forEach(el => observer.observe(el));
+    }
+
+    // --- 3. METRIC COUNTERS ---
+    initMetricCounters() {
+        const animateValue = (el, start, end, duration) => {
+            let startTimestamp = null;
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                const value = Math.floor(progress * (end - start) + start);
+                
+                // Add formatting based on context
+                if (el.innerText.includes('$')) {
+                    el.innerHTML = `$${value}M`;
+                } else if (el.innerText.includes('%')) {
+                    el.innerHTML = `${value}%`;
+                } else if (el.innerText.includes('Y')) {
+                    el.innerHTML = `${value}Y+`;
+                } else {
+                    el.innerHTML = value;
+                }
+
+                if (progress < 1) {
+                    window.requestAnimationFrame(step);
+                }
+            };
+            window.requestAnimationFrame(step);
+        };
+
+        const obs = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting && !entry.target.dataset.animated) {
+                    const target = entry.target;
+                    const endVal = parseInt(target.innerText.replace(/[^0-9]/g, ''));
+                    animateValue(target, 0, endVal, 2000);
+                    target.dataset.animated = "true";
+                }
+            });
+        }, { threshold: 1 });
+
+        document.querySelectorAll('.h-val').forEach(el => obs.observe(el));
+    }
+
+    // --- 4. MOUSE MICRO-INTERACTIONS (No 3D) ---
+    initMouseInteractions() {
+        window.addEventListener('mousemove', (e) => {
+            const { clientX, clientY } = e;
+            
+            // Subtle glow movement for cards
+            document.querySelectorAll('.ledger-card').forEach(card => {
+                const rect = card.getBoundingClientRect();
+                const x = clientX - rect.left;
+                const y = clientY - rect.top;
+                card.style.setProperty('--mouse-x', `${x}px`);
+                card.style.setProperty('--mouse-y', `${y}px`);
+                
+                // Update reflection/glow
+                const glow = card.querySelector('.card-glow');
+                if (glow) {
+                    glow.style.transform = `translate(${(clientX - window.innerWidth/2) * 0.02}px, ${(clientY - window.innerHeight/2) * 0.02}px)`;
+                }
+            });
+        });
+
+        // --- GRID MAP INTERACTION ---
+        const nodes = document.querySelectorAll('.grid-node');
+        const hudMarket = document.getElementById('hudMarket');
+        
+        nodes.forEach(node => {
+            node.addEventListener('mouseenter', () => {
+                // Reset active class
+                nodes.forEach(n => n.classList.remove('active'));
+                node.classList.add('active');
+                
+                // Update HUD
+                const marketName = node.getAttribute('data-market');
+                if (hudMarket) {
+                    hudMarket.style.opacity = 0;
+                    setTimeout(() => {
+                        hudMarket.innerText = marketName;
+                        hudMarket.style.opacity = 1;
+                    }, 150);
+                }
             });
         });
     }
 }
 
-// --- 2. DATA DECRYPT (For Hero Eyebrow) ---
-class DataDecrypt {
-    constructor() {
-        this.scrambleChars = '/>_-\|[]{}*&^%$#@!~';
-        this.eyebrow = document.querySelector('.hero-eyebrow');
-        if (this.eyebrow) this.initElement(this.eyebrow, 400, 30);
-    }
-
-    initElement(el, startDelay, speed) {
-        const originalText = el.innerText;
-        el.innerText = '';
-        el.style.opacity = '1';
-        el.style.visibility = 'visible';
-
-        const charSpans = originalText.split('').map(char => {
-            const span = document.createElement('span');
-            span.style.display = 'inline-block';
-            span.style.minWidth = char === ' ' ? '0.25em' : 'auto';
-            span.innerText = char;
-            span.style.opacity = '0';
-            span.dataset.char = char;
-            el.appendChild(span);
-            return span;
-        });
-
-        setTimeout(() => {
-            charSpans.forEach((span, index) => {
-                setTimeout(() => this.animateChar(span), index * speed);
-            });
-        }, startDelay);
-    }
-
-    animateChar(span) {
-        const targetChar = span.dataset.char;
-        let frame = 0;
-        const maxFrames = 10;
-        span.style.opacity = '1';
-        span.style.color = '#3B82F6';
-        const scrambleInterval = setInterval(() => {
-            frame++;
-            if (frame < maxFrames) {
-                span.innerText = this.scrambleChars[Math.floor(Math.random() * this.scrambleChars.length)];
-            } else {
-                clearInterval(scrambleInterval);
-                span.innerText = targetChar;
-                span.style.color = '';
-            }
-        }, 40);
-    }
-}
-
-// --- 3. SPATIAL DEPTH (Mouse Parallax) ---
-const initSpatialDepth = () => {
-    const glassPanels = document.querySelectorAll('.quantum-card, .gwr-monolith, .flow-content');
-    const bgVoid = document.querySelector('.bg-void-layer');
-    const bgAmbient = document.querySelector('.bg-ambient-glow');
-
-    window.addEventListener('mousemove', (e) => {
-        const { clientX, clientY } = e;
-        const xPct = (clientX / window.innerWidth - 0.5) * 2;
-        const yPct = (clientY / window.innerHeight - 0.5) * 2;
-
-        if (bgVoid) bgVoid.style.transform = `translate3d(${xPct * -10}px, ${yPct * -10}px, 0)`;
-        if (bgAmbient) bgAmbient.style.transform = `translate3d(${xPct * 20}px, ${yPct * 20}px, 0)`;
-
-        glassPanels.forEach(panel => {
-            const rect = panel.getBoundingClientRect();
-            const px = clientX - rect.left;
-            const py = clientY - rect.top;
-            
-            // Reflections
-            panel.style.setProperty('--reflect-x', `${(px / rect.width) * 100}%`);
-            panel.style.setProperty('--reflect-y', `${(py / rect.height) * 100}%`);
-            
-            // 3D Tilt for Quantum Cards
-            if (panel.classList.contains('quantum-card')) {
-                const centerX = rect.width / 2;
-                const centerY = rect.height / 2;
-                const rotateX = (py - centerY) / 30;
-                const rotateY = (centerX - px) / 30;
-                panel.style.transform = `translateY(-5px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
-            }
-        });
-    });
-};
-
-// --- 4. GWR MONOLITH SPECIAL EFFECT ---
-const initMonolith = () => {
-    const monolith = document.querySelector('.gwr-monolith');
-    if (!monolith) return;
-
-    monolith.addEventListener('mousemove', (e) => {
-        const rect = monolith.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        monolith.style.setProperty('--scan-pos', `${x}px`);
-    });
-};
-
-// --- 5. SCROLL REVEAL ENGINE ---
-const initScrollReveal = () => {
-    const elements = document.querySelectorAll('.reveal, .stagger-item, .flow-node');
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('visible');
-                // observer.unobserve(entry.target);
-            }
-        });
-    }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
-
-    elements.forEach(el => observer.observe(el));
-};
-
-// --- BOOT SYSTEM ---
 document.addEventListener('DOMContentLoaded', () => {
-    new KineticText();
-    new DataDecrypt();
-    initSpatialDepth();
-    initMonolith();
-    initScrollReveal();
-    
-    // Initial Hero Entrance
-    setTimeout(() => {
-        const hero = document.querySelector('.archive-hero');
-        if (hero) hero.classList.add('visible');
-    }, 100);
+    new AchievementsEngine();
 });

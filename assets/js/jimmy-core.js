@@ -11,8 +11,8 @@ const J_CORE = {
     config: {
         maxHistory: 20,
         timeout: 12000,
-        videoSrc: 'assets/images/jimmy-icon.m4v',
-        version: '4.2.0'
+        videoSrc: 'assistance.gif', // Updated to new GIF
+        version: '4.4.0'
     },
     // Fallback UI texts
     i18n: {
@@ -52,12 +52,17 @@ class JimmyEngine {
 
     injectStructure() {
         const t = J_CORE.i18n[this.ctx.lang];
-        const avatarMedia = this.isMobileLite
-            ? `<img src="assets/images/logo.png" alt="Captain Jimmy" loading="lazy" decoding="async">`
-            : `<video src="${J_CORE.config.videoSrc}" autoplay loop muted playsinline preload="metadata"></video>`;
-        const launcherMedia = this.isMobileLite
-            ? `<img src="assets/images/logo.png" alt="Open Jimmy" loading="lazy" decoding="async">`
-            : `<video src="${J_CORE.config.videoSrc}" autoplay loop muted playsinline preload="metadata"></video>`;
+        // Determine base path for assets based on current location
+        const isPortfolio = window.location.pathname.includes('/portfolio/') || window.location.pathname.includes('/achievements/');
+        const assetPrefix = isPortfolio ? '../' : './';
+        const avatarSrc = `${assetPrefix}assistance.gif`;
+
+        // Unified Avatar (GIF for consistent branding)
+        const avatarMedia = `<img src="${avatarSrc}" alt="Captain Jimmy" loading="eager" decoding="async">`;
+
+        // Launcher uses the same GIF
+        const launcherMedia = `<img src="${avatarSrc}" alt="Open Jimmy" loading="lazy" decoding="async">`;
+
         const html = `
             <div id="jimmy-root" aria-hidden="true">
                 <!-- 1. BACKDROP (Click to close) -->
@@ -294,7 +299,7 @@ class JimmyEngine {
                     const errJson = await res.json();
                     detail = errJson?.details || errJson?.error || '';
                 } catch {
-                    try { detail = (await res.text() || '').trim(); } catch {}
+                    try { detail = (await res.text() || '').trim(); } catch { }
                 }
                 const err = new Error(`HTTP ${res.status}${detail ? ` - ${detail}` : ''}`);
                 err.status = res.status;
