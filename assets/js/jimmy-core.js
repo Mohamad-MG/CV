@@ -284,16 +284,37 @@ class JimmyEngine {
             const controller = new AbortController();
             const toId = setTimeout(() => controller.abort(), J_CORE.config.timeout);
 
-            const res = await fetch(J_CORE.endpoints.worker, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload),
-                signal: controller.signal
-            });
+            let res;
+            try {
+                res = await fetch(J_CORE.endpoints.worker, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload),
+                    signal: controller.signal
+                });
+            } finally {
+                clearTimeout(toId);
+            }
 
-            clearTimeout(toId);
-            if (!res.ok) throw new Error(`HTTP ${res.status}`);
-            
+            if (!res.ok) {
+                let apiError = '';
+                let apiDetails = '';
+                try {
+                    const errData = await res.json();
+                    apiError = typeof errData?.error === 'string' ? errData.error : '';
+                    apiDetails = typeof errData?.details === 'string' ? errData.details : '';
+                } catch {
+                    // Ignore invalid/non-JSON error body.
+                }
+
+                const httpErr = new Error(apiError || `HTTP ${res.status}`);
+                httpErr.status = res.status;
+                httpErr.retryAfter = res.headers.get('Retry-After') || '';
+                httpErr.apiError = apiError;
+                httpErr.apiDetails = apiDetails;
+                throw httpErr;
+            }
+
             const data = await res.json();
             if (data.meta) this.ctx.meta = data.meta;
 
@@ -302,9 +323,45 @@ class JimmyEngine {
             if (data.meta?.quickReplies) this.renderChips(data.meta.quickReplies);
 
         } catch (err) {
-            console.error('Jimmy Error:', err);
+            console.error('Jimmy Error:', {
+                message: err?.message || String(err),
+                status: err?.status,
+                apiError: err?.apiError,
+                apiDetails: err?.apiDetails
+            });
             this.setThinking(false);
-            this.addMessage('ai', this.ctx.lang === 'ar' ? 'عذراً، حدث خطأ في الاتصال. يرجى المحاولة مرة أخرى.' : J_CORE.i18n[this.ctx.lang].error, true);
+            
+            let errMsg = this.ctx.lang === 'ar' ? 'عذراً، حدث خطأ في الاتصال. يرجى المحاولة مرة أخرى.' : J_CORE.i18n[this.ctx.lang].error;
+
+            const compact = (value, max = 140) => {
+                const txt = typeof value === 'string' ? value.trim() : '';
+                if (!txt) return '';
+                return txt.length > max ? `${txt.slice(0, max - 3)}...` : txt;
+            };
+
+            if (err?.status === 429) {
+                const sec = Number.parseInt(err?.retryAfter || '60', 10);
+                const waitSec = Number.isFinite(sec) && sec > 0 ? sec : 60;
+                if (err?.apiError === 'Upstream quota exceeded') {
+                    errMsg = this.ctx.lang === 'ar'
+                        ? 'مزود الذكاء الاصطناعي وصل لحد الاستخدام حالياً. جرّب بعد دقائق.'
+                        : 'AI provider quota is currently exceeded. Please try again in a few minutes.';
+                } else {
+                    errMsg = this.ctx.lang === 'ar'
+                        ? `النظام مشغول حالياً. يرجى المحاولة بعد ${waitSec} ثانية.`
+                        : `Too many requests. Please try again in ${waitSec}s.`;
+                }
+            } else if (err?.apiError) {
+                const reason = compact(err.apiError);
+                const detail = compact(err.apiDetails);
+                if (this.ctx.lang === 'ar') {
+                    errMsg = detail ? `تعذر تنفيذ الطلب: ${reason} (${detail})` : `تعذر تنفيذ الطلب: ${reason}`;
+                } else {
+                    errMsg = detail ? `Request failed: ${reason} (${detail})` : `Request failed: ${reason}`;
+                }
+            }
+
+            this.addMessage('ai', errMsg, true);
         }
     }
 
@@ -345,12 +402,14 @@ class JimmyEngine {
             iconBox.innerHTML = `<img src="${jimmyIcon}" alt="Captain Jimmy" style="width:100%; height:100%; object-fit:contain;">`;
             iconBox.classList.add('is-bot');
         } else {
-            // Inline SVG to allow currentColor to work
+            // Precise SVG match for usericon.svg
             iconBox.innerHTML = `
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:100%; height:100%;">
-                    <circle cx="10" cy="6" r="4"/>
-                    <path d="M18 17.5c0 2.485 0 4.5-8 4.5s-8-2.015-8-4.5S5.582 13 10 13s8 2.015 8 4.5Z"/>
-                    <path stroke-linecap="round" d="M19 2s2 1.2 2 4s-2 4-2 4m-2-6s1 .6 1 2s-1 2-1 2"/>
+                    <g>
+                        <circle cx="10" cy="6" r="4"/>
+                        <path d="M18 17.5c0 2.485 0 4.5-8 4.5s-8-2.015-8-4.5S5.582 13 10 13s8 2.015 8 4.5Z"/>
+                        <path stroke-linecap="round" d="M19 2s2 1.2 2 4s-2 4-2 4m-2-6s1 .6 1 2s-1 2-1 2"/>
+                    </g>
                 </svg>
             `;
         }

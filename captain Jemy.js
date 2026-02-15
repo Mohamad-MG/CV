@@ -53,8 +53,8 @@ const DEFAULT_GEMINI_API_VERSION = "v1beta";
 
 const TIMEOUT_MS = 10000;
 const RATE_LIMIT_WINDOW_MS = 60_000;
-const RATE_LIMIT_MAX = 45;
-const RATE_LIMIT_MAX_ANON = 20;
+const RATE_LIMIT_MAX = 100;
+const RATE_LIMIT_MAX_ANON = 60;
 const MAX_REQUEST_BYTES = 50_000;
 const rateLimitStore = new Map();
 
