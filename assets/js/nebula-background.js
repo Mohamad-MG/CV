@@ -15,18 +15,22 @@
             this.width = window.innerWidth;
             this.height = window.innerHeight;
             this.isPaused = document.hidden;
+            this.isReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            this.isPerfLite = document.body.classList.contains('perf-lite') || this.isReducedMotion;
             this.isLowPower =
+                this.isPerfLite ||
                 window.matchMedia('(max-width: 768px)').matches ||
                 (navigator.deviceMemory && navigator.deviceMemory <= 4) ||
                 (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4);
             this.lastFrameTs = 0;
-            this.minFrameInterval = this.isLowPower ? (1000 / 30) : 0;
+            this.minFrameInterval = this.isLowPower ? (1000 / 24) : 0;
             this.scrollPauseUntil = 0;
+            this.pendingResize = false;
 
             // System Config (The 2026 Universe Protocol)
             this.config = {
-                baseSpeed: this.isLowPower ? 0.08 : 0.15, 
-                fallSpeed: this.isLowPower ? 0.2 : 0.35, 
+                baseSpeed: this.isLowPower ? 0.06 : 0.15,
+                fallSpeed: this.isLowPower ? 0.16 : 0.35,
                 collisionPadding: 3, 
                 drag: 0.98,
                 recovery: 0.015,
@@ -41,7 +45,7 @@
             // Throttle: Skip frames if needed or use RAF
             requestAnimationFrame(this.animate);
 
-            window.addEventListener('resize', () => this.handleResize());
+            window.addEventListener('resize', () => this.scheduleResize(), { passive: true });
             window.addEventListener('scroll', () => {
                 if (this.isLowPower) {
                     this.scrollPauseUntil = performance.now() + 120;
@@ -92,7 +96,7 @@
         init() {
             const shuffledSignals = [...this.signals].sort(() => Math.random() - 0.5);
             const animatedCount = this.isLowPower
-                ? Math.max(8, Math.floor(shuffledSignals.length * 0.6))
+                ? Math.max(6, Math.floor(shuffledSignals.length * 0.5))
                 : shuffledSignals.length;
 
             shuffledSignals.forEach((el, index) => {
@@ -122,7 +126,7 @@
 
                 this.particles.push(particle);
 
-                const activationDelay = 500 + (index * 1400); 
+                const activationDelay = 300 + (index * (this.isLowPower ? 1100 : 1400)); 
                 
                 setTimeout(() => {
                     particle.active = particle.isAnimated;
@@ -132,10 +136,21 @@
                         } else {
                             particle.el.style.willChange = 'auto';
                         }
-                        particle.el.style.opacity = particle.isAnimated ? '0.2' : '0.08';
+                        particle.el.style.opacity = particle.isAnimated
+                            ? (this.isLowPower ? '0.16' : '0.2')
+                            : (this.isLowPower ? '0.07' : '0.08');
                         particle.el.style.transform = `translate3d(${particle.x - particle.radius}px, ${particle.y - particle.radius}px, 0)`;
                     });
                 }, activationDelay);
+            });
+        }
+
+        scheduleResize() {
+            if (this.pendingResize) return;
+            this.pendingResize = true;
+            requestAnimationFrame(() => {
+                this.pendingResize = false;
+                this.handleResize();
             });
         }
 

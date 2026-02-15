@@ -9,6 +9,7 @@
         content="Mohamed Gamal - Growth Systems Architect & System Builder. Specializing in sustainable growth engines, SEO, and ROI-driven marketing across MENA.">
     <meta name="keywords"
         content="Growth Systems Architect, Digital Marketing Saudi Arabia, E-commerce Growth, Mohamed Gamal, ROI Marketing">
+    <meta name="mg-worker-endpoint" content="https://mg-ai-proxy.emarketbank.workers.dev/chat">
 
     <!-- Open Graph / Social -->
     <meta property="og:type" content="website">
@@ -42,14 +43,14 @@
     <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
 
     <!-- Home Main Styles -->
-    <link rel="stylesheet" href="assets/css/home-main.css?v=6.0">
-    <link rel="stylesheet" href="assets/css/jimmy-core.css?v=7.1">
+    <link rel="stylesheet" href="assets/css/home-main.css?v=6.3">
+    <link rel="stylesheet" href="assets/css/jimmy-core.css?v=7.3">
 
     <!-- Core System Scripts -->
     <script src="assets/js/header.js" defer></script>
-    <script src="assets/js/home-main.js?v=2.1" defer></script>
-    <script src="assets/js/nebula-background.js?v=1.0" defer></script>
-    <script src="assets/js/jimmy-core.js?v=5.5" defer></script>
+    <script src="assets/js/home-main.js?v=2.3" defer></script>
+    <script src="assets/js/nebula-background.js?v=1.1" defer></script>
+    <script src="assets/js/jimmy-core.js?v=4.6.3" defer></script>
 </head>
 
 <body>
@@ -59,14 +60,6 @@
     <div class="bg-micro-dust"></div>
     <div class="bg-glass-haze"></div>
     <div class="bg-vignette"></div>
-
-    <!-- 2026 Refraction Engine (Hidden) -->
-    <svg style="display: none;">
-        <filter id="refraction-filter">
-            <feTurbulence type="fractalNoise" baseFrequency="0.01" numOctaves="3" result="noise" />
-            <feDisplacementMap in="SourceGraphic" in2="noise" scale="5" />
-        </filter>
-    </svg>
 
     <div id="nebula-host" class="nebula-host" aria-hidden="true">
         <div class="social-nebula">
@@ -121,7 +114,9 @@
                     </div>
 
                     <h1 class="tagline kinetic-text">
-                        Building the systems that make growth inevitable
+                        I design growth systems <br>
+                        that lift conversion, <br>
+                        <span class="tagline-sub">retention and ROI</span>
                     </h1>
 
                     <div class="mission-metrics">
@@ -275,95 +270,6 @@
             </div>
         </section>
 
-        <!-- Experience (Apple-Style Carousel) -->
-        <section class="experience-section">
-            <div class="content-wrap content-wrap--wide">
-                <div class="section-header reveal">
-                    <div class="header-with-nav">
-                        <div>
-                            <p class="overline">The Journey</p>
-                            <h2>Career Timeline</h2>
-                        </div>
-                        <div class="carousel-nav-group">
-                            <button class="nav-btn prev-btn" aria-label="Previous"><i
-                                    class="ri-arrow-left-s-line"></i></button>
-                            <button class="nav-btn next-btn" aria-label="Next"><i
-                                    class="ri-arrow-right-s-line"></i></button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Carousel Container -->
-                <div class="carousel-container" id="carouselZone">
-                    <div class="horizontal-scroll" id="expCarousel">
-                        <!-- Card 1 -->
-                        <div class="exp-card" data-year="2023">
-                            <div class="exp-year">2023 - Present</div>
-                            <h3>Marketing Manager</h3>
-                            <h4>Qyadat, Riyadh</h4>
-                            <p>Leading 9-person team across 6+ industries.</p>
-                        </div>
-                        <!-- Card 2 -->
-                        <div class="exp-card" data-year="2023">
-                            <div class="exp-year">2023 - 2025</div>
-                            <h3>E-commerce Supervisor</h3>
-                            <h4>Gento Shop</h4>
-                            <p>Built unified warehouse + mobile ops system.</p>
-                        </div>
-                        <!-- Card 3 -->
-                        <div class="exp-card" data-year="2022">
-                            <div class="exp-year">2022 - 2024</div>
-                            <h3>Business Dev Lead</h3>
-                            <h4>Tatweeq</h4>
-                            <p>7x contract growth in 1 year.</p>
-                        </div>
-                        <!-- Card 4 -->
-                        <div class="exp-card" data-year="2021">
-                            <div class="exp-year">2021</div>
-                            <h3>Digital Strategist</h3>
-                            <h4>Kuwait Finance House</h4>
-                            <p>Streamlined banking workflows.</p>
-                        </div>
-                        <!-- Card 5 -->
-                        <div class="exp-card" data-year="2014">
-                            <div class="exp-year">2014 - 2023</div>
-                            <h3>Marketing Supervisor</h3>
-                            <h4>Arabian Oud</h4>
-                            <p>6x organic growth • GWR recognition (Jan 2020) based on estimated annual retail sales
-                                value (FY2019).</p>
-                        </div>
-                        <!-- Card 6 -->
-                        <div class="exp-card" data-year="2018">
-                            <div class="exp-year">2018 - 2023</div>
-                            <h3>Digital Specialist</h3>
-                            <h4>Iso-tec.com</h4>
-                            <p>ISO digital readiness projects.</p>
-                        </div>
-                        <!-- Card 7 -->
-                        <div class="exp-card" data-year="2011">
-                            <div class="exp-year">2011 - 2017</div>
-                            <h3>Digital Specialist</h3>
-                            <h4>TwinExcel</h4>
-                            <p>Where the performance mindset started.</p>
-                        </div>
-                    </div>
-
-                    <!-- Timeline Scrubber -->
-                    <div class="timeline-scrubber">
-                        <div class="scrub-track">
-                            <span class="scrub-year" data-target="2026">2026</span>
-                            <span class="scrub-year" data-target="2023">2023</span>
-                            <span class="scrub-year" data-target="2020">2020</span>
-                            <span class="scrub-year" data-target="2017">2017</span>
-                            <span class="scrub-year" data-target="2014">2014</span>
-                            <span class="scrub-year" data-target="2011">2011</span>
-                        </div>
-                        <div class="scrub-indicator" id="scrubIndicator"></div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
         <!-- Industries Served -->
         <section class="tools-section">
             <div class="content-wrap content-wrap--wide">
@@ -374,71 +280,62 @@
 
                 <div class="industries-grid reveal">
                     <div class="industry-card stagger-item">
-                        <div class="industry-icon">
-                            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z" />
-                                <path d="M3 6h18" />
-                                <path d="M16 10a4 4 0 0 1-8 0" />
-                            </svg>
+                        <div class="ind-accent-bar"></div>
+                        <div class="industry-icon-wrap">
+                            <i class="ri-shopping-cart-2-fill"></i>
+                            <div class="icon-glow"></div>
                         </div>
+                        <span class="ind-meta">Consumer Logic</span>
                         <h4>E-commerce & Retail</h4>
                         <p>Arabian Oud, Gento, Vinofy, Tolegor, Luna</p>
                     </div>
                     <div class="industry-card stagger-item">
-                        <div class="industry-icon">
-                            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                                <path
-                                    d="M19 14c1.49-1.28 3.6-2.34 3.6-4.74C22.6 7.05 20.5 5 18 5c-2.35 0-4.27 1.34-5.64 3.32C11.01 6.34 9.1 5 6.75 5 4.25 5 2.19 7.05 2.19 9.26c0 2.4 2.11 3.46 3.6 4.74" />
-                                <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
-                            </svg>
+                        <div class="ind-accent-bar"></div>
+                        <div class="industry-icon-wrap">
+                            <i class="ri-pulse-fill"></i>
+                            <div class="icon-glow"></div>
                         </div>
+                        <span class="ind-meta">Critical Ops</span>
                         <h4>Healthcare</h4>
                         <p>Al Hayat National Hospitals</p>
                     </div>
                     <div class="industry-card stagger-item">
-                        <div class="industry-icon">
-                            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
-                                <path d="M6 12v5c3 3 9 3 12 0v-5" />
-                            </svg>
+                        <div class="ind-accent-bar"></div>
+                        <div class="industry-icon-wrap">
+                            <i class="ri-graduation-cap-fill"></i>
+                            <div class="icon-glow"></div>
                         </div>
+                        <span class="ind-meta">Knowledge Systems</span>
                         <h4>Education</h4>
                         <p>Sarh Schools, Ertiqaa, Jouf University</p>
                     </div>
                     <div class="industry-card stagger-item">
-                        <div class="industry-icon">
-                            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                                <rect width="20" height="14" x="2" y="7" rx="2" ry="2" />
-                                <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
-                            </svg>
+                        <div class="ind-accent-bar"></div>
+                        <div class="industry-icon-wrap">
+                            <i class="ri-instance-fill"></i>
+                            <div class="icon-glow"></div>
                         </div>
+                        <span class="ind-meta">Scale Architecture</span>
                         <h4>B2B & SaaS</h4>
                         <p>Tatweeq Real Estate, Qyadat, Iso-tec</p>
                     </div>
                     <div class="industry-card stagger-item">
-                        <div class="industry-icon">
-                            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M12 2 2 7l10 5 10-5-10-5Z" />
-                                <path d="m2 17 10 5 10-5" />
-                                <path d="m2 12 10 5 10-5" />
-                            </svg>
+                        <div class="ind-accent-bar"></div>
+                        <div class="industry-icon-wrap">
+                            <i class="ri-government-fill"></i>
+                            <div class="icon-glow"></div>
                         </div>
+                        <span class="ind-meta">Civic Tech</span>
                         <h4>Government & GovTech</h4>
                         <p>Ministries, Universities, Saudi Recruitment</p>
                     </div>
                     <div class="industry-card stagger-item">
-                        <div class="industry-icon">
-                            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M2 12h20" />
-                                <path d="M13 2a9 9 0 0 1 9 9H13v9a9 9 0 0 1-9-9h9V2Z" />
-                            </svg>
+                        <div class="ind-accent-bar"></div>
+                        <div class="industry-icon-wrap">
+                            <i class="ri-map-pin-user-fill"></i>
+                            <div class="icon-glow"></div>
                         </div>
+                        <span class="ind-meta">Experience Design</span>
                         <h4>Travel & Hospitality</h4>
                         <p>Safark, Hotel chains via Qyadat</p>
                     </div>
@@ -461,31 +358,6 @@
                             type="video/mp4">
                         Your browser does not support the video tag.
                     </video>
-                </div>
-            </div>
-        </section>
-
-        <!-- Skills (Infinite Motion) -->
-        <section class="skills-section">
-            <div class="content-wrap content-wrap--wide">
-                <div class="section-header reveal">
-                    <p class="overline">Expertise</p>
-                    <h2>Core Skills</h2>
-                </div>
-
-                <div class="skills-marquee reveal">
-                    <div class="skills-track">
-                        <div class="skill-card"><i class="ri-rocket-2-line"></i>Digital Marketing Strategy</div>
-                        <div class="skill-card"><i class="ri-magic-line"></i>Creative Campaigns</div>
-                        <div class="skill-card"><i class="ri-search-eye-line"></i>SEO & SEM Impact</div>
-                        <div class="skill-card"><i class="ri-share-forward-box-line"></i>Social Media Architecture</div>
-                        <div class="skill-card"><i class="ri-shopping-cart-2-line"></i>E-commerce Growth</div>
-                        <div class="skill-card"><i class="ri-shield-user-line"></i>Brand Positioning</div>
-                        <div class="skill-card"><i class="ri-line-chart-line"></i>Business Development</div>
-                        <div class="skill-card"><i class="ri-pie-chart-2-line"></i>Marketing Analytics</div>
-                        <div class="skill-card"><i class="ri-focus-3-line"></i>CRO Optimization</div>
-                        <div class="skill-card"><i class="ri-robot-line"></i>AI Automation</div>
-                    </div>
                 </div>
             </div>
         </section>
@@ -622,67 +494,6 @@
             </div>
         </section>
 
-        <!-- Education (Apple-Style Carousel) -->
-        <section class="education-section">
-            <div class="content-wrap">
-                <div class="section-header reveal">
-                    <div class="header-with-nav">
-                        <div>
-                            <p class="overline">Background</p>
-                            <h2>Education & Certifications</h2>
-                        </div>
-                        <div class="carousel-nav-group">
-                            <button class="nav-btn prev-btn edu-prev" aria-label="Previous"><i
-                                    class="ri-arrow-left-s-line"></i></button>
-                            <button class="nav-btn next-btn edu-next" aria-label="Next"><i
-                                    class="ri-arrow-right-s-line"></i></button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Carousel Container -->
-                <div class="carousel-container" id="eduCarouselZone">
-                    <div class="horizontal-scroll" id="eduCarousel">
-                        <!-- Card 1 -->
-                        <div class="exp-card edu-card">
-                            <div class="exp-year">2003</div>
-                            <h3>B.Sc Computer Science</h3>
-                            <h4>Tanta University</h4>
-                            <p>Faculty of Computers and Information.</p>
-                        </div>
-                        <!-- Card 2 -->
-                        <div class="exp-card edu-card">
-                            <div class="exp-year">CERTIFICATION</div>
-                            <h3>Social Media Marketing</h3>
-                            <h4>Coursera Specialization</h4>
-                            <p>Advanced strategy & analytics.</p>
-                        </div>
-                        <!-- Card 3 -->
-                        <div class="exp-card edu-card">
-                            <div class="exp-year">NANODEGREE</div>
-                            <h3>Digital Marketing</h3>
-                            <h4>Udacity</h4>
-                            <p>Performance & Technical SEO.</p>
-                        </div>
-                        <!-- Card 4 -->
-                        <div class="exp-card edu-card">
-                            <div class="exp-year">CERTIFICATION</div>
-                            <h3>E-commerce Essentials</h3>
-                            <h4>Shopify Academy</h4>
-                            <p>Store operations & Scaling.</p>
-                        </div>
-                        <!-- Card 5 -->
-                        <div class="exp-card edu-card">
-                            <div class="exp-year">FUNDAMENTALS</div>
-                            <h3>Digital Garage</h3>
-                            <h4>Google</h4>
-                            <p>Essential digital skills.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
     </main>
 
     <footer class="site-footer-2026">
@@ -693,22 +504,35 @@
                     decoding="async">
             </div>
 
-            <!-- Center: Actions -->
-            <div class="footer-actions">
+            <!-- Center: Site Nav -->
+            <div class="footer-nav-group">
+                <a href="./index.html" class="dock-link">Home</a>
                 <a href="./portfolio/index.html" class="dock-link">Portfolio</a>
-                <a href="https://www.linkedin.com/in/mohamadgamal/" target="_blank" rel="noopener"
-                    class="dock-link">LinkedIn</a>
-                <a href="https://wa.me/201555141282" target="_blank" rel="noopener" class="dock-link">WhatsApp</a>
-                <a href="assets/docs/mohamed-gamal-cv.pdf" download class="dock-link">Resume</a>
+                <a href="./achievements/index.html" class="dock-link">Impact</a>
+            </div>
+
+            <div class="footer-v-divider"></div>
+
+            <!-- Right: External Actions -->
+            <div class="footer-action-group">
+                <a href="https://www.linkedin.com/in/mohamadgamal/" target="_blank" rel="noopener" class="dock-action-btn" aria-label="LinkedIn">
+                    <i class="ri-linkedin-fill"></i>
+                </a>
+                <a href="https://wa.me/201555141282" target="_blank" rel="noopener" class="dock-action-btn" aria-label="WhatsApp">
+                    <i class="ri-whatsapp-line"></i>
+                </a>
+                <a href="assets/docs/mohamed-gamal-cv.pdf" download class="dock-action-btn cv-download" title="Download Resume">
+                    <i class="ri-file-download-line"></i>
+                    <span>Resume</span>
+                </a>
             </div>
         </div>
 
-        <!-- Minimal Casual Outro (Detached from Dock) -->
-        <div class="footer-casual-msg">
-            <p>I fix the marketing mess so you can actually enjoy your weekend</p>
-            <p class="secondary">Your competitors hope you never actually call me ツ</p>
+        <!-- Minimal Casual Outro -->
+        <div class="footer-outro-message">
+            <p class="main-msg">I fix the marketing mess so you can actually enjoy your weekend</p>
+            <p class="sub-msg">Built for the 2026 Digital Economy</p>
         </div>
-
     </footer>
 </body>
 

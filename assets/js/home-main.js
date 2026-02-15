@@ -5,6 +5,95 @@
 
 // Nebula background handled by assets/js/nebula-background.js
 
+const prefersReducedMotion = () =>
+    window.matchMedia &&
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+const rafThrottle = (fn) => {
+    let ticking = false;
+    let lastArgs = [];
+
+    return (...args) => {
+        lastArgs = args;
+        if (ticking) return;
+
+        ticking = true;
+        requestAnimationFrame(() => {
+            ticking = false;
+            fn(...lastArgs);
+        });
+    };
+};
+
+const isMotionProfilingEnabled = () => {
+    try {
+        const qs = new URLSearchParams(window.location.search);
+        if (qs.get('mg_profile_motion') === '1') return true;
+    } catch {
+        // no-op
+    }
+
+    try {
+        return window.localStorage?.getItem('mg_profile_motion') === '1';
+    } catch {
+        return false;
+    }
+};
+
+const createMotionProfiler = () => {
+    const enabled = isMotionProfilingEnabled();
+    const durations = [];
+    const counters = new Map();
+
+    const now = () => performance.now();
+
+    const bump = (name, value = 1) => {
+        if (!enabled || !name) return;
+        counters.set(name, (counters.get(name) || 0) + value);
+    };
+
+    const time = (name, fn) => {
+        if (typeof fn !== 'function') return undefined;
+        if (!enabled) return fn();
+
+        const t0 = now();
+        const result = fn();
+        const pushDone = () => {
+            durations.push({
+                step: name,
+                ms: Number((now() - t0).toFixed(2))
+            });
+        };
+
+        if (result && typeof result.then === 'function') {
+            return result.finally(pushDone);
+        }
+        pushDone();
+        return result;
+    };
+
+    const report = (title = 'Motion Profile') => {
+        if (!enabled) return;
+        const total = durations.reduce((sum, item) => sum + item.ms, 0);
+        const summary = durations.map(item => ({ ...item }));
+        summary.push({ step: 'TOTAL', ms: Number(total.toFixed(2)) });
+        console.groupCollapsed(`[MG] ${title}`);
+        console.table(summary);
+        if (counters.size) {
+            console.table(
+                Array.from(counters.entries()).map(([name, count]) => ({ counter: name, count }))
+            );
+        }
+        console.groupEnd();
+    };
+
+    return { enabled, bump, time, report };
+};
+
+const getMotionProfiler = () => {
+    return window.__MG_MOTION_PROFILER__ || null;
+};
+
 // --- 1. KINETIC TEXT (Word Reveal Engine) ---
 class KineticText {
     constructor() {
@@ -14,38 +103,82 @@ class KineticText {
 
     init() {
         this.elements.forEach(el => {
-            const text = el.innerText.trim();
-            if (!text) return;
+            const originalHTML = el.innerHTML.trim();
+            if (!originalHTML) return;
             
             el.innerHTML = '';
             el.style.opacity = '1';
             el.style.visibility = 'visible';
 
-            const words = text.split(/\s+/);
-            words.forEach((word, wordIdx) => {
-                const wordSpan = document.createElement('span');
-                wordSpan.className = 'word';
-                wordSpan.style.display = 'inline-block';
-                wordSpan.style.whiteSpace = 'nowrap';
+            // Split by <br> tags
+            const lines = originalHTML.split(/<br\s*\/?>/i);
+            
+            lines.forEach((lineHTML, lineIdx) => {
+                const lineContainer = document.createElement('span');
+                lineContainer.className = 'tagline-line';
+                lineContainer.style.display = 'block';
                 
-                // Grouping characters into words for a cleaner "reveal"
-                word.split('').forEach((char, charIdx) => {
-                    const charSpan = document.createElement('span');
-                    charSpan.className = 'char';
-                    charSpan.innerText = char;
-                    // Calmer delay: 0.02s per char instead of 0.04s, and 0.05s per word
-                    const delay = (wordIdx * 0.05) + (charIdx * 0.02);
-                    charSpan.style.transitionDelay = `${delay}s`;
-                    wordSpan.appendChild(charSpan);
-                });
+                // Temporary div to parse inner HTML of the line (handles <small>, etc.)
+                const temp = document.createElement('div');
+                temp.innerHTML = lineHTML;
+                
+                // Process nodes (text or nested tags)
+                this.processNodes(temp, lineContainer, lineIdx);
 
-                el.appendChild(wordSpan);
-                if (wordIdx < words.length - 1) {
-                    const space = document.createTextNode(' ');
-                    el.appendChild(space);
-                }
+                el.appendChild(lineContainer);
             });
         });
+    }
+
+    processNodes(parentNode, targetContainer, lineIdx) {
+        let globalWordIdx = 0;
+        
+        Array.from(parentNode.childNodes).forEach(node => {
+            if (node.nodeType === Node.TEXT_NODE) {
+                const words = node.textContent.trim().split(/\s+/);
+                words.forEach((word, wordIdx) => {
+                    if (word) {
+                        const wordSpan = this.createWordSpan(word, lineIdx, globalWordIdx);
+                        targetContainer.appendChild(wordSpan);
+                        targetContainer.appendChild(document.createTextNode(' '));
+                        globalWordIdx++;
+                    }
+                });
+            } else if (node.nodeType === Node.ELEMENT_NODE) {
+                const wrapper = document.createElement('span');
+                wrapper.className = node.className; // Preserve classes like tagline-sub
+                if (node.tagName.toLowerCase() === 'small') wrapper.style.fontSize = '0.6em';
+                
+                const words = node.textContent.trim().split(/\s+/);
+                words.forEach((word, wordIdx) => {
+                    if (word) {
+                        const wordSpan = this.createWordSpan(word, lineIdx, globalWordIdx);
+                        wrapper.appendChild(wordSpan);
+                        wrapper.appendChild(document.createTextNode(' '));
+                        globalWordIdx++;
+                    }
+                });
+                targetContainer.appendChild(wrapper);
+            }
+        });
+    }
+
+    createWordSpan(word, lineIdx, wordIdx) {
+        const wordSpan = document.createElement('span');
+        wordSpan.className = 'word';
+        wordSpan.style.display = 'inline-block';
+        wordSpan.style.whiteSpace = 'nowrap';
+        
+        word.split('').forEach((char, charIdx) => {
+            const charSpan = document.createElement('span');
+            charSpan.className = 'char';
+            charSpan.innerText = char;
+            // Sophisticated delay logic
+            const delay = (lineIdx * 0.25) + (wordIdx * 0.08) + (charIdx * 0.02);
+            charSpan.style.transitionDelay = `${delay}s`;
+            wordSpan.appendChild(charSpan);
+        });
+        return wordSpan;
     }
 }
 
@@ -239,12 +372,26 @@ const initMarqueeSystem = () => {
 
 // --- 4. SPATIAL DEPTH ENGINE (3D & Reflections) ---
 const initSpatialDepth = () => {
-    const glassPanels = document.querySelectorAll('.identity-card, .stat-card, .exp-card, .industry-card, .future-card');
-    const identityCard = document.querySelector('.identity-card');
+    const profiler = getMotionProfiler();
+    const glassPanels = Array.from(document.querySelectorAll('.identity-card, .stat-card, .exp-card, .industry-card, .future-card'));
     const bgVoid = document.querySelector('.bg-void-layer');
     const bgAmbient = document.querySelector('.bg-ambient-glow');
+    if (!glassPanels.length && !bgVoid && !bgAmbient) return;
 
-    window.addEventListener('mousemove', (e) => {
+    const panelRects = new Map();
+    const updatePanelRects = () => {
+        glassPanels.forEach((panel) => {
+            panelRects.set(panel, panel.getBoundingClientRect());
+        });
+    };
+    updatePanelRects();
+
+    const scheduleRectRefresh = rafThrottle(updatePanelRects);
+    window.addEventListener('resize', scheduleRectRefresh, { passive: true });
+    window.addEventListener('scroll', scheduleRectRefresh, { passive: true });
+
+    const handlePointerMove = rafThrottle((e) => {
+        profiler?.bump('spatial.pointer.raf');
         const { clientX, clientY } = e;
         const xPct = (clientX / window.innerWidth - 0.5) * 2; // -1 to 1
         const yPct = (clientY / window.innerHeight - 0.5) * 2; // -1 to 1
@@ -259,7 +406,9 @@ const initSpatialDepth = () => {
 
         // B) Dynamic Glass Reflections
         glassPanels.forEach(panel => {
-            const rect = panel.getBoundingClientRect();
+            const rect = panelRects.get(panel);
+            if (!rect) return;
+
             const px = clientX - rect.left;
             const py = clientY - rect.top;
 
@@ -270,6 +419,10 @@ const initSpatialDepth = () => {
             }
         });
     });
+    window.addEventListener('mousemove', (e) => {
+        profiler?.bump('spatial.pointer.raw');
+        handlePointerMove(e);
+    }, { passive: true });
 
     // C) Scroll-Linked Tilt for Identity (Removed for 2026 Stability)
     /*
@@ -285,11 +438,14 @@ const initSpatialDepth = () => {
 
 // --- 4b. LIVE HUD DATA SYSTEM ---
 const initLiveHUD = () => {
+    const profiler = getMotionProfiler();
     const ksaEl = document.querySelector('.d1');
     const egyEl = document.querySelector('.d2');
     const futureEl = document.querySelector('.d3');
+    if (!ksaEl && !egyEl && !futureEl) return;
 
     const updateHUD = () => {
+        profiler?.bump('hud.ticks');
         // Network Latency Simulation (Actual network API if available)
         const latency = Math.floor(Math.random() * 20 + 15); // 15-35ms
         if (ksaEl) ksaEl.innerHTML = `KSA <span style="opacity:0.5; font-size:0.5rem;">${latency}MS</span>`;
@@ -302,7 +458,27 @@ const initLiveHUD = () => {
         if (futureEl) futureEl.innerHTML = `2026 <span style="opacity:0.5; font-size:0.5rem;">VER_2.8</span>`;
     };
 
-    setInterval(updateHUD, 3000);
+    let hudInterval = null;
+    const startHUD = () => {
+        if (hudInterval) return;
+        hudInterval = setInterval(updateHUD, 3000);
+    };
+    const stopHUD = () => {
+        if (!hudInterval) return;
+        clearInterval(hudInterval);
+        hudInterval = null;
+    };
+
+    document.addEventListener('visibilitychange', () => {
+        if (document.hidden) {
+            stopHUD();
+        } else {
+            updateHUD();
+            startHUD();
+        }
+    });
+
+    startHUD();
     updateHUD();
 };
 
@@ -592,40 +768,74 @@ const initStoryInteractives = () => {
     storyElements.forEach(el => storyObserver.observe(el));
 };
 
-// --- MASTER BOOT ---
-document.addEventListener('DOMContentLoaded', () => {
+const detectRuntimeFlags = () => {
     const isMobileViewport =
         window.matchMedia("(max-width: 768px)").matches ||
         window.matchMedia("(pointer: coarse)").matches;
+    const isReducedMotion = prefersReducedMotion();
     const isLowPowerDevice =
         isMobileViewport ||
         (navigator.deviceMemory && navigator.deviceMemory <= 4) ||
         (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4);
 
-    if (isMobileViewport) {
+    return {
+        isMobileViewport,
+        isReducedMotion,
+        isLowPowerDevice,
+        allowAdvancedMotion: !isMobileViewport && !isReducedMotion
+    };
+};
+
+const applyRuntimeClasses = (flags) => {
+    if (flags.isMobileViewport) {
         document.body.classList.add('mobile-lite');
     }
-    if (isLowPowerDevice) {
+    if (flags.isLowPowerDevice) {
         document.body.classList.add('perf-lite');
     }
-
-    // Core Motion
-    new KineticText();
-    new DataDecrypt();
-    new FluidSweep();
-    new IgnitionMetrics();
-
-    // Interaction
-    if (!isMobileViewport) {
-        initSpatialDepth();
-        initLiveHUD();
+    if (flags.isReducedMotion) {
+        document.body.classList.add('reduce-motion');
     }
-    initScrollReveal();
-    initMarqueeSystem();
-    initVideo();
-    initCarousel();
-    initStoryInteractives();
-    if (!isMobileViewport) {
-        new SmartPulseEngine();
+};
+
+const bootMotionSystem = (flags, profiler) => {
+    const steps = [
+        { name: 'core.kineticText', run: () => new KineticText() },
+        { name: 'core.dataDecrypt', run: () => new DataDecrypt() },
+        { name: 'core.fluidSweep', run: () => new FluidSweep() },
+        { name: 'core.ignitionMetrics', run: () => new IgnitionMetrics() },
+        { name: 'interaction.scrollReveal', run: initScrollReveal },
+        { name: 'interaction.marquee', run: initMarqueeSystem },
+        { name: 'interaction.video', run: initVideo },
+        { name: 'interaction.carousel', run: initCarousel },
+        { name: 'interaction.story', run: initStoryInteractives },
+    ];
+
+    if (flags.allowAdvancedMotion) {
+        steps.splice(4, 0, { name: 'interaction.spatialDepth', run: initSpatialDepth });
+        steps.splice(5, 0, { name: 'interaction.liveHud', run: initLiveHUD });
+        steps.push({ name: 'interaction.smartPulse', run: () => new SmartPulseEngine() });
     }
+
+    steps.forEach((step) => {
+        profiler.time(step.name, step.run);
+    });
+};
+
+const scheduleMotionProfileReports = (profiler) => {
+    if (!profiler.enabled) return;
+
+    profiler.report('Motion Boot (immediate)');
+    setTimeout(() => profiler.report('Motion Runtime (8s sample)'), 8000);
+};
+
+// --- MASTER BOOT ---
+document.addEventListener('DOMContentLoaded', () => {
+    const profiler = createMotionProfiler();
+    window.__MG_MOTION_PROFILER__ = profiler;
+
+    const flags = profiler.time('runtime.detectFlags', detectRuntimeFlags);
+    profiler.time('runtime.applyClasses', () => applyRuntimeClasses(flags));
+    bootMotionSystem(flags, profiler);
+    scheduleMotionProfileReports(profiler);
 });
