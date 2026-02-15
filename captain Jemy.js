@@ -26,7 +26,7 @@
  * - Origin "null" supported
  */
 
-const WORKER_VERSION = "3.2.1";
+const WORKER_VERSION = "3.2.3";
 
 const ALLOWED_ORIGINS = [
   "https://mo-gamal.com",
@@ -41,17 +41,27 @@ const ALLOWED_ORIGINS = [
 
 const GEMINI_KEY_POOL = [
   "arabian", "arabw", "Cartonya", "Digimora",
-  "digimoraeg", "mogamal", "qyadat"
+  "digimoraeg", "hamed", "mogamal", "qyadat"
 ];
 
 const DEFAULT_MODELS = {
   FLASH: "gemini-2.0-flash",
   EXPERT: "gemini-2.0-flash",  // Using flash for both until 2.0-pro is stable
-  FAILOVER: "",
+  FAILOVER: "gemini-2.0-flash-lite",
 };
 const DEFAULT_GEMINI_API_VERSION = "v1beta";
 
 const TIMEOUT_MS = 10000;
+const MAX_OUTPUT_TOKENS_FLASH = 360;
+const MAX_OUTPUT_TOKENS_EXPERT = 650;
+const MIN_OUTPUT_TOKENS_FLASH = 140;
+const MIN_OUTPUT_TOKENS_EXPERT = 320;
+const MAX_PRIMARY_KEYS_PER_REQUEST = 3;
+const MAX_FAILOVER_KEYS_PER_REQUEST = 2;
+const QUOTA_WAVE_BREAK_AFTER_429 = 2;
+const CONTEXT_TURNS_FLASH = 6;
+const CONTEXT_TURNS_MARKET = 8;
+const CONTEXT_TURNS_EXPERT = 10;
 const RATE_LIMIT_WINDOW_MS = 60_000;
 const RATE_LIMIT_MAX = 100;
 const RATE_LIMIT_MAX_ANON = 60;
@@ -180,6 +190,12 @@ function toBool(value, fallback = false) {
   if (v === "true" || v === "1" || v === "yes") return true;
   if (v === "false" || v === "0" || v === "no") return false;
   return fallback;
+}
+
+function toPositiveInt(value, fallback, min = 1, max = 50) {
+  const parsed = Number.parseInt(String(value ?? "").trim(), 10);
+  if (!Number.isFinite(parsed) || parsed < min || parsed > max) return fallback;
+  return parsed;
 }
 
 function safeEqual(a, b) {
@@ -322,7 +338,62 @@ function normalizeMessages(msgs, max = 10) {
 }
 
 function shuffle(arr) {
-  return [...arr].sort(() => Math.random() - 0.5);
+  const out = [...arr];
+  for (let i = out.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [out[i], out[j]] = [out[j], out[i]];
+  }
+  return out;
+}
+
+function parseKeyPool(value) {
+  if (typeof value !== "string") return [];
+  return value
+    .split(",")
+    .map(x => x.trim())
+    .filter(Boolean)
+    .filter(name => /^[a-z_][a-z0-9_]*$/i.test(name))
+    .slice(0, 24);
+}
+
+function resolveGeminiKeyNames(env) {
+  const overridePool = parseKeyPool(env.GEMINI_KEY_POOL);
+  const basePool = overridePool.length ? overridePool : GEMINI_KEY_POOL;
+  const seen = new Set();
+  const active = [];
+
+  for (const name of basePool) {
+    if (seen.has(name)) continue;
+    seen.add(name);
+    const value = env[name];
+    if (typeof value === "string" && value.trim()) active.push(name);
+  }
+  return active;
+}
+
+function resolveContextTurns(mode, marketCardsCount) {
+  if (mode === "expert") return CONTEXT_TURNS_EXPERT;
+  if (marketCardsCount > 0) return CONTEXT_TURNS_MARKET;
+  return CONTEXT_TURNS_FLASH;
+}
+
+function resolveOutputTokens(mode, lastMsg) {
+  const t = String(lastMsg || "").trim();
+  const len = t.length;
+  const hasMetrics = /\d/.test(t) && /(%|\$|k|m|ريال|جنية|جنيه|دولار|roas|cpa|ctr|cvr|rto|cac|aov)/i.test(t);
+  const hasComplexIntent = isBusinessQuestion(t) || /(audit|analysis|تحليل|تقييم|استشارة)/i.test(t);
+
+  if (mode === "expert") {
+    if (len < 50) return MIN_OUTPUT_TOKENS_EXPERT;
+    if (len < 180) return Math.min(MAX_OUTPUT_TOKENS_EXPERT, 440);
+    if (hasComplexIntent || hasMetrics) return Math.min(MAX_OUTPUT_TOKENS_EXPERT, 560);
+    return Math.min(MAX_OUTPUT_TOKENS_EXPERT, 500);
+  }
+
+  if (len < 32) return MIN_OUTPUT_TOKENS_FLASH;
+  if (len < 120) return Math.min(MAX_OUTPUT_TOKENS_FLASH, 220);
+  if (hasComplexIntent || hasMetrics) return Math.min(MAX_OUTPUT_TOKENS_FLASH, 300);
+  return Math.min(MAX_OUTPUT_TOKENS_FLASH, 260);
 }
 
 function normalizeModelName(value) {
@@ -476,7 +547,8 @@ function uniq(arr) {
 }
 
 function pickMarketCards(text, mode, marketMode) {
-  const want = (marketMode === "on") || (marketMode === "auto" && isBusinessQuestion(text));
+  const hasMarketSignal = /(roas|cac|cvr|ctr|aov|rto|tracking|capi|s2s|attribution|pixel|checkout|payment|cod|returns?|refund|logistics|shipping|funnel|offer|margin|contribution|payback|ads|media|ميزانية|تحويل|مبيعات|ربح|هامش|شحن|دفع|مرتجع|ارجاع|تتبع|لوجست|سلة|بوابة|قناة)/i.test(text || "");
+  const want = (marketMode === "on") || (marketMode === "auto" && hasMarketSignal);
   if (!want) return [];
 
   const t = (text || "").toLowerCase();
@@ -634,14 +706,29 @@ function buildSystemPrompt(ctx) {
 // =====================================================================
 // Gemini Call (join all parts)
 // =====================================================================
-async function tryGenerate({ model, apiKey, apiVersion, systemPrompt, messages, mode }) {
+async function tryGenerate({
+  model,
+  apiKey,
+  apiVersion,
+  systemPrompt,
+  messages,
+  mode,
+  contextTurns,
+  outputTokens,
+}) {
+  const defaultContextTurns = mode === "expert" ? CONTEXT_TURNS_EXPERT : CONTEXT_TURNS_FLASH;
+  const safeContextTurns = toPositiveInt(contextTurns, defaultContextTurns, 1, 20);
+  const maxByMode = mode === "expert" ? MAX_OUTPUT_TOKENS_EXPERT : MAX_OUTPUT_TOKENS_FLASH;
+  const minByMode = mode === "expert" ? MIN_OUTPUT_TOKENS_EXPERT : MIN_OUTPUT_TOKENS_FLASH;
+  const safeOutputTokens = toPositiveInt(outputTokens, maxByMode, minByMode, maxByMode);
+
   const payload = {
-    contents: normalizeMessages(messages),
+    contents: normalizeMessages(messages, safeContextTurns),
     system_instruction: { parts: [{ text: systemPrompt }] },
     generationConfig: {
       temperature: mode === "expert" ? 0.7 : 0.62,
       topP: 0.9,
-      maxOutputTokens: mode === "expert" ? 900 : 520,
+      maxOutputTokens: safeOutputTokens,
       // تقليل التكرار
       presencePenalty: 0.35,
       frequencyPenalty: 0.35,
@@ -906,62 +993,99 @@ export default {
       const models = resolveModels(env);
       const apiVersion = resolveApiVersion(env);
       const selectedModel = mode === "expert" ? models.EXPERT : models.FLASH;
+      const contextTurns = resolveContextTurns(mode, marketCards.length);
+      const outputTokens = resolveOutputTokens(mode, lastMsg);
 
       // 7) Generate (failover)
-      const keys = shuffle(GEMINI_KEY_POOL);
+      const keys = shuffle(resolveGeminiKeyNames(env));
       let responseText = null;
       const upstreamFailures = [];
+      const primaryFailures = [];
+      const triedPrimaryKeys = new Set();
 
-      for (const k of keys) {
+      const primaryKeyBudget = toPositiveInt(env.GEMINI_MAX_PRIMARY_KEYS, MAX_PRIMARY_KEYS_PER_REQUEST, 1, 10);
+      const quotaWaveBreak = toPositiveInt(env.GEMINI_QUOTA_WAVE_BREAK, QUOTA_WAVE_BREAK_AFTER_429, 1, 5);
+      let consecutivePrimary429 = 0;
+
+      for (const k of keys.slice(0, primaryKeyBudget)) {
+        triedPrimaryKeys.add(k);
         const apiKey = env[k];
-        if (!apiKey) continue;
         const result = await tryGenerate({
           model: selectedModel,
           apiKey,
           apiVersion,
           systemPrompt,
           messages,
-          mode
+          mode,
+          contextTurns,
+          outputTokens,
         });
         if (result?.ok) {
           responseText = result.text;
           break;
         }
-        if (result) upstreamFailures.push(result);
+        if (!result) continue;
+
+        upstreamFailures.push(result);
+        primaryFailures.push(result);
+
+        if (result.status === 429) {
+          consecutivePrimary429 += 1;
+          // موجة quota واضحة: ما نحرقش كل المفاتيح في نفس الطلب
+          if (consecutivePrimary429 >= quotaWaveBreak) break;
+        } else {
+          consecutivePrimary429 = 0;
+        }
       }
 
-      const primaryOnlyQuota = upstreamFailures.length > 0 && upstreamFailures.every(f => f?.status === 429);
-      const canTryFailover = !!models.FAILOVER && !primaryOnlyQuota;
+      const primaryOnlyQuota = primaryFailures.length > 0 && primaryFailures.every(f => f?.status === 429);
+      const allowFailoverOnPrimaryQuota = toBool(env.GEMINI_FAILOVER_ON_PRIMARY_429, false);
+      const canTryFailover = !!models.FAILOVER && (!primaryOnlyQuota || allowFailoverOnPrimaryQuota);
 
       if (!responseText && canTryFailover) {
-        for (const k of keys) {
+        const defaultFailoverBudget = primaryOnlyQuota ? 1 : MAX_FAILOVER_KEYS_PER_REQUEST;
+        const failoverKeyBudget = toPositiveInt(env.GEMINI_MAX_FAILOVER_KEYS, defaultFailoverBudget, 1, 6);
+        const failoverOutputTokens = Math.min(outputTokens, MAX_OUTPUT_TOKENS_FLASH);
+        const failoverContextTurns = Math.min(contextTurns, CONTEXT_TURNS_MARKET);
+        const remainingKeys = keys.filter(k => !triedPrimaryKeys.has(k));
+        const failoverKeys = remainingKeys.length ? remainingKeys : keys;
+
+        for (const k of failoverKeys.slice(0, failoverKeyBudget)) {
           const apiKey = env[k];
-          if (!apiKey) continue;
           const result = await tryGenerate({
             model: models.FAILOVER,
             apiKey,
             apiVersion,
             systemPrompt,
             messages,
-            mode: "flash"
+            mode: "flash",
+            contextTurns: failoverContextTurns,
+            outputTokens: failoverOutputTokens,
           });
           if (result?.ok) {
             responseText = result.text;
             break;
           }
-          if (result) upstreamFailures.push(result);
+          if (!result) continue;
+          upstreamFailures.push(result);
+
+          // في حالة quota wave، اكتفي بمحاولة failover واحدة فقط
+          if (primaryOnlyQuota && result.status === 429) break;
         }
       }
 
       if (!responseText) {
         const classification = classifyUpstreamFailure(upstreamFailures);
+        const failureHeaders = classification.status === 429
+          ? { ...corsHeaders, "Retry-After": "120" }
+          : corsHeaders;
         return json(
           {
             error: classification.error,
             details: `${classification.details} :: ${summarizeFailures(upstreamFailures)}`,
           },
           classification.status,
-          corsHeaders
+          failureHeaders
         );
       }
 
