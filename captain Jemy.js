@@ -356,6 +356,12 @@ function parseKeyPool(value) {
     .slice(0, 24);
 }
 
+function normalizeSecretName(value) {
+  if (typeof value !== "string") return "";
+  const trimmed = value.trim();
+  return /^[a-z_][a-z0-9_]*$/i.test(trimmed) ? trimmed : "";
+}
+
 function resolveGeminiKeyNames(env) {
   const overridePool = parseKeyPool(env.GEMINI_KEY_POOL);
   const basePool = overridePool.length ? overridePool : GEMINI_KEY_POOL;
@@ -883,6 +889,9 @@ export default {
       const body = await req.json();
       const messages = normalizeIncomingMessages(body?.messages || []);
       const previousMeta = normalizeMeta(body?.meta);
+      const requestedForceKey = normalizeSecretName(body?.meta?.force_key);
+      const allowForceKey = toBool(env.ALLOW_FORCE_KEY_META, true);
+      const forceSingleKey = allowForceKey && !!requestedForceKey;
       if (!messages.length) {
         return json({ error: "Bad request", details: "messages[] is required" }, 400, corsHeaders);
       }
@@ -997,13 +1006,24 @@ export default {
       const outputTokens = resolveOutputTokens(mode, lastMsg);
 
       // 7) Generate (failover)
-      const keys = shuffle(resolveGeminiKeyNames(env));
+      const resolvedKeys = shuffle(resolveGeminiKeyNames(env));
+      const keys = forceSingleKey
+        ? resolvedKeys.filter(k => k === requestedForceKey)
+        : resolvedKeys;
+      if (forceSingleKey && keys.length === 0) {
+        return json({
+          error: "Bad request",
+          details: `Forced key "${requestedForceKey}" is not configured or empty.`,
+        }, 400, corsHeaders);
+      }
       let responseText = null;
       const upstreamFailures = [];
       const primaryFailures = [];
       const triedPrimaryKeys = new Set();
 
-      const primaryKeyBudget = toPositiveInt(env.GEMINI_MAX_PRIMARY_KEYS, MAX_PRIMARY_KEYS_PER_REQUEST, 1, 10);
+      const primaryKeyBudget = forceSingleKey
+        ? 1
+        : toPositiveInt(env.GEMINI_MAX_PRIMARY_KEYS, MAX_PRIMARY_KEYS_PER_REQUEST, 1, 10);
       const quotaWaveBreak = toPositiveInt(env.GEMINI_QUOTA_WAVE_BREAK, QUOTA_WAVE_BREAK_AFTER_429, 1, 5);
       let consecutivePrimary429 = 0;
 
@@ -1040,7 +1060,7 @@ export default {
 
       const primaryOnlyQuota = primaryFailures.length > 0 && primaryFailures.every(f => f?.status === 429);
       const allowFailoverOnPrimaryQuota = toBool(env.GEMINI_FAILOVER_ON_PRIMARY_429, false);
-      const canTryFailover = !!models.FAILOVER && (!primaryOnlyQuota || allowFailoverOnPrimaryQuota);
+      const canTryFailover = !forceSingleKey && !!models.FAILOVER && (!primaryOnlyQuota || allowFailoverOnPrimaryQuota);
 
       if (!responseText && canTryFailover) {
         const defaultFailoverBudget = primaryOnlyQuota ? 1 : MAX_FAILOVER_KEYS_PER_REQUEST;
@@ -1121,6 +1141,7 @@ export default {
           market_cards: marketCards,
 
           quickReplies: extracted.quickReplies,
+          ...(forceSingleKey ? { forced_key: requestedForceKey } : {}),
         }
       }, 200, corsHeaders);
 

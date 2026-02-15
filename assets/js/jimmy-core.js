@@ -48,7 +48,7 @@ class JimmyEngine {
         this.isMobileLite =
             window.matchMedia('(max-width: 768px)').matches ||
             window.matchMedia('(pointer: coarse)').matches;
-        
+
         this.ctx = {
             isOpen: false,
             isThinking: false,
@@ -81,7 +81,7 @@ class JimmyEngine {
         const launcherMedia = `<img src="${jimmyIcon}" alt="Open Jimmy" loading="lazy" decoding="async">`;
 
         const html = `
-            <div id="jimmy-root" aria-hidden="true">
+            <div id="jimmy-root">
                 <div id="j-backdrop" class="j-console-backdrop"></div>
                 <div id="j-console" class="j-console" role="dialog" aria-modal="true" aria-hidden="true">
                     <div class="j-header" id="j-header">
@@ -89,6 +89,10 @@ class JimmyEngine {
                             <div class="j-avatar-sm">${avatarMedia}</div>
                             <div class="j-hud-data">
                                 <span class="j-title">${t.status}</span>
+                                <div class="j-meta-row">
+                                    <span id="j-ping" class="j-ping-tag">SIGNAL: STABLE</span>
+                                    <span class="j-ver-tag">v${J_CORE.config.version}</span>
+                                </div>
                             </div>
                             <div class="j-status-pulse"></div>
                         </div>
@@ -215,12 +219,13 @@ class JimmyEngine {
     }
 
     updatePosition() {
+        if (this.isMobileLite) return;
         const d = this.ctx.drag;
         this.dom.console.style.transform = `translate(calc(-50% + ${d.currentX}px), calc(-50% + ${d.currentY}px)) scale(1)`;
     }
 
     handleParallax(e) {
-        if (!this.ctx.isOpen || this.ctx.drag.isDragging || window.innerWidth < 1000) return;
+        if (this.isMobileLite || !this.ctx.isOpen || this.ctx.drag.isDragging || window.innerWidth < 1000) return;
         const x = (window.innerWidth / 2 - e.pageX) / 400;
         const y = (window.innerHeight / 2 - e.pageY) / 400;
         const d = this.ctx.drag;
@@ -236,7 +241,6 @@ class JimmyEngine {
         if (shouldOpen) {
             this.dom.root.classList.add('is-open');
             this.dom.launcher.classList.add('active');
-            this.dom.root.setAttribute('aria-hidden', 'false');
             this.updatePosition();
             requestAnimationFrame(() => this.dom.input.focus());
 
@@ -247,7 +251,6 @@ class JimmyEngine {
         } else {
             this.dom.root.classList.remove('is-open');
             this.dom.launcher.classList.remove('active');
-            this.dom.root.setAttribute('aria-hidden', 'true');
             this.dom.launcher.focus();
         }
     }
@@ -330,7 +333,7 @@ class JimmyEngine {
                 apiDetails: err?.apiDetails
             });
             this.setThinking(false);
-            
+
             let errMsg = this.ctx.lang === 'ar' ? 'عذراً، حدث خطأ في الاتصال. يرجى المحاولة مرة أخرى.' : J_CORE.i18n[this.ctx.lang].error;
 
             const compact = (value, max = 140) => {
