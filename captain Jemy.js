@@ -8,23 +8,8 @@
  * - مفيش تقطيع جُمل (Fix parts)
  * - مفيش كسر كلام بسبب [[Option]] (Options آخر سطر فقط)
  * - مفيش تكرار نمط واحد (تنويع فلسفي + Anti-repeat)
- *
- * الملف: jimmy-worker-v3.2.0.js
- *
- * ملاحظة: المحتوى المعلوماتي في مقدمة الملف كان مكتوب Markdown.
- * تم تحويله لتعليق JavaScript للحفاظ عليه بدون أي حذف.
  */
-/**
- * Jimmy AI Worker v3.2.0 — Full Rebuild (KB محفوظة بالكامل + كاريزما غير نمطية)
- * ============================================================================
- * Fixes:
- * - No cut sentences: join ALL Gemini parts
- * - No broken sentences: options ONLY last line, removed as whole line
- * - No boring repetition: style rules تمنع الجُمل المحفوظة + تنويع "فلسفي" حسب السياق
- * - Market Brain optional: تحميل KB market حسب السؤال (مش دايمًا)
- * - Direct routes: Portfolio/Contact بدون LLM
- * - Origin "null" supported
- */
+
 
 const WORKER_VERSION = "3.2.3";
 
@@ -40,145 +25,230 @@ const ALLOWED_ORIGINS = [
 ];
 
 const GEMINI_KEY_POOL = [
-  "arabian", "arabw", "Cartonya", "Digimora",
-  "digimoraeg", "hamed", "mogamal", "qyadat"
+  "newarabw"  // ← المفتاح الجديد للاختبار
+  // Disabled temporarily for testing
+  // "arabian", "arabw", "Cartonya", "Digimora",
+  // "digimoraeg", "hamed", "mogamal", "qyadat"
+];
+
+const GROQ_KEY_POOL = [
+  // Disabled temporarily - testing Gemini newarabw
+  // "gr-digi"
 ];
 
 const DEFAULT_MODELS = {
-  FLASH: "gemini-2.0-flash",
-  EXPERT: "gemini-2.0-flash",  // Using flash for both until 2.0-pro is stable
-  FAILOVER: "gemini-2.0-flash-lite",
+  FLASH: "gemini-2.5-flash-lite",
+  EXPERT: "gemini-2.5-pro",
+  FAILOVER: "gemini-2.5-flash",
 };
 const DEFAULT_GEMINI_API_VERSION = "v1beta";
 
+const GROQ_MODELS = {
+  FLASH: "llama-3.3-70b-versatile",
+  EXPERT: "llama-3.3-70b-versatile",
+};
+
 const TIMEOUT_MS = 10000;
-const MAX_OUTPUT_TOKENS_FLASH = 360;
-const MAX_OUTPUT_TOKENS_EXPERT = 650;
+const MAX_OUTPUT_TOKENS_FLASH = 260;       // was 360 → save 28%
+const MAX_OUTPUT_TOKENS_EXPERT = 520;      // was 650 → save 20%
 const MIN_OUTPUT_TOKENS_FLASH = 140;
 const MIN_OUTPUT_TOKENS_EXPERT = 320;
-const MAX_PRIMARY_KEYS_PER_REQUEST = 3;
+const MAX_PRIMARY_KEYS_PER_REQUEST = 1;    // was 3 → prevent key burning
 const MAX_FAILOVER_KEYS_PER_REQUEST = 2;
 const QUOTA_WAVE_BREAK_AFTER_429 = 2;
-const CONTEXT_TURNS_FLASH = 6;
-const CONTEXT_TURNS_MARKET = 8;
-const CONTEXT_TURNS_EXPERT = 10;
+const CONTEXT_TURNS_FLASH = 4;             // was 6 → save 33%
+const CONTEXT_TURNS_MARKET = 6;            // was 8 → save 25%
+const CONTEXT_TURNS_EXPERT = 6;            // was 10 → save 40%
 const RATE_LIMIT_WINDOW_MS = 60_000;
 const RATE_LIMIT_MAX = 100;
 const RATE_LIMIT_MAX_ANON = 60;
 const MAX_REQUEST_BYTES = 50_000;
 const rateLimitStore = new Map();
 
-// =====================================================================
-// EDITABLE CONTENT ZONE (عدّل هنا فقط: ستايل/شخصية/معلومات محمد/الماركت)
-// =====================================================================
-// ملاحظة أداء: الـ IIFE بيتنفذ مرة واحدة وقت تحميل الـ Worker فقط (مش لكل Request).
-const CONTENT = (() => {
-  // =========================
-  // روابط مؤكدة (Direct)
-  // =========================
-  const LINKS = {
-    site: "https://mo-gamal.com",
-    cv: "https://mo-gamal.com/Mohamed-Gamal-CV.pdf",
-    phone: "tel:+201555141282",
-    displayPhone: "00201555141282",
-    whatsapp: "https://wa.me/201555141282",
-  };
+// ── Retry & Backoff ──
+const BACKOFF_BASE_MS = 300;
+const BACKOFF_MAX_MS = 2000;
+const MAX_TOTAL_UPSTREAM_ATTEMPTS = 3; // 1 original + 2 retries
 
-  const DATA_BLOCKS = {
-    PORTFOLIO: `
+// ╔═══════════════════════════════════════════════════════════════════╗
+// ║  🟢 SECTION 1: JIMMY STYLE — شخصية جيمي وكاريزمته              ║
+// ║  عدّل هنا لتغيير أسلوبه وطريقة كلامه وحضوره                   ║
+// ╚═══════════════════════════════════════════════════════════════════╝
+
+// Core Identity — يتحمّل في كل الـ Tiers
+const KB_STYLE = `أنت جيمي. مش بوت. مش مساعد. مش بائع.
+أنت الصاحب الذكي اللي الواحد بيتمنى يلاقيه لما يكون محتار في شغله.
+
+أنت موجود على موقع محمد جمال — كل زائر هو عميل محتمل.
+مهمتك: تصاحبهم. تفهمهم. تساعدهم بخبرتك. وتوصّلهم لمحمد لما يكون ده الأنسب.
+مش بالضغط. بالثقة والقيمة اللي بتقدمها.
+
+إنت فاهم البيزنس والتسويق والأنظمة زي محمد — لأنك اتبنيت من عقله.
+بس عندك حاجة زيادة: حضور، خفة دم، وقدرة على الارتباط بالناس.
+إنت مش بتمثّل دور — إنت كده فعلاً.
+
+لو حد سألك "إنت AI؟": أجب بشكل ذكي وخفيف يخلّيه يكمل الحوار مش يسيبه.
+لغتك = لغة اللي قدامك. مصري→مصري. خليجي→خليجي. إنجليزي→إنجليزي.
+ردودك قصيرة وحادة — مش لأن في قاعدة، لأنك بتحترم وقت اللي قدامك.`.trim();
+
+// Charisma & Depth — يتحمّل في Tier 1+
+const KB_STYLE_CHARISMA = `إنت جيمي — وده معناه:
+
+🧠 بتفهم من غير ما يتقالك
+الزائر ممكن ييجي بسؤال سطحي والمشكلة الحقيقية تحته بمترين.
+إنت بتحس بده. بتلاقط الإشارات. بتسأل السؤال الصح مش الكتير.
+مش بتستجوب — بتفهم.
+
+💬 بتتكلم زي صاحبك الخبير
+مش بتقرأ من نشرة. مش بتنصح من فوق. مش بتعمل محاضرة.
+إنت بتقول رأيك بثقة — وبتسيب مساحة للتاني يفكّر.
+لو الموضوع محتاج تفصيل أكتر أو تحليل عميق — بتقترح يتكلم مع محمد مباشرة.
+
+🎯 مبادر مش مستني
+مش بتستنى يسألك — لو شايف حاجة مهمة، بتقولها.
+لو حاسس إن الزائر تايه، بتفتحله طريق.
+لو شايف فرصة إنه يستفيد من محمد — بتلمّح بذوق.
+
+😄 خفيف الدم بس بميزان
+دمك خفيف طبيعي. مش بتحاول تكون مضحك — إنت كده.
+الهزار بتاعك ذكي، بييجي في سياقه، ومبيسخفش.
+لو الموضوع جد أو حساس — بتكون جد وإنساني.
+
+🔥 إنت مش كوبي من محمد — إنت شخصية مستقلة
+عندك رأيك. عندك أسلوبك. عندك طريقتك.
+بتحب محمد وبتشتغل معاه — بس إنت جيمي.
+الناس بترتبط بيك إنت. وده مقصود.
+
+📊 بتقدم قيمة حقيقية
+كل زائر بييجي عنده سؤال أو مشكلة أو فضول.
+إنت بتقدم Insight حقيقي — مش كلام عام ولا نصائح مدرسية.
+كلامك بيختصر تفكير، يكشف زاوية جديدة، أو يوضّح قرار.
+وده اللي بيخلي الناس تثق فيك وفي محمد.`.trim();
+
+// ╔═══════════════════════════════════════════════════════════════════╗
+// ║  🔵 SECTION 2: MOHAMED — هوية محمد وإنجازاته                   ║
+// ║  عدّل هنا لتحديث بيانات محمد أو إضافة إنجازات جديدة           ║
+// ╚═══════════════════════════════════════════════════════════════════╝
+
+const KB_MOHAMED = `[MOHAMED]
+ID: Growth Systems Architect | Infrastructure>Campaigns | NOT: SMM/MediaBuyer/Coach
+بيقف في النص بين البيزنس+البرودكت+التسويق | أعلى من منفّذ، أقرب للتشغيل
+
+[JOURNEY]
+2011–14: SEO/Content/Ads → اكتشف إن إتقان القناة مش كفاية، الفشل غالباً UX/Offer/Tracking
+2014–18: Media Buying → الإعلان Amplifier مش Fixer، التوسع بيكشف مشاكل بنيوية
+2018–23: Arabian Oud — 900+ متجر، أسواق متعددة، إنفاق يومي 12–20K$، فريق ~12
+  → نمو عضوي ~6× خلال 24 شهر + Guinness FY2019 (~478M$ مبيعات تجزئة) كنتيجة أنظمة مش حملات
+  → Tracking+Conversion+Ops ربط التسويق بالمخزون والتوزيع
+2020–24: تحوّل لأنظمة+منتج — Guru (Marketplaces) + DigiMora (B2B/SaaS ~7× تعاقدات/سنة) + ArabWorkers (6 دول)
+2023–الآن: Qyadat — فرق متعددة + WhatsApp/SMS Playbooks | Gento — −60-80% متابعة يدوية
+
+[PARALLEL]
+Iso-tec (2018–23): تحول رقمي لجهات متعددة (Al Abbasi, Global Tech, Jouf Uni, Food Quality Lab)
+  → workflows واضحة + قياس + ملكية → −10-20% هدر تشغيلي
+
+[THINKING]
+System Designer مش منفّذ مهام:
+- يبدأ من النهاية: إيه القرار اللي لازم يطلع؟
+- الفوضى = Missing Rules | الغموض = بيانات ناقصة
+- يدير المخاطر بدري — قبل الصرف، قبل التوسع
+- الوضوح القاسي > الراحة المؤقتة
+- "الحل اللي محتاج شخص شاطر عشان يفضل شغال → حل فاشل"
+- تحت الضغط: يقلّل المتغيرات، يجمّد التوسع، يراجع المنطق مش التنفيذ
+- يرفض: حلول سريعة حتى لو مربحة | اعتماد على أفراد بدل قواعد | تسويق بدون منتج قوي
+
+[AGENT_RULES]
+- 1–2 Proof حسب السياق (ممنوع سرد كل الإنجازات)
+- "مين محمد؟" → 2–3 سطور + Proof واحد + سؤال نية
+- "ليه هو؟" → Proofين + زاوية مختلفة عن المرة اللي قبلها
+- الربط لازم يكون بالسياق المناسب — مش استعراض
+- Hiring Lens: ركّز على Impact/Systems Thinking/قياس/تنفيذ — Proof points قصيرة وواقعية`.trim();
+
+// ╔═══════════════════════════════════════════════════════════════════╗
+// ║  🟠 SECTION 3: MARKET & LINKS — روابط وبيانات السوق             ║
+// ║  عدّل هنا لتحديث بيانات السوق أو الروابط                      ║
+// ╚═══════════════════════════════════════════════════════════════════╝
+
+const LINKS = {
+  site: "https://mo-gamal.com",
+  cv: "https://mo-gamal.com/Mohamed-Gamal-CV.pdf",
+  phone: "tel:+201555141282",
+  displayPhone: "00201555141282",
+  whatsapp: "https://wa.me/201555141282",
+};
+
+const DATA_BLOCKS = {
+  PORTFOLIO: `
 [DATA_PORTFOLIO]
 URL: ${LINKS.site}
 CV_PDF: ${LINKS.cv}
 NOTE: شوف قسم Success Stories على الموقع.
 `.trim(),
-    CONTACT: `
+  CONTACT: `
 [DATA_CONTACT]
 Phone: ${LINKS.phone} (${LINKS.displayPhone})
 WhatsApp: ${LINKS.whatsapp}
 NOTE: واتساب أسرع للرد.
 `.trim(),
-  };
+};
 
-  // =====================================================================
-  // KB — محمّلة بالكامل (بس متضغطَة: أقل توكينز + نفس المعنى)
-  // =====================================================================
+const MARKET_KB = {
+  // ── تشخيص ودخول ──
+  "KB-A": `تشخيص سريع: CVR ضعيف+دفع/توصيل→Checkout/Ops | ROAS OK+ربح سلبي→COD/RTO/Shipping | ROAS متقلب→Tracking/CAPI. فخ: تغيير Ads قبل تثبيت دفع/شحن/سياسات. أسئلة: بلد/فئة/قناة/منصة/دفع/مخزون/CAPI/RTO/SLA/شكاوى/هدف90يوم`,
 
-  /**
-   * KB — Compressed Structured Shorthand (v3.2.1)
-   * Same semantics, ~60% fewer tokens.
-   */
-  const KB_STYLE_FULL_MIN = `[JIMMY_STYLE]
-ROLE: نافذة عقل (مش Chatbot/Assistant/Sales)
-SUCCESS: يحس بإنسان فاهم ✅ | يحس بنظام ❌
-PHILOSOPHY: Help-First(قيمة قبل سؤال) | Human>Business | Simple>Clever
-TONE: بني آدم(مش روبوت/AI) | خفة دم Level2(تخفيف جمود, مش إهانة) | حضور واثق(قصير+رأي, بدون تبرير/اعتذار زائد) | لا نمط واحد(ممنوع تكرار افتتاحيات/إيقاع)
-RESPONSE: Flash=2-4 سطور | Expert=6-8 سطور(تحليل مركز) | سؤال واحد أو Options
-OPTIONS_FORMAT: آخر سطر فقط: خيارات: [[...]] [[...]] [[...]]
-TRUST: Anti-hallucination(قول مش متأكد) | Zero sales pressure(CTA بطلب فقط)
-EXPERT_MODE: بطلب واضح/سياق عميق فقط | هدف=قرار مش محتوى
-BANNED: كلام AI/Prompt/Model | تكرار جمل/افتتاحيات | استجواب | Options داخل الجمل`.trim();
+  // ── أسواق ──
+  "KB-B": `سوق=(ثقة+دفع+لوجستيات+قناة قرار). KSA:تشغيل محلي+توطين+RTO أولاً. UAE:CAC عالي طبيعي→CX/Retention. EG كروس:تجنب DDU. سؤال: القرار بيتاخد فين؟`,
+  "KB-B-KSA": `KSA: ثقة+تشغيل محلي. Snap=لحظة قرار. Proof>خصم. توطين كامل. RTO قبل Scaling. E-com $20-22B/2025, نمو 10-12%, Mobile 75%+, دفع Mada/Apple Pay`,
+  "KB-B-UAE": `UAE: تجربة+خدمة. CAC أعلى طبيعياً. الخندق=Segmentation+Retention+CX. سوق مشبع—Reach واسع=هدر. E-com $12-14B/2025`,
+  "KB-B-EG": `EG: سعر+ثقة+توصيل. WhatsApp=مسار قرار. COD قوي+RTO خطر. تجنب DDU كروس-بوردر. E-com $9-11B/2025, نمو 15%+, التحدي Logistics/Returns`,
 
-  const KB_MOHAMED_FULL_MIN = `[MOHAMED]
-ID: Growth Systems Architect | Infrastructure>Campaigns | NOT:SMM/MediaBuyer/Coach
-POSITION: بين البيزنس+البرودكت+التسويق | أعلى من منفذ، أقرب للتشغيل
-PROOF:
-  ArabianOud: ضغط عالي+أسواق متعددة+~6×organic/24mo+Guinness Jan2020
-  Isotec: workflows+قياس+ملكية→−10-20%هدر
-  Tatweeq: Tasks→Outcomes→~7×تعاقدات/سنة
-  Qyadat: فرق+إطلاق WhatsApp/SMS+Playbooks
-  Gento: −60-80%متابعة يدوية+تسريع إطلاقات
-THINK: Marketing=OS | يبدأ من قرار العميل | لا وعود بدون قياس | Finance/Ops/Tracking قبل Scale | يرفض سلوك سام
-AGENT_RULES: 1-2 Proof حسب السياق(ممنوع سرد كله) | "مين محمد؟"→2-3 سطور+Proof+سؤال نية | "ليه هو؟"→Proofين+زاوية مختلفة`.trim();
+  // ── سيكولوجية المستهلك ──
+  "KB-C": `شراء 2026: أسرع قرار+أقل صبر. فشل=Features بدل Outcome/خصم بدل ثقة/سياسة غامضة. Formula:(Outcome+Proof)−Friction`,
+  "KB-C-01": `اقتصاد الثقة: Proof داخل الرحلة (Reviews/سياسات/شفافية شحن) أهم من Reach. مؤثر كبير بدون Proof=حرق`,
+  "KB-C-02": `TikTok/Snap/IG=محركات بحث مش بس إعلانات. محتوى decision-ready مش views-ready. فخ: بناء استراتيجية على Google بس`,
 
-  const MARKET_KB = {
-    "KB-A": `تشخيص سريع: CVR ضعيف+دفع/توصيل→Checkout/Ops | ROAS OK+ربح سلبي→COD/RTO/Shipping | ROAS متقلب→Tracking/CAPI. فخ: تغيير Ads قبل تثبيت دفع/شحن/سياسات. أسئلة: بلد/فئة/قناة/منصة/دفع/مخزون/CAPI/RTO/SLA/شكاوى/هدف90يوم`,
-    "KB-B": `سوق=(ثقة+دفع+لوجستيات+قناة قرار). KSA:تشغيل محلي+توطين+RTO أولاً. UAE:CAC عالي طبيعي→CX/Retention. EG كروس:تجنب DDU. سؤال: القرار بيتاخد فين؟`,
-    "KB-B-KSA": `KSA: ثقة+تشغيل محلي. Snap=لحظة قرار. Proof>خصم. توطين كامل. RTO قبل Scaling.`,
-    "KB-B-UAE": `UAE: تجربة+خدمة. CAC أعلى طبيعياً. الخندق=Segmentation+Retention+CX.`,
-    "KB-B-EG": `EG: سعر+ثقة+توصيل. WhatsApp=مسار قرار. COD قوي+RTO خطر. تجنب DDU كروس-بوردر.`,
-    "KB-C": `شراء 2026: أسرع قرار+أقل صبر. فشل=Features بدل Outcome/خصم بدل ثقة/سياسة غامضة. Formula:(Outcome+Proof)−Friction`,
-    "KB-C-01": `نقص Proof→CAC↑+CVR↓. Proof قبل الخصم.`,
-    "KB-C-02": `TikTok/Snap/IG=نية شراء. محتوى decision-ready مش views-ready.`,
-    "KB-D": `منصة: سرعة إطلاق→Hosted | مرونة→Open source. فخ: منصة قوية+تشغيل ضعيف=فشل.`,
-    "KB-E": `Tracking: CAPI/S2S+dedup(event_id)+value/currency+Match Quality. Pixel وحده يكدب. تقلبات→attribution+dedup+currency.`,
-    "KB-F": `قنوات=لحظة قرار. مش نزود Budget قبل ضمان Offer/Proof/Checkout/Ops.`,
-    "KB-F-SNAP": `Snap KSA: قرار سريع. Creative مباشر+Proof. هبوط غالباً Trust/Shipping مش Ads.`,
-    "KB-F-TT": `TikTok: UGC+Problem→Proof→Action. Views بدون صفحة تبيع=حرق.`,
-    "KB-F-META": `Meta: Retarget+Proof+Creative testing. فخ: Audience tinkering قبل تثبيت صفحة/دفع.`,
-    "KB-G": `Benchmarks=إنذار مش وصفة. اتقرأ مع سوق+هامش+تشغيل.`,
-    "KB-H": `Ops: RTO/Returns/SLA/Logistics cost/Cash cycle. ممنوع Scaling قبل Contribution واضح.`,
-    "KB-H-01": `COD/RTO: WhatsApp confirm/No reply cancel/Incentive prepaid/COD fee/Address validation. Metric: RTO by stage.`,
-    "KB-H-02": `شحن: Cheapest carrier ممكن يرفع RTO ويقتل الربح.`,
-    "KB-H-03": `EG كروس: مفاجآت عند الباب(رسوم/جمارك/تأخير)=رفض+تدمير ثقة.`,
-    "KB-I": `Payments: Success Rate(موبايل)+محلي+BNPL(Tabby/Tamara)→AOV↑+COD↓.`,
-    "KB-J": `Compliance: قفل مفاجئ يقتل البيزنس. Claims+سياسات نظيفة.`,
-    "KB-K": `SEO=Intent+Conversion. SEO بدون Conversion=تضخيم فشل.`,
-    "KB-K-01": `On-page: سرعة موبايل+بنية+سكيما+FAQ+Proof.`,
-    "KB-K-02": `Content: Problem→Proof→How→CTA ناعم. قرار مش مقال.`,
-    "KB-K-03": `Tech SEO: Indexing/Canonical/404/Redirects. أساسيات قبل hacks.`,
-    "KB-L": `لوحة القرار: Marketing+Ops+Finance مع بعض. قرار بدون Ops/Finance=ناقص.`,
-    "KB-L-F": `Funnel: Sessions→ATC→Checkout→Purchase+CVR+AOV+Refund/Return. Traffic عالي+Purchase ضعيف→Proof/Checkout/Ops أولاً.`,
-    "KB-L-O": `Ops: RTO%/Return%/Payment success/SLA Avg+P95/Logistics cost/Cash cycle. ممنوع زيادة ميزانية قبل Contribution+Payback.`,
-  };
-  return {
-    LINKS,
-    DATA_BLOCKS,
-    KB_STYLE_FULL_MIN,
-    KB_MOHAMED_FULL_MIN,
-    MARKET_KB,
-  };
-})();
+  // ── منصات ──
+  "KB-D": `منصة: سلة(KSA سريع) | زد(KSA+Back-office) | Shopify(خليج/تصدير+UX) | Magento(مؤسسة+ERP). فخ: منصة قوية+تشغيل ضعيف=فشل. SME بدون فريق تطوير→تجنب Magento`,
 
-const {
-  LINKS,
-  DATA_BLOCKS,
-  KB_STYLE_FULL_MIN,
-  KB_MOHAMED_FULL_MIN,
-  MARKET_KB,
-} = CONTENT;
-// =====================================================================
-// END EDITABLE CONTENT ZONE
-// =====================================================================
+  // ── تتبع ──
+  "KB-E": `Tracking: CAPI/S2S+dedup(event_id)+value/currency+Match Quality. Pixel وحده يكدب بعد الخصوصية. تقلبات ROAS→attribution+dedup+currency. افحص Tracking قبل قرارات ميزانية`,
+
+  // ── قنوات ──
+  "KB-F": `قنوات=لحظة قرار. مش نزود Budget قبل ضمان Offer/Proof/Checkout/Ops.`,
+  "KB-F-SNAP": `Snap KSA: UGC ستوري+Proof سريع. ربحية:tCPA/حجم:Auto-bid. Refresh كرياتيف باستمرار. هبوط غالباً Trust/Shipping مش Ads`,
+  "KB-F-TT": `TikTok: اكتشاف قوي لكن كرياتيف بيتحرق بسرعة (Refresh كل 5-7 أيام). VBO للقيمة. فخ: CPA قليل مع نية شراء ضعيفة`,
+  "KB-F-META": `Meta: Reels+Carousel كتالوج للأزياء/الجمال. إعلان قوي+صفحة بدون ثقة=سقوط. لازم الصفحة تكمل وعد الإعلان. Creative testing مع Audience stability`,
+
+  // ── Benchmarks ──
+  "KB-G": `Benchmarks=إنذار مش وصفة. اتقرأ مع سوق+هامش+تشغيل. CVR 1.5-3%. ROAS المقبول: KSA/UAE≥2.5x, EG≥3x. Marketing Spend 20-30% من الإيراد`,
+
+  // ── تشغيل ──
+  "KB-H": `Ops: RTO/Returns/SLA/Logistics cost/Cash cycle. ممنوع Scaling قبل Contribution واضح.`,
+  "KB-H-01": `COD/RTO: WhatsApp confirm(نعم/لا)→لا رد=اتصال/إلغاء قبل الشحن→Incentive prepaid→COD fee→تحقق عنوان. Metric: RTO by stage. فخ: توسع Ads مع RTO عالي=نمو وهمي`,
+  "KB-H-02": `شحن: اختيار حسب قيمة/وقت/جغرافيا (L1:DHL/FedEx VIP | L2:Aramex/SMSA KSA | L3:ناقل/زاجل | L4:Same-day). قرار على SLA Avg+P95 مش المتوسط بس`,
+  "KB-H-03": `EG كروس: مفاجآت عند الباب(رسوم/جمارك/تأخير)=رفض+تدمير ثقة. تجنب DDU B2C→بدائل: DDP أو IOR أو تنفيذ محلي`,
+
+  // ── مدفوعات ──
+  "KB-I": `Payments: الدفع جزء من التحويل. KSA:Mada+Apple Pay | EG:Fawry/Meeza | BNPL:Tabby/Tamara→AOV↑+COD↓. راقب Payment Success Rate (Mobile أهم) بحسب بنك/بوابة. فشل فين؟ OTP/3DS/Redirect`,
+
+  // ── امتثال ──
+  "KB-J": `Compliance: قفل مفاجئ يقتل البيزنس. سياسات شحن/إرجاع/تسعير واضحة قبل Checkout. بديل مؤثر: UGC+إعلان من حساب البراند. Claims لازم تكون قابلة للإثبات`,
+
+  // ── تريكات استشاري ──
+  "KB-K": `SEO=Intent+Conversion. صفحات الأقسام قبل المدونة. Internal linking=بائع صامت`,
+  "KB-K-01": `بديل المؤثر: UGC+Script قصير+تصوير حقيقي+Partnership/Spark. Proof في أول 3 ثواني`,
+  "KB-K-02": `دروب شيبينج من الصين بيموت: توقعات 2-3 أيام مش 15+. حل: 3PL محلي للBest-sellers`,
+  "KB-K-03": `توطين اللهجة=CTR. فصحى باردة في السوشيال. لهجة بيضاء/محلية حسب البلد. فخ: ترجمة حرفية`,
+
+  // ── لوحة قرار ──
+  "KB-L": `لوحة القرار: Marketing+Ops+Finance مع بعض. قرار بدون Ops/Finance=ناقص. "أداء بيكذب" لما التسويق منفصل عن التشغيل`,
+  "KB-L-F": `Funnel: CTR/CPC/CPM+CVR+CAC+AOV+LTV:CAC+Abandoned carts+Conversion lag. Traffic عالي+Purchase ضعيف→Proof/Checkout/Ops أولاً`,
+  "KB-L-O": `Ops: RTO%/Return%/Payment success/SLA Avg+P95/Logistics cost/Cash cycle/شكاوى مصنفة. ارتفاع RTO/فشل دفع غالباً يسبق هبوط الربح حتى لو ROAS ثابت`,
+};
+
+// ╔═══════════════════════════════════════════════════════════════════╗
+// ║  🔻 END OF KB — تحت هنا المحرك (Engine) — مش محتاج تعدّله      ║
+// ╚═══════════════════════════════════════════════════════════════════╝
 
 // =========================
 // Helpers
@@ -314,6 +384,15 @@ function normalizeMeta(meta) {
     out.market_cards = meta.market_cards.filter(id => typeof id === "string" && MARKET_KB[id]).slice(0, 9);
   }
   if (typeof meta.forced_route === "string") out.forced_route = meta.forced_route.slice(0, 40);
+
+  // Budget Guard tracking
+  if (Number.isInteger(meta.last_429_timestamp) && meta.last_429_timestamp >= 0) {
+    out.last_429_timestamp = meta.last_429_timestamp;
+  }
+  if (Number.isInteger(meta.wave_429_count) && meta.wave_429_count >= 0 && meta.wave_429_count <= 10) {
+    out.wave_429_count = meta.wave_429_count;
+  }
+
   return out;
 }
 
@@ -375,6 +454,26 @@ function resolveGeminiKeyNames(env) {
     if (typeof value === "string" && value.trim()) active.push(name);
   }
   return active;
+}
+
+function resolveGroqKeyNames(env) {
+  const overridePool = parseKeyPool(env.GROQ_KEY_POOL);
+  const basePool = overridePool.length ? overridePool : GROQ_KEY_POOL;
+  const seen = new Set();
+  const active = [];
+
+  for (const name of basePool) {
+    if (seen.has(name)) continue;
+    seen.add(name);
+    const value = env[name];
+    if (typeof value === "string" && value.trim()) active.push(name);
+  }
+  return active;
+}
+
+function detectProvider(keyName) {
+  if (keyName.startsWith('gr-')) return 'groq';
+  return 'gemini';
 }
 
 function resolveContextTurns(mode, marketCardsCount) {
@@ -454,6 +553,37 @@ function detectDialectScore(text) {
   return { egypt: sE, gulf: sG };
 }
 
+// =====================================================================
+// Budget Guard (منع حرق التوكنز والمفاتيح)
+// =====================================================================
+function checkBudgetGuard(previousMeta, mode) {
+  const expertUses = previousMeta.expert_uses || 0;
+  const last429 = previousMeta.last_429_timestamp || 0;
+  const wave429Count = previousMeta.wave_429_count || 0;
+  const now = Date.now();
+
+  // Rule 1: Max 2 expert uses per session
+  if (mode === "expert" && expertUses >= 2) {
+    return {
+      allowed: false,
+      reason: "expert_limit",
+      forcedMode: "flash"
+    };
+  }
+
+  // Rule 2: 429 wave detection (2× in 60 seconds)
+  if (now - last429 < 60000 && wave429Count >= 2) {
+    return {
+      allowed: false,
+      reason: "429_wave",
+      stopRetry: true
+    };
+  }
+
+  return { allowed: true };
+}
+
+
 function isSubstantive(text) {
   const t = String(text || "").trim();
   if (t.length > 18) return true;
@@ -463,10 +593,24 @@ function isSubstantive(text) {
 
 function isBusinessQuestion(msg) {
   const t = (msg || "").trim();
-  const hasBiz = /(تحويل|مبيعات|إعلان|ميزانية|roas|cac|rto|نمو|ads|budget|conversion|sales|traffic|funnel|audit|تحليل|قيم|تقييم|نزيف|خسارة|ربح|هامش|margin|offer|checkout|tracking|capi|s2s|logistics|شحن|دفع|مرتجع|إرجاع|سلة)/i.test(t);
-  const hasDecision = /(أعمل ايه|اعمل ايه|إيه الحل|ايه الحل|أبدأ منين|ابدا منين|أقرر|أختار|احسن|أطوّر|اطور|أقيّم|محتاج مساعدة|عايز رأي|استشارة)/i.test(t);
-  return hasBiz || hasDecision || (/\d/.test(t) && hasDecision);
+
+  // Short messages never trigger Expert (prevent surface-word activation)
+  if (t.length < 40) return false;
+
+  // Must have numbers AND financial decision keywords
+  const hasNumbers = /\d/.test(t);
+  const hasFinancial = /(ميزانية|budget|roas|cac|rto|ربح|خسارة|margin|تكلفة|cost|هامش|نزيف|مبيعات|sales|revenue|إيرادات)/i.test(t);
+  const hasDecision = /(أعمل ايه|اعمل ايه|إيه الحل|ايه الحل|أقرر|أختار|استشارة عميقة|deep analysis|تحليل شامل)/i.test(t);
+
+  // Expert only if: (numbers + financial) OR explicit deep consultation request
+  const needsExpert = (hasNumbers && hasFinancial) || /(استشارة عميقة|deep analysis|تحليل شامل|comprehensive analysis)/i.test(t);
+
+  // For Market KB detection (broader) — requires decision intent + numbers
+  const hasBizContext = /(تحويل|إعلان|ads|conversion|traffic|funnel|checkout|tracking|شحن|دفع)/i.test(t);
+
+  return needsExpert || (hasBizContext && hasDecision && hasNumbers);
 }
+
 
 function safetyClamp(text) {
   if (!text) return "";
@@ -482,6 +626,40 @@ function sanitizeQuickReply(text) {
     .replace(/[\u{1F600}-\u{1F64F}]/gu, "")
     .replace(/[^\w\s\u0600-\u06FF\u0750-\u077F]/g, "")
     .trim();
+}
+
+// ── Retry & Resilience Utilities ──
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, Math.max(0, ms)));
+}
+
+function backoffDelay(attempt) {
+  const base = BACKOFF_BASE_MS * Math.pow(2, attempt);
+  const jitter = Math.floor(Math.random() * BACKOFF_BASE_MS);
+  return Math.min(base + jitter, BACKOFF_MAX_MS);
+}
+
+function generateRequestId() {
+  try { return crypto.randomUUID(); }
+  catch { return `req-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`; }
+}
+
+function structuredLog(data) {
+  try { console.log(JSON.stringify({ ts: Date.now(), v: WORKER_VERSION, ...data })); } catch { /* noop */ }
+}
+
+function supportsPenalties(model) {
+  if (!model || typeof model !== "string") return false;
+  // lite variants may not support presencePenalty/frequencyPenalty
+  if (/lite/i.test(model)) return false;
+  return true;
+}
+
+function estimateTokens(text) {
+  const t = String(text || "");
+  if (!t.length) return 0;
+  const arRatio = (t.match(/[\u0600-\u06FF]/g) || []).length / (t.length || 1);
+  return Math.ceil(t.length / (arRatio > 0.4 ? 3.5 : 4));
 }
 
 // =========================
@@ -582,8 +760,8 @@ function pickMarketCards(text, mode, marketMode) {
 
   ids = uniq(ids);
 
-  // Flash أقل / Expert أكتر
-  const max = mode === "expert" ? 9 : 4;
+  // Flash: max 2 cards | Expert: max 9 cards (was 4 for flash)
+  const max = mode === "expert" ? 9 : 2;
   return ids.slice(0, max);
 }
 
@@ -612,31 +790,16 @@ function detectVibeTag(text) {
 
 // “افتتاحية” مش محفوظة: ندي للموديل دور (مش نص)
 // ونجبره يطلع افتتاحية مختلفة عن آخر مرة + مرتبطة بالسياق
-function buildOpenerRule(lastOpener, vibeTag) {
-  return `
-[OPENER_RULE]
-اكتب افتتاحية واحدة سطر واحد فقط.
-الافتتاحية لازم:
-- تكون جديدة (ممنوع تكرار افتتاحية آخر مرة: "${lastOpener || "—"}")
-- مرتبطة بالسياق الحالي (tag=${vibeTag})
-- من غير جملة محفوظة أو قالب مشهور
-`.trim();
+function buildOpenerRule(lastOpener) {
+  if (!lastOpener || lastOpener === "—") return "";
+  return `آخر افتتاحية استخدمتها كانت: "${lastOpener}" — قول حاجة مختلفة تماماً.`;
 }
 
-// Pattern routing (اختلاف الإيقاع)
-function pickPattern(vibeTag, mode) {
-  const base = {
-    normal: "تفهّم سريع + Insight عملي + سؤال واحد أو Option.",
-    fast_calm: "سطر تهدئة + Insight مختصر + قرار واحد.",
-    reassure: "سطر احتواء + Insight صغير + سؤال واحد.",
-    tough_love: "Reframe صريح بس لطيف + سبب واحد + اختبار صغير.",
-    decisive: "قرار واحد واضح + سبب واحد + Option.",
-    market_brain: "تشخيص سريع + مخاطرة + قرار واحد + Option.",
-  }[vibeTag] || "Insight + سؤال واحد.";
-
+// Length guidance — minimal hint, not rigid template
+function pickLengthHint(mode) {
   return mode === "expert"
-    ? `${base} (Expert: 6–8 سطور، تحليل مركز، بدون تنظير).`
-    : `${base} (Flash: 2–4 سطور).`;
+    ? "الموضوع ده محتاج تحليل — خد راحتك بس خلّيه مركّز."
+    : "خلّي ردك قصير وحاد — سطرين لتلاتة كفاية.";
 }
 
 // =====================================================================
@@ -657,50 +820,41 @@ function selectTier(mode, marketCards, isFirst, vibeTag) {
 function buildSystemPrompt(ctx) {
   const {
     lang, dialect, mode, isFirst,
-    lastOpener, vibeTag, patternRule,
+    lastOpener, vibeTag,
     marketCtx, tier
   } = ctx;
 
-  let langLock = "";
+  // Language hint — short and natural
+  let langHint = "";
   if (lang === "en") {
-    langLock = "LANGUAGE: English only. No Arabic.";
+    langHint = "The visitor is speaking English — reply in English.";
   } else {
-    if (dialect === "egypt") langLock = "LANGUAGE: Arabic Egyptian (مصري). ممنوع إنجليزي.";
-    else if (dialect === "gulf") langLock = "LANGUAGE: Arabic Gulf (خليجي أبيض). ممنوع إنجليزي.";
-    else langLock = "LANGUAGE: Arabic colloquial (عامية بيضا). ممنوع إنجليزي.";
+    if (dialect === "egypt") langHint = "الزائر بيتكلم مصري — رد بالمصري.";
+    else if (dialect === "gulf") langHint = "الزائر بيتكلم خليجي — رد بالخليجي.";
+    else langHint = "رد بالعامية البيضا.";
   }
 
-  const flow = isFirst
-    ? "أول تفاعل: افتتاحية + Insight + سؤال نية واحد."
-    : "رد مختصر يزود وضوح/قرار.";
-
-  const lengthRule = mode === "expert"
-    ? "[LENGTH] 6–8 سطور (مركّز)."
-    : "[LENGTH] 2–4 سطور.";
-
-  // ── Tier 0: Core Style + Language + Flow ──
+  // ── Tier 0: Identity + Context ──
   const parts = [
-    KB_STYLE_FULL_MIN,
-    `[FLOW] ${flow}`,
-    lengthRule,
-    `[LANGUAGE_LOCK] ${langLock}`,
+    KB_STYLE,
+    langHint,
+    pickLengthHint(mode),
   ];
 
-  // ── Tier 1+: Add Mohamed Brain + Opener + Pattern + Non-negotiables ──
-  if (tier >= 1) {
-    parts.splice(1, 0, KB_MOHAMED_FULL_MIN); // after style, before flow
-    if (isFirst) {
-      parts.push(buildOpenerRule(lastOpener, vibeTag));
-    }
-    parts.push(`[PATTERN] ${patternRule}`);
-    parts.push(`[NON_NEGOTIABLES] ممنوع تكرار جمل/افتتاحيات | ممنوع كلام AI/Prompt/Model | Humor≤Level2 | نقد محمد≤Level1 | "أنا أشطر" مسموح بدون هز صورة محمد`);
+  if (isFirst) {
+    parts.push("ده أول تفاعل — رحّب بطريقتك وافتح الحوار.");
   }
 
-  // ── Tier 2: Add Expert Escalation + Market KB ──
+  // ── Tier 1+: Full Persona + Mohamed ──
+  if (tier >= 1) {
+    parts.splice(1, 0, KB_STYLE_CHARISMA);
+    parts.splice(2, 0, KB_MOHAMED);
+    const openerHint = buildOpenerRule(lastOpener);
+    if (openerHint) parts.push(openerHint);
+  }
+
+  // ── Tier 2: Market Knowledge ──
   if (tier >= 2) {
-    if (mode === "expert") {
-      parts.push(`[ADVANCED_ESCALATION] لو السؤال ادفانسد: ادّي قرارك بثقة + سطر لطيف عن إن محمد ممكن يأكد. غيّر الصياغة كل مرة.`);
-    }
     if (marketCtx) {
       parts.push(marketCtx);
     }
@@ -728,17 +882,21 @@ async function tryGenerate({
   const minByMode = mode === "expert" ? MIN_OUTPUT_TOKENS_EXPERT : MIN_OUTPUT_TOKENS_FLASH;
   const safeOutputTokens = toPositiveInt(outputTokens, maxByMode, minByMode, maxByMode);
 
+  const genConfig = {
+    temperature: mode === "expert" ? 0.7 : 0.62,
+    topP: 0.9,
+    maxOutputTokens: safeOutputTokens,
+  };
+  // Only include penalty fields for models that support them (prevents 400)
+  if (supportsPenalties(model)) {
+    genConfig.presencePenalty = 0.35;
+    genConfig.frequencyPenalty = 0.35;
+  }
+
   const payload = {
     contents: normalizeMessages(messages, safeContextTurns),
     system_instruction: { parts: [{ text: systemPrompt }] },
-    generationConfig: {
-      temperature: mode === "expert" ? 0.7 : 0.62,
-      topP: 0.9,
-      maxOutputTokens: safeOutputTokens,
-      // تقليل التكرار
-      presencePenalty: 0.35,
-      frequencyPenalty: 0.35,
-    }
+    generationConfig: genConfig,
   };
 
   const controller = new AbortController();
@@ -788,6 +946,96 @@ async function tryGenerate({
   }
 }
 
+// =====================================================================
+// Groq API Call (OpenAI-compatible format)
+// =====================================================================
+async function tryGenerateGroq({
+  model,
+  apiKey,
+  systemPrompt,
+  messages,
+  mode,
+  contextTurns,
+  outputTokens,
+}) {
+  const defaultContextTurns = mode === "expert" ? CONTEXT_TURNS_EXPERT : CONTEXT_TURNS_FLASH;
+  const safeContextTurns = toPositiveInt(contextTurns, defaultContextTurns, 1, 20);
+  const maxByMode = mode === "expert" ? MAX_OUTPUT_TOKENS_EXPERT : MAX_OUTPUT_TOKENS_FLASH;
+  const minByMode = mode === "expert" ? MIN_OUTPUT_TOKENS_EXPERT : MIN_OUTPUT_TOKENS_FLASH;
+  const safeOutputTokens = toPositiveInt(outputTokens, maxByMode, minByMode, maxByMode);
+
+  // Convert messages to OpenAI format
+  const groqMessages = [
+    { role: "system", content: systemPrompt }
+  ];
+
+  const recentMessages = (messages || []).slice(-safeContextTurns);
+  for (const m of recentMessages) {
+    groqMessages.push({
+      role: m.role === "user" ? "user" : "assistant",
+      content: scrub(m.content)
+    });
+  }
+
+  const payload = {
+    model,
+    messages: groqMessages,
+    temperature: mode === "expert" ? 0.7 : 0.62,
+    max_tokens: safeOutputTokens,
+    top_p: 0.9,
+    frequency_penalty: 0.35,
+    presence_penalty: 0.35,
+  };
+
+  const controller = new AbortController();
+  const id = setTimeout(() => controller.abort(), TIMEOUT_MS);
+
+  try {
+    const res = await fetch(
+      "https://api.groq.com/openai/v1/chat/completions",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${apiKey}`
+        },
+        body: JSON.stringify(payload),
+        signal: controller.signal
+      }
+    );
+
+    if (res.status !== 200) {
+      let detail = `HTTP ${res.status}`;
+      try {
+        const raw = (await res.text()).replace(/\s+/g, " ").trim();
+        if (raw) detail += ` ${raw.substring(0, 180)}`;
+      } catch { }
+      return { ok: false, model, status: res.status, detail };
+    }
+
+    const data = await res.json();
+    const text = data.choices?.[0]?.message?.content?.trim() || "";
+    if (text) return { ok: true, text };
+
+    return {
+      ok: false,
+      model,
+      status: 200,
+      detail: "Empty response from Groq",
+    };
+  } catch (err) {
+    return {
+      ok: false,
+      model,
+      status: 0,
+      detail: err?.name === "AbortError" ? "Timeout" : (err?.message || "Fetch failed"),
+    };
+  } finally {
+    clearTimeout(id);
+  }
+}
+
+
 function summarizeFailures(failures, max = 8) {
   if (!Array.isArray(failures) || failures.length === 0) return "No upstream response";
   return failures.slice(0, max).map(f => {
@@ -801,37 +1049,59 @@ function classifyUpstreamFailure(failures) {
     return {
       status: 500,
       error: "Worker misconfigured",
-      details: "No valid Gemini API keys were found in Worker secrets.",
+      details: "No valid API keys were found in Worker secrets.",
     };
   }
 
+  const has400 = failures.some(f => f?.status === 400);
+  const has401or403 = failures.some(f => f?.status === 401 || f?.status === 403);
   const has429 = failures.some(f => f?.status === 429);
   const has404 = failures.some(f => f?.status === 404);
-  const only429or404 = failures.every(f => f?.status === 429 || f?.status === 404);
   const all404 = failures.every(f => f?.status === 404);
+  const all429 = failures.every(f => f?.status === 429);
 
-  if (all404) {
+  // Auth / billing issue
+  if (has401or403) {
     return {
-      status: 500,
-      error: "Upstream model misconfigured",
-      details: "Configured model is not available for this API/project.",
+      status: 502,
+      error: "Upstream auth error",
+      details: "API key is invalid or billing is disabled.",
     };
   }
 
-  if (has429 && only429or404) {
+  // Bad payload (config issue, not retryable)
+  if (has400 && !has429 && !has404) {
+    return {
+      status: 502,
+      error: "Upstream payload rejected",
+      details: "API rejected the request payload.",
+    };
+  }
+
+  // All models not found
+  if (all404) {
+    return {
+      status: 502,
+      error: "Upstream model unavailable",
+      details: "Configured model(s) not available for this API/project.",
+    };
+  }
+
+  // Quota exceeded
+  if (all429 || (has429 && !has400)) {
     return {
       status: 429,
       error: "Upstream quota exceeded",
       details: has404
-        ? "Gemini quota exceeded and failover model is invalid."
-        : "Gemini quota exceeded on all configured keys.",
+        ? "API quota exceeded and failover model is invalid."
+        : "API quota exceeded on all configured keys.",
     };
   }
 
   return {
     status: 502,
     error: "Upstream AI unavailable",
-    details: "Gemini upstream request failed.",
+    details: "Upstream request failed.",
   };
 }
 
@@ -886,6 +1156,7 @@ export default {
     }
 
     try {
+      const requestId = generateRequestId();
       const body = await req.json();
       const messages = normalizeIncomingMessages(body?.messages || []);
       const previousMeta = normalizeMeta(body?.meta);
@@ -964,13 +1235,28 @@ export default {
       }
 
       // 3) Mode gate (Expert يسمح 6–8 سطور)
-      const wantsDeepAudit = /(audit|analyze|analysis|فحص|تحليل|قيم|تقييم|استشارة ادفانسد)/i.test(lastMsg);
-      let expertUses = previousMeta.expert_uses || 0;
+      // 3) Mode detection with Budget Guard
+      const wantsDeepAudit = isBusinessQuestion(lastMsg);
+      const forceExpert = previousMeta.forced_route === "<<NEEDS_EXPERT>>";
+      let expertUses = Math.min(previousMeta.expert_uses || 0, 10); // server-side clamp
 
       let mode = "flash";
-      const continueExpert = previousMeta.mode === "expert" && isSubstantive(lastMsg);
+      // continueExpert requires business context, not just message length
+      const hasBizFollowUp = isSubstantive(lastMsg) && /(roas|cac|rto|ربح|خسارة|margin|تكلفة|هامش|ميزانية|budget|تحليل|analysis|شحن|دفع|tracking|funnel|مبيعات|conversion)/i.test(lastMsg);
+      const continueExpert = previousMeta.mode === "expert" && hasBizFollowUp;
 
-      if ((wantsDeepAudit || continueExpert) && expertUses < 2) mode = "expert";
+      // Determine initial mode
+      if (forceExpert || wantsDeepAudit || continueExpert) {
+        mode = "expert";
+      }
+
+      // Apply Budget Guard
+      const budgetCheck = checkBudgetGuard(previousMeta, mode);
+      if (!budgetCheck.allowed) {
+        mode = budgetCheck.forcedMode || "flash";
+      }
+
+      // Track expert usage
       if (mode === "expert") expertUses += 1;
 
       // 4) Market toggle/cards
@@ -981,7 +1267,6 @@ export default {
 
       // 5) فلسفة الدهشة/الكاريزما
       const vibeTag = detectVibeTag(lastMsg);
-      const patternRule = pickPattern(vibeTag, mode);
 
       const lastOpener = previousMeta.last_opener_text || "";
 
@@ -994,7 +1279,6 @@ export default {
         isFirst: !hasWelcomed,
         lastOpener,
         vibeTag,
-        patternRule,
         marketCtx,
         tier
       });
@@ -1005,97 +1289,115 @@ export default {
       const contextTurns = resolveContextTurns(mode, marketCards.length);
       const outputTokens = resolveOutputTokens(mode, lastMsg);
 
-      // 7) Generate (failover)
-      const resolvedKeys = shuffle(resolveGeminiKeyNames(env));
+      // 7) Generate with resilient retry (max 3 attempts, backoff, no key re-use)
+      const geminiKeys = shuffle(resolveGeminiKeyNames(env));
+      const groqKeys = shuffle(resolveGroqKeyNames(env));
+      const allKeys = [...groqKeys, ...geminiKeys];
+
       const keys = forceSingleKey
-        ? resolvedKeys.filter(k => k === requestedForceKey)
-        : resolvedKeys;
+        ? allKeys.filter(k => k === requestedForceKey)
+        : allKeys;
       if (forceSingleKey && keys.length === 0) {
         return json({
           error: "Bad request",
           details: `Forced key "${requestedForceKey}" is not configured or empty.`,
         }, 400, corsHeaders);
       }
+
       let responseText = null;
       const upstreamFailures = [];
-      const primaryFailures = [];
-      const triedPrimaryKeys = new Set();
+      const triedKeyModel = new Set(); // track key+model combos to prevent re-use
+      let totalAttempts = 0;
 
-      const primaryKeyBudget = forceSingleKey
-        ? 1
-        : toPositiveInt(env.GEMINI_MAX_PRIMARY_KEYS, MAX_PRIMARY_KEYS_PER_REQUEST, 1, 10);
-      const quotaWaveBreak = toPositiveInt(env.GEMINI_QUOTA_WAVE_BREAK, QUOTA_WAVE_BREAK_AFTER_429, 1, 5);
-      let consecutivePrimary429 = 0;
+      structuredLog({ level: "info", type: "request_start", requestId, model: selectedModel, mode, keyCount: keys.length });
 
-      for (const k of keys.slice(0, primaryKeyBudget)) {
-        triedPrimaryKeys.add(k);
+      // --- Primary model attempts ---
+      for (const k of keys) {
+        if (totalAttempts >= MAX_TOTAL_UPSTREAM_ATTEMPTS) break;
+        const combo = `${k}:${selectedModel}`;
+        if (triedKeyModel.has(combo)) continue;
+        triedKeyModel.add(combo);
+
+        // Exponential backoff between attempts (skip first)
+        if (totalAttempts > 0) {
+          await sleep(backoffDelay(totalAttempts - 1));
+        }
+        totalAttempts++;
+
         const apiKey = env[k];
-        const result = await tryGenerate({
-          model: selectedModel,
-          apiKey,
-          apiVersion,
-          systemPrompt,
-          messages,
-          mode,
-          contextTurns,
-          outputTokens,
+        const provider = detectProvider(k);
+        let result;
+
+        if (provider === 'groq') {
+          const groqModel = mode === "expert" ? GROQ_MODELS.EXPERT : GROQ_MODELS.FLASH;
+          result = await tryGenerateGroq({ model: groqModel, apiKey, systemPrompt, messages, mode, contextTurns, outputTokens });
+        } else {
+          result = await tryGenerate({ model: selectedModel, apiKey, apiVersion, systemPrompt, messages, mode, contextTurns, outputTokens });
+        }
+
+        structuredLog({
+          level: result?.ok ? "info" : "warn", type: "attempt",
+          requestId, attempt: totalAttempts, provider, model: selectedModel,
+          status: result?.status, ok: !!result?.ok,
         });
-        if (result?.ok) {
-          responseText = result.text;
+
+        if (result?.ok) { responseText = result.text; break; }
+        if (!result) continue;
+        upstreamFailures.push(result);
+
+        // Non-retryable errors: stop immediately
+        if (result.status === 400 || result.status === 401 || result.status === 403) {
+          structuredLog({ level: "error", type: "non_retryable", requestId, status: result.status });
           break;
         }
-        if (!result) continue;
-
-        upstreamFailures.push(result);
-        primaryFailures.push(result);
-
-        if (result.status === 429) {
-          consecutivePrimary429 += 1;
-          // موجة quota واضحة: ما نحرقش كل المفاتيح في نفس الطلب
-          if (consecutivePrimary429 >= quotaWaveBreak) break;
-        } else {
-          consecutivePrimary429 = 0;
-        }
+        // Model not found (404): skip to fallback model
+        if (result.status === 404) break;
+        // 429: don't try more keys with same model (quota is project-wide)
+        if (result.status === 429) break;
       }
 
-      const primaryOnlyQuota = primaryFailures.length > 0 && primaryFailures.every(f => f?.status === 429);
-      const allowFailoverOnPrimaryQuota = toBool(env.GEMINI_FAILOVER_ON_PRIMARY_429, false);
-      const canTryFailover = !forceSingleKey && !!models.FAILOVER && (!primaryOnlyQuota || allowFailoverOnPrimaryQuota);
+      // --- Failover model attempt (max 1 attempt) ---
+      const canTryFailover = !responseText && !forceSingleKey && models.FAILOVER
+        && totalAttempts < MAX_TOTAL_UPSTREAM_ATTEMPTS;
 
-      if (!responseText && canTryFailover) {
-        const defaultFailoverBudget = primaryOnlyQuota ? 1 : MAX_FAILOVER_KEYS_PER_REQUEST;
-        const failoverKeyBudget = toPositiveInt(env.GEMINI_MAX_FAILOVER_KEYS, defaultFailoverBudget, 1, 6);
-        const failoverOutputTokens = Math.min(outputTokens, MAX_OUTPUT_TOKENS_FLASH);
-        const failoverContextTurns = Math.min(contextTurns, CONTEXT_TURNS_MARKET);
-        const remainingKeys = keys.filter(k => !triedPrimaryKeys.has(k));
-        const failoverKeys = remainingKeys.length ? remainingKeys : keys;
+      if (canTryFailover) {
+        // Pick a key not yet used with the failover model
+        const failoverKey = keys.find(k => !triedKeyModel.has(`${k}:${models.FAILOVER}`));
+        if (failoverKey) {
+          if (totalAttempts > 0) await sleep(backoffDelay(totalAttempts - 1));
+          totalAttempts++;
+          triedKeyModel.add(`${failoverKey}:${models.FAILOVER}`);
 
-        for (const k of failoverKeys.slice(0, failoverKeyBudget)) {
-          const apiKey = env[k];
+          const failoverOutputTokens = Math.min(outputTokens, MAX_OUTPUT_TOKENS_FLASH);
+          const failoverContextTurns = Math.min(contextTurns, CONTEXT_TURNS_MARKET);
+          const apiKey = env[failoverKey];
+
           const result = await tryGenerate({
-            model: models.FAILOVER,
-            apiKey,
-            apiVersion,
-            systemPrompt,
-            messages,
-            mode: "flash",
-            contextTurns: failoverContextTurns,
-            outputTokens: failoverOutputTokens,
+            model: models.FAILOVER, apiKey, apiVersion, systemPrompt,
+            messages, mode: "flash", contextTurns: failoverContextTurns, outputTokens: failoverOutputTokens,
           });
+
+          structuredLog({
+            level: result?.ok ? "info" : "warn", type: "failover_attempt",
+            requestId, attempt: totalAttempts, model: models.FAILOVER,
+            status: result?.status, ok: !!result?.ok,
+          });
+
           if (result?.ok) {
             responseText = result.text;
-            break;
+          } else if (result) {
+            upstreamFailures.push(result);
           }
-          if (!result) continue;
-          upstreamFailures.push(result);
-
-          // في حالة quota wave، اكتفي بمحاولة failover واحدة فقط
-          if (primaryOnlyQuota && result.status === 429) break;
         }
       }
 
       if (!responseText) {
         const classification = classifyUpstreamFailure(upstreamFailures);
+        structuredLog({
+          level: "error", type: "all_failed", requestId,
+          status: classification.status, attempts: totalAttempts,
+          failures: upstreamFailures.map(f => ({ model: f?.model, status: f?.status })),
+        });
         const failureHeaders = classification.status === 429
           ? { ...corsHeaders, "Retry-After": "120" }
           : corsHeaders;
@@ -1116,11 +1418,16 @@ export default {
       // تخزين الافتتاحية اللي كتبها الموديل (أول سطر)
       const firstLine = (extracted.cleaned.split("\n")[0] || "").trim();
 
+      // Token estimation for cost visibility (silent, meta only)
+      const estInputTokens = estimateTokens(systemPrompt) + estimateTokens(lastMsg);
+      const estOutputTokens = estimateTokens(extracted.cleaned);
+
       return json({
         response: extracted.cleaned,
         meta: {
           ...previousMeta,
           worker_version: WORKER_VERSION,
+          request_id: requestId,
 
           mode,
           expert_uses: expertUses,
@@ -1140,12 +1447,23 @@ export default {
           market_mode: marketMode,
           market_cards: marketCards,
 
+          // cost tracking (approximate)
+          est_input_tokens: estInputTokens,
+          est_output_tokens: estOutputTokens,
+
           quickReplies: extracted.quickReplies,
           ...(forceSingleKey ? { forced_key: requestedForceKey } : {}),
         }
       }, 200, corsHeaders);
 
     } catch (err) {
+      // JSON parse errors → 400 (client sent invalid body)
+      if (err instanceof SyntaxError) {
+        structuredLog({ level: "warn", type: "bad_json", msg: err?.message });
+        return json({ error: "Bad request", details: "Invalid JSON body" }, 400, corsHeaders);
+      }
+      // All other errors → 503
+      structuredLog({ level: "error", type: "unhandled", msg: err?.message, stack: (err?.stack || "").slice(0, 200) });
       return json({ error: "System Busy", details: "Retrying neural link..." }, 503, corsHeaders);
     }
   }
