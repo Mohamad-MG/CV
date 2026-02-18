@@ -105,23 +105,23 @@ class KineticText {
         this.elements.forEach(el => {
             const originalHTML = el.innerHTML.trim();
             if (!originalHTML) return;
-            
+
             el.innerHTML = '';
             el.style.opacity = '1';
             el.style.visibility = 'visible';
 
             // Split by <br> tags
             const lines = originalHTML.split(/<br\s*\/?>/i);
-            
+
             lines.forEach((lineHTML, lineIdx) => {
                 const lineContainer = document.createElement('span');
                 lineContainer.className = 'tagline-line';
                 lineContainer.style.display = 'block';
-                
+
                 // Temporary div to parse inner HTML of the line (handles <small>, etc.)
                 const temp = document.createElement('div');
                 temp.innerHTML = lineHTML;
-                
+
                 // Process nodes (text or nested tags)
                 this.processNodes(temp, lineContainer, lineIdx);
 
@@ -132,7 +132,7 @@ class KineticText {
 
     processNodes(parentNode, targetContainer, lineIdx) {
         let globalWordIdx = 0;
-        
+
         Array.from(parentNode.childNodes).forEach(node => {
             if (node.nodeType === Node.TEXT_NODE) {
                 const words = node.textContent.trim().split(/\s+/);
@@ -148,7 +148,7 @@ class KineticText {
                 const wrapper = document.createElement('span');
                 wrapper.className = node.className; // Preserve classes like tagline-sub
                 if (node.tagName.toLowerCase() === 'small') wrapper.style.fontSize = '0.6em';
-                
+
                 const words = node.textContent.trim().split(/\s+/);
                 words.forEach((word, wordIdx) => {
                     if (word) {
@@ -168,7 +168,7 @@ class KineticText {
         wordSpan.className = 'word';
         wordSpan.style.display = 'inline-block';
         wordSpan.style.whiteSpace = 'nowrap';
-        
+
         word.split('').forEach((char, charIdx) => {
             const charSpan = document.createElement('span');
             charSpan.className = 'char';
@@ -186,9 +186,25 @@ class KineticText {
 class DataDecrypt {
     constructor() {
         this.scrambleChars = '/>_-\|[]{}*&^%$#@!~';
-        this.eyebrow = document.querySelector('.hero-eyebrow');
+        // Select all elements with .decrypt class + keep legacy support for hero-eyebrow
+        this.elements = document.querySelectorAll('.decrypt, .hero-eyebrow');
 
-        if (this.eyebrow) this.initElement(this.eyebrow, 200, 30);
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    // Start immediately upon reveal (stagger handled by CSS or slight delay if needed)
+                    // We can add a slight index-based delay if we had the index here, but for simplicity
+                    // and robustness, we let the scroll trigger it naturally. 
+                    this.initElement(entry.target, 0, 30);
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1, rootMargin: "0px 0px -50px 0px" });
+
+        this.elements.forEach(el => {
+            el.style.opacity = '0'; // Ensure hidden initially
+            observer.observe(el);
+        });
     }
 
     initElement(el, startDelay, speed) {
@@ -226,7 +242,9 @@ class DataDecrypt {
 
         span.style.opacity = '1';
         span.style.color = '#3B82F6';
-        span.style.fontFamily = 'monospace';
+        span.style.fontFamily = 'monospace'; /* CRITICAL: Prevent Reflow/Layout Shift */
+        span.style.display = 'inline-block';
+        span.style.width = '1ch'; /* Ensure fixed width per char */
 
         const scrambleInterval = setInterval(() => {
             frame++;
@@ -248,7 +266,7 @@ class FluidSweep {
     constructor() {
         this.mission = document.querySelector('.hero-mission');
         if (this.mission) {
-            this.init(200); 
+            this.init(200);
         }
     }
 
@@ -296,7 +314,12 @@ class IgnitionMetrics {
         el.style.transition = 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
         el.style.opacity = '1';
         el.style.transform = 'scale(1)';
-        el.style.filter = 'blur(0px) brightness(2)'; // Flash
+        // Mobile Perf: Skip blur filter
+        if (window.innerWidth > 768) {
+            el.style.filter = 'blur(0px) brightness(2)'; // Flash
+        } else {
+            el.style.filter = 'none';
+        }
 
         // Cool Down
         setTimeout(() => {
@@ -419,6 +442,8 @@ const initSpatialDepth = () => {
             }
         });
     });
+    // C) Mobile optimization: Remove mousemove listener entirely on touch/small devices
+    // Always enable parallax
     window.addEventListener('mousemove', (e) => {
         profiler?.bump('spatial.pointer.raw');
         handlePointerMove(e);
@@ -505,16 +530,16 @@ class SmartPulseEngine {
 
         // 2. Random Speed (6s to 10s for sophisticated but active look)
         const duration = (6 + Math.random() * 4).toFixed(2);
-        
+
         // 3. Re-apply and trigger
         setTimeout(() => {
             path.style.animationDuration = `${duration}s`;
             path.classList.add('is-pulsing');
-            
+
             // 4. Schedule next run: Duration + Near-Zero Silence (0.1s to 0.6s)
             const silence = 100 + Math.random() * 500;
             const nextRunTime = (parseFloat(duration) * 1000) + silence;
-            
+
             setTimeout(() => this.runCycle(path), nextRunTime);
         }, 50); // Small buffer to ensure class removal is registered
     }
@@ -540,17 +565,21 @@ const initVideo = () => {
     const video = document.getElementById('showreelVideo');
     if (!video) return;
 
-    const isMobileLite =
-        document.body.classList.contains('mobile-lite') ||
-        window.matchMedia('(max-width: 768px)').matches ||
-        window.matchMedia('(pointer: coarse)').matches;
+    // Force Autoplay for everyone
+    video.autoplay = true;
+    video.setAttribute('autoplay', '');
+    video.preload = 'auto';
+    video.muted = true; // Required for auto
+    video.loop = true;
+    video.playsInline = true;
 
-    // Keep the section visual, but avoid continuous decoding/render on phones.
-    if (isMobileLite) {
-        video.autoplay = false;
-        video.removeAttribute('autoplay');
-        video.preload = 'none';
-        video.pause();
+    // Attempt play immediately
+    const playPromise = video.play();
+    if (playPromise !== undefined) {
+        playPromise.catch(error => {
+            console.log("Auto-play prevented (user did not interact yet):", error);
+            // Setup click-to-play fallback locally
+        });
     }
 
     const videoContainer = video.closest('.ipad-mockup');
@@ -616,7 +645,7 @@ const initCarousel = () => {
     // Drag to Scroll Logic with Momentum (Inertia)
     const initDragToScroll = () => {
         const sliders = document.querySelectorAll('.horizontal-scroll');
-        
+
         sliders.forEach(slider => {
             let isDown = false;
             let startX;
@@ -634,8 +663,8 @@ const initCarousel = () => {
 
             const momentumLoop = () => {
                 slider.scrollLeft += velX;
-                velX *= 0.95; // Friction
-                if (Math.abs(velX) > 0.5) {
+                velX *= 0.98; // Low Friction (Gliding on Ice)
+                if (Math.abs(velX) > 0.1) {
                     momentumID = requestAnimationFrame(momentumLoop);
                 }
             };
@@ -669,7 +698,7 @@ const initCarousel = () => {
                 if (!isDown) return;
                 e.preventDefault();
                 const x = e.pageX - slider.offsetLeft;
-                const walk = (x - startX) * 2;
+                const walk = (x - startX) * 3; // High Sensitivity (Fast Response)
                 const prevScrollLeft = slider.scrollLeft;
                 slider.scrollLeft = scrollLeft - walk;
                 velX = slider.scrollLeft - prevScrollLeft;
@@ -694,7 +723,7 @@ const initCarousel = () => {
             const cards = expContainer.querySelectorAll('.exp-card');
             // Target index 4 (Arabian Oud) to match the image exactly
             const targetCard = cards.length > 4 ? cards[4] : cards[0];
-            
+
             if (targetCard) {
                 const scrollPos = targetCard.offsetLeft - (expContainer.clientWidth / 2) + (targetCard.clientWidth / 2);
                 expContainer.scrollTo({ left: scrollPos, behavior: 'auto' });
@@ -711,7 +740,7 @@ const initCarousel = () => {
                 eduContainer.scrollTo({ left: scrollPos, behavior: 'auto' });
             }
         }
-        
+
         initDragToScroll();
     };
 

@@ -1,270 +1,279 @@
 /**
- * Nebula Physics Engine (Clean Production)
- * Smooth, minimal, and stable floating icons for the home background.
+ * Nebula Physics Engine 2026 (Ultra-Modern Premium)
+ * High-performance, depth-aware vertical motion with soft-body repulsion.
+ * Built for maintainability and industrial stability.
  */
 (() => {
+    'use strict';
+
     class NebulaPhysics {
+        /** @type {Object} Core System configuration */
+        #config = {
+            baseSpeed: 0.45,
+            fallSpeed: 0.65,
+            collisionPadding: 8,
+            repulsionForce: 0.05,
+            drag: 0.96,
+            recovery: 0.1,
+            downFlowChance: 0.15,
+            laneWidth: 100,
+            boundaryBuffer: 100
+        };
+
+        /** @type {Array} Active particle storage */
+        #particles = [];
+        #signals = [];
+        #container = null;
+        #isPaused = false;
+        #lastFrameTs = 0;
+        #dims = { width: 0, height: 0 };
+        #isLowPower = false;
+
         constructor() {
-            this.container = document.querySelector('.social-nebula');
-            if (!this.container) return;
-
-            this.signals = Array.from(this.container.querySelectorAll('.signal'));
-            if (!this.signals.length) return;
-
-            this.particles = [];
-            this.width = window.innerWidth;
-            this.height = window.innerHeight;
-            this.isPaused = document.hidden;
-            this.isReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-            this.isPerfLite = document.body.classList.contains('perf-lite') || this.isReducedMotion;
-            this.isLowPower =
-                this.isPerfLite ||
-                window.matchMedia('(max-width: 768px)').matches ||
-                (navigator.deviceMemory && navigator.deviceMemory <= 4) ||
-                (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4);
-            this.lastFrameTs = 0;
-            this.minFrameInterval = this.isLowPower ? (1000 / 24) : 0;
-            this.scrollPauseUntil = 0;
-            this.pendingResize = false;
-
-            // System Config (The 2026 Universe Protocol)
-            this.config = {
-                baseSpeed: this.isLowPower ? 0.06 : 0.15,
-                fallSpeed: this.isLowPower ? 0.16 : 0.35,
-                collisionPadding: 3, 
-                drag: 0.98,
-                recovery: 0.015,
-                downFlowChance: 0.3, 
-                laneWidth: 90,
-                // Adaptive Pass: 1 pass for mobile/low-power, 2 for desktop
-                physicsPasses: this.isLowPower ? 0 : 2
-            };
-
-            this.init();
-            this.animate = this.animate.bind(this);
-            // Throttle: Skip frames if needed or use RAF
-            requestAnimationFrame(this.animate);
-
-            window.addEventListener('resize', () => this.scheduleResize(), { passive: true });
-            window.addEventListener('scroll', () => {
-                if (this.isLowPower) {
-                    this.scrollPauseUntil = performance.now() + 120;
+            try {
+                this.#initEnvironment();
+                if (this.#setupContainer()) {
+                    this.#bootstrap();
                 }
+            } catch (err) {
+                console.error('[NebulaPhysics] Initialization Aborted:', err);
+            }
+        }
+
+        /** Detect environment and set performance profile */
+        #initEnvironment() {
+            this.#dims.width = window.innerWidth;
+            this.#dims.height = window.innerHeight;
+            // FORCE HIGH PERFORMANCE - User Request
+            this.#isLowPower = false;
+
+            // if (this.#isLowPower) {
+            //     this.#config.baseSpeed *= 0.6;
+            //     this.#config.fallSpeed *= 0.6;
+            // }
+        }
+
+        /** Validate and capture necessary DOM elements */
+        #setupContainer() {
+            this.#container = document.querySelector('.social-nebula');
+            if (!this.#container) return false;
+
+            const signals = this.#container.querySelectorAll('.signal');
+            if (!signals.length) return false;
+
+            this.#signals = Array.from(signals);
+            return true;
+        }
+
+        /** Initialize systemic event listeners and physics loops */
+        #bootstrap() {
+            this.#spawnParticles();
+            this.#bindEvents();
+
+            // Start the motion logic
+            this.#lastFrameTs = performance.now();
+            requestAnimationFrame((ts) => this.#animate(ts));
+        }
+
+        #bindEvents() {
+            // Optimized Resize logic
+            let resizeDebounce;
+            window.addEventListener('resize', () => {
+                cancelAnimationFrame(resizeDebounce);
+                resizeDebounce = requestAnimationFrame(() => {
+                    this.#dims.width = window.innerWidth;
+                    this.#dims.height = window.innerHeight;
+                });
             }, { passive: true });
+
             document.addEventListener('visibilitychange', () => {
-                this.isPaused = document.hidden;
+                this.#isPaused = document.hidden;
             });
         }
 
-        getRadius(el) {
-            if (el.classList.contains('sig-lg')) return 26;
-            if (el.classList.contains('sig-md')) return 18;
-            if (el.classList.contains('sig-sm')) return 12;
-            return 16;
+        /** Helper to determine radius based on design tokens */
+        #getSignalRadius(el) {
+            const classes = el.classList;
+            if (classes.contains('sig-lg')) return 28;
+            if (classes.contains('sig-md')) return 20;
+            if (classes.contains('sig-sm')) return 14;
+            return 18;
         }
 
-        getAvailableX(isFalling, particleToExempt = null) {
-            const laneWidth = this.config.laneWidth;
-            const totalLanes = Math.floor(this.width / laneWidth);
-            const occupiedLanes = new Set();
+        /** Find an optimal X coordinate to prevent initial overcrowding */
+        #getAvailableX(isFalling, exempt = null) {
+            const lWidth = this.#config.laneWidth;
+            const totalLanes = Math.floor(this.#dims.width / lWidth) || 1;
+            const occupied = new Set();
 
-            // Identify lanes occupied by icons moving in the SAME direction
-            for (const p of this.particles) {
-                if (!p.active || p === particleToExempt) continue;
-                if (p.isFalling === isFalling) {
-                    occupiedLanes.add(Math.floor(p.x / laneWidth));
+            this.#particles.forEach(p => {
+                if (p.active && p !== exempt && p.isFalling === isFalling) {
+                    occupied.add(Math.floor(p.x / lWidth));
                 }
-            }
+            });
 
-            // Create a pool of free lanes for this specific direction
-            const freeLanes = [];
-            for (let i = 0; i < totalLanes; i++) {
-                if (!occupiedLanes.has(i)) freeLanes.push(i);
-            }
+            const free = Array.from({ length: totalLanes }, (_, i) => i).filter(i => !occupied.has(i));
+            const lane = free.length > 0 ? free[Math.floor(Math.random() * free.length)] : Math.floor(Math.random() * totalLanes);
 
-            // If a free lane exists, pick one randomly
-            if (freeLanes.length > 0) {
-                const lane = freeLanes[Math.floor(Math.random() * freeLanes.length)];
-                // Randomize position within the chosen lane for a natural look
-                return (lane * laneWidth) + (Math.random() * (laneWidth * 0.6) + laneWidth * 0.2);
-            }
-
-            // Fallback: strictly avoid the nearest neighbors if all lanes are full
-            return Math.random() * this.width;
+            return (lane * lWidth) + (Math.random() * (lWidth * 0.4) + lWidth * 0.3);
         }
 
-        init() {
-            const shuffledSignals = [...this.signals].sort(() => Math.random() - 0.5);
-            const animatedCount = this.isLowPower
-                ? Math.max(6, Math.floor(shuffledSignals.length * 0.5))
-                : shuffledSignals.length;
+        /** Create and prepare the particle pool */
+        #spawnParticles() {
+            this.#signals.forEach((el, index) => {
+                const zLayer = 0.4 + Math.random() * 0.6;
+                const isFalling = Math.random() < this.#config.downFlowChance;
+                const bRadius = this.#getSignalRadius(el);
 
-            shuffledSignals.forEach((el, index) => {
-                const isFalling = Math.random() < this.config.downFlowChance;
-                const radius = this.getRadius(el);
-                const isAnimated = index < animatedCount;
-                
-                Object.assign(el.style, {
-                    position: 'absolute',
-                    left: '0',
-                    top: '0',
-                    margin: '0',
-                    opacity: '0',
-                    transition: 'opacity 5s ease' 
-                });
+                const speed = (isFalling ? this.#config.fallSpeed : this.#config.baseSpeed) * zLayer;
+                const vy = isFalling ? speed : -speed;
 
-                const x = this.getAvailableX(isFalling);
-                const y = Math.random() * this.height;
-
-                const speedMult = isFalling ? 1 : 1.2; 
-                const speed = (isFalling ? this.config.fallSpeed : this.config.baseSpeed) * speedMult;
-                const baseVy = isFalling ? speed : -speed;
-
-                const particle = {
-                    el, x, y, radius, vx: 0, vy: baseVy, baseVy, mass: radius, active: false, isFalling, isAnimated
+                const p = {
+                    el,
+                    x: this.#getAvailableX(isFalling),
+                    y: Math.random() * this.#dims.height,
+                    vx: 0,
+                    vy: vy,
+                    baseVy: vy,
+                    radius: bRadius * zLayer,
+                    mass: bRadius * zLayer,
+                    z: zLayer,
+                    active: false,
+                    isFalling
                 };
 
-                this.particles.push(particle);
+                // Apply initial hidden state and styles
+                Object.assign(el.style, {
+                    position: 'absolute',
+                    left: '0', top: '0',
+                    margin: '0',
+                    opacity: '0',
+                    filter: `blur(${Math.max(0, (1 - zLayer) * 4).toFixed(1)}px)`,
+                    transform: `translate3d(${p.x.toFixed(1)}px, ${p.y.toFixed(1)}px, 0) scale(${zLayer.toFixed(2)})`,
+                    transition: 'opacity 3.5s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+                    willChange: 'transform'
+                });
 
-                const activationDelay = 300 + (index * (this.isLowPower ? 1100 : 1400)); 
-                
+                this.#particles.push(p);
+
+                // Entrance animation
                 setTimeout(() => {
-                    particle.active = particle.isAnimated;
-                    requestAnimationFrame(() => {
-                        if (particle.isAnimated) {
-                            particle.el.style.willChange = 'transform';
-                        } else {
-                            particle.el.style.willChange = 'auto';
-                        }
-                        particle.el.style.opacity = particle.isAnimated
-                            ? (this.isLowPower ? '0.16' : '0.2')
-                            : (this.isLowPower ? '0.07' : '0.08');
-                        particle.el.style.transform = `translate3d(${particle.x - particle.radius}px, ${particle.y - particle.radius}px, 0)`;
-                    });
-                }, activationDelay);
+                    p.active = true;
+                    el.style.opacity = (p.z * 0.22).toFixed(2);
+                }, 400 + (index * (this.#isLowPower ? 180 : 280)));
             });
         }
 
-        scheduleResize() {
-            if (this.pendingResize) return;
-            this.pendingResize = true;
-            requestAnimationFrame(() => {
-                this.pendingResize = false;
-                this.handleResize();
-            });
+        /** Main Animation Loop */
+        #animate(ts) {
+            if (this.#isPaused) {
+                requestAnimationFrame((t) => this.#animate(t));
+                return;
+            }
+
+            this.#lastFrameTs = ts;
+
+            // 1. Kinetic Pass
+            this.#processKineticPass();
+
+            // 2. Physics Pass (repulsion)
+            this.#resolveRepulsions();
+
+            // 3. Render Pass
+            this.#updateDOM();
+
+            requestAnimationFrame((t) => this.#animate(t));
         }
 
-        handleResize() {
-            this.width = window.innerWidth;
-            this.height = window.innerHeight;
-        }
+        #processKineticPass() {
+            const drag = this.#config.drag;
+            const recovery = this.#config.recovery;
 
-        animate(ts) {
-            const now = typeof ts === 'number' ? ts : performance.now();
-            if (this.isPaused || document.body.classList.contains('ai-open')) {
-                requestAnimationFrame(this.animate);
-                return;
-            }
-
-            if (this.isLowPower && now < this.scrollPauseUntil) {
-                requestAnimationFrame(this.animate);
-                return;
-            }
-
-            if (this.minFrameInterval && (now - this.lastFrameTs) < this.minFrameInterval) {
-                requestAnimationFrame(this.animate);
-                return;
-            }
-            this.lastFrameTs = now;
-
-            this.particles.forEach(p => {
+            this.#particles.forEach(p => {
                 if (!p.active) return;
 
                 p.x += p.vx;
                 p.y += p.vy;
 
-                p.vx *= this.config.drag;
-                p.vy = p.vy * (1 - this.config.recovery) + p.baseVy * this.config.recovery;
+                // Inertia & Vertical recovery
+                p.vx *= drag;
+                p.vy = p.vy * (1 - recovery) + p.baseVy * recovery;
 
-                this.handleWrap(p);
+                this.#handleBoundaries(p);
             });
+        }
 
-            // Adaptive Physics Throttling
-            if (this.config.physicsPasses > 0) {
-                for (let k = 0; k < this.config.physicsPasses; k++) {
-                    for (let i = 0; i < this.particles.length; i++) {
-                        for (let j = i + 1; j < this.particles.length; j++) {
-                            this.resolveCollision(this.particles[i], this.particles[j]);
-                        }
+        #resolveRepulsions() {
+            const pad = this.#config.collisionPadding;
+            const rForce = this.#config.repulsionForce;
+
+            for (let i = 0, len = this.#particles.length; i < len; i++) {
+                const p1 = this.#particles[i];
+                if (!p1.active) continue;
+
+                for (let j = i + 1; j < len; j++) {
+                    const p2 = this.#particles[j];
+                    if (!p2.active) continue;
+
+                    const dx = p2.x - p1.x;
+                    const dy = p2.y - p1.y;
+                    const minDist = p1.radius + p2.radius + pad;
+                    const distSq = dx * dx + dy * dy;
+
+                    if (distSq < minDist * minDist) {
+                        const distance = Math.sqrt(distSq) || 0.1;
+                        const angle = Math.atan2(dy, dx);
+                        const push = (minDist - distance) * rForce;
+
+                        const fx = Math.cos(angle) * push;
+                        const fy = Math.sin(angle) * push;
+
+                        p1.vx -= fx / p1.mass;
+                        p1.vy -= fy / p1.mass;
+                        p2.vx += fx / p2.mass;
+                        p2.vy += fy / p2.mass;
                     }
                 }
             }
-
-            this.particles.forEach(p => {
-                p.el.style.transform = `translate3d(${p.x - p.radius}px, ${p.y - p.radius}px, 0)`;
-            });
-
-            requestAnimationFrame(this.animate);
         }
 
-        handleWrap(p) {
-            const buffer = p.radius + 50;
+        #updateDOM() {
+            this.#particles.forEach(p => {
+                if (p.active) {
+                    p.el.style.transform = `translate3d(${(p.x - p.radius).toFixed(1)}px, ${(p.y - p.radius).toFixed(1)}px, 0) scale(${p.z.toFixed(2)})`;
+                }
+            });
+        }
+
+        #handleBoundaries(p) {
+            const buffer = this.#config.boundaryBuffer;
+            const h = this.#dims.height;
+            const w = this.#dims.width;
 
             if (p.isFalling) {
-                if (p.y > this.height + buffer) {
+                if (p.y > h + buffer) {
                     p.y = -buffer;
-                    p.x = this.getAvailableX(p.isFalling, p);
+                    p.x = this.#getAvailableX(true, p);
                 }
-            } else if (p.y < -buffer) {
-                p.y = this.height + buffer;
-                p.x = this.getAvailableX(p.isFalling, p);
+            } else {
+                if (p.y < -buffer) {
+                    p.y = h + buffer;
+                    p.x = this.#getAvailableX(false, p);
+                }
             }
 
-            if (p.x < -p.radius) p.x = this.width + p.radius;
-            if (p.x > this.width + p.radius) p.x = -p.radius;
-        }
-
-        resolveCollision(p1, p2) {
-            if (!p1.active || !p2.active) return;
-
-            const dx = p2.x - p1.x;
-            const dy = p2.y - p1.y;
-            const distSq = dx * dx + dy * dy;
-            const minDist = p1.radius + p2.radius + this.config.collisionPadding;
-
-            if (distSq < minDist * minDist) {
-                const dist = Math.sqrt(distSq) || 0.001;
-                const overlap = minDist - dist;
-                const nx = dx / dist;
-                const ny = dy / dist;
-
-                const force = overlap * 0.5;
-                p1.x -= nx * force;
-                p1.y -= ny * force;
-                p2.x += nx * force;
-                p2.y += ny * force;
-
-                const v1n = p1.vx * nx + p1.vy * ny;
-                const v2n = p2.vx * nx + p2.vy * ny;
-                if (v1n < v2n) return;
-
-                const m1 = p1.mass;
-                const m2 = p2.mass;
-                const v1nFinal = (v1n * (m1 - m2) + 2 * m2 * v2n) / (m1 + m2);
-                const v2nFinal = (v2n * (m2 - m1) + 2 * m1 * v1n) / (m1 + m2);
-
-                const dv1 = v1nFinal - v1n;
-                const dv2 = v2nFinal - v2n;
-
-                p1.vx += nx * dv1;
-                p1.vy += ny * dv1;
-                p2.vx += nx * dv2;
-                p2.vy += ny * dv2;
-            }
+            // Horizontal wrap (soft)
+            if (p.x < -buffer) p.x = w + buffer;
+            if (p.x > w + buffer) p.x = -buffer;
         }
     }
 
-    document.addEventListener('DOMContentLoaded', () => {
-        new NebulaPhysics();
+    // Initialize after a stabilization delay to ensure layout is ready
+    window.addEventListener('load', () => {
+        setTimeout(() => {
+            try {
+                new NebulaPhysics();
+            } catch (e) { }
+        }, 150);
     });
 })();

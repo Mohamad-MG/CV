@@ -9,6 +9,7 @@ class AchievementsEngine {
         this.initScrollReveal();
         this.initMetricCounters();
         this.initMouseInteractions();
+        this.initVideo();
     }
 
     // --- 1. KINETIC TYPOGRAPHY ---
@@ -49,6 +50,40 @@ class AchievementsEngine {
         document.querySelectorAll('.reveal, .ledger-card, .path-item').forEach(el => observer.observe(el));
     }
 
+    // --- 5. VIDEO PLAYER (Ported from Home) ---
+    initVideo() {
+        const video = document.getElementById('showreelVideo');
+        if (!video) return;
+
+        // Force Autoplay for everyone
+        video.autoplay = true;
+        video.setAttribute('autoplay', '');
+        video.preload = 'auto';
+        video.muted = true; // Required for auto
+        video.loop = true;
+        video.playsInline = true;
+
+        // Attempt play immediately
+        const playPromise = video.play();
+        if (playPromise !== undefined) {
+            playPromise.catch(error => {
+                console.log("Auto-play prevented (user did not interact yet):", error);
+            });
+        }
+
+        const videoContainer = video.closest('.ipad-mockup');
+        const togglePlayback = () => {
+            if (video.paused) video.play();
+            else video.pause();
+        };
+
+        if (videoContainer) {
+            videoContainer.addEventListener('click', togglePlayback);
+        } else {
+            video.addEventListener('click', togglePlayback);
+        }
+    }
+
     // --- 3. METRIC COUNTERS ---
     initMetricCounters() {
         const animateValue = (el, start, end, duration) => {
@@ -57,7 +92,7 @@ class AchievementsEngine {
                 if (!startTimestamp) startTimestamp = timestamp;
                 const progress = Math.min((timestamp - startTimestamp) / duration, 1);
                 const value = Math.floor(progress * (end - start) + start);
-                
+
                 // Add formatting based on context
                 if (el.innerText.includes('$')) {
                     el.innerHTML = `$${value}M`;
@@ -94,7 +129,7 @@ class AchievementsEngine {
     initMouseInteractions() {
         window.addEventListener('mousemove', (e) => {
             const { clientX, clientY } = e;
-            
+
             // Subtle glow movement for cards
             document.querySelectorAll('.ledger-card').forEach(card => {
                 const rect = card.getBoundingClientRect();
@@ -102,11 +137,11 @@ class AchievementsEngine {
                 const y = clientY - rect.top;
                 card.style.setProperty('--mouse-x', `${x}px`);
                 card.style.setProperty('--mouse-y', `${y}px`);
-                
+
                 // Update reflection/glow
                 const glow = card.querySelector('.card-glow');
                 if (glow) {
-                    glow.style.transform = `translate(${(clientX - window.innerWidth/2) * 0.02}px, ${(clientY - window.innerHeight/2) * 0.02}px)`;
+                    glow.style.transform = `translate(${(clientX - window.innerWidth / 2) * 0.02}px, ${(clientY - window.innerHeight / 2) * 0.02}px)`;
                 }
             });
         });
@@ -114,13 +149,13 @@ class AchievementsEngine {
         // --- GRID MAP INTERACTION ---
         const nodes = document.querySelectorAll('.grid-node');
         const hudMarket = document.getElementById('hudMarket');
-        
+
         nodes.forEach(node => {
             node.addEventListener('mouseenter', () => {
                 // Reset active class
                 nodes.forEach(n => n.classList.remove('active'));
                 node.classList.add('active');
-                
+
                 // Update HUD
                 const marketName = node.getAttribute('data-market');
                 if (hudMarket) {

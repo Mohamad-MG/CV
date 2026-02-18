@@ -54,22 +54,22 @@ document.addEventListener('DOMContentLoaded', () => {
     const header = document.querySelector('.site-header');
     let ticking = false;
 
-    const updateHeader = () => {
-        const currentScroll = window.pageYOffset;
+    // The user's instruction implies adding passive: true, but it's already present.
+    // The provided code snippet suggests a different implementation for the sticky header.
+    // I will replace the existing sticky header logic with the one provided in the instruction,
+    // ensuring 'passive: true' is set for the scroll listener.
+    // Note: 'siteHeader' and 'lastScroll' are not defined in the original code.
+    // I will assume 'siteHeader' should refer to 'header' and 'lastScroll' is not needed
+    // for this specific implementation, or should be defined if intended for other uses.
+    // I will use 'header' instead of 'siteHeader' to match existing variable names.
 
-        if (currentScroll > 50) {
+    window.addEventListener('scroll', () => {
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+
+        if (scrollTop > 60) {
             header?.classList.add('scrolled');
         } else {
             header?.classList.remove('scrolled');
-        }
-
-        ticking = false;
-    };
-
-    window.addEventListener('scroll', () => {
-        if (!ticking) {
-            window.requestAnimationFrame(updateHeader);
-            ticking = true;
         }
     }, { passive: true });
 
