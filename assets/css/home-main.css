@@ -2418,7 +2418,7 @@ h4 {
 
 /* --- 🦶 THE 2026 DYNAMIC DOCK (FOOTER) --- */
 .site-footer-2026 {
-  margin-top: 160px;
+  margin-top: 64px;
   padding-bottom: 60px;
   display: flex;
   flex-direction: column;
@@ -2599,7 +2599,7 @@ h4 {
 
 /* Outro Message Polish */
 .footer-outro-message {
-  margin-top: 40px;
+  margin-top: 24px;
   text-align: center;
 }
 

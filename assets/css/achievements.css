@@ -23,7 +23,8 @@
     padding: 40px;
     position: relative;
     transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), background 0.4s ease, border-color 0.4s ease, box-shadow 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-    transform: translateY(0) translateZ(0); /* Hardware Acceleration */
+    transform: translateY(0) translateZ(0);
+    /* Hardware Acceleration */
     will-change: transform;
 }
 
@@ -145,7 +146,7 @@
 
 /* --- ⛓️ CHRONO PATH (Preserved) --- */
 .chrono-section {
-    padding: 100px 0;
+    padding: 64px 0;
 }
 
 .path-header {
@@ -208,7 +209,7 @@
 
 /* --- 🎥 VISUAL SHOWCASE (Preserved) --- */
 .video-section {
-    padding-bottom: 80px;
+    padding-bottom: 48px;
 }
 
 .strategic-intervention-btn {
