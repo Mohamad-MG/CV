@@ -28,6 +28,14 @@
     will-change: transform;
 }
 
+@media (max-width: 768px) {
+    .ledger-card {
+        padding: 24px;
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+    }
+}
+
 /* --- 2. HERO OVERRIDES (Centered Typography Edition) --- */
 .hero {
     min-height: 70vh !important;
@@ -180,6 +188,12 @@
     transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), background 0.4s ease, border-color 0.4s ease;
     transform: translateY(0) translateZ(0);
     will-change: transform;
+}
+
+@media (max-width: 768px) {
+    .path-item {
+        padding: 20px;
+    }
 }
 
 .path-item:hover {

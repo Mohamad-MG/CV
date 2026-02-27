@@ -583,11 +583,14 @@ h4 {
   text-align: left;
   /* Left align text */
   margin-bottom: 50px;
-  /* Increased breathing room */
   position: relative;
   z-index: 5;
-  /* Shift left more as requested */
-  margin-left: -70px;
+}
+
+@media (min-width: 1200px) {
+  .section-header {
+    margin-left: -70px;
+  }
 }
 
 .section-header h2 {
@@ -606,10 +609,9 @@ h4 {
   background-clip: text;
   -webkit-text-fill-color: transparent;
 
-  /* Layout: Left Align & Extended Width */
-  width: 140%;
-  max-width: none;
-  margin-right: -40%;
+  /* Layout: Left Align & Extended Width (Desktop Only) */
+  width: 100%;
+  max-width: 800px;
   text-align: left;
   margin-bottom: 20px;
 
@@ -619,6 +621,13 @@ h4 {
   filter: blur(8px);
   transition: all 1.2s cubic-bezier(0.16, 1, 0.3, 1);
   will-change: opacity, filter, transform;
+}
+
+@media (min-width: 1024px) {
+  .section-header h2 {
+    width: 140%;
+    margin-right: -40%;
+  }
 }
 
 /* --- 🎩 HEADER (ULTRA-MODERN 2026 CAPSULE) --- */
@@ -988,6 +997,30 @@ h4 {
 
   .float-data {
     display: none;
+  }
+
+  /* Optimize Performance for Mobile */
+  .bg-ambient-glow,
+  .hero-orb {
+    filter: blur(40px) !important;
+    opacity: 0.5 !important;
+  }
+
+  .header-container,
+  .exp-card,
+  .industry-card,
+  .footer-dock {
+    backdrop-filter: blur(8px) !important;
+    -webkit-backdrop-filter: blur(8px) !important;
+  }
+
+  /* Fix Title Wrapping */
+  .tagline {
+    white-space: normal !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    font-size: 1.8rem !important;
+    display: block !important;
   }
 
   .section-header {
