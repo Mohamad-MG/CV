@@ -37,11 +37,13 @@
 }
 
 /* --- 2. HERO OVERRIDES (Centered Typography Edition) --- */
-.hero {
-    min-height: 70vh !important;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
+@media (min-width: 1024px) {
+    .hero {
+        min-height: 70vh !important;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+    }
 }
 
 .hero-grid {
@@ -60,15 +62,31 @@
 }
 
 .tagline {
-    font-size: clamp(3.5rem, 6vw, 5.5rem) !important;
-    letter-spacing: -0.03em;
-    margin-bottom: 32px !important;
+    font-size: clamp(2rem, 8vw, 2.8rem) !important;
+    letter-spacing: -0.02em;
+    margin-bottom: 24px !important;
+}
+
+@media (min-width: 1024px) {
+    .tagline {
+        font-size: clamp(3.5rem, 6vw, 5.5rem) !important;
+        letter-spacing: -0.03em;
+        margin-bottom: 32px !important;
+    }
 }
 
 .mission-metrics {
     justify-content: center;
-    margin-top: 48px;
-    gap: 48px !important;
+    margin-top: 32px;
+    gap: 20px !important;
+    flex-wrap: wrap;
+}
+
+@media (min-width: 1024px) {
+    .mission-metrics {
+        margin-top: 48px;
+        gap: 48px !important;
+    }
 }
 
 .hero-identity {

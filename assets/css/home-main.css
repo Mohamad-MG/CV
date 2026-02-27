@@ -1043,6 +1043,12 @@ h4 {
   -webkit-backdrop-filter: blur(2px);
 }
 
+@media (max-width: 640px) {
+  .hero-mission {
+    padding: 20px 16px;
+  }
+}
+
 .hero-badge-row {
   display: flex;
   align-items: center;
@@ -1092,22 +1098,38 @@ h4 {
   box-shadow: 0 0 10px #4ade80;
 }
 
-/* --- 📐 KINETIC TYPOGRAPHY (SHARP RGB 2026) --- */
+/* Global Tagline Base (Desktop First) */
 .tagline {
   font-family: var(--font-display);
-  font-size: clamp(1.8rem, 4.5vw, 3.2rem) !important;
-  line-height: 1.35 !important;
-  /* Increased from 1.1 for better vertical rhythm */
-  letter-spacing: -0.03em;
-  font-weight: 900;
+  font-size: clamp(2.2rem, 5vw, 4.5rem);
+  line-height: 1.1;
+  letter-spacing: -0.035em;
+  font-weight: 800;
   color: #fff;
   margin-bottom: 24px;
-  display: block !important;
+  text-transform: uppercase;
 }
+
+@media (max-width: 768px) {
+  .tagline {
+    font-size: clamp(1.8rem, 8vw, 2.6rem) !important;
+    line-height: 1.25 !important;
+    white-space: normal !important;
+    width: 100% !important;
+  }
+}
+
+
 
 .tagline-line {
   display: block !important;
   white-space: nowrap !important;
+}
+
+@media (max-width: 768px) {
+  .tagline-line {
+    white-space: normal !important;
+  }
 }
 
 .tagline-sub {
@@ -1293,6 +1315,13 @@ h4 {
   margin-top: -30px;
 }
 
+@media (max-width: 1024px) {
+  .hero-identity {
+    margin-top: 16px;
+    margin-bottom: 40px;
+  }
+}
+
 .identity-card {
   width: 100%;
   max-width: 300px;
@@ -1324,13 +1353,17 @@ h4 {
 
 .id-logo-large {
   width: 140px;
-  /* Reduced from 160px */
   height: auto;
   filter: none;
-  /* No effects */
   position: relative;
   z-index: 11;
   display: block;
+}
+
+@media (max-width: 640px) {
+  .id-logo-large {
+    width: 110px;
+  }
 }
 
 /* Removed light sweep effects to keep logo clean */
