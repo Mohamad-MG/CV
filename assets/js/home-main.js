@@ -242,9 +242,9 @@ class DataDecrypt {
 
         span.style.opacity = '1';
         span.style.color = '#3B82F6';
-        span.style.fontFamily = 'monospace'; /* CRITICAL: Prevent Reflow/Layout Shift */
+        span.style.fontFamily = 'monospace'; /* CRITICAL: Prevent Reflow during scramble */
         span.style.display = 'inline-block';
-        span.style.width = '1ch'; /* Ensure fixed width per char */
+        // Removed fixed 1ch width to allow natural spacing
 
         const scrambleInterval = setInterval(() => {
             frame++;
@@ -253,8 +253,11 @@ class DataDecrypt {
             } else {
                 clearInterval(scrambleInterval);
                 span.innerText = targetChar;
+                span.style.display = 'inline';
                 span.style.color = '';
                 span.style.fontFamily = '';
+                span.style.width = '';
+                span.style.minWidth = '';
                 span.style.webkitTextFillColor = '';
             }
         }, 40);

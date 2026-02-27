@@ -1,108 +1,9 @@
-/* 🏆 IMPACT LEDGER 3.1 - CLEAN ARCHITECTURE & VIDEO SHOWCASE */
+/* 🚀 IMPACT LEDGER 3.2 - ADAPTIVE SYSTEMS */
+/* NOTE: The Hero Section now inherits from home-main.css (.hero) for 100% consistency. */
+/* This file now only handles page-specific overrides and the Milestones/Chrono sections. */
 
-:root {
-    --ledger-glass: rgba(255, 255, 255, 0.03);
-    --ledger-border: rgba(255, 255, 255, 0.08);
-    --ledger-accent: #3B82F6;
-    --ledger-accent-glow: rgba(59, 130, 246, 0.2);
-}
 
-/* Reset Body & Main */
-body {
-    background-color: transparent !important;
-    margin: 0;
-    padding: 0;
-}
-
-main {
-    position: relative;
-    z-index: 10;
-}
-
-/* --- 🚀 HERO SECTION --- */
-.achievements-hero-2026 {
-    position: relative;
-    padding: clamp(160px, 20vh, 240px) 0 80px;
-    background: radial-gradient(circle at 10% 50%, rgba(59, 130, 246, 0.1) 0%, transparent 70%);
-}
-
-.hero-grid-overlay {
-    position: absolute;
-    inset: 0;
-    background-image: linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
-    background-size: 50px 50px;
-    mask-image: radial-gradient(circle at center, black, transparent 90%);
-    pointer-events: none;
-}
-
-.hero-label {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 24px;
-}
-
-.l-line {
-    width: 30px;
-    height: 1px;
-    background: var(--ledger-accent);
-}
-
-.l-text {
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 0.7rem;
-    font-weight: 700;
-    letter-spacing: 3px;
-    color: var(--ledger-accent);
-}
-
-.hero-title {
-    font-family: var(--font-display);
-    font-size: clamp(2.2rem, 6vw, 4.2rem);
-    font-weight: 900;
-    line-height: 1.1;
-    color: #fff;
-    text-transform: uppercase;
-    margin-bottom: 24px;
-}
-
-.hero-subtitle {
-    max-width: 650px;
-    font-size: 1.1rem;
-    line-height: 1.7;
-    color: var(--color-text-muted);
-    margin-bottom: 48px;
-    opacity: 0.8;
-}
-
-.hero-metrics-row {
-    display: flex;
-    gap: 48px;
-    flex-wrap: wrap;
-}
-
-.h-metric {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-}
-
-.h-val {
-    font-family: var(--font-display);
-    font-size: 2rem;
-    font-weight: 800;
-    color: #fff;
-}
-
-.h-lbl {
-    font-size: 0.6rem;
-    font-weight: 700;
-    letter-spacing: 1px;
-    color: var(--color-text-faint);
-}
-
-/* --- 💠 MILESTONES GRID (BENTO) --- */
+/* --- 💠 MILESTONES GRID (Preserved) --- */
 .milestones-section {
     padding: 60px 0;
 }
@@ -114,14 +15,71 @@ main {
 }
 
 .ledger-card {
-    background: var(--ledger-glass);
+    background: rgba(255, 255, 255, 0.03);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-    border: 1px solid var(--ledger-border);
+    border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 28px;
     padding: 40px;
     position: relative;
-    transition: all 0.4s var(--ease-smooth);
+    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), background 0.4s ease, border-color 0.4s ease, box-shadow 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    transform: translateY(0) translateZ(0); /* Hardware Acceleration */
+    will-change: transform;
+}
+
+/* --- 2. HERO OVERRIDES (Centered Typography Edition) --- */
+.hero {
+    min-height: 70vh !important;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.hero-grid {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+.hero-mission {
+    max-width: 900px !important;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.tagline {
+    font-size: clamp(3.5rem, 6vw, 5.5rem) !important;
+    letter-spacing: -0.03em;
+    margin-bottom: 32px !important;
+}
+
+.mission-metrics {
+    justify-content: center;
+    margin-top: 48px;
+    gap: 48px !important;
+}
+
+.hero-identity {
+    display: none !important;
+}
+
+/* Enhanced Kinetic Flow (2026 Premium Standard) */
+.kinetic-text {
+    opacity: 0;
+    transform: translateY(30px) translateZ(0);
+    animation: text-reveal 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    animation-delay: var(--delay, 0s);
+    will-change: transform, opacity;
+}
+
+@keyframes text-reveal {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .ledger-card.large {
@@ -132,7 +90,8 @@ main {
 .ledger-card:hover {
     border-color: rgba(59, 130, 246, 0.3);
     background: rgba(255, 255, 255, 0.04);
-    transform: translateY(-5px);
+    transform: translateY(-8px) translateZ(0);
+    box-shadow: 0 20px 40px -10px rgba(59, 130, 246, 0.15);
 }
 
 .card-header {
@@ -144,7 +103,7 @@ main {
 .c-tag {
     font-size: 0.65rem;
     font-weight: 800;
-    color: var(--ledger-accent);
+    color: var(--hero-accent);
     text-transform: uppercase;
     letter-spacing: 1px;
 }
@@ -152,11 +111,11 @@ main {
 .c-year {
     font-family: monospace;
     font-size: 0.75rem;
-    color: var(--color-text-faint);
+    color: rgba(255, 255, 255, 0.5);
 }
 
 .card-title {
-    font-family: var(--font-display);
+    font-family: 'Unbounded', sans-serif;
     font-size: 1.5rem;
     font-weight: 700;
     color: #fff;
@@ -170,7 +129,7 @@ main {
 .card-desc {
     font-size: 0.95rem;
     line-height: 1.6;
-    color: var(--color-text-muted);
+    color: rgba(255, 255, 255, 0.7);
     margin-bottom: 24px;
 }
 
@@ -184,7 +143,7 @@ main {
     gap: 8px;
 }
 
-/* --- ⛓️ CHRONO PATH --- */
+/* --- ⛓️ CHRONO PATH (Preserved) --- */
 .chrono-section {
     padding: 100px 0;
 }
@@ -195,7 +154,7 @@ main {
 }
 
 .path-title {
-    font-family: var(--font-display);
+    font-family: 'Unbounded', sans-serif;
     font-size: 2.2rem;
     font-weight: 800;
     color: #fff;
@@ -214,22 +173,25 @@ main {
     grid-template-columns: 160px 1fr;
     gap: 32px;
     padding: 32px;
-    background: var(--ledger-glass);
-    border: 1px solid var(--ledger-border);
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 20px;
-    transition: 0.4s;
+    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), background 0.4s ease, border-color 0.4s ease;
+    transform: translateY(0) translateZ(0);
+    will-change: transform;
 }
 
 .path-item:hover {
-    background: rgba(255, 255, 255, 0.03);
-    border-color: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.04);
+    border-color: rgba(255, 255, 255, 0.15);
+    transform: translateY(-4px) translateZ(0);
 }
 
 .p-meta {
-    font-family: var(--font-display);
+    font-family: 'Unbounded', sans-serif;
     font-size: 0.85rem;
     font-weight: 700;
-    color: var(--ledger-accent);
+    color: var(--hero-accent);
 }
 
 .p-content h4 {
@@ -241,59 +203,18 @@ main {
 
 .p-content p {
     font-size: 0.95rem;
-    color: var(--color-text-muted);
+    color: rgba(255, 255, 255, 0.7);
 }
 
-/* --- 🎥 VISUAL SHOWCASE (Replacement) --- */
-.visual-impact-section {
-    padding: 40px 0 100px;
-}
-
-/* Reduced padding */
-.impact-video-frame {
-    position: relative;
-    width: 100%;
-    max-width: 600px;
-    /* Further reduced from 720px for a more focused feel */
-    aspect-ratio: 16 / 7.5;
-    /* Cinematic wide ratio to crop top/bottom bars */
-    margin: 0 auto;
-    border-radius: 20px;
-    /* Slightly tighter radius for smaller size */
-    overflow: hidden;
-    background: #000;
-    box-shadow: 0 40px 80px -20px rgba(0, 0, 0, 0.8);
-    border: 1px solid var(--ledger-border);
-}
-
-.impact-video-core {
-    width: 100%;
-    height: 100%;
-    /* Fill the frame */
-    display: block;
-    object-fit: cover;
-    /* This is the key: it zooms slightly to hide bars */
-    mix-blend-mode: screen;
-}
-
-.video-overlay-glow {
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(circle at center, transparent 50%, rgba(0, 0, 0, 0.4) 100%);
-    pointer-events: none;
-}
-
-.grid-cta-wrapper {
-    display: flex;
-    justify-content: center;
-    margin-top: 60px;
+/* --- 🎥 VISUAL SHOWCASE (Preserved) --- */
+.video-section {
+    padding-bottom: 80px;
 }
 
 .strategic-intervention-btn {
     position: relative;
     padding: 22px 56px;
     background: rgba(255, 255, 255, 0.02);
-    /* Ghostly transparent */
     backdrop-filter: blur(15px);
     -webkit-backdrop-filter: blur(15px);
     border: 1px solid rgba(255, 255, 255, 0.08);
@@ -301,59 +222,26 @@ main {
     text-decoration: none;
     color: #fff;
     font-weight: 800;
-    font-family: var(--font-display);
+    font-family: 'Unbounded', sans-serif;
     font-size: 0.8rem;
-    /* Slightly smaller for elegance */
     letter-spacing: 4px;
-    /* Extreme spacing for premium feel */
     text-transform: uppercase;
     transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
     display: inline-flex;
     align-items: center;
     justify-content: center;
     overflow: hidden;
-    box-shadow:
-        0 20px 40px -10px rgba(0, 0, 0, 0.5),
-        inset 0 1px 1px rgba(255, 255, 255, 0.05);
-}
-
-/* Light Sweep Shine Effect */
-.strategic-intervention-btn::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg,
-            transparent,
-            rgba(59, 130, 246, 0.15),
-            transparent);
-    transition: none;
+    box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.05);
 }
 
 .strategic-intervention-btn:hover {
     background: rgba(59, 130, 246, 0.05);
     border-color: rgba(59, 130, 246, 0.4);
-    box-shadow:
-        0 30px 60px -12px rgba(59, 130, 246, 0.2),
-        0 0 20px rgba(59, 130, 246, 0.1),
-        inset 0 1px 1px rgba(255, 255, 255, 0.1);
+    box-shadow: 0 30px 60px -12px rgba(59, 130, 246, 0.2), 0 0 20px rgba(59, 130, 246, 0.1), inset 0 1px 1px rgba(255, 255, 255, 0.1);
     transform: translateY(-4px) scale(1.02);
 }
 
-.strategic-intervention-btn:hover::before {
-    left: 100%;
-    transition: 0.8s var(--ease-smooth);
-}
-
-.strategic-intervention-btn .btn-text {
-    position: relative;
-    z-index: 2;
-    text-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
-}
-
-/* Responsive Footer */
+/* Responsive Footer Helpers */
 @media (max-width: 1024px) {
     .ledger-grid {
         grid-template-columns: 1fr;
@@ -368,9 +256,5 @@ main {
     .path-item {
         grid-template-columns: 1fr;
         gap: 12px;
-    }
-
-    .achievements-hero-2026 {
-        padding-top: 140px;
     }
 }

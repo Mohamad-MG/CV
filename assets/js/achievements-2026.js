@@ -1,111 +1,55 @@
 /**
- * ULTRA 2026 - ARCHIVE SYSTEM CORE v3.0
+ * ULTRA 2026 - ARCHIVE SYSTEM CORE v3.2
  * Pure Kinetic Motion & Scroll Intelligence.
+ * NOW OPTIMIZED FOR 60FPS & GPU LAYERING.
  */
 
 class AchievementsEngine {
     constructor() {
-        this.initKineticText();
         this.initScrollReveal();
         this.initMetricCounters();
         this.initMouseInteractions();
         this.initVideo();
     }
 
-    // --- 1. KINETIC TYPOGRAPHY ---
-    initKineticText() {
-        const elements = document.querySelectorAll('.kinetic-text');
-        elements.forEach(el => {
-            const text = el.innerText.trim();
-            el.innerHTML = '';
-            el.style.opacity = '1';
-            el.style.visibility = 'visible';
-
-            text.split(/\s+/).forEach((word, wordIdx) => {
-                const wordSpan = document.createElement('span');
-                wordSpan.className = 'word';
-                word.split('').forEach((char, charIdx) => {
-                    const charSpan = document.createElement('span');
-                    charSpan.className = 'char';
-                    charSpan.innerText = char;
-                    charSpan.style.transitionDelay = `${(wordIdx * 0.08) + (charIdx * 0.02)}s`;
-                    wordSpan.appendChild(charSpan);
-                });
-                el.appendChild(wordSpan);
-                el.appendChild(document.createTextNode(' '));
-            });
-        });
-    }
-
-    // --- 2. SCROLL REVEAL ---
+    // --- 1. SCROLL REVEAL (Standardized Intersection Observer) ---
     initScrollReveal() {
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     entry.target.classList.add('visible');
+                    // Stop observing once revealed for performance
+                    observer.unobserve(entry.target);
                 }
             });
-        }, { threshold: 0.15 });
+        }, { threshold: 0.15, rootMargin: "0px 0px -50px 0px" });
 
-        document.querySelectorAll('.reveal, .ledger-card, .path-item').forEach(el => observer.observe(el));
+        document.querySelectorAll('.reveal, .reveal-stagger, .ledger-card, .path-item').forEach(el => observer.observe(el));
     }
 
-    // --- 5. VIDEO PLAYER (Ported from Home) ---
-    initVideo() {
-        const video = document.getElementById('showreelVideo');
-        if (!video) return;
-
-        // Force Autoplay for everyone
-        video.autoplay = true;
-        video.setAttribute('autoplay', '');
-        video.preload = 'auto';
-        video.muted = true; // Required for auto
-        video.loop = true;
-        video.playsInline = true;
-
-        // Attempt play immediately
-        const playPromise = video.play();
-        if (playPromise !== undefined) {
-            playPromise.catch(error => {
-                console.log("Auto-play prevented (user did not interact yet):", error);
-            });
-        }
-
-        const videoContainer = video.closest('.ipad-mockup');
-        const togglePlayback = () => {
-            if (video.paused) video.play();
-            else video.pause();
-        };
-
-        if (videoContainer) {
-            videoContainer.addEventListener('click', togglePlayback);
-        } else {
-            video.addEventListener('click', togglePlayback);
-        }
-    }
-
-    // --- 3. METRIC COUNTERS ---
+    // --- 2. METRIC COUNTERS (Data-Attribute Driven) ---
     initMetricCounters() {
         const animateValue = (el, start, end, duration) => {
             let startTimestamp = null;
+            const suffix = el.dataset.suffix || '';
+            const prefix = el.dataset.prefix || '';
+
             const step = (timestamp) => {
                 if (!startTimestamp) startTimestamp = timestamp;
                 const progress = Math.min((timestamp - startTimestamp) / duration, 1);
-                const value = Math.floor(progress * (end - start) + start);
 
-                // Add formatting based on context
-                if (el.innerText.includes('$')) {
-                    el.innerHTML = `$${value}M`;
-                } else if (el.innerText.includes('%')) {
-                    el.innerHTML = `${value}%`;
-                } else if (el.innerText.includes('Y')) {
-                    el.innerHTML = `${value}Y+`;
-                } else {
-                    el.innerHTML = value;
-                }
+                // Ease Out Expo: 1 - pow(2, -10 * x)
+                const ease = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
+
+                const value = Math.floor(ease * (end - start) + start);
+
+                el.textContent = `${prefix}${value}${suffix}`;
 
                 if (progress < 1) {
                     window.requestAnimationFrame(step);
+                } else {
+                    // Final ensure matches exact target
+                    el.textContent = `${prefix}${end}${suffix}`;
                 }
             };
             window.requestAnimationFrame(step);
@@ -115,58 +59,98 @@ class AchievementsEngine {
             entries.forEach(entry => {
                 if (entry.isIntersecting && !entry.target.dataset.animated) {
                     const target = entry.target;
-                    const endVal = parseInt(target.innerText.replace(/[^0-9]/g, ''));
-                    animateValue(target, 0, endVal, 2000);
-                    target.dataset.animated = "true";
+                    const endVal = parseInt(target.dataset.target || 0);
+                    if (endVal > 0) {
+                        animateValue(target, 0, endVal, 2000);
+                        target.dataset.animated = "true";
+                    }
+
+                    // Trigger graph bars if sibling exists
+                    const card = target.closest('.metric-card');
+                    if (card) {
+                        card.querySelectorAll('.graph-bar').forEach((bar, idx) => {
+                            setTimeout(() => bar.classList.add('animate'), idx * 100);
+                        });
+                    }
                 }
             });
-        }, { threshold: 1 });
+        }, { threshold: 0.5 });
 
-        document.querySelectorAll('.h-val').forEach(el => obs.observe(el));
+        document.querySelectorAll('.metric-val, .h-val').forEach(el => obs.observe(el));
     }
 
-    // --- 4. MOUSE MICRO-INTERACTIONS (No 3D) ---
+    // --- 3. MOUSE MICRO-INTERACTIONS (Throttled & CSS Vars) ---
     initMouseInteractions() {
+        const cards = document.querySelectorAll('.metric-card');
+        const heroStage = document.querySelector('.achievements-hero-2026');
+
+        if (!heroStage && cards.length === 0) return;
+
+        let mouseX = 0;
+        let mouseY = 0;
+        let isTicking = false;
+
         window.addEventListener('mousemove', (e) => {
-            const { clientX, clientY } = e;
+            mouseX = e.clientX;
+            mouseY = e.clientY;
 
-            // Subtle glow movement for cards
-            document.querySelectorAll('.ledger-card').forEach(card => {
-                const rect = card.getBoundingClientRect();
-                const x = clientX - rect.left;
-                const y = clientY - rect.top;
-                card.style.setProperty('--mouse-x', `${x}px`);
-                card.style.setProperty('--mouse-y', `${y}px`);
-
-                // Update reflection/glow
-                const glow = card.querySelector('.card-glow');
-                if (glow) {
-                    glow.style.transform = `translate(${(clientX - window.innerWidth / 2) * 0.02}px, ${(clientY - window.innerHeight / 2) * 0.02}px)`;
-                }
-            });
+            if (!isTicking) {
+                window.requestAnimationFrame(() => {
+                    this.updateTilt(mouseX, mouseY, cards);
+                    isTicking = false;
+                });
+                isTicking = true;
+            }
         });
+    }
 
-        // --- GRID MAP INTERACTION ---
-        const nodes = document.querySelectorAll('.grid-node');
-        const hudMarket = document.getElementById('hudMarket');
+    updateTilt(x, y, cards) {
+        // Global Hero Parallax (Subtle)
+        const centerX = window.innerWidth / 2;
+        const centerY = window.innerHeight / 2;
 
-        nodes.forEach(node => {
-            node.addEventListener('mouseenter', () => {
-                // Reset active class
-                nodes.forEach(n => n.classList.remove('active'));
-                node.classList.add('active');
+        // Update Grid Parallax via CSS Var on Body or Root if needed, 
+        // For now, let's keep it scoped to cards for 'Premium Feel'
 
-                // Update HUD
-                const marketName = node.getAttribute('data-market');
-                if (hudMarket) {
-                    hudMarket.style.opacity = 0;
-                    setTimeout(() => {
-                        hudMarket.innerText = marketName;
-                        hudMarket.style.opacity = 1;
-                    }, 150);
-                }
-            });
+        cards.forEach(card => {
+            const rect = card.getBoundingClientRect();
+            const cardX = rect.left + rect.width / 2;
+            const cardY = rect.top + rect.height / 2;
+
+            // Mouse relative to card center
+            const deltaX = x - cardX;
+            const deltaY = y - cardY;
+
+            // Normalize (-1 to 1) roughly
+            const percentX = deltaX / (window.innerWidth / 2);
+            const percentY = deltaY / (window.innerHeight / 2);
+
+            // Apply slight rotation via CSS transform (handled here or in CSS)
+            // Ideally we just pass the vars to CSS
+            card.style.transform = `perspective(1000px) rotateY(${percentX * 5}deg) rotateX(${-percentY * 5}deg) translateY(0)`;
         });
+    }
+
+    // --- 4. VIDEO PLAYER (Footer) ---
+    initVideo() {
+        const video = document.getElementById('showreelVideo');
+        if (!video) return;
+
+        // Force Autoplay Logic
+        video.autoplay = true;
+        video.setAttribute('autoplay', '');
+        video.preload = 'auto';
+        video.muted = true;
+        video.loop = true;
+        video.playsInline = true;
+
+        const playPromise = video.play();
+        if (playPromise !== undefined) {
+            playPromise.catch(() => {
+                // Autoplay blocked, wait for interaction
+                document.body.addEventListener('click', () => video.play(), { once: true });
+            });
+        }
     }
 }
 
