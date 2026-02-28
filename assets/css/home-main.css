@@ -905,9 +905,15 @@ h4 {
 
 .hero-grid {
   display: grid;
-  grid-template-columns: 1.2fr 0.8fr;
-  gap: clamp(60px, 10vw, 120px);
+  grid-template-columns: 1.15fr 0.85fr;
+  /* Re-balanced to give card enough space and not overflow */
+  gap: clamp(30px, 4vw, 60px);
+  /* Reduced gap to prevent horizontal overflow */
   align-items: center;
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  /* Ensure it does not exceed parent */
 }
 
 @media (max-width: 1024px) {
@@ -936,8 +942,8 @@ h4 {
   }
 
   .tagline {
-    font-size: clamp(1.6rem, 8vw, 2.6rem) !important;
-    line-height: 1.25 !important;
+    font-size: clamp(2rem, 6.5vw, 3.2rem) !important;
+    line-height: 1.15 !important;
   }
 
   .tagline-line {
@@ -986,9 +992,13 @@ h4 {
   }
 
   .mission-metrics {
-    display: grid;
-    grid-template-columns: 1fr;
-    margin-bottom: 16px;
+    display: flex;
+    flex-wrap: wrap;
+    /* Allow wrapping on small screens, better than forced grid */
+    gap: 16px;
+    margin-bottom: 24px;
+    /* More space before the card */
+    padding: 16px;
   }
 
   .m-val {
@@ -1019,8 +1029,9 @@ h4 {
     white-space: normal !important;
     width: 100% !important;
     max-width: 100% !important;
-    font-size: 1.8rem !important;
+    font-size: clamp(1.8rem, 8vw, 2.4rem) !important;
     display: block !important;
+    letter-spacing: -0.02em !important;
   }
 
   .section-header {
@@ -1041,6 +1052,8 @@ h4 {
   background: radial-gradient(circle at top left, rgba(255, 255, 255, 0.02), transparent);
   backdrop-filter: blur(2px);
   -webkit-backdrop-filter: blur(2px);
+  content-visibility: auto;
+  /* Creative Opportunity 4: Strict render optimization */
 }
 
 @media (max-width: 640px) {
@@ -1098,22 +1111,27 @@ h4 {
   box-shadow: 0 0 10px #4ade80;
 }
 
-/* Global Tagline Base (Desktop First) */
+/* Global Tagline Base (Desktop First) - Creative Opportunity 2: Fluid Sync Typography */
 .tagline {
   font-family: var(--font-display);
-  font-size: clamp(2.2rem, 5vw, 4.5rem);
-  line-height: 1.1;
-  letter-spacing: -0.035em;
+  font-size: clamp(2.4rem, 4.2vw, 4rem);
+  /* Slightly reduced maximum width to prevent overflow */
+  line-height: 1.05;
+  /* Tighter leading for display text */
+  letter-spacing: -0.03em;
   font-weight: 800;
+  /* Dropped to 800 to help fit inside the container */
   color: #fff;
-  margin-bottom: 24px;
+  margin-bottom: 32px;
   text-transform: uppercase;
+  max-width: 100%;
+  /* Safety to contain it within the grid cell */
+  white-space: normal;
+  /* Safety against explicit unwrapped text */
 }
 
 @media (max-width: 768px) {
   .tagline {
-    font-size: clamp(1.8rem, 8vw, 2.6rem) !important;
-    line-height: 1.25 !important;
     white-space: normal !important;
     width: 100% !important;
   }
@@ -1253,14 +1271,10 @@ h4 {
 
 
 .m-val {
-
-  font-size: 1.4rem;
-  /* Reduced from 1.6rem */
-
+  font-size: 1.3rem;
+  /* Reduced from 1.4rem to prevent wrapping on some 13" laptops */
   font-weight: 700;
-
   color: #fff;
-
   font-family: var(--font-display);
   line-height: 1;
 }
@@ -1324,23 +1338,53 @@ h4 {
 
 .identity-card {
   width: 100%;
-  max-width: 300px;
-  /* Reduced from 320px */
+  max-width: 320px;
+  /* Restored to 320px for better avatar proportion */
   height: auto;
   background: var(--glass-bg);
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
   border: 1px solid var(--glass-border);
   box-shadow: var(--glass-shadow);
-  border-radius: 24px;
-  padding: 16px;
-  /* Reduced from 24px 20px */
+  border-radius: 28px;
+  /* Slightly rounder 2026 aesthetic */
+  padding: 24px;
+  /* Restored padding */
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  /* Reduced from 16px */
+  gap: 16px;
+  /* Restored gap */
   position: relative;
+
+  /* Creative Opportunity 1: Magnetic Hover Prep */
+  transform-style: preserve-3d;
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.6s ease;
+  will-change: transform;
 }
+
+/* Creative Opportunity 3: Iridescent Edge Lighting */
+.identity-card::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, transparent 40%, transparent 60%, rgba(59, 130, 246, 0.3) 100%);
+  z-index: -1;
+  opacity: 0.5;
+  transition: opacity 0.4s ease;
+}
+
+@media (hover: hover) and (min-width: 1025px) {
+  .identity-card:hover {
+    transform: translateY(-8px) rotateX(2deg) rotateY(-4deg) scale(1.02);
+    box-shadow: 0 40px 80px -20px rgba(0, 0, 0, 0.8), 0 0 40px rgba(59, 130, 246, 0.15);
+  }
+
+  .identity-card:hover::before {
+    opacity: 1;
+  }
+}
+
 
 /* Header: Clean Logo Container */
 .id-header {
