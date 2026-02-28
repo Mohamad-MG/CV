@@ -57,8 +57,11 @@
     width: 600px;
     height: 600px;
     border-radius: 50%;
-    mix-blend-mode: screen;
+    /* Mobile Perf: Removed mix-blend-mode: screen for massive GPU savings */
     animation: meshMove 20s infinite alternate;
+    transform: translateZ(0);
+    /* Hardware accelerate */
+    will-change: transform;
 }
 
 .blob-1 {
@@ -111,9 +114,11 @@
 .hero-noise-overlay {
     position: absolute;
     inset: 0;
+    /* Static base64 noise is okay, but drop opacity to blend without screen */
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
     background-size: 200px;
-    opacity: 0.5;
+    opacity: 0.3;
+    pointer-events: none;
 }
 
 /* Content sits above background */
@@ -1049,10 +1054,24 @@
         grid-template-columns: repeat(2, 1fr);
     }
 
-    /* Hero compact */
+    /* Hero compact && Fast */
     .portfolio-hero-2026 {
-        padding: clamp(100px, 12vh, 140px) 0 50px;
-        min-height: 50vh;
+        padding: clamp(80px, 10vh, 100px) 0 30px;
+        min-height: 35vh;
+        /* Reduced to avoid broken whitespace */
+    }
+
+    /* Kill the heavy blur node on mobile */
+    .hero-mesh-container {
+        filter: none;
+        opacity: 0.3;
+    }
+
+    .mesh-blob {
+        animation: none;
+        /* Kill CPU loop */
+        filter: blur(40px);
+        /* Lighter blur applied to individual blobs instead of wrapper */
     }
 
     .kinetic-heading {
