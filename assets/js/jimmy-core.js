@@ -1,5 +1,5 @@
 /**
- * 🚀 CAPTAIN JIMMY: CORE PRODUCT ENGINE (v4.7.5)
+ * 🚀 CAPTAIN JIMMY: CORE PRODUCT ENGINE (v4.8.0)
  * Architecture: Event-Driven State Machine (2026 Edition)
  * UX: Focus Trap, Immersive, Draggable Flexibility, Instant Feedback
  */
@@ -36,7 +36,8 @@ const J_CORE = {
         maxHistory: 20,
         maxDomRows: 80,
         timeout: 12000,
-        version: '4.7.5'
+        maxInputChars: 900,
+        version: '4.8.0'
     },
     links: {
         whatsapp: 'https://wa.me/201555141282',
@@ -62,6 +63,7 @@ class JimmyEngine {
         this.viewportRaf = 0;
         this.focusTimer = 0;
         this.syncViewportBound = null;
+        this.touchGesture = { startX: 0, startY: 0, deltaX: 0, deltaY: 0 };
 
         this.ctx = {
             isOpen: false,
@@ -70,6 +72,7 @@ class JimmyEngine {
             thread: [],
             meta: {},
             lang: this.resolveInitialLang(),
+            mobileSheetMode: this.resolveInitialSheetMode(),
             drag: { isDragging: false, startX: 0, startY: 0, currentX: 0, currentY: 0 }
         };
 
@@ -99,6 +102,17 @@ class JimmyEngine {
         return 'ar';
     }
 
+    resolveInitialSheetMode() {
+        if (!this.isMobileLite) return 'full';
+        try {
+            const persisted = localStorage.getItem('jimmy_sheet_mode');
+            if (persisted === 'compact' || persisted === 'full') return persisted;
+        } catch {
+            // noop
+        }
+        return 'full';
+    }
+
     detectInputLang(text, fallback = 'ar') {
         const value = String(text || '');
         const ar = (value.match(/[\u0600-\u06FF]/g) || []).length;
@@ -122,6 +136,8 @@ class JimmyEngine {
         }
         if (this.dom.chips) this.dom.chips.dir = next === 'ar' ? 'rtl' : 'ltr';
         if (this.dom.actions) this.dom.actions.dir = next === 'ar' ? 'rtl' : 'ltr';
+        this.updateComposerCounter();
+        this.syncComposerState();
     }
 
     init() {
@@ -129,7 +145,11 @@ class JimmyEngine {
         this.cacheDOM();
         this.applyLangUI(this.ctx.lang);
         this.applyPerformanceProfile();
+        this.hydrateDraft({ onlyIfEmpty: true });
+        this.syncComposerState();
+        this.updateComposerCounter();
         this.bindInteractions();
+        this.setMobileSheetMode(this.ctx.mobileSheetMode, false);
         this.setupMobileViewportSync();
     }
 
@@ -153,6 +173,7 @@ class JimmyEngine {
                 <div id="j-backdrop" class="j-console-backdrop"></div>
                 <div id="j-console" class="j-console" role="dialog" aria-modal="true" aria-hidden="true">
                     <div class="j-header" id="j-header">
+                        <div class="j-mobile-grip" aria-hidden="true"><span></span></div>
                         <div class="j-identity">
                             <div class="j-avatar-sm">${avatarMedia}</div>
                             <div class="j-hud-data">
@@ -174,11 +195,12 @@ class JimmyEngine {
                     <div class="j-footer">
                         <div id="j-actions-badges" class="j-actions-rail"></div>
                         <div class="j-input-scaffold">
-                            <textarea id="j-input" class="j-textarea" rows="1" placeholder="${t.placeholder}"></textarea>
+                            <textarea id="j-input" class="j-textarea" rows="1" maxlength="${J_CORE.config.maxInputChars}" enterkeyhint="send" placeholder="${t.placeholder}" autocapitalize="sentences" autocomplete="off" autocorrect="on" spellcheck="false"></textarea>
                             <button id="j-send" class="j-send-btn" aria-label="Send">
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h14"/><path d="M12 7l6 5-6 5"/></svg>
                             </button>
                         </div>
+                        <div id="j-counter" class="j-input-counter" aria-live="polite"></div>
                         <div id="j-chips" class="j-chips-rail"></div>
                     </div>
                 </div>
@@ -205,7 +227,8 @@ class JimmyEngine {
             title: get('j-title'),
             actions: get('j-actions-badges'),
             chips: get('j-chips'),
-            ping: get('j-ping')
+            ping: get('j-ping'),
+            counter: get('j-counter')
         };
     }
 
@@ -219,20 +242,34 @@ class JimmyEngine {
         this.dom.backdrop.onclick = toggle;
 
         this.dom.input.addEventListener('input', (e) => {
-            const val = e.target.value;
+            let val = e.target.value;
+            if (val.length > J_CORE.config.maxInputChars) {
+                val = val.slice(0, J_CORE.config.maxInputChars);
+                e.target.value = val;
+            }
             e.target.style.height = 'auto';
             e.target.style.height = Math.min(e.target.scrollHeight, 120) + 'px';
             const isArabic = /[\u0600-\u06FF]/.test(val);
             e.target.dir = isArabic ? 'rtl' : 'ltr';
             e.target.classList.toggle('is-rtl', isArabic);
             e.target.classList.toggle('is-ltr', !isArabic);
+            this.saveDraft(val);
+            this.updateComposerCounter();
+            this.syncComposerState();
         });
 
         this.dom.input.addEventListener('keydown', (e) => {
             if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); this.handleSend(); }
         });
-        this.dom.input.addEventListener('focus', () => this.scheduleViewportSync(true), { passive: true });
-        this.dom.input.addEventListener('blur', () => this.scheduleViewportSync(true), { passive: true });
+        this.dom.input.addEventListener('focus', () => {
+            this.dom.root.classList.add('is-input-focused');
+            this.scheduleViewportSync(true);
+        }, { passive: true });
+        this.dom.input.addEventListener('blur', () => {
+            this.dom.root.classList.remove('is-input-focused');
+            this.scheduleViewportSync(true);
+            this.saveDraft(this.dom.input.value);
+        }, { passive: true });
 
         this.dom.send.onclick = () => this.handleSend();
 
@@ -247,18 +284,145 @@ class JimmyEngine {
             }
         }
 
-        let touchStart = 0;
-        this.dom.header.addEventListener('touchstart', e => touchStart = e.touches[0].clientY, { passive: true });
-        this.dom.header.addEventListener('touchmove', e => {
-            if (e.touches[0].clientY - touchStart > 100) this.setOpen(false);
-        }, { passive: true });
+        if (this.isMobileLite) {
+            this.dom.header.addEventListener('touchstart', (e) => {
+                const t = e.touches[0];
+                this.touchGesture.startY = t.clientY;
+                this.touchGesture.startX = t.clientX;
+                this.touchGesture.deltaY = 0;
+                this.touchGesture.deltaX = 0;
+            }, { passive: true });
+
+            this.dom.header.addEventListener('touchmove', (e) => {
+                const t = e.touches[0];
+                this.touchGesture.deltaY = t.clientY - this.touchGesture.startY;
+                this.touchGesture.deltaX = t.clientX - this.touchGesture.startX;
+            }, { passive: true });
+
+            this.dom.header.addEventListener('touchend', () => this.handleMobileHeaderGesture(), { passive: true });
+        }
 
         setInterval(() => {
-            if (this.ctx.isOpen) {
+            if (this.ctx.isOpen && !(this.isMobileLite && this.dom.root.classList.contains('is-keyboard-open'))) {
                 const ms = Math.floor(Math.random() * 30) + 10;
                 if (this.dom.ping) this.dom.ping.textContent = `PING: ${ms}ms`;
             }
         }, 4000);
+    }
+
+    buzz(pattern = 8) {
+        try {
+            if (!this.isMobileLite) return;
+            if (typeof navigator.vibrate === 'function') navigator.vibrate(pattern);
+        } catch {
+            // noop
+        }
+    }
+
+    draftKey(lang = this.ctx.lang) {
+        const safeLang = lang === 'en' ? 'en' : 'ar';
+        return `jimmy_draft:${window.location.pathname}:${safeLang}`;
+    }
+
+    saveDraft(value) {
+        const text = String(value || '');
+        try {
+            if (!text.trim()) {
+                localStorage.removeItem(this.draftKey());
+                return;
+            }
+            localStorage.setItem(this.draftKey(), text.slice(0, J_CORE.config.maxInputChars));
+        } catch {
+            // noop
+        }
+    }
+
+    clearDraft() {
+        try {
+            localStorage.removeItem(this.draftKey());
+        } catch {
+            // noop
+        }
+    }
+
+    hydrateDraft({ onlyIfEmpty = false } = {}) {
+        if (!this.dom.input) return;
+        if (onlyIfEmpty && this.dom.input.value.trim()) return;
+
+        let draft = '';
+        try {
+            draft = localStorage.getItem(this.draftKey()) || '';
+        } catch {
+            // noop
+        }
+
+        const value = draft.slice(0, J_CORE.config.maxInputChars);
+        this.dom.input.value = value;
+        this.dom.input.style.height = 'auto';
+        this.dom.input.style.height = Math.min(this.dom.input.scrollHeight, 120) + 'px';
+        const isArabic = /[\u0600-\u06FF]/.test(value);
+        this.dom.input.dir = isArabic ? 'rtl' : 'ltr';
+        this.dom.input.classList.toggle('is-rtl', isArabic);
+        this.dom.input.classList.toggle('is-ltr', !isArabic);
+        this.updateComposerCounter();
+        this.syncComposerState();
+    }
+
+    updateComposerCounter() {
+        if (!this.dom.counter || !this.dom.input) return;
+        const len = this.dom.input.value.length;
+        const max = J_CORE.config.maxInputChars;
+        this.dom.counter.textContent = `${len}/${max}`;
+        this.dom.counter.classList.toggle('is-visible', len > Math.floor(max * 0.55));
+        this.dom.counter.classList.toggle('is-warn', len > Math.floor(max * 0.85));
+    }
+
+    syncComposerState() {
+        if (!this.dom.send || !this.dom.input || !this.dom.root) return;
+        const hasValue = this.dom.input.value.trim().length > 0;
+        const canSend = hasValue && !this.ctx.isThinking;
+        this.dom.send.disabled = !canSend;
+        this.dom.send.setAttribute('aria-disabled', canSend ? 'false' : 'true');
+        this.dom.send.classList.toggle('is-ready', canSend);
+        this.dom.root.classList.toggle('is-composer-ready', canSend);
+    }
+
+    setMobileSheetMode(mode, persist = true) {
+        if (!this.isMobileLite || !this.dom.root) return;
+        const next = mode === 'compact' ? 'compact' : 'full';
+        const prev = this.ctx.mobileSheetMode;
+        this.ctx.mobileSheetMode = next;
+        this.dom.root.classList.toggle('is-mobile-sheet-full', next === 'full');
+        this.dom.root.classList.toggle('is-mobile-sheet-compact', next === 'compact');
+
+        if (persist) {
+            try {
+                localStorage.setItem('jimmy_sheet_mode', next);
+            } catch {
+                // noop
+            }
+        }
+
+        if (prev !== next) this.buzz(7);
+        this.scheduleViewportSync(true);
+    }
+
+    handleMobileHeaderGesture() {
+        if (!this.isMobileLite || !this.ctx.isOpen) return;
+        const { deltaX, deltaY } = this.touchGesture;
+        if (Math.abs(deltaY) < 56) return;
+        if (Math.abs(deltaX) > Math.abs(deltaY)) return;
+
+        if (deltaY < 0) {
+            this.setMobileSheetMode('full');
+            return;
+        }
+
+        if (this.ctx.mobileSheetMode === 'full') {
+            this.setMobileSheetMode('compact');
+        } else {
+            this.setOpen(false);
+        }
     }
 
     setupMobileViewportSync() {
@@ -308,6 +472,10 @@ class JimmyEngine {
         this.dom.root.style.setProperty('--j-mobile-vh', `${visibleHeight}px`);
         this.dom.root.style.setProperty('--j-vv-top', `${offsetTop}px`);
         this.dom.root.classList.toggle('is-keyboard-open', isKeyboardOpen);
+
+        if (isKeyboardOpen && this.ctx.mobileSheetMode === 'compact') {
+            this.setMobileSheetMode('full', false);
+        }
 
         const keepBottom = this.ctx.isOpen && document.activeElement === this.dom.input;
         if (keepBottom) this.scrollToBottom('auto');
@@ -379,6 +547,7 @@ class JimmyEngine {
         if (shouldOpen) {
             this.dom.root.classList.add('is-open');
             this.dom.launcher.classList.add('active');
+            this.setMobileSheetMode(this.ctx.mobileSheetMode, false);
             this.updatePosition();
             this.scheduleViewportSync(true);
             if (this.focusTimer) {
@@ -387,6 +556,7 @@ class JimmyEngine {
             }
             if (this.isMobileLite) {
                 this.focusTimer = window.setTimeout(() => {
+                    this.hydrateDraft({ onlyIfEmpty: true });
                     this.dom.input.focus();
                     this.scheduleViewportSync(true);
                     this.focusTimer = 0;
@@ -394,6 +564,9 @@ class JimmyEngine {
             } else {
                 requestAnimationFrame(() => this.dom.input.focus());
             }
+            this.buzz(8);
+            this.syncComposerState();
+            this.updateComposerCounter();
 
             if (this.ctx.messages.length === 0) {
                 this.renderChips(this.ctx.lang === 'ar' ? ['تحليل سريع', 'فكرة للنمو'] : ['Quick Audit', 'Growth Idea']);
@@ -411,10 +584,13 @@ class JimmyEngine {
             this.updatePosition();
             this.dom.root.classList.remove('is-open');
             this.dom.root.classList.remove('is-keyboard-open');
+            this.dom.root.classList.remove('is-input-focused');
             this.dom.launcher.classList.remove('active');
+            this.saveDraft(this.dom.input.value);
             this.dom.input.blur();
             this.dom.launcher.focus();
             this.scheduleViewportSync(true);
+            this.syncComposerState();
         }
     }
 
@@ -429,16 +605,20 @@ class JimmyEngine {
     }
 
     async handleSend(textOverride = null) {
-        const text = textOverride || this.dom.input.value.trim();
+        const text = (textOverride || this.dom.input.value).trim();
         if (!text || this.ctx.isThinking) return;
 
         this.applyLangUI(this.detectInputLang(text, this.ctx.lang));
 
         this.dom.input.value = '';
         this.dom.input.style.height = 'auto';
+        this.clearDraft();
+        this.updateComposerCounter();
+        this.syncComposerState();
         this.renderChips([]);
         this.renderActionBadges([]);
         this.addMessage('user', text);
+        this.buzz(10);
         this.setThinking(true);
 
         try {
@@ -553,6 +733,8 @@ class JimmyEngine {
             this.dom.stream.insertAdjacentHTML('beforeend', html);
             this.scrollToBottom('auto');
         }
+
+        this.syncComposerState();
     }
 
     trimStreamRows() {
@@ -620,10 +802,11 @@ class JimmyEngine {
     renderChips(chips) {
         this.dom.chips.innerHTML = '';
         if (!chips || !chips.length) return;
-        chips.forEach(txt => {
+        chips.forEach((txt, index) => {
             const btn = document.createElement('button');
-            btn.className = 'j-chip';
+            btn.className = 'j-chip is-enter';
             btn.textContent = txt;
+            btn.style.setProperty('--j-stagger', `${index * 45}ms`);
             btn.onclick = () => this.handleSend(txt);
             this.dom.chips.appendChild(btn);
         });
@@ -684,15 +867,16 @@ class JimmyEngine {
         this.dom.actions.innerHTML = '';
         if (!Array.isArray(badges) || !badges.length) return;
 
-        badges.slice(0, 3).forEach((badge) => {
+        badges.slice(0, 3).forEach((badge, index) => {
             const normalized = this.normalizeActionBadge(badge);
             if (!normalized) return;
 
             const a = document.createElement('a');
-            a.className = `j-action-badge is-${normalized.type}`;
+            a.className = `j-action-badge is-${normalized.type} is-enter`;
             a.href = normalized.url;
             a.target = normalized.url.startsWith('tel:') ? '_self' : '_blank';
             a.rel = normalized.url.startsWith('tel:') ? '' : 'noopener noreferrer';
+            a.style.setProperty('--j-stagger', `${index * 50}ms`);
             a.innerHTML = `<span class="j-action-icon">${this.getActionBadgeIcon(normalized.type)}</span><span>${normalized.label}</span>`;
             this.dom.actions.appendChild(a);
         });
