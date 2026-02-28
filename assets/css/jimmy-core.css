@@ -297,6 +297,16 @@
     image-rendering: -webkit-optimize-contrast;
     image-rendering: crisp-edges;
 }
+
+.j-msg-row.is-rtl .j-bubble {
+    direction: rtl;
+    text-align: right;
+}
+
+.j-msg-row.is-ltr .j-bubble {
+    direction: ltr;
+    text-align: left;
+}
 .j-msg-row.user .j-bubble {
     background: linear-gradient(135deg, rgba(56, 189, 248, 0.12), rgba(56, 189, 248, 0.05));
     border-color: rgba(56, 189, 248, 0.2);
@@ -453,6 +463,18 @@
     min-height: 44px;
     resize: none;
     outline: none;
+    direction: ltr;
+    text-align: left;
+}
+
+.j-textarea.is-rtl {
+    direction: rtl;
+    text-align: right;
+}
+
+.j-textarea.is-ltr {
+    direction: ltr;
+    text-align: left;
 }
 
 .j-send-btn {
@@ -474,6 +496,9 @@
     border-color: rgba(148, 163, 184, 0.5);
     color: #e2e8f0;
     box-shadow: none;
+}
+.j-send-btn svg {
+    display: block;
 }
 
 #jimmy-root.is-low-perf .j-console-backdrop {

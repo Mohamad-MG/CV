@@ -1,5 +1,5 @@
 /**
- * 🚀 CAPTAIN JIMMY: CORE PRODUCT ENGINE (v4.7.2)
+ * 🚀 CAPTAIN JIMMY: CORE PRODUCT ENGINE (v4.7.4)
  * Architecture: Event-Driven State Machine (2026 Edition)
  * UX: Focus Trap, Immersive, Draggable Flexibility, Instant Feedback
  */
@@ -36,7 +36,7 @@ const J_CORE = {
         maxHistory: 20,
         maxDomRows: 80,
         timeout: 12000,
-        version: '4.7.2'
+        version: '4.7.4'
     },
     links: {
         whatsapp: 'https://wa.me/201555141282',
@@ -110,12 +110,21 @@ class JimmyEngine {
         try { localStorage.setItem('jimmy_lang', next); } catch { /* noop */ }
         const t = J_CORE.i18n[next];
         if (this.dom.title) this.dom.title.textContent = t.status;
-        if (this.dom.input) this.dom.input.placeholder = t.placeholder;
+        if (this.dom.input) {
+            this.dom.input.placeholder = t.placeholder;
+            const isArabic = next === 'ar';
+            this.dom.input.dir = isArabic ? 'rtl' : 'ltr';
+            this.dom.input.classList.toggle('is-rtl', isArabic);
+            this.dom.input.classList.toggle('is-ltr', !isArabic);
+        }
+        if (this.dom.chips) this.dom.chips.dir = next === 'ar' ? 'rtl' : 'ltr';
+        if (this.dom.actions) this.dom.actions.dir = next === 'ar' ? 'rtl' : 'ltr';
     }
 
     init() {
         this.injectStructure();
         this.cacheDOM();
+        this.applyLangUI(this.ctx.lang);
         this.applyPerformanceProfile();
         this.bindInteractions();
     }
@@ -163,7 +172,7 @@ class JimmyEngine {
                         <div class="j-input-scaffold">
                             <textarea id="j-input" class="j-textarea" rows="1" placeholder="${t.placeholder}"></textarea>
                             <button id="j-send" class="j-send-btn" aria-label="Send">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg>
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h14"/><path d="M12 7l6 5-6 5"/></svg>
                             </button>
                         </div>
                         <div id="j-chips" class="j-chips-rail"></div>
@@ -212,6 +221,7 @@ class JimmyEngine {
             const isArabic = /[\u0600-\u06FF]/.test(val);
             e.target.dir = isArabic ? 'rtl' : 'ltr';
             e.target.classList.toggle('is-rtl', isArabic);
+            e.target.classList.toggle('is-ltr', !isArabic);
         });
 
         this.dom.input.addEventListener('keydown', (e) => {
@@ -479,11 +489,8 @@ class JimmyEngine {
     addMessage(role, text, isError = false) {
         const row = document.createElement('div');
         row.className = `j-msg-row ${role}`;
-
-        if (role === 'user') {
-            const isArabic = /[\u0600-\u06FF]/.test(text);
-            row.classList.add(isArabic ? 'is-rtl' : 'is-ltr');
-        }
+        const isArabic = /[\u0600-\u06FF]/.test(text);
+        row.classList.add(isArabic ? 'is-rtl' : 'is-ltr');
 
         const idRow = document.createElement('div');
         idRow.className = 'j-row-identity';
