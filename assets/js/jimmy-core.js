@@ -1,5 +1,5 @@
 /**
- * 🚀 CAPTAIN JIMMY: CORE PRODUCT ENGINE (v4.7.0)
+ * 🚀 CAPTAIN JIMMY: CORE PRODUCT ENGINE (v4.7.1)
  * Architecture: Event-Driven State Machine (2026 Edition)
  * UX: Focus Trap, Immersive, Draggable Flexibility, Instant Feedback
  */
@@ -34,8 +34,9 @@ const J_CORE = {
     },
     config: {
         maxHistory: 20,
+        maxDomRows: 80,
         timeout: 12000,
-        version: '4.7.0'
+        version: '4.7.1'
     },
     links: {
         whatsapp: 'https://wa.me/201555141282',
@@ -53,6 +54,11 @@ class JimmyEngine {
         this.isMobileLite =
             window.matchMedia('(max-width: 768px)').matches ||
             window.matchMedia('(pointer: coarse)').matches;
+        this.prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        this.isLowPerfDevice = this.detectLowPerfDevice();
+        this.enableParallax = !this.isMobileLite && !this.prefersReducedMotion && !this.isLowPerfDevice;
+        this.parallaxRaf = 0;
+        this.parallaxPoint = null;
 
         this.ctx = {
             isOpen: false,
@@ -66,9 +72,18 @@ class JimmyEngine {
 
         const isSubdir = window.location.pathname.includes('/portfolio/') || window.location.pathname.includes('/achievements/');
         this.assetPrefix = isSubdir ? '../assets/' : 'assets/';
+        this.chatRowBotIcon = `${this.assetPrefix}assistance-static.png`;
 
         this.dom = {};
         this.init();
+    }
+
+    detectLowPerfDevice() {
+        const cores = Number(navigator.hardwareConcurrency || 0);
+        const mem = Number(navigator.deviceMemory || 0);
+        if (cores && cores <= 4) return true;
+        if (mem && mem <= 4) return true;
+        return false;
     }
 
     resolveInitialLang() {
@@ -101,7 +116,15 @@ class JimmyEngine {
     init() {
         this.injectStructure();
         this.cacheDOM();
+        this.applyPerformanceProfile();
         this.bindInteractions();
+    }
+
+    applyPerformanceProfile() {
+        if (!this.dom.root) return;
+        if (this.prefersReducedMotion || this.isLowPerfDevice) {
+            this.dom.root.classList.add('is-low-perf');
+        }
     }
 
     injectStructure() {
@@ -203,7 +226,9 @@ class JimmyEngine {
 
         if (!this.isMobileLite) {
             this.initDraggable();
-            window.addEventListener('mousemove', (e) => this.handleParallax(e));
+            if (this.enableParallax) {
+                window.addEventListener('mousemove', (e) => this.scheduleParallax(e), { passive: true });
+            }
         }
 
         let touchStart = 0;
@@ -260,11 +285,21 @@ class JimmyEngine {
     }
 
     handleParallax(e) {
-        if (this.isMobileLite || !this.ctx.isOpen || this.ctx.drag.isDragging || window.innerWidth < 1000) return;
+        if (!this.enableParallax || !e || !this.ctx.isOpen || this.ctx.drag.isDragging || window.innerWidth < 1000) return;
         const x = (window.innerWidth / 2 - e.pageX) / 400;
         const y = (window.innerHeight / 2 - e.pageY) / 400;
         const d = this.ctx.drag;
         this.dom.console.style.transform = `translate(calc(-50% + ${d.currentX}px), calc(-50% + ${d.currentY}px)) rotateY(${x}deg) rotateX(${-y}deg)`;
+    }
+
+    scheduleParallax(e) {
+        if (!this.enableParallax || !this.ctx.isOpen || this.ctx.drag.isDragging || window.innerWidth < 1000) return;
+        this.parallaxPoint = { pageX: e.pageX, pageY: e.pageY };
+        if (this.parallaxRaf) return;
+        this.parallaxRaf = requestAnimationFrame(() => {
+            this.parallaxRaf = 0;
+            this.handleParallax(this.parallaxPoint);
+        });
     }
 
     setOpen(shouldOpen) {
@@ -287,6 +322,11 @@ class JimmyEngine {
                     : [{ type: 'cv', label: 'Download CV', url: J_CORE.links.cv }]);
             }
         } else {
+            if (this.parallaxRaf) {
+                cancelAnimationFrame(this.parallaxRaf);
+                this.parallaxRaf = 0;
+            }
+            this.updatePosition();
             this.dom.root.classList.remove('is-open');
             this.dom.launcher.classList.remove('active');
             this.dom.launcher.focus();
@@ -426,7 +466,16 @@ class JimmyEngine {
                 </div>
             `;
             this.dom.stream.insertAdjacentHTML('beforeend', html);
-            this.scrollToBottom();
+            this.scrollToBottom('auto');
+        }
+    }
+
+    trimStreamRows() {
+        const rows = this.dom.stream.querySelectorAll('.j-msg-row:not(.j-typing)');
+        const overflow = rows.length - J_CORE.config.maxDomRows;
+        if (overflow <= 0) return;
+        for (let i = 0; i < overflow; i += 1) {
+            rows[i].remove();
         }
     }
 
@@ -444,10 +493,8 @@ class JimmyEngine {
         const iconBox = document.createElement('div');
         iconBox.className = 'j-row-icon';
 
-        const jimmyIcon = `${this.assetPrefix}images/jimmy-icon-home.gif`;
-
         if (role === 'ai') {
-            iconBox.innerHTML = `<img src="${jimmyIcon}" alt="Captain Jimmy" style="width:100%; height:100%; object-fit:contain;">`;
+            iconBox.innerHTML = `<img src="${this.chatRowBotIcon}" alt="Assistant" style="width:100%; height:100%; object-fit:contain;">`;
             iconBox.classList.add('is-bot');
         } else {
             // Precise SVG match for usericon.svg
@@ -478,10 +525,14 @@ class JimmyEngine {
         this.dom.stream.appendChild(row);
 
         this.ctx.messages.push({ role, text });
+        if (this.ctx.messages.length > (J_CORE.config.maxDomRows * 2)) {
+            this.ctx.messages.shift();
+        }
         this.ctx.thread.push({ role, text });
         if (this.ctx.thread.length > J_CORE.config.maxHistory) this.ctx.thread.shift();
 
-        this.scrollToBottom();
+        this.trimStreamRows();
+        this.scrollToBottom('auto');
     }
 
     renderChips(chips) {
@@ -565,8 +616,8 @@ class JimmyEngine {
         });
     }
 
-    scrollToBottom() {
-        this.dom.stream.scrollTo({ top: this.dom.stream.scrollHeight, behavior: 'smooth' });
+    scrollToBottom(behavior = 'auto') {
+        this.dom.stream.scrollTo({ top: this.dom.stream.scrollHeight, behavior });
     }
 }
 

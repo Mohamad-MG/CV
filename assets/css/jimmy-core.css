@@ -45,6 +45,13 @@
     box-sizing: border-box;
 }
 
+@media (prefers-reduced-motion: reduce) {
+    #jimmy-root * {
+        animation: none !important;
+        transition: none !important;
+    }
+}
+
 /* --- 👁️ THE LAUNCHER ("THE SUMMONER") --- */
 .j-launcher {
     position: fixed;
@@ -125,6 +132,7 @@
     transition: transform 0.6s var(--j-ease-spring), opacity 0.4s ease, visibility 0.4s;
     pointer-events: none;
     will-change: transform, opacity;
+    contain: layout paint style;
 }
 
 #jimmy-root.is-open .j-console {
@@ -246,6 +254,8 @@
     overscroll-behavior: contain;
     scrollbar-width: thin;
     scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
+    content-visibility: auto;
+    contain: content;
 }
 
 .j-stream::-webkit-scrollbar { width: 4px; }
@@ -269,6 +279,7 @@
     background: rgba(255, 255, 255, 0.03);
     padding: 6px;
     color: var(--j-accent);
+    overflow: hidden;
 }
 
 .j-bubble {
@@ -282,6 +293,10 @@
 }
 
 .j-msg-row.ai .j-bubble { border-bottom-left-radius: 4px; }
+.j-msg-row.ai .j-row-icon img {
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+}
 .j-msg-row.user .j-bubble {
     background: linear-gradient(135deg, rgba(56, 189, 248, 0.12), rgba(56, 189, 248, 0.05));
     border-color: rgba(56, 189, 248, 0.2);
@@ -453,6 +468,29 @@
     transition: all 0.3s var(--j-ease-spring);
 }
 .j-send-btn:hover { transform: scale(1.1); box-shadow: 0 0 15px var(--j-accent); }
+
+#jimmy-root.is-low-perf .j-console-backdrop {
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+}
+
+#jimmy-root.is-low-perf .j-console {
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: 0 20px 40px -20px rgba(0, 0, 0, 0.85);
+}
+
+#jimmy-root.is-low-perf .j-launcher,
+#jimmy-root.is-low-perf .j-btn-icon,
+#jimmy-root.is-low-perf .j-send-btn,
+#jimmy-root.is-low-perf .j-chip,
+#jimmy-root.is-low-perf .j-action-badge {
+    transition: none;
+}
+
+#jimmy-root.is-low-perf .j-dot {
+    animation-duration: 2.2s;
+}
 
 /* --- 📱 MOBILE CONSOLE (UP TO 768px) --- */
 @media (max-width: 768px) {
