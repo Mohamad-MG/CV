@@ -1,5 +1,5 @@
 /**
- * 🚀 CAPTAIN JIMMY: CORE PRODUCT ENGINE (v4.7.4)
+ * 🚀 CAPTAIN JIMMY: CORE PRODUCT ENGINE (v4.7.5)
  * Architecture: Event-Driven State Machine (2026 Edition)
  * UX: Focus Trap, Immersive, Draggable Flexibility, Instant Feedback
  */
@@ -36,7 +36,7 @@ const J_CORE = {
         maxHistory: 20,
         maxDomRows: 80,
         timeout: 12000,
-        version: '4.7.4'
+        version: '4.7.5'
     },
     links: {
         whatsapp: 'https://wa.me/201555141282',
@@ -59,6 +59,9 @@ class JimmyEngine {
         this.enableParallax = !this.isMobileLite && !this.prefersReducedMotion && !this.isLowPerfDevice;
         this.parallaxRaf = 0;
         this.parallaxPoint = null;
+        this.viewportRaf = 0;
+        this.focusTimer = 0;
+        this.syncViewportBound = null;
 
         this.ctx = {
             isOpen: false,
@@ -127,6 +130,7 @@ class JimmyEngine {
         this.applyLangUI(this.ctx.lang);
         this.applyPerformanceProfile();
         this.bindInteractions();
+        this.setupMobileViewportSync();
     }
 
     applyPerformanceProfile() {
@@ -227,6 +231,8 @@ class JimmyEngine {
         this.dom.input.addEventListener('keydown', (e) => {
             if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); this.handleSend(); }
         });
+        this.dom.input.addEventListener('focus', () => this.scheduleViewportSync(true), { passive: true });
+        this.dom.input.addEventListener('blur', () => this.scheduleViewportSync(true), { passive: true });
 
         this.dom.send.onclick = () => this.handleSend();
 
@@ -253,6 +259,58 @@ class JimmyEngine {
                 if (this.dom.ping) this.dom.ping.textContent = `PING: ${ms}ms`;
             }
         }, 4000);
+    }
+
+    setupMobileViewportSync() {
+        if (!this.isMobileLite) return;
+        this.syncViewportBound = () => this.scheduleViewportSync();
+
+        window.addEventListener('resize', this.syncViewportBound, { passive: true });
+        window.addEventListener('orientationchange', this.syncViewportBound, { passive: true });
+
+        if (window.visualViewport) {
+            window.visualViewport.addEventListener('resize', this.syncViewportBound, { passive: true });
+            window.visualViewport.addEventListener('scroll', this.syncViewportBound, { passive: true });
+        }
+
+        this.scheduleViewportSync(true);
+    }
+
+    scheduleViewportSync(force = false) {
+        if (!this.isMobileLite) return;
+        if (force && this.viewportRaf) {
+            cancelAnimationFrame(this.viewportRaf);
+            this.viewportRaf = 0;
+        }
+        if (this.viewportRaf) return;
+
+        this.viewportRaf = requestAnimationFrame(() => {
+            this.viewportRaf = 0;
+            this.applyViewportMetrics();
+        });
+    }
+
+    applyViewportMetrics() {
+        if (!this.isMobileLite || !this.dom.root) return;
+
+        const vv = window.visualViewport;
+        const visibleHeight = Math.round(vv ? vv.height : window.innerHeight);
+        const offsetTop = Math.max(0, Math.round(vv ? vv.offsetTop : 0));
+        const layoutHeight = Math.max(
+            window.innerHeight || 0,
+            document.documentElement?.clientHeight || 0
+        );
+        const keyboardHeight = vv
+            ? Math.max(0, Math.round(layoutHeight - (vv.height + vv.offsetTop)))
+            : 0;
+        const isKeyboardOpen = keyboardHeight > 120;
+
+        this.dom.root.style.setProperty('--j-mobile-vh', `${visibleHeight}px`);
+        this.dom.root.style.setProperty('--j-vv-top', `${offsetTop}px`);
+        this.dom.root.classList.toggle('is-keyboard-open', isKeyboardOpen);
+
+        const keepBottom = this.ctx.isOpen && document.activeElement === this.dom.input;
+        if (keepBottom) this.scrollToBottom('auto');
     }
 
     initDraggable() {
@@ -322,21 +380,41 @@ class JimmyEngine {
             this.dom.root.classList.add('is-open');
             this.dom.launcher.classList.add('active');
             this.updatePosition();
-            requestAnimationFrame(() => this.dom.input.focus());
+            this.scheduleViewportSync(true);
+            if (this.focusTimer) {
+                clearTimeout(this.focusTimer);
+                this.focusTimer = 0;
+            }
+            if (this.isMobileLite) {
+                this.focusTimer = window.setTimeout(() => {
+                    this.dom.input.focus();
+                    this.scheduleViewportSync(true);
+                    this.focusTimer = 0;
+                }, 140);
+            } else {
+                requestAnimationFrame(() => this.dom.input.focus());
+            }
 
             if (this.ctx.messages.length === 0) {
                 this.renderChips(this.ctx.lang === 'ar' ? ['تحليل سريع', 'فكرة للنمو'] : ['Quick Audit', 'Growth Idea']);
                 this.renderActionBadges([]);
             }
         } else {
+            if (this.focusTimer) {
+                clearTimeout(this.focusTimer);
+                this.focusTimer = 0;
+            }
             if (this.parallaxRaf) {
                 cancelAnimationFrame(this.parallaxRaf);
                 this.parallaxRaf = 0;
             }
             this.updatePosition();
             this.dom.root.classList.remove('is-open');
+            this.dom.root.classList.remove('is-keyboard-open');
             this.dom.launcher.classList.remove('active');
+            this.dom.input.blur();
             this.dom.launcher.focus();
+            this.scheduleViewportSync(true);
         }
     }
 
