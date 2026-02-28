@@ -1,5 +1,5 @@
 /**
- * 🚀 CAPTAIN JIMMY: CORE PRODUCT ENGINE (v4.7.1)
+ * 🚀 CAPTAIN JIMMY: CORE PRODUCT ENGINE (v4.7.2)
  * Architecture: Event-Driven State Machine (2026 Edition)
  * UX: Focus Trap, Immersive, Draggable Flexibility, Instant Feedback
  */
@@ -36,7 +36,7 @@ const J_CORE = {
         maxHistory: 20,
         maxDomRows: 80,
         timeout: 12000,
-        version: '4.7.1'
+        version: '4.7.2'
     },
     links: {
         whatsapp: 'https://wa.me/201555141282',
@@ -160,13 +160,13 @@ class JimmyEngine {
                     <div id="j-stream" class="j-stream"></div>
                     <div class="j-footer">
                         <div id="j-actions-badges" class="j-actions-rail"></div>
-                        <div id="j-chips" class="j-chips-rail"></div>
                         <div class="j-input-scaffold">
                             <textarea id="j-input" class="j-textarea" rows="1" placeholder="${t.placeholder}"></textarea>
                             <button id="j-send" class="j-send-btn" aria-label="Send">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg>
                             </button>
                         </div>
+                        <div id="j-chips" class="j-chips-rail"></div>
                     </div>
                 </div>
                 <div id="j-launcher" class="j-launcher" role="button" tabindex="0" aria-label="Summon Jimmy" aria-controls="j-console" aria-expanded="false">
@@ -315,11 +315,8 @@ class JimmyEngine {
             requestAnimationFrame(() => this.dom.input.focus());
 
             if (this.ctx.messages.length === 0) {
-                this.addMessage('ai', this.ctx.lang === 'ar' ? 'يا أهلا بيك، أنا جيمي. قولي بس عايز توصّل لإيه وهنطلعه بشكل عملي.' : 'Hey, I am Jimmy. Tell me the goal and we will get there with a practical plan.');
-                this.renderChips(this.ctx.lang === 'ar' ? ['تحليل سريع', 'فكرة للنمو', 'تحميل CV'] : ['Quick Audit', 'Growth Idea', 'Download CV']);
-                this.renderActionBadges(this.ctx.lang === 'ar'
-                    ? [{ type: 'cv', label: 'تحميل CV', url: J_CORE.links.cv }]
-                    : [{ type: 'cv', label: 'Download CV', url: J_CORE.links.cv }]);
+                this.renderChips(this.ctx.lang === 'ar' ? ['تحليل سريع', 'فكرة للنمو'] : ['Quick Audit', 'Growth Idea']);
+                this.renderActionBadges([]);
             }
         } else {
             if (this.parallaxRaf) {

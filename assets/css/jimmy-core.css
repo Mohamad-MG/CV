@@ -400,7 +400,8 @@
 .j-chips-rail {
     display: flex;
     gap: 8px;
-    margin-bottom: 16px;
+    margin-top: 12px;
+    margin-bottom: 0;
     overflow-x: auto;
     padding-bottom: 4px;
     scrollbar-width: none;
@@ -410,24 +411,24 @@
 
 .j-chip {
     padding: 8px 16px;
-    font-size: 0.85rem;
-    color: rgba(255, 255, 255, 0.6);
-    background: rgba(255, 255, 255, 0.04);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    font-size: 0.82rem;
+    color: rgba(219, 234, 254, 0.78);
+    background: rgba(15, 23, 42, 0.55);
+    border: 1px solid rgba(148, 163, 184, 0.22);
     border-radius: 12px;
     cursor: pointer;
     white-space: nowrap;
     transition: all 0.3s var(--j-ease-fluid);
 }
 .j-chip:hover {
-    background: rgba(56, 189, 248, 0.1);
-    border-color: var(--j-accent);
+    background: rgba(30, 41, 59, 0.74);
+    border-color: rgba(148, 163, 184, 0.45);
     color: #fff;
 }
 
 .j-input-scaffold {
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(15, 23, 42, 0.45);
+    border: 1px solid rgba(148, 163, 184, 0.24);
     border-radius: 20px;
     padding: 6px 10px;
     display: flex;
@@ -436,9 +437,9 @@
 }
 
 .j-input-scaffold:focus-within {
-    border-color: rgba(56, 189, 248, 0.4);
-    background: rgba(255, 255, 255, 0.06);
-    box-shadow: 0 0 20px rgba(56, 189, 248, 0.1);
+    border-color: rgba(148, 163, 184, 0.38);
+    background: rgba(15, 23, 42, 0.65);
+    box-shadow: 0 0 0 2px rgba(148, 163, 184, 0.12);
 }
 
 .j-textarea {
@@ -455,19 +456,25 @@
 }
 
 .j-send-btn {
-    width: 40px;
-    height: 40px;
-    background: var(--j-accent);
-    color: #000;
-    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    background: rgba(15, 23, 42, 0.5);
+    color: #cbd5e1;
+    border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
-    border: none;
+    border: 1px solid rgba(148, 163, 184, 0.28);
     cursor: pointer;
-    transition: all 0.3s var(--j-ease-spring);
+    transition: background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease, transform 0.25s ease;
 }
-.j-send-btn:hover { transform: scale(1.1); box-shadow: 0 0 15px var(--j-accent); }
+.j-send-btn:hover {
+    transform: translateY(-1px);
+    background: rgba(30, 41, 59, 0.78);
+    border-color: rgba(148, 163, 184, 0.5);
+    color: #e2e8f0;
+    box-shadow: none;
+}
 
 #jimmy-root.is-low-perf .j-console-backdrop {
     backdrop-filter: blur(4px);
