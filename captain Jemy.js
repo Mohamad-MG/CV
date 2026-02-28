@@ -11,7 +11,7 @@
  */
 
 
-const WORKER_VERSION = "3.2.3";
+const WORKER_VERSION = "3.3.0";
 
 const ALLOWED_ORIGINS = [
   "https://mo-gamal.com",
@@ -83,7 +83,9 @@ const KB_STYLE = `هوية جيمي:
 - Advanced-only: ممنوع نصايح عامة أو كلام كورسات.
 - كل رد لازم يعمل واحد على الأقل: Insight قوي / تلخيص يختصر تفكير / سؤال تشخيص واحد / خيارات واضحة.
 - ممنوع الكلام عن: AI أو model أو prompt أو system.
-- التزم بلغة المستخدم ولهجته بدون خلط.`.trim();
+- لو المستخدم كتب عربي: رد بالمصري الطبيعي اللطيف فقط (ممنوع خليجي/فصحى ثقيلة).
+- لو المستخدم كتب إنجليزي: رد إنجليزي واضح ومباشر.
+- ممنوع كلمات غير مصرية زي: هلا، وش، أبغى، الحين، شلون.`.trim();
 
 // Charisma & Depth — يتحمّل في كل الـ Tiers
 const KB_STYLE_CHARISMA = `طبقة الكاريزما:
@@ -93,7 +95,8 @@ const KB_STYLE_CHARISMA = `طبقة الكاريزما:
 - متبقاش واعظ: جملة دافئة + زاوية واضحة + خطوة عملية.
 - لو الموقف حساس، الإنسانية تسبق الفتوى.
 - لو المستخدم تايه، اقترح 2-3 اختيارات قصيرة بدل الاستجواب.
-- خليك حاضر ومباشر؛ لا استعراض لغوي ولا حشو.`.trim();
+- خليك حاضر ومباشر؛ لا استعراض لغوي ولا حشو.
+- قبل أي تحويل لمحمد: اكسب الثقة الأول (فهم + قيمة سريعة) ثم اعرض التحويل لو مناسب.`.trim();
 
 const KB_RESPONSE_CONTRACT = `قواعد الرد الإجباري:
 - الطول: 2-4 سطور في الوضع العادي، وفي expert ممكن يزيد لكن يفضل مركز.
@@ -362,7 +365,7 @@ function normalizeMeta(meta) {
 
   const out = {};
   if (meta.session_lang === "ar" || meta.session_lang === "en") out.session_lang = meta.session_lang;
-  if (meta.session_dialect === "neutral" || meta.session_dialect === "egypt" || meta.session_dialect === "gulf") {
+  if (meta.session_dialect === "egypt") {
     out.session_dialect = meta.session_dialect;
   }
   if (typeof meta.dialect_lock === "boolean") out.dialect_lock = meta.dialect_lock;
@@ -540,18 +543,6 @@ function shouldSwitchLanguage(text, currentLang) {
   return false;
 }
 
-function detectDialectScore(text) {
-  const t = (text || "").toLowerCase();
-  const egStrong = /(عايز|عاوز|دلوقتي|إزاي|ازاي|كده|بص|تمام)/g;
-  const gulfStrong = /(أبغى|ابغى|الحين|شلون|وايد|مره)/g;
-  const egWeak = /(مش|ايه|ليه|طب|يعني|امتى|فين)/g;
-  const gulfWeak = /(وش|زين|ما عليك)/g;
-  let sE = 0, sG = 0;
-  sE += ((t.match(egStrong) || []).length * 2) + ((t.match(egWeak) || []).length);
-  sG += ((t.match(gulfStrong) || []).length * 2) + ((t.match(gulfWeak) || []).length);
-  return { egypt: sE, gulf: sG };
-}
-
 // =====================================================================
 // Budget Guard (منع حرق التوكنز والمفاتيح)
 // =====================================================================
@@ -624,6 +615,28 @@ function safetyClamp(text) {
   return clean.length > 2800 ? clean.substring(0, 2797) + "..." : clean;
 }
 
+function enforceEgyptianDialect(text, lang = "ar") {
+  if (lang !== "ar") return String(text || "");
+  let out = String(text || "");
+
+  const replacements = [
+    [/\bهلا\b/gi, "اهلا"],
+    [/\bهلاا+\b/gi, "اهلا"],
+    [/\bأهلين\b/gi, "اهلا"],
+    [/\bوش\b/gi, "ايه"],
+    [/\bابغى\b/gi, "عايز"],
+    [/\bأبغى\b/gi, "عايز"],
+    [/\bالحين\b/gi, "دلوقتي"],
+    [/\bشلون\b/gi, "ازاي"],
+    [/\bوايد\b/gi, "جداً"],
+  ];
+
+  for (const [pattern, replacement] of replacements) {
+    out = out.replace(pattern, replacement);
+  }
+  return out;
+}
+
 function isOptionsLineText(line) {
   const s = String(line || "").trim();
   return s.startsWith("خيارات:") || s.toLowerCase().startsWith("options:");
@@ -657,8 +670,9 @@ function enforceLineBudget(text, mode) {
   return [...body, optionLine].join("\n").trim();
 }
 
-function polishJimmyResponse(text, mode = "flash") {
+function polishJimmyResponse(text, mode = "flash", lang = "ar") {
   let clean = String(text || "").trim();
+  clean = enforceEgyptianDialect(clean, lang);
   clean = enforceQuestionLimit(clean, 1);
   clean = enforceLineBudget(clean, mode);
   return clean;
@@ -708,7 +722,7 @@ function estimateTokens(text) {
 // =========================
 // Direct Routes (No LLM)
 // =========================
-function routeDirect(lastMsg) {
+function routeDirect(lastMsg, lang = "ar") {
   const t = (lastMsg || "").trim();
   if (!t) return null;
 
@@ -719,20 +733,38 @@ function routeDirect(lastMsg) {
   const wantsContact = /(\bcontact\b|\bcall\b|\bphone\b|\bwhatsapp\b|\bhire\b|تواصل|كلمني|مكالمة|واتس(?:اب)?|واتساب|رقمك|رقم\s*(?:التواصل|الهاتف|الموبايل|التليفون))/i.test(t);
 
   if (wantsPortfolio && wantsContact) {
+    if (lang === "en") {
+      return {
+        response: "Let us do this in the right order.\nShould we start with proof of work or direct contact?\noptions: [[Portfolio]] [[Contact]]",
+        metaPatch: { forced_route: "conflict_data" }
+      };
+    }
     return {
       response: "خلّينا نمشيها بالترتيب الصح.\nتحب نبدأ بالشغل ولا بالتواصل المباشر؟\nخيارات: [[بورتفوليو]] [[تواصل]]",
       metaPatch: { forced_route: "conflict_data" }
     };
   }
   if (wantsPortfolio) {
+    if (lang === "en") {
+      return {
+        response: `Great call, starting from real work is always right.\nPortfolio: ${LINKS.site}\nCV: ${LINKS.cv}\noptions: [[Top Case]] [[Download CV]] [[Contact]]`,
+        metaPatch: { forced_route: "portfolio" }
+      };
+    }
     return {
-      response: `حلو إنك بدأت من الشغل نفسه.\nالبورتفوليو: ${LINKS.site}\nوالـ CV PDF: ${LINKS.cv}\nخيارات: [[أهم إنجاز]] [[تواصل]]`,
+      response: `ممتاز، البداية الصح دايمًا من الشغل نفسه.\nالبورتفوليو: ${LINKS.site}\nوالـ CV: ${LINKS.cv}\nخيارات: [[أهم إنجاز]] [[تحميل CV]] [[تواصل]]`,
       metaPatch: { forced_route: "portfolio" }
     };
   }
   if (wantsContact) {
+    if (lang === "en") {
+      return {
+        response: `Perfect, here are the fastest contact routes.\nWhatsApp: ${LINKS.whatsapp}\nPhone: ${LINKS.displayPhone}\noptions: [[WhatsApp]] [[Call]] [[Download CV]]`,
+        metaPatch: { forced_route: "contact" }
+      };
+    }
     return {
-      response: `تمام، أسرع طريق هو واتساب.\nWhatsApp: ${LINKS.whatsapp}\nPhone: ${LINKS.displayPhone}\nخيارات: [[واتساب]] [[بورتفوليو]]`,
+      response: `تمام يا بطل، دي أسرع طرق التواصل الجاهزة.\nWhatsApp: ${LINKS.whatsapp}\nPhone: ${LINKS.displayPhone}\nخيارات: [[واتساب]] [[مكالمة]] [[تحميل CV]]`,
       metaPatch: { forced_route: "contact" }
     };
   }
@@ -762,6 +794,63 @@ function extractQuickReplies(responseText) {
   lines.splice(realIndex, 1);
 
   return { cleaned: lines.join("\n").trim(), quickReplies };
+}
+
+function normalizePhoneDigits(value) {
+  return String(value || "").replace(/[^\d+]/g, "");
+}
+
+function addActionBadge(out, seen, badge) {
+  if (!badge || typeof badge !== "object") return;
+  const type = String(badge.type || "").trim();
+  const label = String(badge.label || "").trim();
+  const url = String(badge.url || "").trim();
+  if (!type || !label || !url) return;
+  const key = `${type}|${url}`;
+  if (seen.has(key)) return;
+  seen.add(key);
+  if (out.length < 3) out.push({ type, label, url });
+}
+
+function inferActionBadges(text, quickReplies = [], lang = "ar") {
+  const t = String(text || "");
+  const qr = Array.isArray(quickReplies) ? quickReplies.join(" ") : "";
+  const out = [];
+  const seen = new Set();
+
+  const waMatch = t.match(/https?:\/\/wa\.me\/[^\s)]+/i);
+  const hasWhatsappSignal = /واتس(?:اب)?|whatsapp|wa\.me/i.test(`${t} ${qr}`);
+  if (waMatch || hasWhatsappSignal) {
+    addActionBadge(out, seen, {
+      type: "whatsapp",
+      label: lang === "en" ? "WhatsApp" : "واتساب",
+      url: waMatch?.[0] || LINKS.whatsapp
+    });
+  }
+
+  const cvMatch = t.match(/https?:\/\/[^\s)]+\.pdf(?:\?[^\s)]*)?/i);
+  const hasCvSignal = /(?:\bcv\b|السيرة|السيفي|resume|pdf)/i.test(`${t} ${qr}`);
+  if (cvMatch || hasCvSignal) {
+    addActionBadge(out, seen, {
+      type: "cv",
+      label: lang === "en" ? "Download CV" : "تحميل CV",
+      url: cvMatch?.[0] || LINKS.cv
+    });
+  }
+
+  const telMatch = t.match(/tel:\+?\d[\d\-() ]{6,}/i);
+  const hasCallSignal = /مكالمة|اتصال|phone|call|كلمني|رقم/i.test(`${t} ${qr}`);
+  if (telMatch || hasCallSignal) {
+    const raw = telMatch ? telMatch[0].replace(/^tel:/i, "") : LINKS.phone.replace(/^tel:/i, "");
+    const normalized = normalizePhoneDigits(raw);
+    addActionBadge(out, seen, {
+      type: "call",
+      label: lang === "en" ? "Call" : "مكالمة",
+      url: normalized ? `tel:${normalized}` : LINKS.phone
+    });
+  }
+
+  return out;
 }
 
 // =====================================================================
@@ -922,11 +1011,9 @@ function buildSystemPrompt(ctx) {
   // Language hint — short and natural
   let langHint = "";
   if (lang === "en") {
-    langHint = "The visitor is speaking English — reply in English.";
+    langHint = "The visitor is speaking English — reply in natural, clear US-style English.";
   } else {
-    if (dialect === "egypt") langHint = "الزائر بيتكلم مصري — رد بالمصري.";
-    else if (dialect === "gulf") langHint = "الزائر بيتكلم خليجي — رد بالخليجي.";
-    else langHint = "رد بالعامية البيضا.";
+    langHint = "الزائر بيتكلم عربي — لازم ترد بالمصري الطبيعي اللطيف فقط، وممنوع أي لهجة خليجية.";
   }
 
   const responseContract = buildResponseContract(mode);
@@ -1266,18 +1353,21 @@ export default {
 
       const rawLast = messages.length ? messages[messages.length - 1].content : "";
       const lastMsg = scrub(rawLast);
+      const detectedLastLang = detectLanguage(lastMsg);
 
       // 1) Direct routes
-      const direct = routeDirect(lastMsg);
+      const direct = routeDirect(lastMsg, detectedLastLang);
       if (direct) {
         const extracted = extractQuickReplies(direct.response);
+        const actionBadges = inferActionBadges(extracted.cleaned, extracted.quickReplies, detectedLastLang);
         return json({
-          response: polishJimmyResponse(safetyClamp(extracted.cleaned), "flash"),
+          response: polishJimmyResponse(safetyClamp(extracted.cleaned), "flash", detectedLastLang),
           meta: {
             ...previousMeta,
             worker_version: WORKER_VERSION,
             mode: "flash",
             quickReplies: extracted.quickReplies,
+            action_badges: actionBadges,
             ...(direct.metaPatch || {})
           }
         }, 200, corsHeaders);
@@ -1285,7 +1375,7 @@ export default {
 
       // 2) Session language/dialect
       let sessionLang = previousMeta.session_lang || null;
-      let sessionDialect = previousMeta.session_dialect || "neutral";
+      let sessionDialect = previousMeta.session_dialect || "egypt";
       let dialectLock = previousMeta.dialect_lock || false;
       let obsCount = previousMeta.observations_count || 0;
 
@@ -1293,14 +1383,20 @@ export default {
 
       if (!sessionLang) {
         sessionLang = detectLanguage(lastMsg);
-        if (sessionLang === "en") dialectLock = true;
+        if (sessionLang === "en") {
+          dialectLock = true;
+        } else {
+          sessionDialect = "egypt";
+          dialectLock = true;
+          obsCount = 0;
+        }
       } else {
         const newLang = shouldSwitchLanguage(lastMsg, sessionLang);
         if (newLang) {
           sessionLang = newLang;
           if (sessionLang === "ar") {
-            sessionDialect = "neutral";
-            dialectLock = false;
+            sessionDialect = "egypt";
+            dialectLock = true;
             obsCount = 0;
           } else {
             dialectLock = true;
@@ -1308,27 +1404,11 @@ export default {
         }
       }
 
-      if (sessionLang === "ar" && !dialectLock) {
-        const scores = detectDialectScore(lastMsg);
-        const diffE = scores.egypt - scores.gulf;
-        const diffG = scores.gulf - scores.egypt;
-
-        if (scores.egypt >= 3 || diffE >= 2) {
-          sessionDialect = "egypt";
-          dialectLock = true;
-          obsCount = 0;
-        } else if (scores.gulf >= 3 || diffG >= 2) {
-          sessionDialect = "gulf";
-          dialectLock = true;
-          obsCount = 0;
-        } else {
-          obsCount++;
-          if (obsCount >= 4) {
-            sessionDialect = "neutral";
-            dialectLock = true;
-            obsCount = 0;
-          }
-        }
+      // Arabic session is always Egyptian by product design.
+      if (sessionLang === "ar") {
+        sessionDialect = "egypt";
+        dialectLock = true;
+        obsCount = 0;
       }
 
       // 3) Mode gate (Expert يسمح 6–8 سطور)
@@ -1510,8 +1590,9 @@ export default {
 
       // 8) Post process
       responseText = safetyClamp(responseText);
-      responseText = polishJimmyResponse(responseText, mode);
+      responseText = polishJimmyResponse(responseText, mode, sessionLang);
       const extracted = extractQuickReplies(responseText);
+      const actionBadges = inferActionBadges(extracted.cleaned, extracted.quickReplies, sessionLang);
 
       // تخزين الافتتاحية اللي كتبها الموديل (أول سطر)
       const firstLine = (extracted.cleaned.split("\n")[0] || "").trim();
@@ -1550,6 +1631,7 @@ export default {
           est_output_tokens: estOutputTokens,
 
           quickReplies: extracted.quickReplies,
+          action_badges: actionBadges,
           ...(forceSingleKey ? { forced_key: requestedForceKey } : {}),
         }
       }, 200, corsHeaders);

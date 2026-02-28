@@ -1,5 +1,5 @@
 /**
- * 🚀 CAPTAIN JIMMY: CORE PRODUCT ENGINE (v4.6.3)
+ * 🚀 CAPTAIN JIMMY: CORE PRODUCT ENGINE (v4.7.0)
  * Architecture: Event-Driven State Machine (2026 Edition)
  * UX: Focus Trap, Immersive, Draggable Flexibility, Instant Feedback
  */
@@ -35,7 +35,12 @@ const J_CORE = {
     config: {
         maxHistory: 20,
         timeout: 12000,
-        version: '4.6.3'
+        version: '4.7.0'
+    },
+    links: {
+        whatsapp: 'https://wa.me/201555141282',
+        call: 'tel:+201555141282',
+        cv: 'https://mo-gamal.com/Mohamed-Gamal-CV.pdf'
     },
     i18n: {
         en: { status: "Captain Jimmy", placeholder: "Ask me anything...", error: "Connection interrupted." },
@@ -55,7 +60,7 @@ class JimmyEngine {
             messages: [],
             thread: [],
             meta: {},
-            lang: document.documentElement.lang === 'ar' ? 'ar' : 'en',
+            lang: this.resolveInitialLang(),
             drag: { isDragging: false, startX: 0, startY: 0, currentX: 0, currentY: 0 }
         };
 
@@ -64,6 +69,33 @@ class JimmyEngine {
 
         this.dom = {};
         this.init();
+    }
+
+    resolveInitialLang() {
+        try {
+            const persisted = localStorage.getItem('jimmy_lang');
+            if (persisted === 'ar' || persisted === 'en') return persisted;
+        } catch {
+            // noop
+        }
+        return 'ar';
+    }
+
+    detectInputLang(text, fallback = 'ar') {
+        const value = String(text || '');
+        const ar = (value.match(/[\u0600-\u06FF]/g) || []).length;
+        const en = (value.match(/[a-zA-Z]/g) || []).length;
+        if (!ar && !en) return fallback;
+        return ar >= en ? 'ar' : 'en';
+    }
+
+    applyLangUI(lang) {
+        const next = lang === 'en' ? 'en' : 'ar';
+        this.ctx.lang = next;
+        try { localStorage.setItem('jimmy_lang', next); } catch { /* noop */ }
+        const t = J_CORE.i18n[next];
+        if (this.dom.title) this.dom.title.textContent = t.status;
+        if (this.dom.input) this.dom.input.placeholder = t.placeholder;
     }
 
     init() {
@@ -88,7 +120,7 @@ class JimmyEngine {
                         <div class="j-identity">
                             <div class="j-avatar-sm">${avatarMedia}</div>
                             <div class="j-hud-data">
-                                <span class="j-title">${t.status}</span>
+                                <span id="j-title" class="j-title">${t.status}</span>
                                 <div class="j-meta-row">
                                     <span id="j-ping" class="j-ping-tag">SIGNAL: STABLE</span>
                                     <span class="j-ver-tag">v${J_CORE.config.version}</span>
@@ -104,6 +136,7 @@ class JimmyEngine {
                     </div>
                     <div id="j-stream" class="j-stream"></div>
                     <div class="j-footer">
+                        <div id="j-actions-badges" class="j-actions-rail"></div>
                         <div id="j-chips" class="j-chips-rail"></div>
                         <div class="j-input-scaffold">
                             <textarea id="j-input" class="j-textarea" rows="1" placeholder="${t.placeholder}"></textarea>
@@ -133,6 +166,8 @@ class JimmyEngine {
             input: get('j-input'),
             send: get('j-send'),
             close: get('j-close'),
+            title: get('j-title'),
+            actions: get('j-actions-badges'),
             chips: get('j-chips'),
             ping: get('j-ping')
         };
@@ -245,8 +280,11 @@ class JimmyEngine {
             requestAnimationFrame(() => this.dom.input.focus());
 
             if (this.ctx.messages.length === 0) {
-                this.addMessage('ai', this.ctx.lang === 'ar' ? 'أهلاً بك.. معك كابتن جيمي، كيف يمكنني مساعدتك في تطوير أنظمتك؟' : 'Systems Online. Captain Jimmy at your service. How can I assist your growth today?');
-                this.renderChips(this.ctx.lang === 'ar' ? ['تحليل الموقع', 'خدمات النمو', 'تحميل CV'] : ['Site Audit', 'Growth Stack', 'Download CV']);
+                this.addMessage('ai', this.ctx.lang === 'ar' ? 'يا أهلا بيك، أنا جيمي. قولي بس عايز توصّل لإيه وهنطلعه بشكل عملي.' : 'Hey, I am Jimmy. Tell me the goal and we will get there with a practical plan.');
+                this.renderChips(this.ctx.lang === 'ar' ? ['تحليل سريع', 'فكرة للنمو', 'تحميل CV'] : ['Quick Audit', 'Growth Idea', 'Download CV']);
+                this.renderActionBadges(this.ctx.lang === 'ar'
+                    ? [{ type: 'cv', label: 'تحميل CV', url: J_CORE.links.cv }]
+                    : [{ type: 'cv', label: 'Download CV', url: J_CORE.links.cv }]);
             }
         } else {
             this.dom.root.classList.remove('is-open');
@@ -269,9 +307,12 @@ class JimmyEngine {
         const text = textOverride || this.dom.input.value.trim();
         if (!text || this.ctx.isThinking) return;
 
+        this.applyLangUI(this.detectInputLang(text, this.ctx.lang));
+
         this.dom.input.value = '';
         this.dom.input.style.height = 'auto';
         this.renderChips([]);
+        this.renderActionBadges([]);
         this.addMessage('user', text);
         this.setThinking(true);
 
@@ -323,6 +364,8 @@ class JimmyEngine {
 
             this.setThinking(false);
             this.addMessage('ai', data.response);
+            const actionBadges = data.meta?.action_badges || this.inferActionBadges(data.response, data.meta?.quickReplies);
+            this.renderActionBadges(actionBadges);
             if (data.meta?.quickReplies) this.renderChips(data.meta.quickReplies);
 
         } catch (err) {
@@ -450,6 +493,75 @@ class JimmyEngine {
             btn.textContent = txt;
             btn.onclick = () => this.handleSend(txt);
             this.dom.chips.appendChild(btn);
+        });
+    }
+
+    normalizeActionBadge(badge) {
+        if (!badge || typeof badge !== 'object') return null;
+        const type = String(badge.type || '').toLowerCase();
+        const label = String(badge.label || '').trim();
+        const url = String(badge.url || '').trim();
+        if (!type || !label || !url) return null;
+        return { type, label, url };
+    }
+
+    inferActionBadges(responseText, quickReplies = []) {
+        const text = String(responseText || '');
+        const qr = Array.isArray(quickReplies) ? quickReplies.join(' ') : '';
+        const out = [];
+        const seen = new Set();
+        const add = (badge) => {
+            const n = this.normalizeActionBadge(badge);
+            if (!n) return;
+            const key = `${n.type}|${n.url}`;
+            if (seen.has(key) || out.length >= 3) return;
+            seen.add(key);
+            out.push(n);
+        };
+
+        const waMatch = text.match(/https?:\/\/wa\.me\/[^\s)]+/i);
+        if (waMatch || /واتس(?:اب)?|whatsapp|wa\.me/i.test(`${text} ${qr}`)) {
+            add({ type: 'whatsapp', label: this.ctx.lang === 'ar' ? 'واتساب' : 'WhatsApp', url: waMatch?.[0] || J_CORE.links.whatsapp });
+        }
+
+        const cvMatch = text.match(/https?:\/\/[^\s)]+\.pdf(?:\?[^\s)]*)?/i);
+        if (cvMatch || /(?:\bcv\b|السيرة|السيفي|resume|pdf)/i.test(`${text} ${qr}`)) {
+            add({ type: 'cv', label: this.ctx.lang === 'ar' ? 'تحميل CV' : 'Download CV', url: cvMatch?.[0] || J_CORE.links.cv });
+        }
+
+        const telMatch = text.match(/tel:\+?\d[\d\-() ]{6,}/i);
+        if (telMatch || /مكالمة|اتصال|phone|call|كلمني|رقم/i.test(`${text} ${qr}`)) {
+            const raw = telMatch ? telMatch[0] : J_CORE.links.call;
+            const normalized = raw.replace(/[^\d+]/g, '');
+            const telUrl = normalized ? `tel:${normalized}` : J_CORE.links.call;
+            add({ type: 'call', label: this.ctx.lang === 'ar' ? 'مكالمة' : 'Call', url: telUrl });
+        }
+
+        return out;
+    }
+
+    getActionBadgeIcon(type) {
+        if (type === 'whatsapp') return '◉';
+        if (type === 'call') return '◈';
+        if (type === 'cv') return '⬒';
+        return '◆';
+    }
+
+    renderActionBadges(badges) {
+        this.dom.actions.innerHTML = '';
+        if (!Array.isArray(badges) || !badges.length) return;
+
+        badges.slice(0, 3).forEach((badge) => {
+            const normalized = this.normalizeActionBadge(badge);
+            if (!normalized) return;
+
+            const a = document.createElement('a');
+            a.className = `j-action-badge is-${normalized.type}`;
+            a.href = normalized.url;
+            a.target = normalized.url.startsWith('tel:') ? '_self' : '_blank';
+            a.rel = normalized.url.startsWith('tel:') ? '' : 'noopener noreferrer';
+            a.innerHTML = `<span class="j-action-icon">${this.getActionBadgeIcon(normalized.type)}</span><span>${normalized.label}</span>`;
+            this.dom.actions.appendChild(a);
         });
     }
 
