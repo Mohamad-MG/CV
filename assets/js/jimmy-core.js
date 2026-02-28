@@ -349,6 +349,8 @@ class JimmyEngine {
                     errMsg = this.ctx.lang === 'ar'
                         ? 'مزود الذكاء الاصطناعي وصل لحد الاستخدام حالياً. جرّب بعد دقائق.'
                         : 'AI provider quota is currently exceeded. Please try again in a few minutes.';
+                } else if (err?.apiError === 'Daily Limit Exceeded') {
+                    errMsg = err?.apiDetails || (this.ctx.lang === 'ar' ? 'وصلت للحد الأقصى للرسائل اليوم. أراك غداً!' : 'Daily limit exceeded. See you tomorrow!');
                 } else {
                     errMsg = this.ctx.lang === 'ar'
                         ? `النظام مشغول حالياً. يرجى المحاولة بعد ${waitSec} ثانية.`
