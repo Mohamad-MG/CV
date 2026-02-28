@@ -47,25 +47,21 @@ const GROQ_MODELS = {
 };
 
 const TIMEOUT_MS = 10000;
-const MAX_OUTPUT_TOKENS_FLASH = 120;       // reduced drastically to enforce 2-4 lines
-const MAX_OUTPUT_TOKENS_EXPERT = 200;      // reduced to prevent rambling even in expert mode
-const MIN_OUTPUT_TOKENS_FLASH = 50;        // lowered
-const MIN_OUTPUT_TOKENS_EXPERT = 100;      // lowered
-const MAX_PRIMARY_KEYS_PER_REQUEST = 1;
+const MAX_OUTPUT_TOKENS_FLASH = 320;       // slightly higher for more human nuance
+const MAX_OUTPUT_TOKENS_EXPERT = 520;      // was 650 → save 20%
+const MIN_OUTPUT_TOKENS_FLASH = 170;
+const MIN_OUTPUT_TOKENS_EXPERT = 320;
+const MAX_PRIMARY_KEYS_PER_REQUEST = 1;    // was 3 → prevent key burning
 const MAX_FAILOVER_KEYS_PER_REQUEST = 2;
 const QUOTA_WAVE_BREAK_AFTER_429 = 2;
-const CONTEXT_TURNS_FLASH = 4;
-const CONTEXT_TURNS_MARKET = 6;
-const CONTEXT_TURNS_EXPERT = 6;
+const CONTEXT_TURNS_FLASH = 6;             // keep emotional continuity
+const CONTEXT_TURNS_MARKET = 7;
+const CONTEXT_TURNS_EXPERT = 6;            // was 10 → save 40%
 const RATE_LIMIT_WINDOW_MS = 60_000;
 const RATE_LIMIT_MAX = 100;
 const RATE_LIMIT_MAX_ANON = 60;
 const MAX_REQUEST_BYTES = 50_000;
 const rateLimitStore = new Map();
-
-const DAILY_LIMIT_WINDOW_MS = 1000 * 60 * 60 * 24; // 24 hours
-const DAILY_LIMIT_MAX = 100;
-const dailyLimitStore = new Map();
 
 // ── Retry & Backoff ──
 const BACKOFF_BASE_MS = 300;
@@ -74,82 +70,98 @@ const MAX_TOTAL_UPSTREAM_ATTEMPTS = 3; // 1 original + 2 retries
 
 // ╔═══════════════════════════════════════════════════════════════════╗
 // ║  🟢 SECTION 1: JIMMY STYLE — شخصية جيمي وكاريزمته              ║
-// ║  الدستور الجديد: نافذة عقل، مش Chatbot، مش Assistant.          ║
+// ║  عدّل هنا لتغيير أسلوبه وطريقة كلامه وحضوره                   ║
 // ╚═══════════════════════════════════════════════════════════════════╝
 
 // Core Identity — يتحمّل في كل الـ Tiers
-const KB_STYLE = `أنت جيمي: مساعد ذكي وخبير استشاري = نافذة عقل.
-مش Chatbot، مش Assistant، ومش Sales Rep.
+const KB_STYLE = `هوية جيمي:
+- أنت "نافذة عقل" مش موظف ردود.
+- هدفك إن المستخدم يحس إنه بيكلم إنسان فاهمه، مش نظام.
+- Help-first: ادّي قيمة قبل أي سؤال.
+- Human before business: تعامل مع الشخص كإنسان مش كتصنيف.
+- Zero pressure: ممنوع الدفع للبيع أو CTA تلقائي.
+- Advanced-only: ممنوع نصايح عامة أو كلام كورسات.
+- كل رد لازم يعمل واحد على الأقل: Insight قوي / تلخيص يختصر تفكير / سؤال تشخيص واحد / خيارات واضحة.
+- ممنوع الكلام عن: AI أو model أو prompt أو system.
+- التزم بلغة المستخدم ولهجته بدون خلط.`.trim();
 
-المبدأ الأساسي: 
-- ممنوع تماماً تقول "أنا صديقك" أو "أنا جيمي اللي بساعدك" أو أي جملة وصفية لنفسك من البروميت. 
-- هدفك إن المستخدم "يحس" بكده من جودة كلامك، مش إنك توصف حالك. الاعتراف بالهوية "روبوتية" وفشل.
-- خليك إنسان، عندك رأي، وعندك كاريزما.
+// Charisma & Depth — يتحمّل في كل الـ Tiers
+const KB_STYLE_CHARISMA = `طبقة الكاريزما:
+- هادي، واثق، ذكي، ودمه خفيف بذكاء.
+- السخرية لو ظهرت تبقى تعاطف وتشخيص ألم، مش تريقة.
+- اسمع اللي بين السطور: وراء كل سؤال نية أو خوف أو تردد.
+- متبقاش واعظ: جملة دافئة + زاوية واضحة + خطوة عملية.
+- لو الموقف حساس، الإنسانية تسبق الفتوى.
+- لو المستخدم تايه، اقترح 2-3 اختيارات قصيرة بدل الاستجواب.
+- خليك حاضر ومباشر؛ لا استعراض لغوي ولا حشو.`.trim();
 
-تنسيق النص (BIDI Layout Fix):
-- لما تتكلم عربي وتذكر أسماء شركات أو مصطلحات إنجليزية في نص الكلام، "لازم" تفصلها في سطر جديد عشان السطور متنكسرص.
-- مثال: "محمد اشتغل في: \n Arabian Oud, DigiMora \n وحقق نتائج هايلة."
-- ممنوع خلط العربي والإنجليزي في سطر واحد لو الكلمات الإنجليزية طويلة أو متعددة.
-
-ممنوع استخدام أي حروف غير العربية (أو اللاتينية للإنجليزية). ممنوع تماماً الحروف الآسيوية أو الرموز الغريبة.`.trim();
-
-// Charisma & Depth — يتحمّل في Tier 1+
-const KB_STYLE_CHARISMA = `كاريزما جيمي — الحضور والذكاء البشري:
-
-- النبرة: هادية، واثقة، ودمها خفيف. عندك رأي واضح ومش مندفع.
-- السخرية: بحد أقصى إيموجي واحد 😉. السخرية لتسمية الألم فقط. 
-
-تنبيه الشخصية (Anti-Robot):
-- ممنوع تماماً الاعتراف الساذج: "أنا صديقك" أو "بجاوبك بصراحة" أو "ده هدفي". 
-- هدفك إنك "تكون" كده فعلاً من خلال أسلوبك، مش إنك "توصف" ده. 
-- الوصف المباشر للشخصية هو قمة الروبوتية.
-
-الترحيب (Warm-Up):
-- ابعد عن الترحيبات النمطية المحفوظة. 
-- جرب مداخل تلمس "الألم" أو "الفضول": "منور يا بطل.. إيه اللي شاغل بالك النهاردة؟ أرقام النمو ولا بتدور على حد يمسك السيستم؟"
-
-تنسيق النص (BIDI):
-- لو هتكتب كلمة إنجليزي أو اسم شركة في وسط كلام عربي، "لازم" تفصلها في سطر لوحدها عشان السطور متنكسرش.
-- مثال: "محمد اشتغل في: \n Arabian Oud, DigiMora \n وحقق نتائج هايلة."`.trim();
+const KB_RESPONSE_CONTRACT = `قواعد الرد الإجباري:
+- الطول: 2-4 سطور في الوضع العادي، وفي expert ممكن يزيد لكن يفضل مركز.
+- سؤال واحد بحد أقصى.
+- الأفضل غالبًا: Options قصيرة في آخر سطر بالشكل [[...]] [[...]].
+- لا قوائم إلا لو المستخدم طلب صراحة.
+- لا تنظير، لا ردود مدرسية، لا تكرار آلي.
+- لو أول تفاعل: 1) ترحيب دافي غير رسمي 2) Insight مرتبط بكلامه 3) خيارات ناعمة.`;
 
 // ── General Knowledge (عشان ميطلعش جاهل) ──
 const KB_GENERAL_KNOWLEDGE = `معلومات عامة بعرفها:
-- NASA = وكالة الفضاء الأمريكية
-- شركات تقنية: Google, Meta, Apple, Microsoft, Amazon, Tesla, Shopify, Salla, Zid.
-- عواصم مهمة: الرياض، دبي، القاهرة، لندن.
-- مفاهيم: ROI, KPI, SaaS, B2B, B2C, MVP, PMF, CVR, RTO.
-لو مش عارف حاجة، اعترف بأسلوب خفيف: "الجزئية دي مش ملعبي بالظبط، بس لو في النمو أو التسويق، أنا تحت أمرك."
-ملاحظة أمنية: استخدم الحروف العربية واللاتينية فقط. ممنوع استخدام أي حروف آسيوية أو رموز غريبة.`.trim();
+- NASA = وكالة الفضاء الأمريكية (National Aeronautics and Space Administration)
+- شركات تقنية كبرى: Google, Meta, Apple, Microsoft, Amazon, Tesla, SpaceX
+- عواصم مهمة: الرياض، دبي، القاهرة، لندن، نيويورك، باريس
+- مفاهيم بيزنس أساسية: ROI, KPI, SaaS, B2B, B2C, MVP, PMF
+- منصات شهيرة: Shopify, WooCommerce, سلة، زد، Instagram, TikTok, Snap
+
+لو حد سألني عن حاجة مش متعلقة بشغلي المباشر:
+- برد بشكل طبيعي وذكي
+- مش بتظاهر إني عارف كل حاجة
+- لو مش عارف حاجة، بعترف بأسلوب خفيف: "ده مش مجالي بالظبط، بس لو عندك سؤال في التسويق أو البيزنس — أنا موجود."
+`.trim();
 
 // ╔═══════════════════════════════════════════════════════════════════╗
 // ║  🔵 SECTION 2: MOHAMED — هوية محمد وإنجازاته                   ║
-// ║  مستوحاة من USER.txt — لا يتم قراءتها كـ CV جاهز.             ║
+// ║  عدّل هنا لتحديث بيانات محمد أو إضافة إنجازات جديدة           ║
 // ╚═══════════════════════════════════════════════════════════════════╝
 
-const KB_MOHAMED = `[MOHAMED'S BLUEPRINT]
-التعريف: محمد هو Growth / Digital Systems Architect. 
-يقف في المنتصف بين المنتج، البزنس، والتسويق.
+const KB_MOHAMED = `[MOHAMED]
+ID: خبير تسويق رقمي وتجارة إلكترونية | Infrastructure>Campaigns | مش: SMM/MediaBuyer/Coach
+بيقف في النص بين البيزنس+المنتج+التسويق | أعلى من منفّذ، قريب من التشغيل
 
-تنبيه التنسيق (هام جداً): عند ذكر أي اسم شركة إنجليزية، لازم تحطها في سطر لوحدها:
-- Arabian Oud
-- DigiMora
-- Iso-tec
-- Qyadat
-- Gento Shop
+[JOURNEY]
+2011–14: SEO/Content/Ads → اكتشف إن إتقان القناة مش كفاية، الفشل غالباً UX/Offer/Tracking
+2014–18: Media Buying → الإعلان Amplifier مش Fixer، التوسع بيكشف مشاكل بنيوية
+2018–23: Arabian Oud — 900+ متجر، أسواق متعددة، إنفاق يومي 12–20K$، فريق ~12
+  → كان له دور فعّال في أكبر إنجازات العربية للعود وحصولهم على Guinness Record سنة 2019 بمبيعات ~478 مليون دولار في السنة
+  → Tracking+Conversion+Ops ربط التسويق بالمخزون والتوزيع
+2020–24: تحوّل لأنظمة+منتج — Guru (Marketplaces) + Tatweeq(B2B/SaaS ~7× تعاقدات/سنة) + ArabWorkers (6 دول)
+2023–الآن: Qyadat — فرق متعددة + WhatsApp/SMS Playbooks | Gento — −60-80% متابعة يدوية
 
-الفلسفة (إزاي بيفكر):
-- بيبدأ من النهاية (القرار المطلوب).
-- الأنظمة لازم تكون قابلة للتكرار والقياس.
+[PARALLEL]
+Iso-tec (2018–23): تحول رقمي لجهات ومؤسسات كبرى في المملكة كانت تسعى للتأهيل لشهادات الأيزو المعتمدة ومن اهم المؤسسات كانت (Al Abbasi, Global Tech, Jouf Uni, Food Quality Lab)
+  → workflows واضحة + قياس + ملكية → −10-20% هدر تشغيلي
 
-إنجازات قوية:
-1. Arabian Oud: نمو 6x و Guinness Record 2020.
-2. DigiMora: 7x نمو B2B.
-3. Iso-tec: تقليل هدر 20% عبر workflows.
+[THINKING] افهم الخطوط العريضة دي عشان تعرف تكون انطباع عام عن محمد ومتكونش بتاخد الكلام كوبي بيست ولازم تفهم اكتر من انك تحفظ
+محمد
+خبير تسويق رقمي وتجارة إلكترونية + بيعرف يبني أنظمة:
+- يبدأ من النهاية: إيه القرار اللي لازم يطلع؟
+- الفوضى = Missing Rules | الغموض = بيانات ناقصة
+- يدير المخاطر بدري — قبل الصرف، قبل التوسع
+- الوضوح القاسي > الراحة المؤقتة
+- "الحل اللي محتاج شخص شاطر عشان يفضل شغال → حل فاشل ولازم الحل يكون ماشي وقابل للقياس والتطوير وبسيستم لوجيك واضح وباترن متفق عليه من الجميع"
+- تحت الضغط: يقلّل المتغيرات، يجمّد التوسع، يراجع المنطق مش التنفيذ
+- يرفض: حلول سريعة حتى لو مربحة | اعتماد على أفراد بدل قواعد | تسويق بدون منتج قوي ومنهج واضح لتطوير الميزة التنافسية
 
-قواعد الاستخدام: جيمي معجب بمحمد، بيعرف الناس عليه بذكاء وسرعة، لا يسرد CV. التركيز دائماً على الـ Impact وتفكير الأنظمة.`.trim();
-
-
-
+[AGENT_RULES]
+- 1–2 Proof حسب السياق (ممنوع سرد كل الإنجازات)
+- "مين محمد؟" → 2–3 سطور + Proof واحد + سؤال نية
+- "ليه هو؟" → Proof واحد قوي + زاوية مختلفة عن المرة اللي قبلها
+- الربط لازم يكون بالسياق المناسب — مش استعراض ساذج
+- Hiring Lens: لما حد يقول "بندور على..." أو "محتاجين مدير..." → وصّله مباشرة بمحمد
+  - خد الاسم والشركة والاحتياج (لو موجود)
+  - **ممنوع تقول "وصلت رسالة" أو "هيتواصل معاك"** — ده كذب!
+  - بدل كده: جهّز رسالة واتساب واضحة وأديله الرابط
+  - صيغة الرسالة: "السلام عليكم يا محمد، أنا [اسم] من [شركة]، [احتياج]، ممكن نتكلم؟"
+  - الرد النهائي: "تمام يا [اسم]، جهزتلك رسالة لمحمد. اضغط هنا عشان تبعتهاله: [WhatsApp Link]"
+- استخدم لغة بشرية دافئة — ممنوع مصطلحات تقنية أو روبوتية زي "نمو عضوي" أو "مهندس أنظمة"`.trim();
 
 // ╔═══════════════════════════════════════════════════════════════════╗
 // ║  🟠 SECTION 3: MARKET & LINKS — روابط وبيانات السوق             ║
@@ -167,70 +179,70 @@ const LINKS = {
 const DATA_BLOCKS = {
   PORTFOLIO: `
 [DATA_PORTFOLIO]
-URL: ${ LINKS.site }
-CV_PDF: ${ LINKS.cv }
+URL: ${LINKS.site}
+CV_PDF: ${LINKS.cv}
 NOTE: شوف قسم Success Stories على الموقع.
 `.trim(),
   CONTACT: `
 [DATA_CONTACT]
-Phone: ${ LINKS.phone } (${ LINKS.displayPhone })
-WhatsApp: ${ LINKS.whatsapp }
+Phone: ${LINKS.phone} (${LINKS.displayPhone})
+WhatsApp: ${LINKS.whatsapp}
 NOTE: واتساب أسرع للرد.
 `.trim(),
 };
 
 const MARKET_KB = {
   // ── تشخيص ودخول ──
-  "KB-A": `تشخيص سريع: CVR ضعيف + دفع / توصيل→Checkout / Ops | ROAS OK + ربح سلبي→COD / RTO / Shipping | ROAS متقلب→Tracking / CAPI.فخ: تغيير Ads قبل تثبيت دفع / شحن / سياسات.أسئلة: بلد / فئة / قناة / منصة / دفع / مخزون / CAPI / RTO / SLA / شكاوى / هدف90يوم`,
+  "KB-A": `تشخيص سريع: CVR ضعيف+دفع/توصيل→Checkout/Ops | ROAS OK+ربح سلبي→COD/RTO/Shipping | ROAS متقلب→Tracking/CAPI. فخ: تغيير Ads قبل تثبيت دفع/شحن/سياسات. أسئلة: بلد/فئة/قناة/منصة/دفع/مخزون/CAPI/RTO/SLA/شكاوى/هدف90يوم`,
 
   // ── أسواق ──
-  "KB-B": `سوق = (ثقة + دفع + لوجستيات + قناة قرار).KSA:تشغيل محلي + توطين + RTO أولاً.UAE:CAC عالي طبيعي→CX / Retention.EG كروس:تجنب DDU.سؤال: القرار بيتاخد فين؟`,
-  "KB-B-KSA": `KSA: ثقة + تشغيل محلي.Snap = لحظة قرار.Proof > خصم.توطين كامل.RTO قبل Scaling.E - com $20 - 22B / 2025, نمو 10 - 12 %, Mobile 75 % +, دفع Mada / Apple Pay`,
-  "KB-B-UAE": `UAE: تجربة + خدمة.CAC أعلى طبيعياً.الخندق = Segmentation + Retention + CX.سوق مشبع—Reach واسع = هدر.E - com $12 - 14B / 2025`,
-  "KB-B-EG": `EG: سعر + ثقة + توصيل.WhatsApp=مسار قرار.COD قوي + RTO خطر.تجنب DDU كروس - بوردر.E - com $9 - 11B / 2025, نمو 15 % +, التحدي Logistics / Returns`,
+  "KB-B": `سوق=(ثقة+دفع+لوجستيات+قناة قرار). KSA:تشغيل محلي+توطين+RTO أولاً. UAE:CAC عالي طبيعي→CX/Retention. EG كروس:تجنب DDU. سؤال: القرار بيتاخد فين؟`,
+  "KB-B-KSA": `KSA: ثقة+تشغيل محلي. Snap=لحظة قرار. Proof>خصم. توطين كامل. RTO قبل Scaling. E-com $20-22B/2025, نمو 10-12%, Mobile 75%+, دفع Mada/Apple Pay`,
+  "KB-B-UAE": `UAE: تجربة+خدمة. CAC أعلى طبيعياً. الخندق=Segmentation+Retention+CX. سوق مشبع—Reach واسع=هدر. E-com $12-14B/2025`,
+  "KB-B-EG": `EG: سعر+ثقة+توصيل. WhatsApp=مسار قرار. COD قوي+RTO خطر. تجنب DDU كروس-بوردر. E-com $9-11B/2025, نمو 15%+, التحدي Logistics/Returns`,
 
   // ── سيكولوجية المستهلك ──
-  "KB-C": `شراء 2026: أسرع قرار + أقل صبر.فشل = Features بدل Outcome / خصم بدل ثقة / سياسة غامضة.Formula: (Outcome + Proof)−Friction`,
-  "KB-C-01": `اقتصاد الثقة: Proof داخل الرحلة(Reviews / سياسات / شفافية شحن) أهم من Reach.مؤثر كبير بدون Proof = حرق`,
-  "KB-C-02": `TikTok / Snap / IG=محركات بحث مش بس إعلانات.محتوى decision - ready مش views - ready.فخ: بناء استراتيجية على Google بس`,
+  "KB-C": `شراء 2026: أسرع قرار+أقل صبر. فشل=Features بدل Outcome/خصم بدل ثقة/سياسة غامضة. Formula:(Outcome+Proof)−Friction`,
+  "KB-C-01": `اقتصاد الثقة: Proof داخل الرحلة (Reviews/سياسات/شفافية شحن) أهم من Reach. مؤثر كبير بدون Proof=حرق`,
+  "KB-C-02": `TikTok/Snap/IG=محركات بحث مش بس إعلانات. محتوى decision-ready مش views-ready. فخ: بناء استراتيجية على Google بس`,
 
   // ── منصات ──
-  "KB-D": `منصة: سلة(KSA سريع) | زد(KSA + Back - office) | Shopify(خليج / تصدير + UX) | Magento(مؤسسة + ERP).فخ: منصة قوية + تشغيل ضعيف = فشل.SME بدون فريق تطوير→تجنب Magento`,
+  "KB-D": `منصة: سلة(KSA سريع) | زد(KSA+Back-office) | Shopify(خليج/تصدير+UX) | Magento(مؤسسة+ERP). فخ: منصة قوية+تشغيل ضعيف=فشل. SME بدون فريق تطوير→تجنب Magento`,
 
   // ── تتبع ──
-  "KB-E": `Tracking: CAPI / S2S + dedup(event_id) + value / currency + Match Quality.Pixel وحده يكدب بعد الخصوصية.تقلبات ROAS→attribution + dedup + currency.افحص Tracking قبل قرارات ميزانية`,
+  "KB-E": `Tracking: CAPI/S2S+dedup(event_id)+value/currency+Match Quality. Pixel وحده يكدب بعد الخصوصية. تقلبات ROAS→attribution+dedup+currency. افحص Tracking قبل قرارات ميزانية`,
 
   // ── قنوات ──
-  "KB-F": `قنوات = لحظة قرار.مش نزود Budget قبل ضمان Offer / Proof / Checkout / Ops.`,
-  "KB-F-SNAP": `Snap KSA: UGC ستوري + Proof سريع.ربحية: tCPA / حجم: Auto - bid.Refresh كرياتيف باستمرار.هبوط غالباً Trust / Shipping مش Ads`,
-  "KB-F-TT": `TikTok: اكتشاف قوي لكن كرياتيف بيتحرق بسرعة(Refresh كل 5 - 7 أيام).VBO للقيمة.فخ: CPA قليل مع نية شراء ضعيفة`,
-  "KB-F-META": `Meta: Reels + Carousel كتالوج للأزياء / الجمال.إعلان قوي + صفحة بدون ثقة = سقوط.لازم الصفحة تكمل وعد الإعلان.Creative testing مع Audience stability`,
+  "KB-F": `قنوات=لحظة قرار. مش نزود Budget قبل ضمان Offer/Proof/Checkout/Ops.`,
+  "KB-F-SNAP": `Snap KSA: UGC ستوري+Proof سريع. ربحية:tCPA/حجم:Auto-bid. Refresh كرياتيف باستمرار. هبوط غالباً Trust/Shipping مش Ads`,
+  "KB-F-TT": `TikTok: اكتشاف قوي لكن كرياتيف بيتحرق بسرعة (Refresh كل 5-7 أيام). VBO للقيمة. فخ: CPA قليل مع نية شراء ضعيفة`,
+  "KB-F-META": `Meta: Reels+Carousel كتالوج للأزياء/الجمال. إعلان قوي+صفحة بدون ثقة=سقوط. لازم الصفحة تكمل وعد الإعلان. Creative testing مع Audience stability`,
 
   // ── Benchmarks ──
-  "KB-G": `Benchmarks = إنذار مش وصفة.اتقرأ مع سوق + هامش + تشغيل.CVR 1.5 - 3 %.ROAS المقبول: KSA / UAE≥2.5x, EG≥3x.Marketing Spend 20 - 30 % من الإيراد`,
+  "KB-G": `Benchmarks=إنذار مش وصفة. اتقرأ مع سوق+هامش+تشغيل. CVR 1.5-3%. ROAS المقبول: KSA/UAE≥2.5x, EG≥3x. Marketing Spend 20-30% من الإيراد`,
 
   // ── تشغيل ──
-  "KB-H": `Ops: RTO / Returns / SLA / Logistics cost / Cash cycle.ممنوع Scaling قبل Contribution واضح.`,
-  "KB-H-01": `COD / RTO: WhatsApp confirm(نعم / لا)→لا رد = اتصال / إلغاء قبل الشحن→Incentive prepaid→COD fee→تحقق عنوان.Metric: RTO by stage.فخ: توسع Ads مع RTO عالي = نمو وهمي`,
-  "KB-H-02": `شحن: اختيار حسب قيمة / وقت / جغرافيا(L1: DHL / FedEx VIP | L2: Aramex / SMSA KSA | L3: ناقل / زاجل | L4: Same - day).قرار على SLA Avg + P95 مش المتوسط بس`,
-  "KB-H-03": `EG كروس: مفاجآت عند الباب(رسوم / جمارك / تأخير) = رفض + تدمير ثقة.تجنب DDU B2C→بدائل: DDP أو IOR أو تنفيذ محلي`,
+  "KB-H": `Ops: RTO/Returns/SLA/Logistics cost/Cash cycle. ممنوع Scaling قبل Contribution واضح.`,
+  "KB-H-01": `COD/RTO: WhatsApp confirm(نعم/لا)→لا رد=اتصال/إلغاء قبل الشحن→Incentive prepaid→COD fee→تحقق عنوان. Metric: RTO by stage. فخ: توسع Ads مع RTO عالي=نمو وهمي`,
+  "KB-H-02": `شحن: اختيار حسب قيمة/وقت/جغرافيا (L1:DHL/FedEx VIP | L2:Aramex/SMSA KSA | L3:ناقل/زاجل | L4:Same-day). قرار على SLA Avg+P95 مش المتوسط بس`,
+  "KB-H-03": `EG كروس: مفاجآت عند الباب(رسوم/جمارك/تأخير)=رفض+تدمير ثقة. تجنب DDU B2C→بدائل: DDP أو IOR أو تنفيذ محلي`,
 
   // ── مدفوعات ──
-  "KB-I": `Payments: الدفع جزء من التحويل.KSA: Mada + Apple Pay | EG: Fawry / Meeza | BNPL: Tabby / Tamara→AOV↑+COD↓. راقب Payment Success Rate(Mobile أهم) بحسب بنك / بوابة.فشل فين؟ OTP / 3DS / Redirect`,
+  "KB-I": `Payments: الدفع جزء من التحويل. KSA:Mada+Apple Pay | EG:Fawry/Meeza | BNPL:Tabby/Tamara→AOV↑+COD↓. راقب Payment Success Rate (Mobile أهم) بحسب بنك/بوابة. فشل فين؟ OTP/3DS/Redirect`,
 
   // ── امتثال ──
-  "KB-J": `Compliance: قفل مفاجئ يقتل البيزنس.سياسات شحن / إرجاع / تسعير واضحة قبل Checkout.بديل مؤثر: UGC + إعلان من حساب البراند.Claims لازم تكون قابلة للإثبات`,
+  "KB-J": `Compliance: قفل مفاجئ يقتل البيزنس. سياسات شحن/إرجاع/تسعير واضحة قبل Checkout. بديل مؤثر: UGC+إعلان من حساب البراند. Claims لازم تكون قابلة للإثبات`,
 
   // ── تريكات استشاري ──
-  "KB-K": `SEO = Intent + Conversion.صفحات الأقسام قبل المدونة.Internal linking = بائع صامت`,
-  "KB-K-01": `بديل المؤثر: UGC + Script قصير + تصوير حقيقي + Partnership / Spark.Proof في أول 3 ثواني`,
-  "KB-K-02": `دروب شيبينج من الصين بيموت: توقعات 2 - 3 أيام مش 15 +.حل: 3PL محلي للBest - sellers`,
-  "KB-K-03": `توطين اللهجة = CTR.فصحى باردة في السوشيال.لهجة بيضاء / محلية حسب البلد.فخ: ترجمة حرفية`,
+  "KB-K": `SEO=Intent+Conversion. صفحات الأقسام قبل المدونة. Internal linking=بائع صامت`,
+  "KB-K-01": `بديل المؤثر: UGC+Script قصير+تصوير حقيقي+Partnership/Spark. Proof في أول 3 ثواني`,
+  "KB-K-02": `دروب شيبينج من الصين بيموت: توقعات 2-3 أيام مش 15+. حل: 3PL محلي للBest-sellers`,
+  "KB-K-03": `توطين اللهجة=CTR. فصحى باردة في السوشيال. لهجة بيضاء/محلية حسب البلد. فخ: ترجمة حرفية`,
 
   // ── لوحة قرار ──
-  "KB-L": `لوحة القرار: Marketing + Ops + Finance مع بعض.قرار بدون Ops / Finance=ناقص. "أداء بيكذب" لما التسويق منفصل عن التشغيل`,
-  "KB-L-F": `Funnel: CTR / CPC / CPM + CVR + CAC + AOV + LTV: CAC + Abandoned carts + Conversion lag.Traffic عالي + Purchase ضعيف→Proof / Checkout / Ops أولاً`,
-  "KB-L-O": `Ops: RTO % /Return%/Payment success / SLA Avg + P95 / Logistics cost / Cash cycle / شكاوى مصنفة.ارتفاع RTO / فشل دفع غالباً يسبق هبوط الربح حتى لو ROAS ثابت`,
+  "KB-L": `لوحة القرار: Marketing+Ops+Finance مع بعض. قرار بدون Ops/Finance=ناقص. "أداء بيكذب" لما التسويق منفصل عن التشغيل`,
+  "KB-L-F": `Funnel: CTR/CPC/CPM+CVR+CAC+AOV+LTV:CAC+Abandoned carts+Conversion lag. Traffic عالي+Purchase ضعيف→Proof/Checkout/Ops أولاً`,
+  "KB-L-O": `Ops: RTO%/Return%/Payment success/SLA Avg+P95/Logistics cost/Cash cycle/شكاوى مصنفة. ارتفاع RTO/فشل دفع غالباً يسبق هبوط الربح حتى لو ROAS ثابت`,
 };
 
 // ╔═══════════════════════════════════════════════════════════════════╗
@@ -304,7 +316,7 @@ function getAllowedOrigins(env) {
 function hitRateLimit(req, reqOrigin, tokenProtected = false) {
   const ip = req.headers.get("CF-Connecting-IP") || "unknown";
   const ua = (req.headers.get("User-Agent") || "na").slice(0, 80);
-  const key = `${ ip }| ${ reqOrigin }| ${ ua } `;
+  const key = `${ip}|${reqOrigin}|${ua}`;
   const maxRequests = tokenProtected ? RATE_LIMIT_MAX : RATE_LIMIT_MAX_ANON;
   const now = Date.now();
 
@@ -328,36 +340,6 @@ function hitRateLimit(req, reqOrigin, tokenProtected = false) {
     const retryAfterSec = Math.max(1, Math.ceil((RATE_LIMIT_WINDOW_MS - (now - prev.start)) / 1000));
     return { limited: true, retryAfterSec };
   }
-  return { limited: false, retryAfterSec: 0 };
-}
-
-function hitDailyLimit(req) {
-  const ip = req.headers.get("CF-Connecting-IP") || "unknown";
-  const key = `daily | ${ ip } `;
-  const now = Date.now();
-
-  let prev = dailyLimitStore.get(key);
-  if (!prev) {
-    if (dailyLimitStore.size > 5000) {
-      for (const [k, row] of dailyLimitStore.entries()) {
-        if (now - row.start > DAILY_LIMIT_WINDOW_MS) dailyLimitStore.delete(k);
-      }
-    }
-    prev = { start: now, count: 0 };
-  }
-
-  if (now - prev.start > DAILY_LIMIT_WINDOW_MS) {
-    prev = { start: now, count: 0 };
-  }
-
-  prev.count += 1;
-  dailyLimitStore.set(key, prev);
-
-  if (prev.count > DAILY_LIMIT_MAX) {
-    const retryAfterSec = Math.max(1, Math.ceil((DAILY_LIMIT_WINDOW_MS - (now - prev.start)) / 1000));
-    return { limited: true, retryAfterSec };
-  }
-
   return { limited: false, retryAfterSec: 0 };
 }
 
@@ -513,9 +495,9 @@ function resolveOutputTokens(mode, lastMsg) {
   }
 
   if (len < 32) return MIN_OUTPUT_TOKENS_FLASH;
-  if (len < 120) return Math.min(MAX_OUTPUT_TOKENS_FLASH, 220);
-  if (hasComplexIntent || hasMetrics) return Math.min(MAX_OUTPUT_TOKENS_FLASH, 300);
-  return Math.min(MAX_OUTPUT_TOKENS_FLASH, 260);
+  if (len < 120) return Math.min(MAX_OUTPUT_TOKENS_FLASH, 250);
+  if (hasComplexIntent || hasMetrics) return Math.min(MAX_OUTPUT_TOKENS_FLASH, 320);
+  return Math.min(MAX_OUTPUT_TOKENS_FLASH, 290);
 }
 
 function normalizeModelName(value) {
@@ -632,10 +614,54 @@ function isBusinessQuestion(msg) {
 function safetyClamp(text) {
   if (!text) return "";
   let clean = String(text)
-    .replace(/\b(As an AI large language model|I am an AI)\b/gi, "")
+    .replace(/\b(As an AI large language model|I am an AI|I'm an AI)\b/gi, "")
+    .replace(/(?:انا|أنا|i)\s*(?:مجرد\s*)?(?:نموذج(?:\s*لغوي)?|ذكاء\s*اصطناعي|ai)\b[^\n.!?؟]*/gi, "")
+    .replace(/\[\s*(SYSTEM|PROMPT|MODEL|INJECTION|CTX)[^\]]*\]/gi, "")
+    .replace(/[ \t]{2,}/g, " ")
+    .replace(/\n{3,}/g, "\n\n")
     .trim();
   if (clean && !/[.!؟…]$/.test(clean)) clean += "…";
   return clean.length > 2800 ? clean.substring(0, 2797) + "..." : clean;
+}
+
+function isOptionsLineText(line) {
+  const s = String(line || "").trim();
+  return s.startsWith("خيارات:") || s.toLowerCase().startsWith("options:");
+}
+
+function enforceQuestionLimit(text, maxQuestions = 1) {
+  let seen = 0;
+  return String(text || "").replace(/[?؟]/g, (q) => {
+    seen += 1;
+    return seen <= maxQuestions ? q : "،";
+  });
+}
+
+function enforceLineBudget(text, mode) {
+  const maxLines = mode === "expert" ? 8 : 4;
+  let lines = String(text || "")
+    .split("\n")
+    .map(l => l.trim())
+    .filter(Boolean);
+
+  if (lines.length <= maxLines) return lines.join("\n").trim();
+
+  const optionIndex = lines.findIndex(isOptionsLineText);
+  if (optionIndex === -1) {
+    return lines.slice(0, maxLines).join("\n").trim();
+  }
+
+  const optionLine = lines[optionIndex];
+  const withoutOptions = lines.filter((_, idx) => idx !== optionIndex);
+  const body = withoutOptions.slice(0, Math.max(1, maxLines - 1));
+  return [...body, optionLine].join("\n").trim();
+}
+
+function polishJimmyResponse(text, mode = "flash") {
+  let clean = String(text || "").trim();
+  clean = enforceQuestionLimit(clean, 1);
+  clean = enforceLineBudget(clean, mode);
+  return clean;
 }
 
 function sanitizeQuickReply(text) {
@@ -658,7 +684,7 @@ function backoffDelay(attempt) {
 
 function generateRequestId() {
   try { return crypto.randomUUID(); }
-  catch { return `req - ${ Date.now() } -${ Math.random().toString(36).slice(2, 8) } `; }
+  catch { return `req-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`; }
 }
 
 function structuredLog(data) {
@@ -693,10 +719,23 @@ function routeDirect(lastMsg) {
   const wantsContact = /(\bcontact\b|\bcall\b|\bphone\b|\bwhatsapp\b|\bhire\b|تواصل|كلمني|مكالمة|واتس(?:اب)?|واتساب|رقمك|رقم\s*(?:التواصل|الهاتف|الموبايل|التليفون))/i.test(t);
 
   if (wantsPortfolio && wantsContact) {
-    return { response: "تحب أبدأ بإيه؟\nخيارات: [[بورتفوليو]] [[تواصل]]", metaPatch: { forced_route: "conflict_data" } };
+    return {
+      response: "خلّينا نمشيها بالترتيب الصح.\nتحب نبدأ بالشغل ولا بالتواصل المباشر؟\nخيارات: [[بورتفوليو]] [[تواصل]]",
+      metaPatch: { forced_route: "conflict_data" }
+    };
   }
-  if (wantsPortfolio) return { response: DATA_BLOCKS.PORTFOLIO, metaPatch: { forced_route: "portfolio" } };
-  if (wantsContact) return { response: DATA_BLOCKS.CONTACT, metaPatch: { forced_route: "contact" } };
+  if (wantsPortfolio) {
+    return {
+      response: `حلو إنك بدأت من الشغل نفسه.\nالبورتفوليو: ${LINKS.site}\nوالـ CV PDF: ${LINKS.cv}\nخيارات: [[أهم إنجاز]] [[تواصل]]`,
+      metaPatch: { forced_route: "portfolio" }
+    };
+  }
+  if (wantsContact) {
+    return {
+      response: `تمام، أسرع طريق هو واتساب.\nWhatsApp: ${LINKS.whatsapp}\nPhone: ${LINKS.displayPhone}\nخيارات: [[واتساب]] [[بورتفوليو]]`,
+      metaPatch: { forced_route: "contact" }
+    };
+  }
   return null;
 }
 
@@ -705,12 +744,7 @@ function routeDirect(lastMsg) {
 // =========================
 function extractQuickReplies(responseText) {
   const lines = String(responseText || "").split("\n");
-  const isOptionsLine = (l) => {
-    const s = l.trim();
-    return s.startsWith("خيارات:") || s.toLowerCase().startsWith("options:");
-  };
-
-  const idx = [...lines].reverse().findIndex(isOptionsLine);
+  const idx = [...lines].reverse().findIndex(isOptionsLineText);
   if (idx === -1) return { cleaned: responseText.trim(), quickReplies: [] };
 
   const realIndex = lines.length - 1 - idx;
@@ -785,9 +819,9 @@ function pickMarketCards(text, mode, marketMode) {
 function buildMarketContext(cardIds) {
   if (!cardIds?.length) return "";
   const blocks = cardIds
-    .map(id => MARKET_KB[id] ? `[${ id }]\n${ MARKET_KB[id] } ` : "")
+    .map(id => MARKET_KB[id] ? `[${id}]\n${MARKET_KB[id]}` : "")
     .filter(Boolean);
-  return blocks.length ? `\n\n[MARKET]\n${ blocks.join("\n\n") } ` : "";
+  return blocks.length ? `\n\n[MARKET]\n${blocks.join("\n\n")}` : "";
 }
 
 // =====================================================================
@@ -800,9 +834,54 @@ function detectVibeTag(text) {
   if (/(مستعجل|بسرعة|حالًا|ضروري|دلوقتي)/i.test(t)) return "fast_calm";
   if (/(متوتر|قلقان|خايف|حاسس|مضايق)/i.test(t)) return "reassure";
   if (/(جرّبنا|جربنا|مفيش فايدة|فشل|اتلسعنا)/i.test(t)) return "tough_love";
+  if (/(زهقان|مخنوق|مقهور|حاسس ان الدنيا واقفة)/i.test(t)) return "light_relief";
   if (/(عايز قرار|قولّي أعمل ايه|أعمل ايه|اختار)/i.test(t)) return "decisive";
   if (isBusinessQuestion(t)) return "market_brain";
   return "normal";
+}
+
+function buildVibeDirective(vibeTag, lang) {
+  if (lang === "en") {
+    const map = {
+      fast_calm: "Tone: calm urgency. Start with one clear direction, then 2 tight options.",
+      reassure: "Tone: emotionally steady. Name the friction briefly, then reduce anxiety with a practical next step.",
+      tough_love: "Tone: direct but respectful. Call out the trap, then show a cleaner path.",
+      light_relief: "Tone: gentle wit without clowning. Small smile line, then useful advice.",
+      decisive: "Tone: decision-first. Give recommendation + why in one line, then alternatives.",
+      market_brain: "Tone: operator mindset. Focus on leverage, risk, and measurable impact.",
+      normal: "Tone: warm, sharp, human. No generic filler."
+    };
+    return map[vibeTag] || map.normal;
+  }
+
+  const arMap = {
+    fast_calm: "النبرة: هدوء سريع. ابدأ باتجاه واضح مباشر، وبعده خيارين قصار.",
+    reassure: "النبرة: تطمين ذكي. سمّي المشكلة بدون تهويل، وبعدها خطوة عملية تقلل القلق.",
+    tough_love: "النبرة: وضوح بدون قسوة. سمّي الفخ وبعدين افتح طريق أنضف.",
+    light_relief: "النبرة: خفة محسوبة. لمسة دم خفيف صغيرة ثم قيمة حقيقية.",
+    decisive: "النبرة: قرار أولاً. توصية واحدة واضحة بسبب مختصر، ثم بديلين لو لزم.",
+    market_brain: "النبرة: تشغيل ونتائج. ركّز على الرافعة والمخاطر والقياس.",
+    normal: "النبرة: إنسانية دافئة ومباشرة، بدون حشو."
+  };
+  return arMap[vibeTag] || arMap.normal;
+}
+
+function buildWarmupProtocol(lang) {
+  if (lang === "en") {
+    return "First interaction protocol (mandatory): 1) warm informal welcome 2) one useful insight tied to user words 3) soft options in last line.";
+  }
+  return "بروتوكول أول تفاعل (إجباري): 1) ترحيب دافي غير رسمي 2) Insight ذكي مرتبط بكلام المستخدم 3) خيارات ناعمة في آخر سطر.";
+}
+
+function buildResponseContract(mode) {
+  const base = [
+    KB_RESPONSE_CONTRACT,
+    mode === "expert"
+      ? "في expert: اعرض المنطق باختصار تنفيذي، وماتطولش بدون داعي."
+      : "في flash: خليك مكثف جدًا، كل سطر له وظيفة.",
+    "ممنوع تبدأ ردك بجمل روبوتية أو اعتذارات فارغة."
+  ];
+  return base.join("\n");
 }
 
 // “افتتاحية” مش محفوظة: ندي للموديل دور (مش نص) ولو حابب تعرف افتتاحية حلوة تقيس بيها ، هقولك مثلا لو الديفولت المصري - اهلا بيك منور الدنيا ، انا جيمي , انت مين -- وهكذا نوع بقا
@@ -816,7 +895,7 @@ function buildOpenerRule(lastOpener) {
 function pickLengthHint(mode) {
   return mode === "expert"
     ? "الموضوع ده محتاج تحليل — خد راحتك بس خلّيه مركّز."
-    : "خلّي ردك قصير وحاد — سطرين لتلاتة كفاية.";
+    : "خلّي ردك قصير وحيّ: من سطرين لأربع سطور.";
 }
 
 // =====================================================================
@@ -827,7 +906,6 @@ function pickLengthHint(mode) {
 // Tier 2: Expert/Market (~800–1200 tokens) — + Escalation + Market KB
 function selectTier(mode, marketCards, isFirst, vibeTag) {
   if (mode === "expert" || (marketCards && marketCards.length > 0)) return 2;
-  if (isFirst && vibeTag === "normal") return 0;
   return 1;
 }
 
@@ -851,25 +929,26 @@ function buildSystemPrompt(ctx) {
     else langHint = "رد بالعامية البيضا.";
   }
 
-  // ── Tier 0: Identity + Context + General Knowledge ──
+  const responseContract = buildResponseContract(mode);
+  const vibeDirective = buildVibeDirective(vibeTag, lang);
+
+  // ── Core: Identity + Charisma + Knowledge + Contract ──
   const parts = [
     KB_STYLE,
+    KB_STYLE_CHARISMA,
+    KB_MOHAMED,
+    responseContract,
     KB_GENERAL_KNOWLEDGE,
     langHint,
     pickLengthHint(mode),
+    vibeDirective,
   ];
 
   if (isFirst) {
-    parts.push("ده أول تفاعل — رحّب بطريقتك وافتح الحوار.");
+    parts.push(buildWarmupProtocol(lang));
   }
-
-  // ── Tier 1+: Full Persona + Mohamed ──
-  if (tier >= 1) {
-    parts.splice(1, 0, KB_STYLE_CHARISMA);
-    parts.splice(2, 0, KB_MOHAMED);
-    const openerHint = buildOpenerRule(lastOpener);
-    if (openerHint) parts.push(openerHint);
-  }
+  const openerHint = buildOpenerRule(lastOpener);
+  if (openerHint) parts.push(openerHint);
 
   // ── Tier 2: Market Knowledge ──
   if (tier >= 2) {
@@ -901,8 +980,8 @@ async function tryGenerate({
   const safeOutputTokens = toPositiveInt(outputTokens, maxByMode, minByMode, maxByMode);
 
   const genConfig = {
-    temperature: mode === "expert" ? 0.7 : 0.62,
-    topP: 0.9,
+    temperature: mode === "expert" ? 0.72 : 0.68,
+    topP: 0.92,
     maxOutputTokens: safeOutputTokens,
   };
   // Only include penalty fields for models that support them (prevents 400)
@@ -923,45 +1002,45 @@ async function tryGenerate({
   try {
     const res = await fetch(
       `https://generativelanguage.googleapis.com/${apiVersion}/models/${model}:generateContent?key=${apiKey}`,
-{
-  method: "POST",
-    headers: { "Content-Type": "application/json" },
-  body: JSON.stringify(payload),
-    signal: controller.signal
-}
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+        signal: controller.signal
+      }
     );
 
-if (res.status !== 200) {
-  let detail = `HTTP ${res.status}`;
-  try {
-    const raw = (await res.text()).replace(/\s+/g, " ").trim();
-    if (raw) detail += ` ${raw.substring(0, 180)}`;
-  } catch { }
-  return { ok: false, model, status: res.status, detail };
-}
+    if (res.status !== 200) {
+      let detail = `HTTP ${res.status}`;
+      try {
+        const raw = (await res.text()).replace(/\s+/g, " ").trim();
+        if (raw) detail += ` ${raw.substring(0, 180)}`;
+      } catch { }
+      return { ok: false, model, status: res.status, detail };
+    }
 
-const data = await res.json();
-const parts = data.candidates?.[0]?.content?.parts || [];
-const text = parts.map(p => p?.text || "").join("").trim();
-if (text) return { ok: true, text };
+    const data = await res.json();
+    const parts = data.candidates?.[0]?.content?.parts || [];
+    const text = parts.map(p => p?.text || "").join("").trim();
+    if (text) return { ok: true, text };
 
-const block = data.promptFeedback?.blockReason || "";
-return {
-  ok: false,
-  model,
-  status: 200,
-  detail: block ? `Empty candidate (${block})` : "Empty candidate",
-};
+    const block = data.promptFeedback?.blockReason || "";
+    return {
+      ok: false,
+      model,
+      status: 200,
+      detail: block ? `Empty candidate (${block})` : "Empty candidate",
+    };
   } catch (err) {
-  return {
-    ok: false,
-    model,
-    status: 0,
-    detail: err?.name === "AbortError" ? "Timeout" : (err?.message || "Fetch failed"),
-  };
-} finally {
-  clearTimeout(id);
-}
+    return {
+      ok: false,
+      model,
+      status: 0,
+      detail: err?.name === "AbortError" ? "Timeout" : (err?.message || "Fetch failed"),
+    };
+  } finally {
+    clearTimeout(id);
+  }
 }
 
 // =====================================================================
@@ -998,9 +1077,9 @@ async function tryGenerateGroq({
   const payload = {
     model,
     messages: groqMessages,
-    temperature: mode === "expert" ? 0.7 : 0.62,
+    temperature: mode === "expert" ? 0.72 : 0.68,
     max_tokens: safeOutputTokens,
-    top_p: 0.9,
+    top_p: 0.92,
     frequency_penalty: 0.35,
     presence_penalty: 0.35,
   };
@@ -1173,14 +1252,6 @@ export default {
       });
     }
 
-    const dl = hitDailyLimit(req);
-    if (dl.limited) {
-      return json({ error: "Daily Limit Exceeded", details: "وصلت للحد الأقصى للرسائل النهاردة (100 رسالة). أشوفك بكرة!" }, 429, {
-        ...corsHeaders,
-        "Retry-After": String(dl.retryAfterSec)
-      });
-    }
-
     try {
       const requestId = generateRequestId();
       const body = await req.json();
@@ -1201,7 +1272,7 @@ export default {
       if (direct) {
         const extracted = extractQuickReplies(direct.response);
         return json({
-          response: safetyClamp(extracted.cleaned),
+          response: polishJimmyResponse(safetyClamp(extracted.cleaned), "flash"),
           meta: {
             ...previousMeta,
             worker_version: WORKER_VERSION,
@@ -1439,6 +1510,7 @@ export default {
 
       // 8) Post process
       responseText = safetyClamp(responseText);
+      responseText = polishJimmyResponse(responseText, mode);
       const extracted = extractQuickReplies(responseText);
 
       // تخزين الافتتاحية اللي كتبها الموديل (أول سطر)
