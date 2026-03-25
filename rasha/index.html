@@ -1,0 +1,2190 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>رشا محمد | Marketing Team Lead - Strategy & Execution</title>
+    <meta name="description" content="رشا محمد - Marketing Team Lead بتبني تسويق مفهوم مش مجرد شغل بيتحمل تحويل الفوضى التسويقية إلى منظومة أهدى وأذكى">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800&family=Unbounded:wght@400;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+
+    <style>
+/* 
+   RASHA MOHAMED | ULTRA-MODERN 2026 EXPERIMENTAL INTERFACE
+   CORE DESIGN SYSTEM
+*/
+
+:root {
+    /* Color Palette - 2026 Luminous Violet (Anti-Gloom) */
+    --void: #0a0a20; /* Deep Blue-Violet */
+    --void-glow: #1a1a3a; /* Mid-tone Purple */
+    --void-accent: #251545; /* Luminous Deep Purple */
+    --accent-p: #bc6ff1; /* Electric Purple */
+    --accent-s: #d8b4fe; /* Luminous Orchid */
+    --accent-t: #f472b6; /* Brighter Fuchsia */
+    
+    --text-p: #ffffff;
+    --text-s: rgba(255, 255, 255, 0.88);
+    --text-dim: rgba(255, 255, 255, 0.5);
+
+    /* Aliases for Continuity */
+    --text-main: var(--text-p);
+    --accent-primary: var(--accent-p);
+    --accent-secondary: var(--accent-s);
+    --void-bg: var(--void);
+
+    /* Glass 5.0 - Luminous & Deep */
+    --glass-f: rgba(168, 85, 247, 0.04); /* Subtle Purple Tint */
+    --glass-b: rgba(255, 255, 255, 0.07);
+    --glass-blur: blur(20px) saturate(160%);
+    --glass-border: linear-gradient(135deg, rgba(168, 85, 247, 0.2), transparent, rgba(236, 72, 153, 0.1));
+    --glass-shadow: 0 20px 50px rgba(0,0,0,0.5);
+
+    /* Motion Speed - 2026 Precision */
+    --ease-p: cubic-bezier(0.2, 0, 0, 1); /* Professional Easing */
+    --t-fast: 0.35s;
+    --t-mid: 0.6s;
+    
+    /* Typography */
+    --font-heading: 'Unbounded', 'Cairo', sans-serif;
+    --font-body: 'Plus Jakarta Sans', 'Cairo', sans-serif;
+    --font-ui: 'Outfit', sans-serif;
+
+    /* Glow Tokens */
+    --glow-p: 0 0 30px rgba(168, 85, 247, 0.3);
+    --glow-s: 0 0 20px rgba(216, 180, 254, 0.2);
+}
+
+body {
+    background: var(--void);
+    color: var(--text-p);
+    font-family: var(--font-body);
+    line-height: 1.6;
+    overflow-x: hidden;
+}
+
+h1, h2, h3, h4, .title-lg, .title-md {
+    color: var(--text-p);
+    text-shadow: 0 10px 30px rgba(56, 189, 248, 0.15);
+}
+
+.text-gradient {
+    background: linear-gradient(to right, #fff, var(--accent-p));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.text-glow {
+    text-shadow: 
+        0 0 20px rgba(188, 111, 241, 0.4),
+        0 0 40px rgba(188, 111, 241, 0.2);
+    animation: text-pulse 4s infinite alternate;
+}
+
+@keyframes text-pulse {
+    0% { filter: brightness(1); }
+    100% { filter: brightness(1.2) drop-shadow(0 0 10px rgba(188, 111, 241, 0.3)); }
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-font-smoothing: antialiased;
+}
+
+html {
+    scroll-behavior: smooth;
+    background: var(--void-bg);
+    color: var(--text-main);
+    overflow-x: hidden;
+}
+
+body {
+    font-family: var(--font-body);
+    line-height: 1.8; /* Better for Arabic */
+    overflow-x: hidden;
+    background: var(--void-bg);
+}
+
+/* --- Layout Systems --- */
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 4vw;
+}
+
+/* --- Atmospheric Background --- */
+.bg-orchestrator {
+    position: fixed;
+    inset: 0;
+    z-index: -10;
+    background: linear-gradient(135deg, var(--void) 0%, var(--void-glow) 50%, var(--void-accent) 100%);
+}
+
+.bg-orchestrator::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at bottom right, rgba(188, 111, 241, 0.15), transparent 60%);
+    pointer-events: none;
+}
+
+.noise-overlay {
+    position: fixed;
+    inset: 0;
+    background: url('https://grainy-gradients.vercel.app/noise.svg');
+    opacity: 0.05;
+    pointer-events: none;
+    z-index: -5;
+    mix-blend-mode: overlay;
+    filter: brightness(0.8) contrast(1.2);
+}
+
+.bg-layer {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    will-change: transform, opacity;
+}
+
+.nebula-1 {
+    width: 140vw;
+    height: 140vh;
+    background: radial-gradient(circle at center, rgba(188, 111, 241, 0.25), transparent 70%);
+    filter: blur(60px);
+    mix-blend-mode: screen;
+}
+
+.nebula-2 {
+    width: 140vw;
+    height: 140vh;
+    background: radial-gradient(circle at center, rgba(244, 114, 182, 0.2), transparent 70%);
+    filter: blur(60px);
+    mix-blend-mode: color-dodge; /* More vibrant blend */
+}
+
+.grid-field {
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(rgba(168, 85, 247, 0.06) 1.5px, transparent 1.5px);
+    background-size: 60px 60px;
+    mask-image: radial-gradient(circle at center, black, transparent 85%);
+}
+
+.mouse-light {
+    position: absolute;
+    width: 60vw;
+    height: 60vw;
+    background: radial-gradient(circle at center, rgba(188, 111, 241, 0.15), rgba(244, 114, 182, 0.05), transparent 70%);
+    filter: blur(60px);
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+    mix-blend-mode: screen;
+    z-index: -1;
+}
+
+.vignette {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at center, transparent 20%, rgba(6, 6, 12, 0.8) 100%);
+}
+
+.prism {
+    position: absolute;
+    width: clamp(100px, 15vw, 300px);
+    height: clamp(100px, 15vw, 300px);
+    background: linear-gradient(135deg, rgba(255,255,255,0.08), transparent);
+    border: 1px solid rgba(255,255,255,0.15);
+    backdrop-filter: blur(20px) saturate(200%);
+    -webkit-backdrop-filter: blur(20px) saturate(200%);
+    border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+    filter: drop-shadow(0 0 30px rgba(188, 111, 241, 0.2));
+    animation: blob 25s infinite alternate ease-in-out;
+    pointer-events: none;
+    will-change: transform;
+    opacity: 0.4;
+}
+
+.prism:nth-child(2) { animation-delay: -5s; left: 60%; top: 20%; transform: scale(0.8); }
+.prism:nth-child(3) { animation-delay: -10s; left: 10%; top: 70%; transform: scale(1.2); }
+
+@keyframes blob {
+    0% { border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%; transform: translate(0, 0) rotate(0deg); }
+    100% { border-radius: 50% 50% 20% 80% / 25% 80% 20% 75%; transform: translate(50px, -50px) rotate(25deg); }
+}
+
+/* --- Navbar Removed --- */
+
+.hero-section {
+    min-height: 90vh;
+    display: flex;
+    align-items: center;
+    padding-top: 5vh; /* Less padding since header is gone */
+}
+
+.hero-layers {
+    display: grid;
+    grid-template-columns: 1fr 0.8fr;
+    gap: 6rem;
+    align-items: center;
+}
+
+.hero-eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    font-family: var(--font-ui);
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent-s);
+    margin-bottom: 2rem;
+    font-weight: 600;
+}
+
+.eyebrow-line {
+    width: 24px;
+    height: 1px;
+    background: var(--accent-s);
+    opacity: 0.6;
+}
+
+.hero-title {
+    font-family: var(--font-heading);
+    font-size: clamp(2.5rem, 8vw, 5rem);
+    line-height: 1.1;
+    margin-bottom: 1.5rem;
+    font-weight: 900;
+}
+
+.sub-title {
+    font-size: clamp(1.1rem, 3.5vw, 1.6rem);
+    font-weight: 500;
+    color: var(--text-s);
+    margin-top: 0.5rem;
+    line-height: 1.4;
+    display: block;
+}
+
+.sub-title-2 {
+    font-size: clamp(0.9rem, 3vw, 1.3rem);
+    font-weight: 400;
+    color: var(--text-t);
+    margin-top: 0.2rem;
+    display: block;
+}
+
+.hero-description {
+    font-size: 1.15rem;
+    color: var(--text-s);
+    max-width: 540px;
+    margin-bottom: 2.5rem;
+    line-height: 1.7;
+}
+
+/* --- Visual Identity --- */
+.layer-visual {
+    position: relative;
+}
+
+.identity-orb {
+    width: 80%;
+    margin: 0 auto;
+    aspect-ratio: 1;
+    border-radius: 32px;
+    overflow: hidden;
+    position: relative;
+    border: 1px solid rgba(168, 85, 247, 0.2);
+    box-shadow: 
+        0 40px 100px rgba(10, 5, 25, 0.8),
+        inset 0 0 40px rgba(188, 111, 241, 0.15);
+    transition: all var(--t-mid) var(--ease-p);
+    background: var(--glass-f);
+}
+
+.identity-orb::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, var(--accent-p), transparent 60%);
+    opacity: 0.15;
+    z-index: 2;
+    pointer-events: none;
+}
+
+.identity-orb::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: inherit;
+    z-index: 3;
+    pointer-events: none;
+}
+
+
+.hero-avatar {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: grayscale(100%) brightness(0.9) contrast(1.1);
+    transition: all 0.8s var(--ease-p);
+}
+
+.identity-orb:hover .hero-avatar {
+    filter: grayscale(0%) brightness(1) contrast(1);
+    transform: scale(1.02);
+}
+
+/* --- Buttons --- */
+.btn-modern {
+    padding: 1.2rem 3rem;
+    background: transparent;
+    border: 1px solid rgba(168, 85, 247, 0.3);
+    color: var(--text-p);
+    font-family: var(--font-ui);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.4s var(--ease-p);
+    border-radius: 8px;
+}
+
+.btn-modern:hover {
+    background: var(--accent-p);
+    color: #000;
+    box-shadow: 0 0 30px rgba(168, 85, 247, 0.4);
+}
+
+/* --- Section Basics --- */
+.section {
+    padding: 8vh 0; /* Reduced from 15vh */
+    position: relative;
+}
+
+.section-divider {
+    position: absolute;
+    bottom: 0;
+    left: 10%;
+    right: 10%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--glass-border), transparent);
+    opacity: 0.5;
+}
+
+.title-lg {
+    font-family: var(--font-heading);
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    line-height: 1.1;
+    margin-bottom: 2rem;
+    color: #fff;
+}
+
+
+.title-md {
+    font-family: var(--font-heading);
+    font-size: clamp(1.8rem, 4vw, 2.5rem);
+    margin-bottom: 3rem;
+    color: #fff;
+}
+
+
+.accent-text {
+    color: var(--accent-primary);
+}
+
+/* --- Section Depth --- */
+.section:nth-child(even) {
+    background: rgba(255, 255, 255, 0.015);
+    position: relative;
+    border-top: 1px solid rgba(255,255,255,0.03);
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+}
+
+.positioning-section .section-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6vw;
+}
+
+.lead-text {
+    font-size: 1.5rem;
+    color: var(--text-main);
+    margin-bottom: 3rem;
+    line-height: 1.6;
+}
+
+.logic-list {
+    list-style: none;
+}
+
+.logic-list li {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 1.5rem 0;
+    color: var(--text-s);
+    border-bottom: 1px solid var(--glass-b);
+    transition: all 0.3s var(--ease-p);
+}
+
+.logic-list li span {
+    font-family: var(--font-ui);
+    font-size: 0.9rem;
+    color: var(--accent-p);
+    font-weight: 600;
+}
+
+.logic-list li:hover {
+    color: var(--text-p);
+    padding-right: 1.5rem;
+    background: rgba(168, 85, 247, 0.03);
+    border-bottom-color: var(--accent-p);
+}
+
+/* --- Feature Cards --- */
+.cards-grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 1.5rem;
+}
+
+.feature-card {
+    grid-column: span 3;
+}
+
+.feature-card:nth-child(1), .feature-card:nth-child(4) {
+    grid-column: span 4;
+}
+
+.feature-card:nth-child(2), .feature-card:nth-child(3) {
+    grid-column: span 2;
+}
+
+@media (max-width: 1024px) {
+    .feature-card { grid-column: span 6 !important; }
+}
+
+@media (max-width: 600px) {
+    .feature-card { grid-column: span 12 !important; }
+}
+
+.feature-card {
+    background: rgba(188, 111, 241, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 2.5rem;
+    backdrop-filter: blur(40px) saturate(220%) brightness(1.1);
+    -webkit-backdrop-filter: blur(40px) saturate(220%) brightness(1.1);
+    transition: all var(--t-fast) var(--ease-p);
+    border-radius: 24px;
+    box-shadow: 
+        0 30px 60px rgba(10, 5, 25, 0.5),
+        inset 0 0 20px rgba(188, 111, 241, 0.1); /* Inner Glow */
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+}
+
+.feature-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(168, 85, 247, 0.1), transparent);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+}
+
+.feature-card:hover {
+    transform: translateY(-10px) scale(1.02);
+    border-color: rgba(188, 111, 241, 0.5);
+    background: rgba(188, 111, 241, 0.08);
+    box-shadow: 0 30px 60px rgba(10, 5, 25, 0.7), 0 0 20px rgba(188, 111, 241, 0.2);
+}
+
+.feature-card:hover::before {
+    opacity: 1;
+}
+
+.card-icon {
+    font-size: 2.2rem;
+    color: var(--accent-p);
+    margin-bottom: 1.5rem;
+}
+
+.feature-card h3 {
+    font-family: var(--font-heading);
+    font-size: 1.4rem;
+    margin-bottom: 1.2rem;
+    color: #fff;
+}
+
+.feature-card p {
+    color: var(--text-s);
+    font-size: 1rem;
+    line-height: 1.7;
+}
+
+/* Stagger reveals */
+.stagger-item:nth-child(1) { transition-delay: 0.1s; }
+.stagger-item:nth-child(2) { transition-delay: 0.2s; }
+.stagger-item:nth-child(3) { transition-delay: 0.3s; }
+.stagger-item:nth-child(4) { transition-delay: 0.4s; }
+
+/* --- How I Work --- */
+.how-section {
+    background: rgba(0,0,0,0.3);
+}
+
+.description-md {
+    font-size: 1.25rem;
+    color: var(--text-dim);
+    margin-top: -1rem;
+    margin-bottom: 4rem;
+}
+
+.principles-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+.nav-logo {
+    position: absolute;
+    top: 3.5rem;
+    left: 4rem;
+    z-index: 100;
+}
+
+.logo-container {
+    position: relative;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.logo-svg {
+    width: 100%;
+    height: 100%;
+    filter: drop-shadow(0 0 15px rgba(0, 198, 255, 0.3));
+}
+
+.logo-initials {
+    fill: #fff;
+    font-family: var(--font-heading);
+    font-size: 24px;
+    font-weight: 900;
+    letter-spacing: -1px;
+}
+
+.logo-status {
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    width: 4px;
+    height: 4px;
+    background: var(--accent-secondary);
+    border-radius: 50%;
+    box-shadow: 0 0 10px var(--accent-secondary);
+    animation: pulse-glow 2s infinite ease-in-out;
+}
+
+@keyframes pulse-glow {
+    0%, 100% { transform: scale(1); opacity: 0.5; }
+    50% { transform: scale(1.5); opacity: 1; }
+}
+.hero-line {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1.5rem;
+    margin-top: 1rem;
+    flex-wrap: wrap;
+}
+
+.sub-separator {
+    color: var(--accent-p);
+    font-weight: 300;
+    opacity: 0.5;
+    font-size: 1.5rem;
+}
+
+/* --- Shard Grid (Why Rasha) --- */
+.shard-grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 1.5rem;
+    margin-top: 4rem;
+}
+
+.shard-card {
+    position: relative;
+    padding: 3rem;
+    background: var(--glass-f);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(50px) saturate(200%);
+    -webkit-backdrop-filter: blur(50px) saturate(200%);
+    border-radius: 4px; /* Industrial Sharp Look */
+    transition: all var(--t-mid) var(--ease-p);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.shard-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 3px; height: 100%;
+    background: var(--accent);
+}
+
+.shard-lg { grid-column: span 7; }
+.shard-md { grid-column: span 5; }
+.shard-sm { grid-column: span 4; }
+@media (max-width: 992px) {
+    .shard-lg, .shard-md, .shard-sm { grid-column: span 12; }
+}
+
+.shard-card:hover {
+    transform: translateY(-5px);
+    background: rgba(255,255,255,0.03);
+    box-shadow: 0 40px 80px rgba(0,0,0,0.4), 0 0 30px rgba(var(--accent), 0.1);
+}
+
+.shard-label {
+    font-family: var(--font-ui);
+    font-size: 0.65rem;
+    letter-spacing: 3px;
+    color: var(--accent);
+    margin-bottom: 2rem;
+    opacity: 0.6;
+}
+
+/* --- Matrix Grid (How I Work) --- */
+.matrix-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    border: 1px solid rgba(255,255,255,0.05);
+}
+
+@media (max-width: 1200px) {
+    .matrix-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 768px) {
+    .matrix-grid { grid-template-columns: 1fr; }
+}
+
+.matrix-item {
+    position: relative;
+    padding: 3rem 2rem;
+    border: 1px solid rgba(255,255,255,0.05);
+    overflow: hidden;
+    transition: all var(--t-mid) var(--ease-p);
+}
+
+.matrix-bg-num {
+    position: absolute;
+    bottom: -1rem;
+    right: -1rem;
+    font-size: 8rem;
+    font-weight: 900;
+    color: rgba(255,255,255,0.02);
+    font-family: var(--font-heading);
+    transition: all 0.8s var(--ease-p);
+}
+
+.matrix-item:hover .matrix-bg-num {
+    color: rgba(188, 111, 241, 0.08);
+    transform: scale(1.1) rotate(-5deg);
+}
+
+/* --- HUD Grid (Signals) --- */
+.hud-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 2rem;
+}
+
+.hud-card {
+    padding: 2.5rem;
+    background: rgba(10, 10, 30, 0.4);
+    border: 1px solid rgba(255,255,255,0.03);
+    position: relative;
+    border-radius: 2px;
+}
+
+.hud-meta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem;
+    color: var(--accent-s);
+    margin-bottom: 1.5rem;
+    opacity: 0.5;
+}
+
+.hud-scanner {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 2px;
+    background: linear-gradient(to right, transparent, var(--accent-p), transparent);
+    opacity: 0;
+    pointer-events: none;
+}
+
+.hud-card:hover .hud-scanner {
+    animation: scanner 2s infinite linear;
+    opacity: 1;
+}
+
+@keyframes scanner { 0% { top: 0; } 100% { top: 100%; } }
+
+/* --- Axis Checklist --- */
+.axis-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin-top: 3rem;
+}
+
+.axis-item {
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.05);
+    padding: 1.5rem;
+    border-radius: 8px;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    transition: all var(--t-fast) var(--ease-p);
+}
+
+.axis-item span {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--accent-p);
+    opacity: 0.6;
+}
+
+.axis-item:hover {
+    background: rgba(188, 111, 241, 0.05);
+    border-color: var(--accent-p);
+    transform: translateX(-5px);
+}
+.principle-item {
+    display: flex;
+    gap: 4rem;
+    padding: 5vh 0;
+    border-top: 1px solid var(--glass-border);
+    transition: all 0.6s var(--ease-p);
+}
+
+.p-num {
+    font-family: var(--font-heading);
+    font-size: 6rem;
+    font-weight: 900;
+    line-height: 0.8;
+    color: transparent;
+    -webkit-text-stroke: 1px var(--glass-border);
+    transition: all 0.6s var(--ease-p);
+    opacity: 0.3;
+}
+
+.principle-item:hover .p-num {
+    color: var(--accent-p);
+    -webkit-text-stroke: 1px var(--accent-p);
+    opacity: 0.8;
+    transform: translateX(-15px) scale(1.1);
+}
+
+.p-content h3 {
+    font-family: var(--font-heading);
+    font-size: 1.8rem;
+    margin-bottom: 1.2rem;
+    color: #fff;
+    font-weight: 800;
+}
+
+.p-content p {
+    color: var(--text-s);
+    font-size: 1.15rem;
+    max-width: 800px;
+    line-height: 1.8;
+}
+
+/* --- Services --- */
+.services-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 2rem;
+    margin-top: 3rem;
+}
+
+.service-block {
+    background: var(--glass-f);
+    border: 1px solid var(--glass-b);
+    padding: 3rem;
+    backdrop-filter: var(--glass-blur);
+    transition: all var(--t-fast) var(--ease-p);
+    border-radius: 12px;
+}
+
+.service-block:hover {
+    transform: translateY(-8px);
+    border-color: var(--accent-p);
+    background: rgba(168, 85, 247, 0.05);
+    box-shadow: 0 30px 60px rgba(0,0,0,0.5);
+}
+
+.service-meta {
+    font-family: var(--font-ui);
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    color: var(--accent-p);
+    margin-bottom: 1.5rem;
+    text-align: left;
+    direction: ltr;
+}
+
+.service-block h3 {
+    font-family: var(--font-heading);
+    font-size: 1.6rem;
+    line-height: 1.2;
+    margin-bottom: 2rem;
+    min-height: 3.8rem;
+    text-align: left;
+    direction: ltr;
+    color: #fff;
+}
+
+.service-block p {
+    color: var(--text-s);
+    font-size: 1.05rem;
+    line-height: 1.8;
+    margin-bottom: 3rem;
+}
+
+.service-info {
+    font-size: 0.85rem;
+    color: #fff;
+    font-style: italic;
+    border-right: 2px solid var(--accent-p);
+    padding-right: 1.5rem;
+    margin-top: auto;
+}
+
+/* --- Proof Signals --- */
+.signals-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 3rem;
+    margin-top: 4rem;
+}
+
+.signal-item {
+    padding: 3rem;
+    background: linear-gradient(135deg, var(--glass-bg), transparent);
+    border: 1px solid var(--glass-border);
+    position: relative;
+    transition: all 0.5s var(--ease-premium);
+}
+
+.signal-item:hover {
+    border-color: var(--accent-primary);
+    transform: translateY(-5px);
+}
+
+.s-tag {
+    font-family: var(--font-ui);
+    font-size: 0.7rem;
+    color: var(--accent-secondary);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 1rem;
+    display: block;
+    text-align: left;
+    direction: ltr;
+}
+
+.signal-item h3 {
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+    font-family: var(--font-heading);
+}
+
+.signal-item p {
+    color: var(--text-dim);
+    font-size: 1rem;
+    line-height: 1.6;
+}
+
+/* --- Contact Section --- */
+.contact-section {
+    padding-bottom: 10vh; /* Reduced from 20vh */
+}
+
+.contact-frame {
+    background: var(--glass-facade);
+    border: 1px solid var(--glass-border);
+    padding: 10vh 8vw;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    border-radius: 32px;
+    box-shadow: var(--glass-shadow);
+    backdrop-filter: var(--glass-blur);
+}
+
+.contact-methods {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    margin-top: 4rem;
+}
+
+.contact-link {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    color: #fff;
+    text-decoration: none;
+    font-family: var(--font-ui);
+    font-size: 1.1rem;
+    padding: 1.2rem 2.5rem;
+    border: 1px solid var(--glass-border);
+    transition: all 0.4s var(--ease-p);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.contact-link:hover {
+    background: #fff;
+    color: var(--void);
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+}
+
+.contact-footer {
+    margin-top: 6rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: var(--text-dim);
+    font-size: 0.8rem;
+    border-top: 1px solid var(--glass-border);
+    padding-top: 2rem;
+}
+
+/* --- HUD & Motion --- */
+.hud-canvas {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 100;
+}
+
+.hud-particle {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    background: var(--accent-secondary);
+    border-radius: 50%;
+    opacity: 0.3;
+    filter: blur(1px); /* More atmospheric */
+    transition: transform 0.2s ease-out;
+}
+
+/* Reactive HUD Overlay */
+.hud-status {
+    position: fixed;
+    bottom: 4rem;
+    left: 4vw;
+    font-family: var(--font-ui);
+    z-index: 101;
+}
+
+.status-indicator {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    color: var(--text-dim);
+    font-size: 0.7rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    background: var(--accent-secondary);
+    border-radius: 50%;
+    box-shadow: 0 0 10px var(--accent-secondary);
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.5); opacity: 0.5; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+/* HUD Scanning Effect */
+.hud-scanline {
+    position: fixed;
+    top: -100px;
+    left: 0;
+    width: 100%;
+    height: 100px;
+    background: linear-gradient(to bottom, transparent, rgba(168, 85, 247, 0.08), transparent);
+    z-index: 1000;
+    pointer-events: none;
+    animation: scan 8s linear infinite;
+}
+
+@keyframes scan {
+    0% { transform: translateY(-100px); }
+    10% { transform: translateY(110vh); }
+    100% { transform: translateY(110vh); }
+}
+
+/* Section Specific Atmospheric States */
+body[data-active-section="hero"] .nebula-1 { opacity: 0.8; }
+body[data-active-section="how-i-work"] .nebula-1 { filter: hue-rotate(30deg); }
+body[data-active-section="services"] .nebula-1 { filter: hue-rotate(-30deg); }
+body[data-active-section="contact"] .nebula-1 { filter: brightness(1.2); }
+
+/* Scroll Progress Matrix */
+.scroll-progress-container {
+    position: fixed;
+    right: 2rem;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 30vh;
+    width: 2px;
+    background: var(--glass-border);
+    z-index: 100;
+}
+
+.scroll-progress-fill {
+    width: 100%;
+    height: 0%;
+    background: var(--accent-secondary);
+    box-shadow: var(--glow-secondary);
+    transition: height 0.1s linear;
+}
+
+/* Terminal Boot Splash */
+.boot-splash {
+    position: fixed;
+    inset: 0;
+    background: #000;
+    z-index: 20000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-ui);
+    color: var(--accent-secondary);
+    transition: opacity 0.4s var(--ease-premium), visibility 0.4s;
+}
+
+.boot-text {
+    font-size: 0.8rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 2rem;
+}
+
+.boot-loader {
+    width: 200px;
+    height: 1px;
+    background: var(--glass-border);
+    position: relative;
+    overflow: hidden;
+}
+
+.boot-loader::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: var(--accent-secondary);
+    animation: boot-load 1.5s var(--ease-premium) forwards;
+}
+
+@keyframes boot-load {
+    0% { left: -100%; }
+    100% { left: 0%; }
+}
+
+/* Reveal System - Fast & Fluid */
+.reveal {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: 
+        opacity var(--t-fast) var(--ease-p),
+        transform var(--t-fast) var(--ease-p);
+    will-change: opacity, transform;
+}
+
+.reveal.active {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Specific delay for hero to feel cinematic */
+#hero .reveal {
+    transition-delay: 0.2s;
+}
+
+.boot-splash.dismissed {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.8s var(--ease-p);
+}
+
+/* Arabic Specific adjustments */
+[dir="rtl"] .hero-title {
+    letter-spacing: 0;
+}
+
+/* --- Responsive Design --- */
+@media (max-width: 1024px) {
+    .navbar { padding: 1rem 0; }
+    .hero-layers, .section-grid { grid-template-columns: 1fr; gap: 4rem; }
+    .hero-title { font-size: 3.5rem; }
+    .nav-links { display: none; }
+    .services-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 768px) {
+    .container { padding: 0 6vw; }
+    .principle-item { flex-direction: column; gap: 1rem; }
+    .p-num { font-size: 3rem; }
+    .contact-frame { padding: 10vw 6vw; }
+    .contact-methods { flex-direction: column; }
+}
+    /* --- AI HUD CENTER (Massive Premium 2026) --- */
+    .chatbot-container {
+        position: fixed;
+        bottom: 2rem;
+        right: 2rem;
+        z-index: 10000;
+    }
+
+    .chatbot-trigger {
+        width: 50px;
+        height: 50px;
+        background: var(--glass-f);
+        border: 1px solid rgba(139, 92, 246, 0.4);
+        color: var(--accent-p);
+        border-radius: 4px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        backdrop-filter: blur(15px);
+        transition: all 0.4s var(--ease-p);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    }
+
+    .chatbot-trigger:hover {
+        transform: scale(1.1) rotate(90deg);
+        border-color: var(--accent-p);
+    }
+
+    .chatbot-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.7);
+        backdrop-filter: blur(40px);
+        z-index: 10001;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.6s ease;
+    }
+
+    .chatbot-overlay.active { opacity: 1; pointer-events: auto; }
+
+    .chatbot-modal {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) scale(0.9);
+        width: 94vw;
+        max-width: 1240px;
+        height: 85vh;
+        max-height: 820px;
+        background: rgba(15, 15, 25, 0.85);
+        backdrop-filter: blur(120px) saturate(300%);
+        -webkit-backdrop-filter: blur(120px) saturate(300%);
+        z-index: 10002;
+        opacity: 0;
+        pointer-events: none;
+        transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        display: grid;
+        grid-template-columns: 1fr 280px; 
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 100px 250px rgba(0,0,0,0.9);
+        
+        /* Reset any potential mobile leaks */
+        bottom: auto;
+        right: auto;
+    }
+
+    .chatbot-modal.active {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+        pointer-events: auto;
+    }
+
+    /* --- Sidebar (Right - Identity) --- */
+    .modal-sidebar {
+        background: rgba(255, 255, 255, 0.02);
+        border-left: 1px solid rgba(255, 255, 255, 0.05);
+        padding: 2.5rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: flex-start; 
+        order: 2; 
+        direction: ltr; /* CRITICAL: Force LTR so flex-start = Left */
+    }
+
+    .sidebar-top {
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+        align-items: flex-start; /* FORCE INTERNAL LEFT */
+        width: 100%;
+    }
+
+    .btn-close {
+        background: rgba(255,255,255,0.05);
+        border: none;
+        color: #fff;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin: 0; /* Clear any previous alignment margins */
+    }
+
+    .btn-close:hover { background: rgba(255,255,255,0.1); transform: rotate(90deg); }
+
+    .sidebar-identity {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+        padding-top: 1rem;
+    }
+
+    .agent-name {
+        font-family: var(--font-heading);
+        font-size: 1.75rem;
+        font-weight: 950;
+        color: #fff;
+        line-height: 1.1;
+        margin-bottom: 0.75rem;
+        letter-spacing: -1px;
+    }
+
+    .agent-type {
+        font-family: 'Space Mono', monospace;
+        font-size: 0.65rem;
+        font-weight: 400;
+        color: rgba(255,255,255,0.4);
+        letter-spacing: 5px;
+        text-transform: uppercase;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding-left: 2px;
+    }
+
+    .agent-type::before {
+        content: '';
+        width: 6px;
+        height: 6px;
+        background: var(--accent-p);
+        border-radius: 50%;
+        box-shadow: 0 0 10px var(--accent-p);
+    }
+
+    .sidebar-bottom {
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+        align-items: flex-start; /* FORCE INTERNAL LEFT */
+        width: 100%;
+    }
+
+    .status-badge {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 0.6rem;
+        font-family: var(--font-ui);
+        color: rgba(255,255,255,0.5);
+        letter-spacing: 2px;
+        background: rgba(255,255,255,0.03);
+        padding: 8px 16px;
+        border: 1px solid rgba(255,255,255,0.05);
+        text-transform: uppercase;
+    }
+
+    .status-indicator {
+        width: 8px;
+        height: 8px;
+        background: #10b981;
+        border-radius: 50%;
+        position: relative;
+    }
+
+    .status-indicator::after {
+        content: '';
+        position: absolute;
+        inset: -4px;
+        background: #10b981;
+        border-radius: 50%;
+        opacity: 0.4;
+        animation: pulse-status 2s infinite;
+    }
+
+    .social-mini {
+        display: flex;
+        gap: 1.5rem;
+        font-size: 1.25rem;
+        color: rgba(255,255,255,0.3);
+    }
+
+    .social-mini a:hover { color: var(--accent-p); }
+
+    /* --- Chat Main Area (Left) --- */
+    .modal-main {
+        display: flex;
+        flex-direction: column;
+        background: rgba(0,0,0,0.1);
+        min-width: 0; /* Fix flex overflow */
+        order: 1; /* Main on Left */
+    }
+
+    .chat-log {
+        flex: 1;
+        padding: 2.5rem;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 2.5rem;
+        scrollbar-width: thin;
+        scrollbar-color: rgba(255,255,255,0.1) transparent;
+        direction: ltr; /* CRITICAL: Force LTR for flex alignment logic */
+    }
+
+    .ai-message, .user-message {
+        max-width: 82%;
+        width: fit-content;
+        padding: 1.25rem 1.75rem;
+        border-radius: 12px;
+        font-size: 0.95rem;
+        line-height: 1.6;
+        direction: rtl; /* Arabic text flow */
+        word-wrap: break-word; /* Prevent stretching */
+        overflow-wrap: break-word;
+    }
+
+    .ai-message {
+        align-self: flex-start; /* LEFT */
+        background: rgba(139, 92, 246, 0.1);
+        color: #10b981; 
+        border: 1px solid rgba(16, 185, 129, 0.1);
+        border-bottom-left-radius: 2px;
+    }
+
+    .user-message {
+        align-self: flex-end; /* RIGHT */
+        background: rgba(255, 255, 255, 0.05);
+        color: #fff;
+        border: 1px solid rgba(255,255,255,0.05);
+        border-bottom-right-radius: 2px;
+    }
+
+    .input-container {
+        padding: 2.5rem 3rem;
+        border-top: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .input-wrapper {
+        background: rgba(255,255,255,0.03);
+        border: 1px solid rgba(255,255,255,0.08);
+        border-radius: 50px;
+        display: flex;
+        align-items: center;
+        padding: 0.5rem 1.5rem;
+        gap: 1rem;
+        transition: all 0.3s ease;
+    }
+
+    .input-wrapper:focus-within {
+        border-color: var(--accent-p);
+        background: rgba(255,255,255,0.05);
+    }
+
+    .chat-input {
+        flex: 1;
+        background: transparent;
+        border: none;
+        color: #fff;
+        padding: 1rem 0;
+        font-size: 0.95rem;
+        outline: none;
+        text-align: right;
+    }
+
+    .btn-send {
+        background: transparent;
+        border: none;
+        color: var(--accent-p);
+        font-size: 1.5rem;
+        cursor: pointer;
+    }
+
+    @media (max-width: 1024px) {
+        .chatbot-modal {
+            grid-template-columns: 1fr;
+            width: 100vw;
+            height: 100vh;
+            max-width: none;
+            max-height: none;
+            border-radius: 0;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            transform: none !important;
+            border: none;
+        }
+        
+        .modal-sidebar {
+            display: none !important;
+        }
+
+        .modal-main {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            height: 100%;
+        }
+
+        .mobile-chat-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1.25rem 1.5rem;
+            background: rgba(255, 255, 255, 0.03);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            flex-shrink: 0;
+        }
+
+        .mobile-identity {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .mobile-dot {
+            width: 8px;
+            height: 8px;
+            background: #10b981;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #10b981;
+        }
+
+        .mobile-name {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.75rem;
+            letter-spacing: 2px;
+            color: #fff;
+            text-transform: uppercase;
+        }
+
+        .btn-close-mobile {
+            background: rgba(255, 255, 255, 0.05);
+            border: none;
+            color: #fff;
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .chat-log {
+            padding: 1.5rem;
+            gap: 1.5rem;
+            flex: 1;
+        }
+
+        .ai-message, .user-message {
+            max-width: 92%;
+            font-size: 0.9rem;
+            padding: 1rem 1.25rem;
+        }
+
+        .input-container {
+            padding: 1.25rem;
+            background: rgba(0,0,0,0.3);
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+    }
+
+    /* Desktop header hidden */
+    .mobile-chat-header { display: none; }
+
+    .chat-log, .modal-header, .chat-input-area { padding: 2rem; }
+    </style>
+</head>
+<body class="is-loading">
+    <!-- Boot Splash -->
+    <div class="boot-splash" id="boot-splash">
+        <div class="boot-text">Initializing Rasha OS 2.6.0</div>
+        <div class="boot-loader"></div>
+    </div>
+
+    <!-- Atmospheric Background System -->
+    <div class="bg-orchestrator">
+        <div class="noise-overlay"></div>
+        <div class="bg-layer nebula-1" id="nebula"></div>
+        <div class="bg-layer nebula-2" id="nebula-2"></div>
+        <div class="bg-layer prism" id="prism-1"></div>
+        <div class="bg-layer prism" id="prism-2"></div>
+        <div class="mouse-light" id="mouse-light"></div>
+        <div class="grid-field" id="grid"></div>
+        <div class="vignette"></div>
+    </div>
+
+    <!-- Scroll Progress Matrix -->
+    <div class="scroll-progress-container">
+        <div class="scroll-progress-fill" id="scroll-fill"></div>
+    </div>
+
+    <!-- AI Chatbot Interface -->
+    <div class="chatbot-container">
+        <button id="chatbot-trigger" class="chatbot-trigger" aria-label="Open Command Hub">
+            <i class="ri-radar-fill"></i>
+        </button>
+
+        <div class="chatbot-overlay" id="chatbot-overlay"></div>
+
+        <div class="chatbot-modal" id="chatbot-modal">
+            <!-- Sidebar (Integrated Identification) -->
+            <div class="modal-sidebar">
+                <div class="sidebar-top">
+                    <button id="chatbot-close" class="btn-close" aria-label="Close Window">
+                        <i class="ri-close-line"></i>
+                    </button>
+                    <div class="sidebar-identity">
+                        <h3 class="agent-name">Rasha<br>Mohamed</h3>
+                        <span class="agent-type">AI Agent "Janah"</span>
+                    </div>
+                </div>
+
+                <div class="sidebar-bottom">
+                    <div class="status-badge">
+                        <span class="status-indicator"></span>
+                        RM ONLINE
+                    </div>
+                    <div class="social-mini">
+                        <a href="#"><i class="ri-linkedin-box-fill"></i></a>
+                        <a href="#"><i class="ri-instagram-line"></i></a>
+                        <a href="#"><i class="ri-whatsapp-line"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Chat Interface -->
+            <div class="modal-main">
+                <!-- Mobile Only Header -->
+                <div class="mobile-chat-header">
+                    <div class="mobile-identity">
+                        <div class="mobile-dot"></div>
+                        <span class="mobile-name">Janah AI</span>
+                    </div>
+                    <button class="btn-close-mobile" id="closeChatMobile" aria-label="Close Chat">
+                        <i class="ri-close-line"></i>
+                    </button>
+                </div>
+
+                <div class="chat-log" id="chatLog">
+                    <div class="ai-message">
+                        <p>أهلاً بك. أنا جنة، المساعدة الذكية الخاصة برشا. كيف يمكنني مساعدتك اليوم؟</p>
+                    </div>
+                </div>
+
+                <div class="input-container">
+                    <div class="input-wrapper">
+                        <input type="text" id="chat-input" class="chat-input" placeholder="اكتب رسالتك لـ جنة هنا...">
+                        <button id="chat-send-btn" class="btn-send">
+                            <i class="ri-send-plane-2-fill"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- The "Developer Mind" HUD -->
+    <div id="hud-canvas" class="hud-canvas" aria-hidden="true">
+        <div class="hud-data-stream"></div>
+        <div class="hud-scanline"></div>
+    </div>
+
+
+    <header class="hidden-navbar">
+        <!-- Header entirely removed from flow -->
+    </header>
+
+    <main id="main-content">
+        <!-- Hero Section -->
+        <section id="hero" class="hero-section">
+            <div class="container">
+                <div class="nav-logo">
+                    <div class="logo-container">
+                        <svg class="logo-svg" viewBox="0 0 100 100">
+                            <defs>
+                                <linearGradient id="logo-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:var(--accent-primary);stop-opacity:1" />
+                                    <stop offset="100%" style="stop-color:var(--accent-secondary);stop-opacity:1" />
+                                </linearGradient>
+                            </defs>
+                            <circle cx="50" cy="50" r="48" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="0.5" />
+                            <path d="M30 35 L70 35 M30 65 L70 65" stroke="url(#logo-grad)" stroke-width="1.5" stroke-linecap="round" opacity="0.5" />
+                            <text x="50" y="58" text-anchor="middle" class="logo-initials">RM</text>
+                        </svg>
+                        <div class="logo-status"></div>
+                    </div>
+                </div>
+                <div class="hero-layers">
+                    <div class="layer-text reveal">
+                        <div class="hero-eyebrow">
+                            <span class="eyebrow-line"></span>
+                            Marketing Supervisor & Team Lead
+                        </div>
+                        <h1 class="hero-title" data-parallax="0.1">
+                            <span class="kinetic-text text-gradient">رشا محمد</span>
+                            <div class="hero-line">
+                                <span class="sub-title text-glow">ببني تسويق مفهوم</span>
+                                <span class="sub-separator">/</span>
+                                <span class="sub-title-2">مش مجرد شغل بيتعمل</span>
+                            </div>
+                        </h1>
+                        <!-- Narrative moved to positioning section for better flow -->
+                    </div>
+                    <div class="layer-visual reveal" data-parallax="-0.05">
+                        <div class="identity-orb">
+                            <img src="https://scontent-sof1-2.xx.fbcdn.net/v/t1.6435-9/116133755_100391521773348_2602178064805608899_n.jpg?_nc_cat=111&ccb=1-7&_nc_sid=1d70fc&_nc_ohc=v7FXh2cea3YQ7kNvwEPn_Na&_nc_oc=AdrD7Vkct4sxAX4cYq5CFDWayeSuKLY4TrXVQH0c6SbQyereR63BTbSQsIQPc2CLFzg&_nc_zt=23&_nc_ht=scontent-sof1-2.xx&_nc_gid=G4GC4-D14ASAxNqafSJtBg&_nc_ss=7a32e&oh=00_AfxbwwQNeCz4HB3IYDUoV_3vh6uRD5k8MlDFsEsKYvybgQ&oe=69EA0809" alt="Rasha Mohamed" class="hero-avatar" loading="lazy" decoding="async">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Positioning Section -->
+        <section id="positioning" class="section positioning-section">
+            <div class="section-divider"></div>
+            <div class="container">
+                <div class="section-grid">
+                    <div class="section-header reveal">
+                        <h2 class="title-md">بحوّل التسويق من أنشطة متفرقة لمنظومة أوضح، أهدى، وقابلة للقياس</h2>
+                        <div class="lead-text" style="margin-top: 2rem; line-height: 1.8;">
+                            أنا مش بشتغل بمنطق "نعمل كامبين ونشوف بعدين"<br>
+                            أنا ببص للتسويق كجزء من منظومة بيزنس أكبر<br>
+                            وببني تفاصيل واضحة، قابلة للتحليل، وقابلة للتطوير
+                        </div>
+                    </div>
+                    <div class="section-content reveal">
+                        <ul class="logic-list">
+                            <li><span>1</span> بدرس إزاي البيزنس ماشي</li>
+                            <li><span>2</span> بتابع الفريق شغال إزاي</li>
+                            <li><span>3</span> براقب العميل بيتحرك فين</li>
+                            <li><span>4</span> بشخّص مكان التعطيل الحقيقي</li>
+                            <li><span>5</span> وبكشف المجهود اللي بيبان نشيط لكن مش بيجيب نتيجة</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Why Rasha Section -->
+        <section id="why-rasha" class="section why-section">
+            <div class="section-divider"></div>
+            <div class="container">
+                <div class="section-intro reveal">
+                    <h2 class="title-md">ليه شغلي مختلف عن أي حد</h2>
+                </div>
+                <div class="shard-grid">
+                    <div class="shard-card shard-lg reveal" style="--accent: var(--accent-p);">
+                        <div class="shard-label">[01] STRATEGY</div>
+                        <div class="card-icon"><i class="ri-earth-line"></i></div>
+                        <h3>استراتيجية شايفة الأرض</h3>
+                        <p>تفكيري مش مجرد أفكار حلوة أو frameworks محفوظة.. تفكيري مربوط بواقع البيزنس فعلًا</p>
+                    </div>
+                    <div class="shard-card shard-md reveal" style="--accent: var(--accent-s);">
+                        <div class="shard-label">[02] CONTROL</div>
+                        <div class="card-icon"><i class="ri-command-line"></i></div>
+                        <h3>تنفيذ تحت السيطرة</h3>
+                        <p>أنا اللي بمسك الصورة الكاملة.. بتابع، بحلل، وبطوّر عشان نضمن إن الحملات بتوصل لنتائجها</p>
+                    </div>
+                    <div class="shard-card shard-sm reveal" style="--accent: var(--accent-t);">
+                        <div class="shard-label">[03] DATA</div>
+                        <div class="card-icon"><i class="ri-bar-chart-box-line"></i></div>
+                        <h3>أرقام ليها معنى</h3>
+                        <p>بالنسبة لي مش أي dashboard تبقى insight.. المهم نحول الـ performance لـ progress حقيقي</p>
+                    </div>
+                    <div class="shard-card shard-sm reveal" style="--accent: #10b981;">
+                        <div class="shard-label">[04] LEADERSHIP</div>
+                        <div class="card-icon"><i class="ri-team-line"></i></div>
+                        <h3>تفكير Team Lead حقيقي</h3>
+                        <p>بوحّد الجهود التسويقية مع الـ design والـ dev وباقي الأطراف لضمان تناغم المنظومة</p>
+                    </div>
+                    <div class="shard-card shard-sm reveal" style="--accent: #f59e0b;">
+                        <div class="shard-label">[05] SUSTAINABILITY</div>
+                        <div class="card-icon"><i class="ri-refresh-line"></i></div>
+                        <h3>نمو قابل للاستمرار</h3>
+                        <p>مش حلول مؤقتة.. ببني أساسات تخلي البيزنس يكبر بشكل مستدام ومستقر بعيد عن الارتجال</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- How I Work Section -->
+        <section id="how-i-work" class="section how-section">
+            <div class="section-divider"></div>
+            <div class="container">
+                <div class="section-header reveal">
+                    <h2 class="title-lg">أنا بشتغل إزاي؟</h2>
+                </div>
+                
+                <div class="matrix-grid">
+                    <div class="matrix-item reveal">
+                        <div class="matrix-bg-num">01</div>
+                        <div class="matrix-content">
+                            <h3>الوقت أهم من الـ Trend</h3>
+                            <p>ببني شغل بذكاء وهدوء عشان يعيش ويأثر أكتر من التريندات اللحظية</p>
+                        </div>
+                    </div>
+                    <div class="matrix-item reveal">
+                        <div class="matrix-bg-num">02</div>
+                        <div class="matrix-content">
+                            <h3>التسويق منظومة مش حملة</h3>
+                            <p>تدخلي بيبدأ من جودة المنتج وبينتهي بتجربة العميل النهائية</p>
+                        </div>
+                    </div>
+                    <div class="matrix-item reveal">
+                        <div class="matrix-bg-num">03</div>
+                        <div class="matrix-content">
+                            <h3>وضوح البيانات قبل حجمها</h3>
+                            <p>تركيزي دايمًا على استخراج قرار يفرق في أرقام البيزنس فعلًا</p>
+                        </div>
+                    </div>
+                    <div class="matrix-item reveal">
+                        <div class="matrix-bg-num">04</div>
+                        <div class="matrix-content">
+                            <h3>التنفيذ محتاج تنسيق</h3>
+                            <p>باهتم بأدق تفاصيل التنسيق (Coordination) عشان مجهود الفريق ما يضيعش</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Services Section -->
+        <section id="services" class="section services-section">
+            <div class="section-divider"></div>
+            <div class="container">
+                <div class="section-header reveal">
+                    <h2 class="title-lg">أقدر أساعد في إيه؟</h2>
+                </div>
+                <div class="services-grid">
+                    <div class="service-block reveal" style="border-left-color: var(--accent-primary);">
+                        <div class="service-meta">Strategy</div>
+                        <h3>Marketing Management & Strategy</h3>
+                        <p>ببني خطط تسويقية مبنية على أرقام واقعية وأهداف واضحة مش مجرد توقعات</p>
+                        <div class="service-info">بسلمك خارطة طريق تخلي البيزنس يتحرك لقدام بخطوات محسوبة وقابلة للنمو</div>
+                    </div>
+                    <div class="service-block reveal" style="border-left-color: var(--accent-secondary);">
+                        <div class="service-meta">Performance</div>
+                        <h3>Campaign Management & Performance Optimization</h3>
+                        <p>متابعتي أذكى، قراءتي أحسن للأداء، وبطوّر الـ conversion logic عبر القنوات المختلفة</p>
+                        <div class="service-info">بصلح الخلل التشغيلي اللي بيخلي التسويق مش شغال بالكفاءة المطلوبة</div>
+                    </div>
+                    <div class="service-block reveal" style="border-left-color: #f59e0b;">
+                        <div class="service-meta">Operations</div>
+                        <h3>Team Enablement & Marketing Operations</h3>
+                        <p>بنسّق الأدوار، بحسّن workflow الفريق، وببني rhythm تشغيلي أوضح للمنظومة</p>
+                        <div class="service-info">بحول العطلة والارتباك جوّه الفريق لتناغم وإنتاجية حقيقية</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- Signals Section Redesign -->
+        <section id="signals" class="section signals-section">
+            <div class="section-divider"></div>
+            <div class="container">
+                <div class="section-header reveal">
+                    <h2 class="title-lg">بفكر إزاي وانا بشتغل</h2>
+                </div>
+                <div class="hud-grid">
+                    <div class="hud-card reveal">
+                        <div class="hud-scanner"></div>
+                        <div class="hud-meta">[SYSTEM CHECK: OK]</div>
+                        <div class="s-tag">Logic</div>
+                        <h3>ببني هيكل يخدم الفريق ويشرّفهم</h3>
+                        <p>بحتم بإن يكون المخرج النهائي مريح وسهل في الاستخدام لكل الفريق المعني</p>
+                    </div>
+                    <div class="hud-card reveal">
+                        <div class="hud-scanner"></div>
+                        <div class="hud-meta">[MODE: OPS]</div>
+                        <div class="s-tag">Ops</div>
+                        <h3>بربط التمويل بالتشغيل</h3>
+                        <p>بفعّل نظام الكاش (Cashflow) من خلال توزيع وترتيب ومتابعة الطلبات بدقة</p>
+                    </div>
+                    <div class="hud-card reveal">
+                        <div class="hud-scanner"></div>
+                        <div class="hud-meta">[SCALE: ON]</div>
+                        <div class="s-tag">Scale</div>
+                        <h3>تأمين البيزنس مش مجرد أشخاص</h3>
+                        <p>قيمة أي بيزنس هي إن النظام مش هو الشخص، فبقلل الاعتمادية على الأفراد لحساب كفاءة السيستم</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 15-Axis Checklist Section -->
+        <section id="checklist" class="section checklist-section">
+            <div class="section-divider"></div>
+            <div class="container">
+                <div class="section-header reveal">
+                    <h2 class="title-lg">ادوات قياس بحبها</h2>
+                    <p class="description-md">الخارطة اللي بنقيس عليها جودة المنظومة التسويقية</p>
+                </div>
+                <div class="axis-grid">
+                    <div class="axis-item reveal"><span>01</span> وضوح الرؤية</div>
+                    <div class="axis-item reveal"><span>02</span> جودة المنتج</div>
+                    <div class="axis-item reveal"><span>03</span> فهم الجمهور</div>
+                    <div class="axis-item reveal"><span>04</span> تناسق القنوات</div>
+                    <div class="axis-item reveal"><span>05</span> كفاءة المحتوى</div>
+                    <div class="axis-item reveal"><span>06</span> سرعة التنفيذ</div>
+                    <div class="axis-item reveal"><span>07</span> دقة البيانات</div>
+                    <div class="axis-item reveal"><span>08</span> وضوح الأدوار</div>
+                    <div class="axis-item reveal"><span>09</span> قوة العروض</div>
+                    <div class="axis-item reveal"><span>10</span> تجربة المستخدم</div>
+                    <div class="axis-item reveal"><span>11</span> معدل التحويل</div>
+                    <div class="axis-item reveal"><span>12</span> تكلفة الاستحواذ</div>
+                    <div class="axis-item reveal"><span>13</span> القيمة الدائمة</div>
+                    <div class="axis-item reveal"><span>14</span> مرونة النظام</div>
+                    <div class="axis-item reveal"><span>15</span> الاستدامة</div>
+                </div>
+            </div>
+        </section>
+        <!-- Contact Section -->
+        <section id="contact" class="section contact-section">
+            <div class="container">
+                <div class="contact-frame reveal">
+                    <div class="contact-text">
+                        <h2 class="title-md">نبدأ كلام واضح؟</h2>
+                        <p>لو محتاج منظومة تسويق أوضح، تنظيم أحسن، ونظرة أهدى للأداء.. نقدر نتكلم</p>
+                        
+                        <div class="contact-methods">
+                            <a href="https://linkedin.com/in/rm-emarketing/" target="_blank" class="contact-link">
+                                <i class="ri-linkedin-fill"></i> LinkedIn
+                            </a>
+                            <a href="https://wa.me/201060340470" target="_blank" class="contact-link">
+                                <i class="ri-whatsapp-line"></i> WhatsApp
+                            </a>
+                        </div>
+                    </div>
+                    <div class="contact-footer">
+                        <span class="location"><i class="ri-map-pin-line"></i> New Cairo, Egypt</span>
+                        <span class="copyright">© 2026 Rasha Mohamed Built for Clarity</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+/* 
+   RASHA MOHAMED | ULTRA-MODERN 2026 MOTION ENGINE
+   Performance-First, High-Inertia Interactions
+*/
+
+const state = {
+    mouseX: 0,
+    mouseY: 0,
+    scrolled: 0,
+    nebulaX: 0,
+    nebulaY: 0,
+    lerpAmount: 0.1
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+    initMotion();
+    initHUD();
+    initChatbot();
+    handleLoader(); 
+});
+
+function initMotion() {
+    // Advanced Intersection Observer for Staggered Mask Reveals
+    const revealObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('active');
+                // Auto-stagger children if they have reveal class
+                const children = entry.target.querySelectorAll('.reveal');
+                children.forEach((child, i) => {
+                    setTimeout(() => child.classList.add('active'), i * 150);
+                });
+            }
+        });
+    }, { threshold: 0.15 });
+
+    document.querySelectorAll('section, .reveal').forEach(el => revealObserver.observe(el));
+
+    // Magnetic Buttons & Interaction Logic
+    const interactives = document.querySelectorAll('.btn-modern, .contact-link, .chat-send, .chatbot-trigger');
+    
+    window.addEventListener('mousemove', (e) => {
+        state.mouseX = e.clientX;
+        state.mouseY = e.clientY;
+        
+        // Background Parallax lerp target
+        state.nebulaX = (state.mouseX - window.innerWidth / 2) * 0.015;
+        state.nebulaY = (state.mouseY - window.innerHeight / 2) * 0.015;
+
+        // Card Lighting Refinement
+        document.querySelectorAll('.feature-card, .service-block').forEach(card => {
+            const rect = card.getBoundingClientRect();
+            if (state.mouseX > rect.left && state.mouseX < rect.right && state.mouseY > rect.top && state.mouseY < rect.bottom) {
+                const x = ((state.mouseX - rect.left) / rect.width) * 100;
+                const y = ((state.mouseY - rect.top) / rect.height) * 100;
+                card.style.setProperty('--mouse-x', `${x}%`);
+                card.style.setProperty('--mouse-y', `${y}%`);
+            }
+        });
+
+        // Magnetic Effect
+        interactives.forEach(btn => {
+            const rect = btn.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+            const dist = Math.hypot(state.mouseX - centerX, state.mouseY - centerY);
+            
+            if (dist < 100) {
+                const moveX = (state.mouseX - centerX) * 0.3;
+                const moveY = (state.mouseY - centerY) * 0.3;
+                btn.style.transform = `translate(${moveX}px, ${moveY}px)`;
+            } else {
+                btn.style.transform = `translate(0, 0)`;
+            }
+        });
+    }, { passive: true });
+
+    // Global Animation Loop for Speed
+    function tick() {
+        state.scrolled = window.scrollY;
+        
+        // Deep Multi-Layered Parallax
+        const nebula = document.getElementById('nebula');
+        if (nebula) {
+            nebula.style.transform = `translate(${state.nebulaX * 0.5}px, ${state.nebulaY * 0.5}px) rotate(${state.scrolled * 0.02}deg)`;
+        }
+
+        const nebula2 = document.getElementById('nebula-2');
+        if (nebula2) {
+            nebula2.style.transform = `translate(${state.nebulaX * -0.3}px, ${state.scrolled * 0.08}px)`;
+        }
+
+        // Mid-Ground Prisms (Faster Parallax)
+        const prism1 = document.getElementById('prism-1');
+        const prism2 = document.getElementById('prism-2');
+        if (prism1) prism1.style.transform = `translate(${state.nebulaX * 1.5}px, ${state.nebulaY * 1.5}px) rotate(${state.scrolled * 0.05}deg)`;
+        if (prism2) prism2.style.transform = `translate(${state.nebulaX * -1.2}px, ${state.nebulaY * -1.2}px) rotate(${-state.scrolled * 0.03}deg)`;
+
+        // Foreground Reactive Light
+        const mouseLight = document.getElementById('mouse-light');
+        if (mouseLight) {
+            mouseLight.style.left = `${state.mouseX}px`;
+            mouseLight.style.top = `${state.mouseY + state.scrolled}px`;
+        }
+
+        updateActiveSection();
+        
+        const scrollFill = document.getElementById('scroll-fill');
+        if (scrollFill) {
+            const progress = state.scrolled / (document.documentElement.scrollHeight - window.innerHeight) * 100;
+            scrollFill.style.height = `${progress}%`;
+        }
+
+        requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+}
+
+function initHUD() {
+    const canvas = document.getElementById('hud-canvas');
+    if (!canvas) return;
+
+    for (let i = 0; i < 40; i++) {
+        const p = document.createElement('div');
+        p.className = 'hud-particle';
+        p.style.left = `${Math.random() * 100}%`;
+        p.style.top = `${Math.random() * 100}%`;
+        p.style.opacity = Math.random() * 0.3;
+        canvas.appendChild(p);
+    }
+}
+
+function handleLoader() {
+    setTimeout(() => {
+        document.getElementById('boot-splash')?.classList.add('dismissed');
+        document.body.classList.remove('is-loading');
+    }, 1200);
+}
+
+function updateActiveSection() {
+    const sections = ['hero', 'positioning', 'why-rasha', 'how-i-work', 'services', 'signals', 'checklist', 'contact'];
+    sections.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+            const rect = el.getBoundingClientRect();
+            if (rect.top < window.innerHeight / 2 && rect.bottom > window.innerHeight / 2) {
+                document.body.setAttribute('data-active-section', id);
+            }
+        }
+    });
+}
+
+function initChatbot() {
+    const trigger = document.getElementById('chatbot-trigger');
+    const modal = document.getElementById('chatbot-modal');
+    const overlay = document.getElementById('chatbot-overlay');
+    const chatInput = document.getElementById('chat-input');
+    const chatLog = document.getElementById('chatLog'); // Updated ID to chatLog
+    const sendBtn = document.getElementById('chat-send-btn');
+
+    if (!trigger) return;
+
+    trigger.addEventListener('click', () => {
+        modal.classList.add('active');
+        overlay.classList.add('active');
+        chatInput?.focus();
+    });
+
+    // Close Handlers
+    const closeBtn = document.getElementById('chatbot-close'); // Desktop close button
+    const closeBtnMobile = document.getElementById('closeChatMobile'); // Mobile close button
+    
+    const closeHandler = () => {
+        modal.classList.remove('active');
+        overlay.classList.remove('active');
+        // Optional: Hide modal completely after transition for accessibility/performance
+        setTimeout(() => {
+            if (!modal.classList.contains('active')) { // Only hide if it's still not active
+                modal.style.display = 'none';
+            }
+        }, 600); // Match transition duration
+    };
+
+    closeBtn?.addEventListener('click', closeHandler);
+    closeBtnMobile?.addEventListener('click', closeHandler); // Wire mobile close button
+    overlay?.addEventListener('click', closeHandler);
+
+    let chatHistory = [];
+    const chatEndpoint = 'https://rasha.emarketbank.workers.dev/chat';
+
+    function addMessageToUI(content, isAI = false) {
+        const msgDiv = document.createElement('div');
+        msgDiv.className = isAI ? 'ai-message' : 'user-message';
+        msgDiv.innerHTML = `<p>${content}</p>`;
+        chatLog.appendChild(msgDiv);
+        chatLog.scrollTop = chatLog.scrollHeight;
+        return msgDiv;
+    }
+
+    async function handleSendMessage() {
+        const message = chatInput.value.trim();
+        if (!message) return;
+
+        chatInput.value = '';
+        chatInput.disabled = true;
+        sendBtn.disabled = true;
+
+        // Add User Message to UI & History
+        addMessageToUI(message, false);
+        chatHistory.push({ role: 'user', content: message });
+        if (chatHistory.length > 10) chatHistory.shift();
+
+        // Add "Thinking" Message
+        const thinkingMsg = addMessageToUI('جاري اتصالك بـ جنة...', true);
+
+        try {
+            const response = await fetch(chatEndpoint, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message, history: chatHistory })
+            });
+
+            const data = await response.json();
+            
+            if (data.ok) {
+                thinkingMsg.innerHTML = `<p>${data.reply}</p>`;
+                chatHistory.push({ role: 'assistant', content: data.reply });
+                if (chatHistory.length > 10) chatHistory.shift();
+            } else {
+                thinkingMsg.innerHTML = `<p>عذراً، حدث خطأ في التواصل مع جنة. يرجى المحاولة لاحقاً.</p>`;
+            }
+        } catch (error) {
+            console.error('Chat Error:', error);
+            thinkingMsg.innerHTML = `<p>عذراً، يبدو أن هناك مشكلة في الاتصال. راجع اتصالك بالإنترنت وحاول مرة أخرى.</p>`;
+        } finally {
+            chatInput.disabled = false;
+            sendBtn.disabled = false;
+            chatInput.focus();
+        }
+    }
+
+    sendBtn?.addEventListener('click', handleSendMessage);
+
+    chatInput?.addEventListener('keyup', (e) => {
+        if (e.key === 'Enter') handleSendMessage();
+    });
+}
+</script>
+</body>
+</html>

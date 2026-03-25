@@ -1,0 +1,1826 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>رشا محمد | Marketing Team Lead - Strategy & Execution</title>
+    <meta name="description" content="رشا محمد - Marketing Team Lead بتبني تسويق مفهوم مش مجرد شغل بيتحمل تحويل الفوضى التسويقية إلى منظومة أهدى وأذكى">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800&family=Unbounded:wght@400;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+
+    <style>
+/* 
+   RASHA MOHAMED | ULTRA-MODERN 2026 EXPERIMENTAL INTERFACE
+   CORE DESIGN SYSTEM
+*/
+
+:root {
+    /* Color Palette - Deep, Grounded, Premium */
+    --void-bg: #050508;
+    --nebula-purple: rgba(84, 51, 235, 0.4);
+    --nebula-blue: rgba(0, 198, 255, 0.3);
+    --accent-primary: #5433EB; /* Vibrant Purple */
+    --accent-secondary: #00C6FF; /* Cyber Blue */
+    --accent-soft: rgba(84, 51, 235, 0.1);
+    --text-main: #FFFFFF;
+    --text-dim: rgba(255, 255, 255, 0.6);
+    --glass-bg: rgba(255, 255, 255, 0.05); /* Slightly more opaque */
+    --glass-border: rgba(255, 255, 255, 0.12); /* Brighter borders */
+    --depth-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.6);
+
+    /* Typography */
+    --font-heading: 'Unbounded', 'Cairo', sans-serif;
+    --font-body: 'Plus+Jakarta+Sans', 'Cairo', sans-serif;
+    --font-ui: 'Outfit', sans-serif;
+
+    /* Transitions & Dynamics */
+    --ease-premium: cubic-bezier(0.16, 1, 0.3, 1);
+    --glow-primary: 0 0 20px rgba(84, 51, 235, 0.3);
+    --glow-secondary: 0 0 20px rgba(0, 198, 255, 0.3);
+}
+
+.text-gradient {
+    background: linear-gradient(135deg, #FFF 0%, var(--accent-secondary) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.text-glow {
+    text-shadow: 0 0 30px rgba(255, 255, 255, 0.2);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-font-smoothing: antialiased;
+}
+
+html {
+    scroll-behavior: smooth;
+    background: var(--void-bg);
+    color: var(--text-main);
+    overflow-x: hidden;
+}
+
+body {
+    font-family: var(--font-body);
+    line-height: 1.8; /* Better for Arabic */
+    overflow-x: hidden;
+    background: var(--void-bg);
+}
+
+/* --- Layout Systems --- */
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 4vw;
+}
+
+/* --- Background Systems --- */
+
+.void-layer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--void-bg);
+    z-index: -3;
+}
+
+.ambient-nebula {
+    position: fixed;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: 
+        radial-gradient(circle at 70% 30%, var(--accent-primary) 0%, transparent 60%),
+        radial-gradient(circle at 30% 70%, var(--accent-secondary) 0%, transparent 60%),
+        radial-gradient(circle at 80% 80%, rgba(255, 100, 0, 0.2) 0%, transparent 40%),
+        radial-gradient(circle at 20% 20%, rgba(0, 255, 255, 0.3) 0%, transparent 50%);
+    z-index: -2;
+    filter: blur(120px);
+    transition: background 2s ease, transform 0.1s linear;
+    opacity: 0.9;
+    mix-blend-mode: screen; /* Adds incredible depth */
+}
+
+.depth-layer {
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(circle at center, transparent 0%, var(--void-bg) 100%);
+    z-index: -1;
+    pointer-events: none;
+}
+
+.grid-layer {
+    position: fixed;
+    inset: 0;
+    background-image: 
+        linear-gradient(var(--glass-border) 1px, transparent 1px),
+        linear-gradient(90deg, var(--glass-border) 1px, transparent 1px);
+    background-size: 100px 100px;
+    opacity: 0.1;
+    pointer-events: none;
+    z-index: -1;
+    mask-image: radial-gradient(circle at center, black, transparent 80%);
+}
+
+.grain-layer {
+    position: fixed;
+    inset: 0;
+    background: url('https://grainy-gradients.vercel.app/noise.svg');
+    opacity: 0.2;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.viewport-vignette {
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(circle at center, transparent 20%, rgba(0,0,0,0.4) 100%);
+    pointer-events: none;
+    z-index: 5;
+}
+
+/* --- Navbar Removed --- */
+
+.hero-section {
+    min-height: 90vh;
+    display: flex;
+    align-items: center;
+    padding-top: 5vh; /* Less padding since header is gone */
+}
+
+.hero-layers {
+    display: grid;
+    grid-template-columns: 1fr 0.8fr;
+    gap: 6rem;
+    align-items: center;
+}
+
+.hero-eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    font-family: var(--font-ui);
+    font-size: 0.8rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--accent-secondary);
+    margin-bottom: 2.5rem;
+    font-weight: 600;
+}
+
+.eyebrow-line {
+    width: 30px;
+    height: 1px;
+    background: var(--accent-secondary);
+    opacity: 0.5;
+    box-shadow: 0 0 10px var(--accent-secondary);
+}
+
+.hero-title {
+    font-family: var(--font-heading);
+    font-size: clamp(2.5rem, 8vw, 5.5rem); /* Reduced from 4rem-8rem */
+    line-height: 0.95;
+    margin-bottom: 2rem;
+}
+
+.hero-title span {
+    display: block;
+}
+
+.sub-title {
+    font-size: clamp(1.2rem, 3.5vw, 1.8rem);
+    font-weight: 500;
+    color: var(--text-dim);
+    margin-top: 1rem;
+    line-height: 1.4;
+    max-width: 90%;
+    display: block;
+}
+
+.sub-title-2 {
+    font-size: clamp(1rem, 3vw, 1.5rem);
+    font-weight: 400;
+    color: rgba(255,255,255,0.35);
+    margin-top: 0.3rem;
+    line-height: 1.4;
+    display: block;
+    letter-spacing: 0.02em;
+}
+
+.hero-description {
+    font-size: 1.25rem;
+    color: var(--text-dim);
+    max-width: 600px;
+    margin-bottom: 3rem;
+    line-height: 1.8;
+}
+
+/* --- Visual Identity --- */
+.layer-visual {
+    position: relative;
+}
+
+.identity-orb {
+    width: 70%; /* Smaller as requested */
+    margin: 0 auto;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    overflow: hidden;
+    position: relative;
+    border: 1px solid var(--glass-border);
+    box-shadow: 0 30px 60px -10px rgba(0,0,0,0.5);
+    transition: all 0.8s var(--ease-premium);
+}
+
+.identity-orb::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(45deg, var(--accent-primary), transparent);
+    opacity: 0.2;
+    z-index: 1;
+}
+
+.hero-avatar {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: grayscale(100%) contrast(1.1);
+    transition: filter 0.8s var(--ease-premium), transform 0.8s var(--ease-premium);
+}
+
+.identity-orb:hover .hero-avatar {
+    filter: grayscale(0%) contrast(1);
+    transform: scale(1.05);
+}
+
+/* --- Buttons --- */
+.btn-modern {
+    padding: 1.2rem 3rem;
+    background: transparent;
+    border: 1px solid var(--glass-border);
+    color: var(--text-main);
+    font-family: var(--font-ui);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.4s var(--ease-premium);
+}
+
+.btn-modern:hover {
+    background: var(--text-main);
+    color: var(--void-bg);
+}
+
+/* --- Section Basics --- */
+.section {
+    padding: 8vh 0; /* Reduced from 15vh */
+    position: relative;
+}
+
+.section-divider {
+    position: absolute;
+    bottom: 0;
+    left: 10%;
+    right: 10%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--glass-border), transparent);
+    opacity: 0.5;
+}
+
+.title-lg {
+    font-family: var(--font-heading);
+    font-size: clamp(2rem, 5vw, 3.5rem); /* Reduced from 2.5-4.5rem */
+    line-height: 1.1;
+    margin-bottom: 2rem;
+}
+
+.title-md {
+    font-family: var(--font-heading);
+    font-size: clamp(1.8rem, 4vw, 2.5rem); /* Reduced from 2-3rem */
+    margin-bottom: 3rem;
+}
+
+.accent-text {
+    color: var(--accent-primary);
+}
+
+/* --- Positioning Section --- */
+.positioning-section .section-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6vw;
+}
+
+.lead-text {
+    font-size: 1.5rem;
+    color: var(--text-main);
+    margin-bottom: 3rem;
+    line-height: 1.6;
+}
+
+.logic-list {
+    list-style: none;
+}
+
+.logic-list li {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 1.5rem 0;
+    border-bottom: 1px solid var(--glass-border);
+    color: var(--text-dim);
+    font-size: 1.1rem;
+    transition: all 0.3s;
+}
+
+.logic-list li span {
+    font-family: var(--font-ui);
+    font-size: 0.8rem;
+    color: var(--accent-secondary);
+}
+
+.logic-list li:hover {
+    color: var(--text-main);
+}
+
+/* --- Feature Cards --- */
+.cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.2rem; /* Tighter gap */
+}
+
+.feature-card {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    padding: 2rem 2.5rem; /* Reduced from 3rem */
+    backdrop-filter: blur(25px);
+    transition: all 0.6s var(--ease-premium);
+    position: relative;
+    overflow: hidden;
+    border-radius: 1px;
+    box-shadow: 0 20px 50px -10px rgba(0,0,0,0.7);
+}
+
+.feature-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255,255,255,0.05) 0%, transparent 60%);
+    opacity: 0;
+    transition: opacity 0.5s;
+    pointer-events: none;
+}
+
+.feature-card:hover::after {
+    opacity: 1;
+}
+
+.feature-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 2px;
+    height: 0;
+    background: var(--accent-primary);
+    transition: height 0.5s var(--ease-premium);
+}
+
+.feature-card:hover {
+    transform: translateY(-10px);
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.feature-card:hover::before {
+    height: 100%;
+}
+
+.card-icon {
+    font-size: 2.5rem;
+    color: var(--accent-secondary);
+    margin-bottom: 2rem;
+}
+
+.feature-card h3 {
+    font-family: var(--font-heading);
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.feature-card p {
+    color: var(--text-dim);
+    font-size: 1rem;
+    line-height: 1.6;
+}
+
+/* Stagger reveals */
+.stagger-item:nth-child(1) { transition-delay: 0.1s; }
+.stagger-item:nth-child(2) { transition-delay: 0.2s; }
+.stagger-item:nth-child(3) { transition-delay: 0.3s; }
+.stagger-item:nth-child(4) { transition-delay: 0.4s; }
+
+/* --- How I Work --- */
+.how-section {
+    background: rgba(0,0,0,0.3);
+}
+
+.description-md {
+    font-size: 1.25rem;
+    color: var(--text-dim);
+    margin-top: -1rem;
+    margin-bottom: 4rem;
+}
+
+.principles-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+.nav-logo {
+    position: absolute;
+    top: 3.5rem;
+    left: 4rem;
+    z-index: 100;
+}
+
+.logo-container {
+    position: relative;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.logo-svg {
+    width: 100%;
+    height: 100%;
+    filter: drop-shadow(0 0 15px rgba(0, 198, 255, 0.3));
+}
+
+.logo-initials {
+    fill: #fff;
+    font-family: var(--font-heading);
+    font-size: 24px;
+    font-weight: 900;
+    letter-spacing: -1px;
+}
+
+.logo-status {
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    width: 4px;
+    height: 4px;
+    background: var(--accent-secondary);
+    border-radius: 50%;
+    box-shadow: 0 0 10px var(--accent-secondary);
+    animation: pulse-glow 2s infinite ease-in-out;
+}
+
+@keyframes pulse-glow {
+    0%, 100% { transform: scale(1); opacity: 0.5; }
+    50% { transform: scale(1.5); opacity: 1; }
+}
+.principle-item {
+    display: flex;
+    gap: 4rem;
+    padding: 4rem 0;
+    border-top: 1px solid var(--glass-border);
+    transition: all 0.5s var(--ease-premium);
+}
+
+.p-num {
+    font-family: var(--font-heading);
+    font-size: 4rem;
+    font-weight: 900;
+    line-height: 1;
+    color: transparent;
+    -webkit-text-stroke: 1px var(--glass-border);
+    transition: all 0.5s var(--ease-premium);
+}
+
+.principle-item:hover .p-num {
+    color: var(--accent-primary);
+    -webkit-text-stroke: 1px var(--accent-primary);
+    transform: translateX(-10px);
+}
+
+.p-content h3 {
+    font-family: var(--font-heading);
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+    color: var(--text-main);
+}
+
+.p-content p {
+    color: var(--text-dim);
+    font-size: 1.1rem;
+    max-width: 800px;
+    line-height: 1.7;
+}
+
+/* --- Services --- */
+.services-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 2rem;
+    margin-top: 3rem;
+}
+
+.service-block {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    padding: 3rem;
+    backdrop-filter: blur(20px);
+    transition: all 0.5s var(--ease-premium);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.service-block:hover {
+    transform: translateY(-5px);
+    border-color: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+}
+
+.service-meta {
+    font-family: var(--font-ui);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    color: var(--accent-secondary);
+    margin-bottom: 2rem;
+    text-align: left; /* Align English to left */
+    direction: ltr;
+}
+
+.service-block h3 {
+    font-family: var(--font-heading);
+    font-size: 1.5rem;
+    line-height: 1.3;
+    margin-bottom: 2rem;
+    min-height: 3.9rem;
+    text-align: left; /* Align English to left */
+    direction: ltr;
+}
+
+.service-block p {
+    color: var(--text-dim);
+    font-size: 1.1rem;
+    line-height: 1.7;
+    margin-bottom: 3rem;
+}
+
+.service-info {
+    font-size: 0.9rem;
+    color: #ffffff; /* Changed to white as requested */
+    font-style: italic;
+    border-left: 2px solid var(--accent-primary);
+    padding-left: 1rem;
+}
+
+[dir="rtl"] .service-info {
+    border-left: none;
+    border-right: 2px solid var(--accent-primary);
+    padding-left: 0;
+    padding-right: 1rem;
+}
+
+/* --- Proof Signals --- */
+.signals-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 3rem;
+    margin-top: 4rem;
+}
+
+.signal-item {
+    padding: 3rem;
+    background: linear-gradient(135deg, var(--glass-bg), transparent);
+    border: 1px solid var(--glass-border);
+    position: relative;
+    transition: all 0.5s var(--ease-premium);
+}
+
+.signal-item:hover {
+    border-color: var(--accent-primary);
+    transform: translateY(-5px);
+}
+
+.s-tag {
+    font-family: var(--font-ui);
+    font-size: 0.7rem;
+    color: var(--accent-secondary);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 1rem;
+    display: block;
+}
+
+.signal-item h3 {
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+    font-family: var(--font-heading);
+}
+
+.signal-item p {
+    color: var(--text-dim);
+    font-size: 1rem;
+    line-height: 1.6;
+}
+
+/* --- Contact Section --- */
+.contact-section {
+    padding-bottom: 10vh; /* Reduced from 20vh */
+}
+
+.contact-frame {
+    background: var(--accent-soft);
+    border: 1px solid var(--glass-border);
+    padding: 8vw;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.contact-methods {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    margin-top: 4rem;
+}
+
+.contact-link {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    color: var(--text-main);
+    text-decoration: none;
+    font-family: var(--font-ui);
+    font-size: 1.1rem;
+    padding: 1rem 2rem;
+    border: 1px solid var(--glass-border);
+    transition: all 0.3s;
+}
+
+.contact-link:hover {
+    background: var(--text-main);
+    color: var(--void-bg);
+}
+
+.contact-footer {
+    margin-top: 6rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: var(--text-dim);
+    font-size: 0.8rem;
+    border-top: 1px solid var(--glass-border);
+    padding-top: 2rem;
+}
+
+/* --- HUD & Motion --- */
+.hud-canvas {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 100;
+}
+
+.hud-particle {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    background: var(--accent-secondary);
+    border-radius: 50%;
+    opacity: 0.3;
+    filter: blur(1px); /* More atmospheric */
+    transition: transform 0.2s ease-out;
+}
+
+/* Reactive HUD Overlay */
+.hud-status {
+    position: fixed;
+    bottom: 4rem;
+    left: 4vw;
+    font-family: var(--font-ui);
+    z-index: 101;
+}
+
+.status-indicator {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    color: var(--text-dim);
+    font-size: 0.7rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    background: var(--accent-secondary);
+    border-radius: 50%;
+    box-shadow: 0 0 10px var(--accent-secondary);
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.5); opacity: 0.5; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+/* HUD Scanning Effect */
+.hud-scanline {
+    position: fixed;
+    top: -100px;
+    left: 0;
+    width: 100%;
+    height: 100px;
+    background: linear-gradient(to bottom, transparent, rgba(0, 198, 255, 0.05), transparent);
+    z-index: 1000;
+    pointer-events: none;
+    animation: scan 8s linear infinite;
+}
+
+@keyframes scan {
+    0% { transform: translateY(-100px); }
+    10% { transform: translateY(110vh); }
+    100% { transform: translateY(110vh); }
+}
+
+/* Section Specific HUD States */
+body[data-active-section="hero"] .ambient-nebula { --accent-primary: #5433EB; }
+body[data-active-section="how-i-work"] .ambient-nebula { --accent-primary: #00C6FF; }
+body[data-active-section="services"] .ambient-nebula { --accent-primary: #FF00E5; }
+
+/* Scroll Progress Matrix */
+.scroll-progress-container {
+    position: fixed;
+    right: 2rem;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 30vh;
+    width: 2px;
+    background: var(--glass-border);
+    z-index: 100;
+}
+
+.scroll-progress-fill {
+    width: 100%;
+    height: 0%;
+    background: var(--accent-secondary);
+    box-shadow: var(--glow-secondary);
+    transition: height 0.1s linear;
+}
+
+/* Terminal Boot Splash */
+.boot-splash {
+    position: fixed;
+    inset: 0;
+    background: #000;
+    z-index: 20000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-ui);
+    color: var(--accent-secondary);
+    transition: opacity 0.4s var(--ease-premium), visibility 0.4s;
+}
+
+.boot-text {
+    font-size: 0.8rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 2rem;
+}
+
+.boot-loader {
+    width: 200px;
+    height: 1px;
+    background: var(--glass-border);
+    position: relative;
+    overflow: hidden;
+}
+
+.boot-loader::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: var(--accent-secondary);
+    animation: boot-load 1.5s var(--ease-premium) forwards;
+}
+
+@keyframes boot-load {
+    0% { left: -100%; }
+    100% { left: 0%; }
+}
+
+/* Reveal System */
+.reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 1s var(--ease-premium);
+}
+
+.reveal.active {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Arabic Specific adjustments */
+[dir="rtl"] .hero-title {
+    letter-spacing: 0;
+}
+
+/* --- Responsive Design --- */
+@media (max-width: 1024px) {
+    .navbar { padding: 1rem 0; }
+    .hero-layers, .section-grid { grid-template-columns: 1fr; gap: 4rem; }
+    .hero-title { font-size: 3.5rem; }
+    .nav-links { display: none; }
+    .services-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 768px) {
+    .container { padding: 0 6vw; }
+    .principle-item { flex-direction: column; gap: 1rem; }
+    .p-num { font-size: 3rem; }
+    .contact-frame { padding: 10vw 6vw; }
+    .contact-methods { flex-direction: column; }
+}
+    /* --- AI Chatbot --- */
+    .chatbot-container {
+        position: fixed;
+        bottom: 3rem;
+        right: 3rem;
+        z-index: 10000;
+    }
+
+    .chatbot-trigger {
+        width: 65px;
+        height: 65px;
+        background: rgba(5, 5, 8, 0.8);
+        border: 2px solid var(--accent-secondary);
+        border-radius: 50%;
+        color: var(--accent-secondary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.4s var(--ease-premium);
+        backdrop-filter: blur(20px);
+        box-shadow: 0 0 30px rgba(0, 198, 255, 0.3), inset 0 0 15px rgba(0, 198, 255, 0.2);
+    }
+
+    .chatbot-trigger:hover {
+        transform: scale(1.1) rotate(15deg);
+        border-color: var(--accent-secondary);
+        box-shadow: 0 0 40px rgba(0, 198, 255, 0.4);
+    }
+
+    .ai-icon {
+        width: 32px;
+        height: 32px;
+    }
+
+    .chatbot-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.7);
+        backdrop-filter: blur(5px);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.4s ease;
+        z-index: 10001;
+    }
+
+    .chatbot-overlay.active {
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    .chatbot-modal {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -48%) scale(0.98);
+        width: 85vw;
+        max-width: 800px;
+        height: 75vh; /* Increased height */
+        max-height: 750px;
+        background: rgba(10, 10, 20, 0.9);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(40px) saturate(150%);
+        z-index: 10002;
+        opacity: 0;
+        pointer-events: none;
+        transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+        display: flex;
+        flex-direction: column;
+        border-radius: 16px;
+        box-shadow: 
+            0 40px 80px rgba(0,0,0,0.9),
+            0 0 100px rgba(0, 198, 255, 0.1);
+        overflow: hidden;
+    }
+
+    .chatbot-modal::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, var(--accent-secondary), transparent);
+        opacity: 0.5;
+    }
+
+    .chatbot-modal.active {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    .modal-header {
+        padding: 1.5rem 2.5rem;
+        background: rgba(255,255,255,0.02);
+        border-bottom: 1px solid rgba(255,255,255,0.08);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .header-identity {
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+    }
+
+    .identity-avatar {
+        position: relative;
+        width: 45px;
+        height: 45px;
+        background: rgba(84, 51, 235, 0.1);
+        border: 1px solid rgba(84, 51, 235, 0.3);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--accent-secondary);
+        font-size: 1.5rem;
+    }
+
+    .identity-avatar .status-dot-pulse {
+        position: absolute;
+        top: -2px;
+        right: -2px;
+        width: 8px;
+        height: 8px;
+    }
+
+    .identity-text {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+    }
+
+    .id-name {
+        font-family: var(--font-heading);
+        font-size: 1.1rem;
+        font-weight: 800;
+        color: #fff;
+        line-height: 1;
+    }
+
+    .id-role {
+        font-family: var(--font-ui);
+        font-size: 0.75rem;
+        color: var(--accent-secondary);
+        opacity: 0.8;
+        letter-spacing: 0.5px;
+    }
+
+    .header-controls {
+        display: flex;
+        align-items: center;
+        gap: 2.5rem;
+    }
+
+    .header-actions {
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+    }
+
+    .action-icon {
+        color: var(--text-dim);
+        font-size: 1.1rem;
+        transition: all 0.3s ease;
+        opacity: 0.6;
+    }
+
+    .action-icon:hover {
+        color: var(--accent-secondary);
+        opacity: 1;
+        transform: translateY(-2px);
+        filter: drop-shadow(0 0 8px var(--accent-secondary));
+    }
+
+    .modal-close-modern {
+        background: transparent;
+        border: none;
+        width: 32px;
+        height: 32px;
+        position: relative;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: transform 0.3s ease;
+    }
+
+    .modal-close-modern:hover {
+        transform: rotate(90deg);
+    }
+
+    .close-lines {
+        position: relative;
+        width: 20px;
+        height: 1px;
+        background: #fff;
+        transform: rotate(45deg);
+    }
+
+    .close-lines::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: #fff;
+        transform: rotate(-90deg);
+    }
+
+    .modal-close-modern:hover .close-lines,
+    .modal-close-modern:hover .close-lines::after {
+        background: var(--accent-primary);
+        box-shadow: 0 0 10px var(--accent-primary);
+    }
+
+    .system-badge {
+        font-family: var(--font-ui);
+        font-size: 0.6rem;
+        padding: 4px 10px;
+        background: rgba(255,255,255,0.05);
+        border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 4px;
+        color: var(--text-dim);
+        letter-spacing: 1px;
+    }
+
+    .modal-body {
+        flex: 1;
+        padding: 2.5rem;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        scrollbar-width: thin;
+        scrollbar-color: var(--accent-secondary) transparent;
+    }
+
+    .chat-log {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+        padding-bottom: 2rem;
+    }
+
+    .ai-message {
+        align-self: flex-end; /* Swapped: AI to left in RTL */
+        max-width: 85%;
+        text-align: right;
+    }
+
+    .user-message {
+        align-self: flex-start; /* Swapped: User to right in RTL */
+        max-width: 85%;
+        text-align: right;
+    }
+
+    .msg-tag {
+        font-family: var(--font-ui);
+        font-size: 0.7rem;
+        color: var(--accent-secondary);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 0.8rem;
+        display: block;
+    }
+
+    .ai-message p {
+        background: rgba(255,255,255,0.05);
+        padding: 1rem 1.5rem;
+        border-radius: 15px 0 15px 15px; /* Adjust bubble corner for left-side AI */
+        border: 1px solid rgba(255,255,255,0.08);
+        color: #fff;
+        line-height: 1.8;
+        font-size: 0.95rem; /* Smaller font */
+    }
+
+    .user-message p {
+        background: rgba(84, 51, 235, 0.2);
+        padding: 1rem 1.5rem;
+        border-radius: 0 15px 15px 15px; /* Adjust bubble corner for right-side User */
+        border: 1px solid rgba(84, 51, 235, 0.3);
+        color: #fff;
+        line-height: 1.8;
+        font-size: 0.95rem; /* Smaller font */
+    }
+
+    .chat-input-area {
+        margin-top: auto;
+        padding-top: 1.5rem;
+    }
+
+    .input-wrapper {
+        background: rgba(255,255,255,0.03);
+        border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 12px;
+        display: flex;
+        padding: 0.5rem;
+        transition: all 0.3s ease;
+    }
+
+    .input-wrapper:focus-within {
+        border-color: var(--accent-secondary);
+        box-shadow: 0 0 20px rgba(0, 198, 255, 0.15);
+        background: rgba(255,255,255,0.05);
+    }
+
+    .chat-input {
+        flex: 1;
+        background: transparent;
+        border: none;
+        color: #fff;
+        padding: 0.8rem 1.2rem;
+        font-family: var(--font-body);
+        font-size: 1rem;
+    }
+
+    .chat-send {
+        width: 45px;
+        height: 45px;
+        background: var(--accent-secondary);
+        border: none;
+        border-radius: 8px;
+        color: #000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+        transition: all 0.3s ease;
+        box-shadow: 0 5px 15px rgba(0, 198, 255, 0.3);
+    }
+
+    .chat-send:hover {
+        transform: scale(1.05) translateY(-2px);
+        filter: brightness(1.1);
+    }
+
+    .modal-footer {
+        padding: 1rem 2.5rem;
+        background: rgba(0,0,0,0.2);
+        border-top: 1px solid rgba(255,255,255,0.05);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .footer-status {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-family: var(--font-ui);
+        font-size: 0.65rem;
+        color: rgba(255,255,255,0.4);
+    }
+
+    .pulse-icon {
+        width: 4px;
+        height: 4px;
+        background: var(--accent-secondary);
+        border-radius: 50%;
+        animation: pulse 2s infinite;
+    }
+
+    .footer-meta {
+        font-family: var(--font-ui);
+        font-size: 0.6rem;
+        color: rgba(255,255,255,0.2);
+        letter-spacing: 2px;
+    }
+    </style>
+</head>
+<body class="is-loading">
+    <!-- Boot Splash -->
+    <div class="boot-splash" id="boot-splash">
+        <div class="boot-text">Initializing Rasha OS 2.6.0</div>
+        <div class="boot-loader"></div>
+    </div>
+
+    <!-- Premium Background System -->
+    <div class="void-layer"></div>
+    <div class="ambient-nebula" id="nebula"></div>
+    <div class="grid-layer" id="grid"></div>
+    <div class="grain-layer"></div>
+    <div class="viewport-vignette"></div>
+
+    <!-- Scroll Progress Matrix -->
+    <div class="scroll-progress-container">
+        <div class="scroll-progress-fill" id="scroll-fill"></div>
+    </div>
+
+    <!-- AI Chatbot Interface -->
+    <div class="chatbot-container">
+        <button class="chatbot-trigger" id="chatbot-trigger" aria-label="Open AI Assistant">
+            <svg class="ai-icon" viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="1.5" />
+                <path d="M8 12 Q12 8 16 12 Q12 16 8 12" fill="none" stroke="currentColor" stroke-width="1.5" />
+                <circle cx="12" cy="12" r="2" fill="currentColor">
+                    <animate attributeName="opacity" values="0.3;1;0.3" dur="2s" repeatCount="indefinite" />
+                </circle>
+            </svg>
+        </button>
+
+        <div class="chatbot-overlay" id="chatbot-overlay"></div>
+        
+        <div class="chatbot-modal" id="chatbot-modal" dir="rtl">
+            <div class="modal-header">
+                <div class="header-identity">
+                    <div class="identity-avatar">
+                        <span class="status-dot-pulse"></span>
+                        <i class="ri-user-smile-line"></i>
+                    </div>
+                    <div class="identity-text">
+                        <div class="id-name">رشا</div>
+                        <div class="id-role">شخصية رقمية ذكية للدعم الفني</div>
+                    </div>
+                </div>
+                <div class="header-controls">
+                    <div class="header-actions">
+                        <a href="#" class="action-icon" aria-label="LinkedIn"><i class="ri-linkedin-fill"></i></a>
+                        <a href="tel:+123456789" class="action-icon" aria-label="Phone"><i class="ri-phone-fill"></i></a>
+                        <a href="https://wa.me/123456789" target="_blank" class="action-icon" aria-label="WhatsApp"><i class="ri-whatsapp-line"></i></a>
+                    </div>
+                    <button class="modal-close-modern" id="chatbot-close">
+                        <span class="close-lines"></span>
+                    </button>
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="chat-log" id="chat-log">
+                    <div class="ai-message">
+                        <span class="msg-tag">نظام المعلومات:</span>
+                        <p class="typing-text">جاري تهيئة واجهة الذكاء الاصطناعي... النظام جاهز. كيف يمكنني مساعدتك في تطوير استراتيجية التسويق اليوم؟</p>
+                    </div>
+                </div>
+                <div class="chat-input-area">
+                    <div class="input-wrapper">
+                        <input type="text" placeholder="اكتب سؤالك هنا..." class="chat-input" id="chat-input">
+                        <button class="chat-send" id="chat-send-btn">
+                            <i class="ri-send-plane-2-fill"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="footer-status">
+                    <span class="pulse-icon"></span>
+                    متصل بقاعدة البيانات المركزية
+                </div>
+                <div class="footer-meta">
+                    SECURE_NODE_09
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- The "Developer Mind" HUD -->
+    <div id="hud-canvas" class="hud-canvas" aria-hidden="true">
+        <div class="hud-data-stream"></div>
+        <div class="hud-scanline"></div>
+    </div>
+
+
+    <header class="hidden-navbar">
+        <!-- Header entirely removed from flow -->
+    </header>
+
+    <main id="main-content">
+        <!-- Hero Section -->
+        <section id="hero" class="hero-section">
+            <div class="container">
+                <div class="nav-logo">
+                    <div class="logo-container">
+                        <svg class="logo-svg" viewBox="0 0 100 100">
+                            <defs>
+                                <linearGradient id="logo-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:var(--accent-primary);stop-opacity:1" />
+                                    <stop offset="100%" style="stop-color:var(--accent-secondary);stop-opacity:1" />
+                                </linearGradient>
+                            </defs>
+                            <circle cx="50" cy="50" r="48" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="0.5" />
+                            <path d="M30 35 L70 35 M30 65 L70 65" stroke="url(#logo-grad)" stroke-width="1.5" stroke-linecap="round" opacity="0.5" />
+                            <text x="50" y="58" text-anchor="middle" class="logo-initials">RM</text>
+                        </svg>
+                        <div class="logo-status"></div>
+                    </div>
+                </div>
+                <div class="hero-layers">
+                    <div class="layer-text reveal">
+                        <div class="hero-eyebrow">
+                            <span class="eyebrow-line"></span>
+                            Marketing Supervisor & Team Lead
+                        </div>
+                        <h1 class="hero-title" data-parallax="0.1">
+                            <span class="kinetic-text text-gradient">رشا محمد</span>
+                            <span class="sub-title text-glow">بتبني تسويق مفهوم</span>
+                            <span class="sub-title-2">مش مجرد شغل بيتعمل</span>
+                        </h1>
+                        <p class="hero-description">
+                            تحويل التسويق من أنشطة متفرقة إلى منظومة أوضح وأهدى وقابلة للقياس
+                        </p>
+                    </div>
+                    <div class="layer-visual reveal" data-parallax="-0.05">
+                        <div class="identity-orb">
+                            <img src="https://scontent-sof1-2.xx.fbcdn.net/v/t1.6435-9/116133755_100391521773348_2602178064805608899_n.jpg?_nc_cat=111&ccb=1-7&_nc_sid=1d70fc&_nc_ohc=v7FXh2cea3YQ7kNvwEPn_Na&_nc_oc=AdrD7Vkct4sxAX4cYq5CFDWayeSuKLY4TrXVQH0c6SbQyereR63BTbSQsIQPc2CLFzg&_nc_zt=23&_nc_ht=scontent-sof1-2.xx&_nc_gid=G4GC4-D14ASAxNqafSJtBg&_nc_ss=7a32e&oh=00_AfxbwwQNeCz4HB3IYDUoV_3vh6uRD5k8MlDFsEsKYvybgQ&oe=69EA0809" alt="Rasha Mohamed" class="hero-avatar">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Positioning Section -->
+        <section id="positioning" class="section positioning-section">
+            <div class="section-divider"></div>
+            <div class="container">
+                <div class="section-grid">
+                    <div class="section-header reveal">
+                        <h2 class="title-lg">مش تسويق شكله حلو</h2>
+                        <div class="lead-text" style="margin-top: 2rem; line-height: 1.8;">
+                            أنا مش بشتغل بمنطق "نعمل كامبين ونشوف بعدين"<br>
+                            أنا ببص على التسويق كجزء من منظومة شغل أكبر<br>
+                            وأتاكد من ان كل التفاصيل قابلة للقياس والتحليل
+                        </div>
+                    </div>
+                    <div class="section-content reveal">
+                        <ul class="logic-list">
+                            <li><span>1</span> البيزنس نفسه ماشي إزاي</li>
+                            <li><span>2</span> الفريق شغال إزاي</li>
+                            <li><span>3</span> العميل بيتحرك إزاي</li>
+                            <li><span>4</span> فين التعطيل</li>
+                            <li><span>5</span> وفين اللي باين نشيط لكنه مش بيجيب نتيجة فعلية</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Why Rasha Section -->
+        <section id="why-rasha" class="section why-section">
+            <div class="section-divider"></div>
+            <div class="container">
+                <div class="section-intro reveal">
+                    <h2 class="title-md">ليه شغلي مختلف عن أي حد</h2>
+                </div>
+                <div class="cards-grid">
+                    <div class="feature-card reveal stagger-item" style="border-left: 2px solid var(--accent-primary);">
+                        <div class="card-icon"><i class="ri-earth-line"></i></div>
+                        <h3>استراتيجية شايفة الأرض</h3>
+                        <p>مش مجرد أفكار حلوة أو frameworks محفوظة تفكير مربوط بواقع البيزنس فعلًا</p>
+                    </div>
+                    <div class="feature-card reveal stagger-item" style="border-left: 2px solid var(--accent-secondary);">
+                        <div class="card-icon"><i class="ri-command-line"></i></div>
+                        <h3>تنفيذ تحت السيطرة</h3>
+                        <p>مش فكرة إن الحملات شغالة وخلاص الفكرة هل في حد ماسك الصورة؟ بيتابع؟ بيفهم؟ بيعدّل؟</p>
+                    </div>
+                    <div class="feature-card reveal stagger-item" style="border-left: 2px solid rgba(255,180,50,0.6);">
+                        <div class="card-icon"><i class="ri-bar-chart-box-line"></i></div>
+                        <h3>أرقام ليها معنى</h3>
+                        <p>مش أي dashboard تبقى insight ومش أي performance يبقى progress</p>
+                    </div>
+                    <div class="feature-card reveal stagger-item" style="border-left: 2px solid rgba(0,255,150,0.5);">
+                        <div class="card-icon"><i class="ri-team-line"></i></div>
+                        <h3>تفكير Team Lead حقيقي</h3>
+                        <p>الشغل بينجح لما الـ marketing يتفهم مع الـ design والـ dev وباقي الأطراف — سطر واحد مش سطرين</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- How I Work Section -->
+        <section id="how-i-work" class="section how-section">
+            <div class="section-divider"></div>
+            <div class="container">
+                <div class="section-header reveal">
+                    <h2 class="title-lg">أنا بشتغل إزاي؟</h2>
+                    <p class="description-md">أنا باعتبر التسويق وظيفة داخل البيزنس مش جزيرة لوحدها</p>
+                </div>
+                
+                <div class="principles-stack">
+                    <div class="principle-item reveal">
+                        <div class="p-num">1</div>
+                        <div class="p-content">
+                            <h3>الوقت أهم من الـ Trend</h3>
+                            <p>أنا بؤمن إن الشغل اللي بيتعمل بذكاء وهدوء بيعيش أكتر من الكامبينز اللي بتعتمد على "الزحمة" والتريندات اللحظية</p>
+                        </div>
+                    </div>
+                    <div class="principle-item reveal">
+                        <div class="p-num">2</div>
+                        <div class="p-content">
+                            <h3>التسويق منظومة مش حملة</h3>
+                            <p>التسويق مش زرار بندوس عليه يطلّع مبيعات هو منظومة كاملة بتبدأ من جودة المنتج وتنتهي بخدمة ما بعد البيع</p>
+                        </div>
+                    </div>
+                    <div class="principle-item reveal">
+                        <div class="p-num">03</div>
+                        <div class="p-content">
+                            <h3>وضوح البيانات قبل حجمها</h3>
+                            <p>مش مهم نجمع داتا كتير المهم نعرف نطلع منها بقرار يفرق في أرقام البيزنس فعلًا</p>
+                        </div>
+                    </div>
+                    <div class="principle-item reveal">
+                        <div class="p-num">04</div>
+                        <div class="p-content">
+                            <h3>التنفيذ القوي محتاج تنسيق قوي</h3>
+                            <p>أصل كتير من مشاكل التسويق هو الـ coordination مين بيعمل إيه مين بيراجع أنا باهتم بالنقطة دي عشان الشغل ما يضيعش في سوء التنسيق</p>
+                        </div>
+                    </div>
+                    <div class="principle-item reveal">
+                        <div class="p-num">05</div>
+                        <div class="p-content">
+                            <h3>اللي مش متوثّق… صعب يكبر</h3>
+                            <p>لما الشغل يبقى قائم على الذاكرة أي تطور بيبقى هش الوضوح، التوثيق، وتوزيع الأدوار هما جزء أصيل من التسويق نفسه</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Services Section -->
+        <section id="services" class="section services-section">
+            <div class="section-divider"></div>
+            <div class="container">
+                <div class="section-header reveal">
+                    <h2 class="title-lg">أقدر أساعد في إيه؟</h2>
+                </div>
+                <div class="services-grid">
+                    <div class="service-block reveal" style="border-left-color: var(--accent-primary);">
+                        <div class="service-meta">Strategy</div>
+                        <h3>Marketing Management & Strategy</h3>
+                        <p>بناء خطط تسويقية مبنية على أرقام واقعية وأهداف واضحة مش مجرد توقعات</p>
+                        <div class="service-info">مفيدة لما البيزنس يحتاج يتحرك لقدام بخطوات محسوبة وقابلة للنمو</div>
+                    </div>
+                    <div class="service-block reveal" style="border-left-color: var(--accent-secondary);">
+                        <div class="service-meta">Performance</div>
+                        <h3>Campaign Management & Performance Optimization</h3>
+                        <p>متابعة أذكى، قراءة أحسن للأداء، وتحسين الـ conversion logic عبر القنوات المختلفة</p>
+                        <div class="service-info">مفيدة لما التسويق مش شغال بالكفاءة اللي المفروض يشتغل بيها</div>
+                    </div>
+                    <div class="service-block reveal" style="border-left-color: #f59e0b;">
+                        <div class="service-meta">Operations</div>
+                        <h3>Team Enablement & Marketing Operations</h3>
+                        <p>تنسيق الأدوار، تحسين workflow الفريق، وبناء rhythm تشغيلي أوضح للبيزنس</p>
+                        <div class="service-info">مفيدة لما العطلة الحقيقية تكون جوّه الفريق مش برّه</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- Proof / Signals Section -->
+        <section id="signals" class="section signals-section">
+            <div class="container">
+                <div class="section-grid">
+                    <div class="section-header reveal">
+                        <h2 class="title-lg">إشارات بتوضح <span class="accent-text">طريقة التفكير</span></h2>
+                        <p class="description-md">مش لازم الـ proof دايمًا يبقى case study متلمّع أوقات proof الحقيقي بيبان في طريقة الشخص بيشخّص بيها المشكلة</p>
+                    </div>
+                </div>
+                <div class="signals-list">
+                    <div class="signal-item reveal">
+                        <div class="s-header">
+                            <span class="s-tag">Logic</span>
+                            <h3>تشوف أصل المشكلة مش شكلها</h3>
+                        </div>
+                        <p>لما الأداء يضعف مش أول افتراض عندي إن الحل “نعمل إعلانات أكتر” أوقات السبب يكون lead handling ضعيف أو رسالة مش واضحة</p>
+                    </div>
+                    <div class="signal-item reveal">
+                        <div class="s-header">
+                            <span class="s-tag">Ops</span>
+                            <h3>ربط التسويق بالتشغيل</h3>
+                        </div>
+                        <p>أنا بشوف التسويق جزء من المنظومة نفسها الحملة لازم تكون راكبة على واقع حقيقي على طريقة شغل الفريق والبيزنس</p>
+                    </div>
+                    <div class="signal-item reveal">
+                        <div class="s-header">
+                            <span class="s-tag">Scale</span>
+                            <h3>بناء شغل يقدر الفريق يكمل عليه</h3>
+                        </div>
+                        <p>جزء مهم من القيمة هو إن التسويق يبقى أوضح للفريق أسهل في المتابعة وأقل اعتمادًا على الارتجال الفردي</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact" class="section contact-section">
+            <div class="container">
+                <div class="contact-frame reveal">
+                    <div class="contact-text">
+                        <h2 class="title-md">نبدأ من كلام واضح</h2>
+                        <p>لو محتاج تسويق أوضح تنظيم أحسن ونظرة أهدى للأداء ممكن نتكلم</p>
+                        
+                        <div class="contact-methods">
+                            <a href="https://linkedin.com/in/rm-emarketing/" target="_blank" class="contact-link">
+                                <i class="ri-linkedin-fill"></i> LinkedIn
+                            </a>
+                            <a href="https://wa.me/201060340470" target="_blank" class="contact-link">
+                                <i class="ri-whatsapp-line"></i> WhatsApp
+                            </a>
+                        </div>
+                    </div>
+                    <div class="contact-footer">
+                        <span class="location"><i class="ri-map-pin-line"></i> New Cairo, Egypt</span>
+                        <span class="copyright">© 2026 Rasha Mohamed Built for Clarity</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+/* 
+   RASHA MOHAMED | ULTRA-MODERN 2026 EXPERIMENTAL INTERFACE
+   CORE MOTION & INTERACTION ENGINE
+*/
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Start Engine
+    try {
+        initMotion();
+        initHUD();
+        initChatbot(); // CRITICAL FIX: Calling the chatbot
+    } catch (e) {
+        console.error("Initialization error:", e);
+    }
+    handleLoader(); 
+});
+
+function initMotion() {
+    // Intersection Observer for Reveal system
+    const observerOptions = {
+        threshold: 0.1
+    };
+
+    const revealObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('active');
+            }
+        });
+    }, observerOptions);
+
+    document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+    // Smooth scroll handling for nav
+    document.querySelectorAll('.nav-links a').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+            e.preventDefault();
+            const targetId = this.getAttribute('href');
+            document.querySelector(targetId).scrollIntoView({
+                behavior: 'smooth'
+            });
+        });
+    });
+}
+
+function initHUD() {
+    const canvas = document.getElementById('hud-canvas');
+    const stream = document.querySelector('.hud-data-stream');
+    let mouseX = 0, mouseY = 0;
+
+    let particles = [];
+    function initParticles() {
+        if (!canvas) return;
+        for (let i = 0; i < 60; i++) {
+            const p = document.createElement('div');
+            p.className = 'hud-particle';
+            const size = Math.random() * 3 + 1;
+            const x = Math.random() * 100;
+            const y = Math.random() * 100;
+            p.style.width = `${size}px`;
+            p.style.height = `${size}px`;
+            p.style.left = `${x}%`;
+            p.style.top = `${y}%`;
+            p.style.opacity = Math.random() * 0.4;
+            const speed = Math.random() * 0.02 + 0.005;
+            canvas.appendChild(p);
+            particles.push({ el: p, x, y, speed });
+        }
+    }
+    initParticles();
+
+    // UI Animation System - Optimized
+
+    const featureCards = document.querySelectorAll('.feature-card');
+    const magneticBtns = document.querySelectorAll('.btn-modern, .contact-link, .chat-send, .modal-close-modern, .action-icon');
+    const nebula = document.getElementById('nebula');
+    
+    window.addEventListener('mousemove', (e) => {
+        const mX = e.clientX;
+        const mY = e.clientY;
+        
+        // Feature Card Lighting - Direct update in mousemove
+        featureCards.forEach(card => {
+            const rect = card.getBoundingClientRect(); 
+            if (mX > rect.left && mX < rect.right && mY > rect.top && mY < rect.bottom) {
+                const x = ((mX - rect.left) / rect.width) * 100;
+                const y = ((mY - rect.top) / rect.height) * 100;
+                card.style.setProperty('--mouse-x', `${x}%`);
+                card.style.setProperty('--mouse-y', `${y}%`);
+            }
+        });
+
+        // Background subtle movement
+        if (nebula) {
+            nebula.style.transform = `translate(${(mX - window.innerWidth / 2) * 0.005}px, ${(mY - window.innerHeight / 2) * 0.005}px)`;
+        }
+    }, { passive: true });
+
+    // Simplest possible particle animation to save cycles
+    function animateParticles() {
+        particles.forEach(p => {
+            p.y -= p.speed;
+            if (p.y < -5) p.y = 105;
+            p.el.style.top = `${p.y}%`;
+        });
+        requestAnimationFrame(animateParticles);
+    }
+    animateParticles();
+}
+
+function handleLoader() {
+    // Dismiss boot splash
+    setTimeout(() => {
+        const splash = document.getElementById('boot-splash');
+        if (splash) splash.style.opacity = '0';
+        setTimeout(() => {
+            if (splash) splash.style.display = 'none';
+        }, 1000);
+    }, 1500);
+
+    // Remove is-loading class after short delay
+    setTimeout(() => {
+        document.body.classList.remove('is-loading');
+        // Trigger hero animation manually if needed
+        document.querySelectorAll('.hero-section .reveal').forEach(el => el.classList.add('active'));
+    }, 300);
+
+    window.addEventListener('scroll', () => {
+        const scrolled = window.scrollY;
+        
+        // Background Parallax
+        const nebula = document.getElementById('nebula');
+        if (nebula) {
+            nebula.style.transform = `translate(${scrolled * 0.05}px, ${scrolled * 0.03}px) rotate(${scrolled * 0.01}deg)`;
+        }
+
+        const grid = document.getElementById('grid');
+        if (grid) {
+            grid.style.transform = `translateY(${scrolled * 0.02}px)`;
+        }
+
+        // Element Parallax
+        document.querySelectorAll('[data-parallax]').forEach(el => {
+            const speed = parseFloat(el.getAttribute('data-parallax'));
+            el.style.transform = `translateY(${scrolled * speed}px)`;
+        });
+
+        // Scroll Progress
+        const scrollFill = document.getElementById('scroll-fill');
+        if (scrollFill) {
+            const h = document.documentElement, 
+                  b = document.body,
+                  st = 'scrollTop',
+                  sh = 'scrollHeight';
+            const percent = (h[st]||b[st]) / ((h[sh]||b[sh]) - h.clientHeight) * 100;
+            scrollFill.style.height = percent + '%';
+        }
+
+        // Section Tracking for HUD
+        updateActiveSection();
+    });
+}
+
+function updateActiveSection() {
+    const sections = ['hero', 'positioning', 'why-rasha', 'how-i-work', 'services', 'signals', 'contact'];
+    const statusText = document.getElementById('active-layer-name');
+    
+    sections.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+            const rect = el.getBoundingClientRect();
+            if (rect.top < window.innerHeight / 2 && rect.bottom > window.innerHeight / 2) {
+                document.body.setAttribute('data-active-section', id);
+                
+                // HUD element removed from DOM
+            }
+        }
+    });
+}
+
+// AI Chatbot Logic - Global Scope
+function initChatbot() {
+    const trigger = document.getElementById('chatbot-trigger');
+    const modal = document.getElementById('chatbot-modal');
+    const overlay = document.getElementById('chatbot-overlay');
+    const closeBtn = document.getElementById('chatbot-close');
+    const chatInput = document.getElementById('chat-input');
+    const chatLog = document.getElementById('chat-log');
+
+    const sendBtn = document.getElementById('chat-send-btn');
+
+    if (trigger && modal && overlay) {
+        trigger.addEventListener('click', () => {
+            modal.classList.add('active');
+            overlay.classList.add('active');
+            chatInput.focus();
+        });
+
+        const closeChat = () => {
+            modal.classList.remove('active');
+            overlay.classList.remove('active');
+        };
+
+        const sendMessage = () => {
+            if (chatInput.value.trim() === '') return;
+            const userMsg = chatInput.value;
+            chatInput.value = '';
+            
+            const userDiv = document.createElement('div');
+            userDiv.className = 'user-message';
+            userDiv.innerHTML = `<span class="msg-tag">المستخدم:</span><p>${userMsg}</p>`;
+            chatLog.appendChild(userDiv);
+            
+            chatLog.scrollTop = chatLog.scrollHeight;
+            
+            setTimeout(() => {
+                const aiDiv = document.createElement('div');
+                aiDiv.className = 'ai-message';
+                aiDiv.innerHTML = `<span class="msg-tag">RM-AI:</span><p>جاري معالجة الطلب... أنا حالياً في وضع العرض التقديمي. للتواصل المباشر وبدء مشروع جديد، يرجى استخدام قسم "تواصل معي" في أسفل الصفحة.</p>`;
+                chatLog.appendChild(aiDiv);
+                chatLog.scrollTop = chatLog.scrollHeight;
+            }, 800);
+        };
+
+        closeBtn.addEventListener('click', closeChat);
+        overlay.addEventListener('click', closeChat);
+        sendBtn.addEventListener('click', sendMessage);
+
+        chatInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendMessage();
+        });
+    }
+}
+</script>
+</body>
+</html>

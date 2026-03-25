@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Sara Abdallah helps startup founders and SME owners turn messy financials into clear, strategic business decisions.">
+    <meta property="og:title" content="SARA ABDALLAH | Strategic Finance Architect">
+    <meta property="og:description" content="Turn messy financials into confident business decisions.">
+    <meta property="og:type" content="website">
+    <title>SARA ABDALLAH | Strategic Finance Architect</title>
+    
+    <!-- Ultra-Premium Typography Stack -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;400;600;800&family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&family=Space+Grotesk:wght@300;500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg: #fafaf7; 
+            --surface: rgba(255, 255, 255, 0.9);
+            --text: #0d0e10;
+            --text-dim: #5c6370;
+            --accent: #2c3e50;
+            --accent-soft: rgba(44, 62, 80, 0.05);
+            --gold-muted: #b89c72;
+            --border: rgba(0, 0, 0, 0.06);
+            --font-main: 'Plus Jakarta Sans', sans-serif;
+            --font-heading: 'Fraunces', serif;
+            --font-mono: 'Space Grotesk', sans-serif;
+            --radius-xl: 4rem;
+            --radius-lg: 2.5rem;
+            --radius-md: 1.5rem;
+            --ease: cubic-bezier(0.16, 1, 0.3, 1);
+            --container: 1400px;
+        }
+
+        /* --- Reset & Base --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-font-smoothing: antialiased; scroll-behavior: smooth; }
+        body { background-color: var(--bg); color: var(--text); font-family: var(--font-main); line-height: 1.6; overflow-x: hidden; }
+
+        /* --- Background Layers --- */
+        .bg-layer { position: fixed; inset: 0; z-index: -1; pointer-events: none; }
+        .bg-mesh { position: absolute; width: 150%; height: 150%; top: -25%; left: -25%; background: radial-gradient(circle at 20% 30%, rgba(44, 62, 80, 0.05) 0%, transparent 40%), radial-gradient(circle at 80% 70%, rgba(184, 156, 114, 0.04) 0%, transparent 40%); filter: blur(100px); }
+        .bg-grid { position: absolute; inset: 0; background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px); background-size: 80px 80px; opacity: 0.3; }
+        .bg-guilloche { position: absolute; inset: 0; opacity: 0.02; background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 50 Q 25 0, 50 50 T 100 50' fill='none' stroke='%232c3e50' stroke-width='0.5'/%3E%3C/svg%3E"); }
+
+        /* --- Layout --- */
+        .section { padding: clamp(5rem, 10vh, 10rem) 5vw; max-width: var(--container); margin: 0 auto; position: relative; }
+        .reveal { opacity: 0; transform: translateY(20px); transition: opacity 1s var(--ease), transform 1s var(--ease); }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+
+        /* --- Logo --- */
+        .logo-absolute { position: absolute; top: 3.5rem; left: 5vw; z-index: 1000; font-family: var(--font-heading); font-weight: 900; font-size: 1.5rem; color: var(--accent); letter-spacing: -0.03em; text-decoration: none; transition: 0.3s var(--ease); }
+        .logo-absolute:hover { opacity: 0.7; }
+
+        /* --- Buttons --- */
+        .btn-group { display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 3.5rem; }
+        .btn { padding: 1.4rem 3.5rem; border-radius: 100px; font-weight: 800; text-decoration: none; transition: 0.5s var(--ease); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.12em; display: inline-flex; align-items: center; justify-content: center; outline: none; }
+        .btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
+        .btn-primary { background: var(--accent); color: white; box-shadow: 0 20px 50px rgba(44, 62, 80, 0.15); }
+        .btn-primary:hover { transform: translateY(-5px); box-shadow: 0 30px 60px rgba(44, 62, 80, 0.25); }
+        .btn-secondary { background: transparent; color: var(--accent); border: 1px solid var(--border); backdrop-filter: blur(10px); }
+        .btn-secondary:hover { background: white; transform: translateY(-5px); border-color: var(--accent); }
+
+        /* --- Hero --- */
+        .hero { min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 0 10vw; position: relative; }
+        .hero-content { max-width: 900px; position: relative; z-index: 10; }
+        .hero-eyebrow { font-family: var(--font-mono); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.4em; color: var(--gold-muted); margin-bottom: 2rem; font-weight: 700; display: block; }
+        .hero h1 { font-family: var(--font-heading); font-size: clamp(3rem, 9vw, 6rem); line-height: 1; margin-bottom: 2rem; font-weight: 900; letter-spacing: -0.04em; color: var(--accent); }
+        .hero h1 span { font-style: italic; font-weight: 400; color: var(--gold-muted); }
+        .hero p { max-width: 620px; font-size: 1.25rem; color: var(--text-dim); margin-bottom: 0; font-weight: 300; line-height: 1.6; margin-left: auto; margin-right: auto; }
+        .hero-trust { margin-top: 5rem; font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.15em; opacity: 0.5; font-weight: 500; }
+        
+        /* Scroll Indicator */
+        .scroll-hint { position: absolute; bottom: 2.5rem; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 0.8rem; color: var(--text-dim); opacity: 0.4; transition: 0.5s; cursor: pointer; }
+        .scroll-hint:hover { opacity: 1; color: var(--accent); }
+        .scroll-line { width: 1px; height: 50px; background: currentColor; transform-origin: top; animation: scaleY 2s infinite var(--ease); }
+        @keyframes scaleY { 0%, 100% { transform: scaleY(0.2); } 50% { transform: scaleY(1); } }
+
+        /* --- Credibility Strip --- */
+        .credibility-strip { background: white; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 2.5rem 0; overflow: hidden; }
+        .strip-inner { display: flex; justify-content: space-around; align-items: center; gap: 3rem; max-width: var(--container); margin: 0 auto; padding: 0 5vw; }
+        .stat-item { text-align: center; }
+        .stat-value { display: block; font-family: var(--font-heading); font-size: 2.2rem; font-weight: 800; color: var(--accent); margin-bottom: 0.3rem; }
+        .stat-label { font-family: var(--font-mono); font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-dim); font-weight: 600; }
+
+        /* --- Section Header --- */
+        .section-header { max-width: 850px; margin-bottom: 4rem; }
+        .section-header h2 { font-family: var(--font-heading); font-size: clamp(2.2rem, 5vw, 3.8rem); line-height: 1.1; margin-bottom: 1.5rem; font-weight: 800; color: var(--accent); }
+        .section-header p { font-size: 1.2rem; color: var(--text-dim); font-weight: 300; line-height: 1.7; margin-bottom: 1.2rem; }
+        .section-header p:last-child { margin-bottom: 0; }
+
+        /* --- Grid Layouts --- */
+        .card-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 2.5rem; }
+        .card { background: var(--surface); backdrop-filter: blur(20px); border-radius: var(--radius-lg); padding: 3.5rem; border: 1px solid var(--border); transition: 0.5s var(--ease); display: flex; flex-direction: column; height: 100%; }
+        .card:hover { transform: translateY(-10px); background: white; border-color: var(--accent); box-shadow: 0 30px 80px rgba(0,0,0,0.04); }
+        .card h3 { font-family: var(--font-heading); font-size: 1.8rem; margin-bottom: 1.2rem; font-weight: 800; color: var(--accent); line-height: 1.2; }
+        .card p { color: var(--text-dim); font-weight: 300; line-height: 1.7; }
+        .card-tag { font-family: var(--font-mono); color: var(--gold-muted); font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.25em; margin-bottom: 1.8rem; display: block; font-weight: 700; }
+
+        /* --- Featured Program (Enhanced) --- */
+        .program-card { background: white; border-radius: var(--radius-xl); overflow: hidden; display: grid; grid-template-columns: 1fr 1fr; border: 1px solid var(--border); transition: 0.6s var(--ease); }
+        .program-card:hover { transform: translateY(-10px); box-shadow: 0 50px 100px rgba(0,0,0,0.05); }
+        .program-content { padding: 5rem; display: flex; flex-direction: column; justify-content: center; }
+        .program-image { background: var(--accent-soft); overflow: hidden; position: relative; }
+        .program-image img { width: 100%; height: 100%; object-fit: cover; opacity: 0.8; transition: 1s var(--ease); }
+        .program-card:hover .program-image img { transform: scale(1.05); opacity: 1; }
+
+        /* --- Feature Points --- */
+        .feature-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2.5rem; margin-top: 3.5rem; }
+        .feature-item h4 { font-family: var(--font-heading); font-size: 1.3rem; margin-bottom: 0.8rem; color: var(--accent); font-weight: 800; }
+        .feature-item p { font-size: 0.9rem; color: var(--text-dim); line-height: 1.6; }
+
+        /* --- Ecosystem / Branding --- */
+        .ecosystem-wrap { background: var(--accent); color: white; border-radius: var(--radius-xl); padding: 5rem; margin: 2rem 0; position: relative; overflow: hidden; }
+        .ecosystem-wrap h2 { font-family: var(--font-heading); font-size: clamp(2rem, 5vw, 3.2rem); margin-bottom: 1.5rem; line-height: 1.1; }
+        .ecosystem-content { max-width: 650px; }
+        .ecosystem-content p { font-weight: 300; line-height: 1.7; opacity: 0.9; }
+        .ecosystem-brands { margin-top: 3rem; display: flex; gap: 2.5rem; align-items: center; flex-wrap: wrap; }
+        .brand-logo { font-family: var(--font-heading); font-size: 1.6rem; font-weight: 800; opacity: 0.8; font-style: italic; }
+
+        /* --- Manifesto (Portrait) --- */
+        .manifesto-grid { display: grid; grid-template-columns: 1fr 1.1fr; gap: 6vw; align-items: center; }
+        .portrait-container { position: relative; display: flex; align-items: center; justify-content: center; }
+        .portrait-frame { width: 100%; max-width: 420px; aspect-ratio: 1; border-radius: 50%; border: 12px solid white; box-shadow: 0 40px 80px rgba(0,0,0,0.06); overflow: hidden; position: relative; z-index: 2; }
+        .portrait-frame img { width: 100%; height: 100%; object-fit: cover; }
+        .portrait-halo { position: absolute; width: 110%; height: 110%; border: 1px dashed var(--accent); border-radius: 50%; opacity: 0.12; animation: rotate 40s linear infinite; }
+        @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+        /* --- Case Teasers --- */
+        .case-teaser-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; }
+        .teaser-card { background: white; padding: 2.5rem; border-radius: var(--radius-md); border: 1px solid var(--border); transition: 0.4s var(--ease); height: 100%; }
+        .teaser-card:hover { border-color: var(--accent); transform: translateY(-5px); box-shadow: 0 20px 50px rgba(0,0,0,0.03); }
+        .teaser-card h4 { font-family: var(--font-heading); font-size: 1.4rem; margin-bottom: 1.2rem; color: var(--accent); font-weight: 800; line-height: 1.3; }
+        .teaser-card p { font-size: 0.95rem; line-height: 1.6; color: var(--text-dim); }
+
+        /* --- Final CTA --- */
+        .final-cta { text-align: center; padding: 8rem 5vw; background: var(--bg); position: relative; }
+        .final-cta h2 { font-family: var(--font-heading); font-size: clamp(2.2rem, 6vw, 3.8rem); line-height: 1.1; margin-bottom: 3rem; max-width: 800px; margin-left: auto; margin-right: auto; color: var(--accent); font-weight: 900; }
+
+        /* --- Footer --- */
+        footer { padding: 4rem 5vw; border-top: 1px solid var(--border); display: flex; justify-content: center; align-items: center; font-family: var(--font-mono); font-size: 0.65rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.15em; font-weight: 600; text-align: center; }
+
+        /* --- AI Assistant Orb & Window (Ultra-Modern 2026) --- */
+        #assistant-orb { 
+            position: fixed; bottom: 3rem; right: 3rem; width: 70px; height: 70px; 
+            background: var(--accent); border-radius: 50%; display: flex; 
+            align-items: center; justify-content: center; color: white; 
+            cursor: pointer; z-index: 3000; box-shadow: 0 30px 60px rgba(0,0,0,0.2); 
+            transition: 0.6s var(--ease); border: 1px solid rgba(255,255,255,0.1);
+        }
+        #assistant-orb:hover { transform: scale(1.1) rotate(10deg); background: var(--text); }
+
+        .chat-overlay { 
+            position: fixed; inset: 0; background: rgba(13, 14, 16, 0.7); 
+            backdrop-filter: blur(25px) saturate(120%); z-index: 4000; 
+            display: none; opacity: 0; transition: 0.8s var(--ease); 
+        }
+        .chat-overlay.active { display: block; opacity: 1; }
+
+        .chat-window { 
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -45%) scale(0.9); 
+            width: 95%; max-width: 950px; height: 82vh; 
+            background: #fff; border-radius: 2.5rem; z-index: 4001; 
+            display: none; flex-direction: column; overflow: hidden; 
+            box-shadow: 0 100px 150px rgba(0,0,0,0.4); opacity: 0; 
+            transition: 0.8s var(--ease); border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .chat-window.active { display: flex; opacity: 1; transform: translate(-50%, -50%) scale(1); }
+
+        .chat-header { 
+            padding: 1.5rem 3.5rem; 
+            background: var(--accent); color: white;
+            display: flex; justify-content: space-between; align-items: center;
+            position: relative;
+        }
+        .chat-header::after { content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 1px; background: rgba(255,255,255,0.1); }
+        .status-pill { display: flex; align-items: center; gap: 1rem; }
+        .live-dot { width: 8px; height: 8px; background: #10b981; border-radius: 50%; box-shadow: 0 0 15px #10b981; animation: pulse 2s infinite; }
+        .chat-header h3 { font-family: var(--font-heading); font-size: 1.25rem; font-weight: 800; color: white; margin: 0; }
+        .chat-header span { font-family: var(--font-mono); font-size: 0.55rem; text-transform: uppercase; letter-spacing: 0.15em; color: rgba(255,255,255,0.6); }
+
+        .chat-body { 
+            flex: 1; padding: 3rem 4rem; overflow-y: auto; display: flex; 
+            flex-direction: column; gap: 1.2rem; background: #fafaf9;
+            background-image: radial-gradient(circle at 2px 2px, rgba(0,0,0,0.015) 1px, transparent 0);
+            background-size: 40px 40px;
+        }
+        .msg { padding: 1.1rem 1.8rem; border-radius: 1.8rem; font-size: 0.9rem; max-width: 70%; line-height: 1.6; }
+        .msg-ai { 
+            background: white; border: 1px solid rgba(0,0,0,0.04); 
+            align-self: flex-start; border-bottom-left-radius: 0.4rem; 
+            box-shadow: 0 8px 25px rgba(0,0,0,0.02); color: var(--text);
+        }
+        .msg-user { 
+            background: var(--accent); color: white; align-self: flex-end; 
+            border-bottom-right-radius: 0.4rem; box-shadow: 0 12px 35px rgba(44, 62, 80, 0.15); 
+        }
+
+        .chat-footer { 
+            padding: 2rem 4rem; background: white; border-top: 1px solid var(--border);
+            display: flex; flex-direction: column; gap: 1.2rem;
+        }
+        .chat-input { 
+            width: 100%; padding: 1.1rem 2.2rem; border-radius: 100px; 
+            border: 1px solid var(--border); outline: none; background: var(--bg); 
+            font-family: inherit; font-size: 0.9rem; transition: 0.4s var(--ease);
+        }
+        .chat-input:focus { border-color: var(--accent); background: white; box-shadow: 0 10px 30px rgba(0,0,0,0.04); }
+
+        .close-btn { 
+            width: 44px; height: 44px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.2); 
+            background: rgba(255,255,255,0.1); cursor: pointer; display: flex; align-items: center; 
+            justify-content: center; transition: 0.4s var(--ease); font-size: 1.1rem; color: white;
+        }
+        .close-btn:hover { background: white; color: var(--accent); transform: rotate(90deg); border-color: white; }
+
+        @media (max-width: 600px) {
+            .chat-window { width: 100%; height: 100%; border-radius: 0; }
+            .chat-header, .chat-body, .chat-footer { padding: 1.5rem; }
+        }
+
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
+
+        /* --- Responsive --- */
+        @media (max-width: 1024px) { 
+            .manifesto-grid, .card-grid, .case-teaser-grid { grid-template-columns: 1fr; }
+            .feature-grid { grid-template-columns: repeat(2, 1fr); }
+            .hero h1 { font-size: 4rem; }
+            .strip-inner { flex-wrap: wrap; gap: 2rem; }
+        }
+        @media (max-width: 600px) {
+            .feature-grid { grid-template-columns: 1fr; }
+            .btn-group { flex-direction: column; }
+            .btn { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-layer">
+        <div class="bg-mesh"></div>
+        <div class="bg-grid"></div>
+        <div class="bg-guilloche"></div>
+    </div>
+
+    <a href="#" class="logo-absolute">Sara Abdallah</a>
+
+    <main>
+        <!-- 1. HERO -->
+        <section class="hero">
+            <div class="hero-content reveal">
+                <span class="hero-eyebrow">Strategic Finance for Founders & SMEs</span>
+                <h1>Messy financials into <span>confident</span> <br> business decisions.</h1>
+                <p>We help founders master their numbers, gain absolute visibility, and lead growth without the finance jargon.</p>
+                <div class="btn-group" style="justify-content: center;">
+                    <a href="#contact" class="btn btn-primary">Book Consultation</a>
+                    <a href="portfolio.html" class="btn btn-secondary">View Portfolio</a>
+                </div>
+            </div>
+            
+            <div class="scroll-hint" onclick="document.querySelector('.credibility-strip').scrollIntoView()">
+                <div class="scroll-line"></div>
+            </div>
+        </section>
+
+        <!-- 2. CREDIBILITY STRIP -->
+        <div class="credibility-strip">
+            <div class="strip-inner">
+                <div class="stat-item">
+                    <span class="stat-value">1,286+</span>
+                    <span class="stat-label">Projects</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value">352+</span>
+                    <span class="stat-label">Clients</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Featured in</span>
+                    <span class="stat-value" style="font-size: 1.1rem; margin-top: 0.5rem;">Leading Media</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Founder of</span>
+                    <span class="stat-value" style="font-size: 1.1rem; margin-top: 0.5rem; font-style: italic;">Beyond Numbers</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. POSITIONING -->
+        <section class="section">
+            <div class="manifesto-grid">
+                <div class="portrait-container reveal">
+                    <div class="portrait-halo"></div>
+                    <div class="portrait-frame">
+                        <img src="https://scontent-sof1-2.xx.fbcdn.net/v/t39.30808-6/549922440_122228424950149587_2205881147970258596_n.jpg?stp=cp6_dst-jpg_tt6&_nc_cat=107&ccb=1-7&_nc_sid=53a332&_nc_ohc=8r6JrbN7uLcQ7kNvwH6NDC0&_nc_oc=AdrlfHJqoZlTKcNObVEdOU_9sc132bG8AUyv9DiJdvxYrEewmJtkn7VS5d6Y4sm3ES0&_nc_zt=23&_nc_ht=scontent-sof1-2.xx&_nc_gid=2pP8wrO4LpKCDOrB8VYfjQ&_nc_ss=7a32e&oh=00_Afw2A34PhjR_hAs-zVQMjf_UxDh-ci4kcHPk6dD7jSOLkA&oe=69C85774" alt="Sara Abdallah" loading="lazy" decoding="async">
+                    </div>
+                </div>
+                <div class="reveal">
+                    <header class="section-header" style="margin-bottom: 0;">
+                        <h2>Stop drowning in data. <br> <i>Start leading with clarity.</i></h2>
+                        <p>Most founders work hard but lack real visibility. The problem isn’t a lack of data—it’s numbers that are scattered and reactive.</p>
+                        <p>Sara turns financial complexity into practical clarity. Price better, plan smarter, and lead with absolute confidence.</p>
+                    </header>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. SERVICES -->
+        <section class="section" id="services">
+            <header class="section-header reveal">
+                <h2>Finance as a decision tool.</h2>
+                <p>Practical support to help you use numbers for growth, not just reporting.</p>
+            </header>
+            <div class="card-grid">
+                <div class="card reveal">
+                    <span class="card-tag">Advisory</span>
+                    <h3>Financial Advisory</h3>
+                    <p>Clarity on pricing, profitability, and growth decisions for bold founders.</p>
+                </div>
+                <div class="card reveal">
+                    <span class="card-tag">Leadership</span>
+                    <h3>Remote CFO</h3>
+                    <p>CFO-level strategy for growing SMEs without the full-time executive cost.</p>
+                </div>
+                <div class="card reveal">
+                    <span class="card-tag">Analysis</span>
+                    <h3>Feasibility & Planning</h3>
+                    <p>Structured financial work for expansion, restructuring, and strategic planning.</p>
+                </div>
+                <div class="card reveal">
+                    <span class="card-tag">Program</span>
+                    <h3>Business Salad Pro</h3>
+                    <p>From idea to valuation. A structured path for founders to master their financial model.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. WHY FOUNDERS WORK WITH SARA -->
+        <section class="section">
+            <header class="section-header reveal">
+                <h2>Finance for founders, <span style="font-size: 0.6em; font-weight: 400; opacity: 0.6; vertical-align: middle; margin-left: 0.5rem;">minus the noise.</span></h2>
+            </header>
+            <div class="feature-grid reveal">
+                <div class="feature-item">
+                    <h4>Clear & Direct</h4>
+                    <p>No jargon. We translate complexity into actionable speed.</p>
+                </div>
+                <div class="feature-item">
+                    <h4>Strategic Lens</h4>
+                    <p>It’s not about numbers—it’s about smarter business decisions.</p>
+                </div>
+                <div class="feature-item">
+                    <h4>Practical Only</h4>
+                    <p>Zero theory. Every metric is tied to your margins and planning.</p>
+                </div>
+                <div class="feature-item">
+                    <h4>Founder-Friendly</h4>
+                    <p>We speak your language, ensuring finance supports your vision.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 6. AUTHORITY / ECOSYSTEM -->
+        <section class="section">
+            <div class="ecosystem-wrap reveal">
+                <div class="ecosystem-content">
+                    <h2>Real expertise. <span style="font-size: 0.6em; font-weight: 400; opacity: 0.8; vertical-align: middle; margin-left: 0.5rem;">Real-world impact.</span></h2>
+                    <p>PhD-trained consulting meets a founder’s mindset. Sara Abdallah combines academic rigor with practical business application.</p>
+                    <div class="ecosystem-brands">
+                        <div class="brand-logo">Beyond Numbers</div>
+                        <div class="brand-logo">Numbers Unboxed</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 7. FEATURED PROGRAM -->
+        <section class="section">
+            <div class="program-card reveal">
+                <div class="program-content">
+                    <span class="card-tag">Flagship Program</span>
+                    <h2>Business Salad Pro</h2>
+                    <p>Master financial models, KPI thinking, and valuation. A structured, AI-supported journey designed for the modern founder.</p>
+                    <a href="https://dr-sara-abdallah.nzmly.com/l/WhkXQYmCrO" class="btn btn-secondary" style="margin-top: 2.5rem; width: fit-content;">Explore Program</a>
+                </div>
+                <div class="program-image">
+                    <img src="https://i.ibb.co/DPt6f5gJ/234234234234.jpg" alt="Business Salad Pro" loading="lazy" decoding="async">
+                </div>
+            </div>
+        </section>
+
+        <!-- 8. CASE TEASERS -->
+        <section class="section" id="portfolio">
+            <header class="section-header reveal">
+                <h2>Real impact. Real clarity.</h2>
+            </header>
+            <div class="case-teaser-grid">
+                <div class="teaser-card reveal">
+                    <h4>Unit Economics</h4>
+                    <p>Rebuilding pricing logic to recover lost margins and fix hidden cost leaks.</p>
+                </div>
+                <div class="teaser-card reveal">
+                    <h4>KPI Systems</h4>
+                    <p>Moving from messy reports to a strategic dashboard that actually guides decisions.</p>
+                </div>
+                <div class="teaser-card reveal">
+                    <h4>Investor Ready</h4>
+                    <p>Transforming broad assumptions into a grounded financial story ready for valuation.</p>
+                </div>
+            </div>
+            <div class="reveal" style="text-align: center; margin-top: 4rem;">
+                <a href="portfolio.html" class="btn btn-secondary">See the Portfolio</a>
+            </div>
+        </section>
+
+        <!-- 9. FINAL CTA -->
+        <section class="final-cta section" id="contact">
+            <div class="reveal">
+                <h2>Ready for absolute financial clarity?</h2>
+                <div class="btn-group" style="justify-content: center;">
+                    <a href="#" class="btn btn-primary">Book Consultation</a>
+                    <a href="https://wa.me/201000000000" class="btn btn-secondary" target="_blank" rel="noopener noreferrer">WhatsApp Sara</a>
+                    <a href="javascript:toggleChat()" class="btn btn-secondary">Ask Sara AI</a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        © 2026 Sara Abdallah • Strategic Finance Architect • Made with Clarity
+    </footer>
+
+    <!-- CHAT INTERFACE -->
+    <div id="assistant-orb" onclick="toggleChat()" aria-label="Open AI Assistant">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+    </div>
+
+    <div class="chat-overlay" id="chat-overlay" onclick="toggleChat()"></div>
+    
+    <div class="chat-window" id="chat-window">
+        <div class="chat-header">
+            <div class="status-pill">
+                <div class="live-dot"></div>
+                <div>
+                    <h3>Sara AI</h3>
+                </div>
+            </div>
+            <button class="close-btn" onclick="toggleChat()" aria-label="Close Chat">✕</button>
+        </div>
+        <div class="chat-body" id="chat-body">
+            <div class="msg msg-ai">Hello. I am Sara, your virtual consultant. How can I help you quantify your vision today?</div>
+        </div>
+        <div class="chat-footer">
+            <input type="text" class="chat-input" placeholder="Ask about growth, margins..." id="chat-input">
+        </div>
+    </div>
+
+    <script defer>
+        // Reveal on Scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+        // Chat Logic & Worker Integration
+        const API_URL = 'https://sara.emarketbank.workers.dev/api/chat';
+        let chatHistory = [];
+        let isWaiting = false;
+
+        function toggleChat() {
+            const win = document.getElementById('chat-window');
+            const over = document.getElementById('chat-overlay');
+            if (win.style.display === 'flex') {
+                win.classList.remove('active'); over.classList.remove('active');
+                setTimeout(() => { win.style.display = 'none'; over.style.display = 'none'; }, 600);
+            } else {
+                win.style.display = 'flex'; over.style.display = 'block';
+                setTimeout(() => { win.classList.add('active'); over.classList.add('active'); }, 10);
+            }
+        }
+
+        function addMessage(text, role) {
+            const body = document.getElementById('chat-body');
+            const div = document.createElement('div');
+            div.className = `msg msg-${role === 'assistant' ? 'ai' : 'user'}`;
+            div.innerText = text;
+            body.appendChild(div);
+            body.scrollTop = body.scrollHeight;
+            return div;
+        }
+
+        async function sendMessage() {
+            const input = document.getElementById('chat-input');
+            const text = input.value.trim();
+            if (!text || isWaiting) return;
+
+            isWaiting = true;
+            input.value = '';
+            input.disabled = true;
+            input.placeholder = "Sara is thinking...";
+
+            // 1. Add User Message
+            addMessage(text, 'user');
+
+            // 2. Show loading indicator
+            const loadingDiv = addMessage('...', 'assistant');
+            loadingDiv.style.opacity = '0.5';
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        message: text,
+                        history: chatHistory,
+                        meta: { locale: 'ar' }
+                    })
+                });
+
+                const data = await response.json();
+                loadingDiv.remove();
+
+                if (data.ok && data.reply) {
+                    // 3. Add AI Reply
+                    addMessage(data.reply, 'assistant');
+                    
+                    // 4. Update History (keep last 10 messages)
+                    chatHistory.push({ role: 'user', content: text });
+                    chatHistory.push({ role: 'assistant', content: data.reply });
+                    if (chatHistory.length > 10) chatHistory = chatHistory.slice(-10);
+                } else {
+                    addMessage("عذراً، واجهت مشكلة في معالجة طلبك. حاول مرة أخرى.", 'assistant');
+                }
+            } catch (err) {
+                if (loadingDiv) loadingDiv.remove();
+                addMessage("حدث خطأ في الاتصال. تأكد من اتصالك بالإنترنت.", 'assistant');
+                console.error("Chat Error:", err);
+            } finally {
+                isWaiting = false;
+                input.disabled = false;
+                input.placeholder = "Ask about growth, margins...";
+                input.focus();
+            }
+        }
+
+        const input = document.getElementById('chat-input');
+        input.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendMessage();
+        });
+
+        // Background Parallax
+        window.addEventListener('scroll', () => {
+            const y = window.pageYOffset;
+            const grid = document.querySelector('.bg-grid');
+            const mesh = document.querySelector('.bg-mesh');
+            if(grid) grid.style.transform = `translateY(${y * 0.1}px)`;
+            if(mesh) mesh.style.transform = `translateY(${y * 0.05}px) rotate(${y * 0.01}deg)`;
+        });
+    </script>
+</body>
+</html>

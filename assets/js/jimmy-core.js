@@ -46,7 +46,7 @@ const J_CORE = {
     },
     i18n: {
         en: { status: "Captain Jimmy", placeholder: "Ask me anything...", error: "Connection interrupted." },
-        ar: { status: "كابتن جيمي", placeholder: "اكتب سؤالك هنا...", error: "انقطع الاتصال." }
+        ar: { status: "Captain Jimmy", placeholder: "اكتب سؤالك هنا...", error: "انقطع الاتصال." }
     }
 };
 
@@ -178,10 +178,6 @@ class JimmyEngine {
                             <div class="j-avatar-sm">${avatarMedia}</div>
                             <div class="j-hud-data">
                                 <span id="j-title" class="j-title">${t.status}</span>
-                                <div class="j-meta-row">
-                                    <span id="j-ping" class="j-ping-tag">SIGNAL: STABLE</span>
-                                    <span class="j-ver-tag">v${J_CORE.config.version}</span>
-                                </div>
                             </div>
                             <div class="j-status-pulse"></div>
                         </div>
