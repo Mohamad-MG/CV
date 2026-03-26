@@ -157,7 +157,6 @@
                     left: '0', top: '0',
                     margin: '0',
                     opacity: '0',
-                    filter: `blur(${Math.max(0, (1 - zLayer) * 4).toFixed(1)}px)`,
                     transform: `translate3d(${p.x.toFixed(1)}px, ${p.y.toFixed(1)}px, 0) scale(${zLayer.toFixed(2)})`,
                     transition: 'opacity 3.5s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
                     willChange: 'transform'

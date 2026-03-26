@@ -251,7 +251,7 @@ class DataDecrypt {
                 clearInterval(scrambleInterval);
                 span.innerText = targetChar;
                 // Batch reset into one cssText write
-                span.style.cssText = 'display:inline;';
+                span.style.cssText = 'display:inline-block;';
             }
         }, 40);
     }
