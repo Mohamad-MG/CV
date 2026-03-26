@@ -240,11 +240,8 @@ class DataDecrypt {
         let frame = 0;
         const maxFrames = 12;
 
-        span.style.opacity = '1';
-        span.style.color = '#3B82F6';
-        span.style.fontFamily = 'monospace'; /* CRITICAL: Prevent Reflow during scramble */
-        span.style.display = 'inline-block';
-        // Removed fixed 1ch width to allow natural spacing
+        // Batch initial styles into a single cssText write (1 style recalc instead of 4)
+        span.style.cssText += ';opacity:1;color:#3B82F6;font-family:monospace;display:inline-block;';
 
         const scrambleInterval = setInterval(() => {
             frame++;
@@ -253,12 +250,8 @@ class DataDecrypt {
             } else {
                 clearInterval(scrambleInterval);
                 span.innerText = targetChar;
-                span.style.display = 'inline';
-                span.style.color = '';
-                span.style.fontFamily = '';
-                span.style.width = '';
-                span.style.minWidth = '';
-                span.style.webkitTextFillColor = '';
+                // Batch reset into one cssText write
+                span.style.cssText = 'display:inline;';
             }
         }, 40);
     }
@@ -398,7 +391,6 @@ const initMarqueeSystem = () => {
 
 // --- 4. SPATIAL DEPTH ENGINE (3D & Reflections) ---
 const initSpatialDepth = () => {
-    const profiler = getMotionProfiler();
     const glassPanels = Array.from(document.querySelectorAll('.identity-card, .stat-card, .exp-card, .industry-card, .future-card'));
     const bgVoid = document.querySelector('.bg-void-layer');
     const bgAmbient = document.querySelector('.bg-ambient-glow');
@@ -412,32 +404,22 @@ const initSpatialDepth = () => {
     };
     updatePanelRects();
 
-    const scheduleRectRefresh = rafThrottle(updatePanelRects);
-    window.addEventListener('resize', scheduleRectRefresh, { passive: true });
-    window.addEventListener('scroll', scheduleRectRefresh, { passive: true });
+    // Only refresh rects on resize — NOT on scroll (avoids forced reflow every frame)
+    window.addEventListener('resize', rafThrottle(updatePanelRects), { passive: true });
 
     const handlePointerMove = rafThrottle((e) => {
-        profiler?.bump('spatial.pointer.raf');
         const { clientX, clientY } = e;
-        const xPct = (clientX / window.innerWidth - 0.5) * 2; // -1 to 1
-        const yPct = (clientY / window.innerHeight - 0.5) * 2; // -1 to 1
+        const xPct = (clientX / window.innerWidth - 0.5) * 2;
+        const yPct = (clientY / window.innerHeight - 0.5) * 2;
 
-        // A) Deep Parallax
-        if (bgVoid) {
-            bgVoid.style.transform = `translate3d(${xPct * -15}px, ${yPct * -15}px, -100px) scale(1.1)`;
-        }
-        if (bgAmbient) {
-            bgAmbient.style.transform = `translate3d(${xPct * 30}px, ${yPct * 30}px, -50px)`;
-        }
+        if (bgVoid) bgVoid.style.transform = `translate3d(${xPct * -15}px, ${yPct * -15}px, -100px) scale(1.1)`;
+        if (bgAmbient) bgAmbient.style.transform = `translate3d(${xPct * 30}px, ${yPct * 30}px, -50px)`;
 
-        // B) Dynamic Glass Reflections
         glassPanels.forEach(panel => {
             const rect = panelRects.get(panel);
             if (!rect) return;
-
             const px = clientX - rect.left;
             const py = clientY - rect.top;
-
             const dist = Math.sqrt((px - rect.width / 2) ** 2 + (py - rect.height / 2) ** 2);
             if (dist < 600) {
                 panel.style.setProperty('--reflect-x', `${(px / rect.width) * 100}%`);
@@ -445,23 +427,9 @@ const initSpatialDepth = () => {
             }
         });
     });
-    // C) Mobile optimization: Remove mousemove listener entirely on touch/small devices
-    // Always enable parallax
-    window.addEventListener('mousemove', (e) => {
-        profiler?.bump('spatial.pointer.raw');
-        handlePointerMove(e);
-    }, { passive: true });
 
-    // C) Scroll-Linked Tilt for Identity (Removed for 2026 Stability)
-    /*
-    window.addEventListener('scroll', () => {
-        if (identityCard) {
-            const scrollPct = window.scrollY / window.innerHeight;
-            const rotation = scrollPct * 20; // Max 20deg tilt
-            identityCard.style.transform = `rotateY(${-10 - rotation}deg) rotateX(${5 + rotation/2}deg)`;
-        }
-    }, { passive: true });
-    */
+    // Single mousemove listener — no profiler bump overhead
+    window.addEventListener('mousemove', handlePointerMove, { passive: true });
 };
 
 // --- 4b. LIVE HUD DATA SYSTEM ---
@@ -519,32 +487,30 @@ class SmartPulseEngine {
 
     init() {
         this.paths.forEach((path, index) => {
-            // Sequential start to avoid simultaneous burst
             const initialDelay = index * 1000 + Math.random() * 2000;
             setTimeout(() => this.runCycle(path), initialDelay);
         });
     }
 
     runCycle(path) {
-        // 1. Clean up previous state
+        // Remove active class first, then use a CSS class toggle instead of
+        // forced reflow (void offsetWidth) to avoid synchronous layout reads
         path.classList.remove('is-pulsing');
-        path.style.animationDuration = '0s';
-        void path.offsetWidth; // Force hardware reflow
+        path.style.animationDuration = '';
 
-        // 2. Random Speed (6s to 10s for sophisticated but active look)
         const duration = (6 + Math.random() * 4).toFixed(2);
 
-        // 3. Re-apply and trigger
-        setTimeout(() => {
-            path.style.animationDuration = `${duration}s`;
-            path.classList.add('is-pulsing');
+        // Two-frame buffer: first frame removes class, second frame re-adds
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+                path.style.animationDuration = `${duration}s`;
+                path.classList.add('is-pulsing');
 
-            // 4. Schedule next run: Duration + Near-Zero Silence (0.1s to 0.6s)
-            const silence = 100 + Math.random() * 500;
-            const nextRunTime = (parseFloat(duration) * 1000) + silence;
-
-            setTimeout(() => this.runCycle(path), nextRunTime);
-        }, 50); // Small buffer to ensure class removal is registered
+                const silence = 100 + Math.random() * 500;
+                const nextRunTime = (parseFloat(duration) * 1000) + silence;
+                setTimeout(() => this.runCycle(path), nextRunTime);
+            });
+        });
     }
 }
 

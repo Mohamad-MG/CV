@@ -122,18 +122,24 @@ section {
 .exp-card,
 .industry-card,
 .ipad-mockup {
-  background: rgba(255, 255, 255, 0.01) !important;
-  /* Ghostly transparency */
-  backdrop-filter: blur(20px) saturate(120%);
-  -webkit-backdrop-filter: blur(20px) saturate(120%);
+  background: rgba(255, 255, 255, 0.02) !important;
   border: none !important;
-  /* REMOVED FRAMES */
   box-shadow: 0 40px 100px -20px rgba(0, 0, 0, 0.3);
-  /* Soft Ambient Shadow */
   border-radius: 32px;
-  /* Rounder, organic look */
   transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), background 0.5s ease;
   position: relative;
+}
+
+/* Backdrop blur only on capable desktop devices — skipped entirely on mobile/touch */
+@media (hover: hover) and (min-width: 769px) {
+  .identity-card,
+  .stat-card,
+  .exp-card,
+  .industry-card,
+  .ipad-mockup {
+    backdrop-filter: blur(20px) saturate(120%);
+    -webkit-backdrop-filter: blur(20px) saturate(120%);
+  }
 }
 
 /* Dynamic Reflection Overlay (Layer 2.5) - Adaptive Lighting */
@@ -346,11 +352,7 @@ section {
 }
 
 @media (max-width: 768px) {
-  .bg-ambient-glow {
-    filter: blur(40px);
-    opacity: 0.7;
-  }
-
+  /* Keep ambient background blur disabled — the correct fix is at line ~222 */
   .bg-glass-haze {
     opacity: 0.25;
   }

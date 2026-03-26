@@ -1,13 +1,11 @@
 /**
- * Nebula Physics Engine 2026 (Ultra-Modern Premium)
- * High-performance, depth-aware vertical motion with soft-body repulsion.
- * Built for maintainability and industrial stability.
+ * Nebula Physics Engine 2026 — Performance Edition
+ * GPU-composited vertical drift. Frame-capped, device-aware, repulsion-throttled.
  */
 (() => {
     'use strict';
 
     class NebulaPhysics {
-        /** @type {Object} Core System configuration */
         #config = {
             baseSpeed: 0.45,
             fallSpeed: 0.65,
@@ -20,7 +18,6 @@
             boundaryBuffer: 100
         };
 
-        /** @type {Array} Active particle storage */
         #particles = [];
         #signals = [];
         #container = null;
@@ -28,6 +25,8 @@
         #lastFrameTs = 0;
         #dims = { width: 0, height: 0 };
         #isLowPower = false;
+        #isTouchDevice = false;
+        #repulsionFrame = 0; // throttle counter
 
         constructor() {
             try {
@@ -36,47 +35,48 @@
                     this.#bootstrap();
                 }
             } catch (err) {
-                console.error('[NebulaPhysics] Initialization Aborted:', err);
+                console.error('[NebulaPhysics] Init Aborted:', err);
             }
         }
 
-        /** Detect environment and set performance profile */
         #initEnvironment() {
             this.#dims.width = window.innerWidth;
             this.#dims.height = window.innerHeight;
-            // FORCE HIGH PERFORMANCE - User Request
-            this.#isLowPower = false;
 
-            // if (this.#isLowPower) {
-            //     this.#config.baseSpeed *= 0.6;
-            //     this.#config.fallSpeed *= 0.6;
-            // }
+            // Real device detection — no longer hard-coded
+            const cores = Number(navigator.hardwareConcurrency || 0);
+            const mem = Number(navigator.deviceMemory || 0);
+            this.#isTouchDevice = window.matchMedia('(pointer: coarse)').matches;
+            this.#isLowPower =
+                this.#isTouchDevice ||
+                (cores > 0 && cores <= 4) ||
+                (mem > 0 && mem <= 4);
+
+            if (this.#isLowPower) {
+                // Low-power profile: slower + lighter
+                this.#config.baseSpeed *= 0.55;
+                this.#config.fallSpeed *= 0.55;
+                this.#config.repulsionForce *= 0.5;
+            }
         }
 
-        /** Validate and capture necessary DOM elements */
         #setupContainer() {
             this.#container = document.querySelector('.social-nebula');
             if (!this.#container) return false;
-
             const signals = this.#container.querySelectorAll('.signal');
             if (!signals.length) return false;
-
             this.#signals = Array.from(signals);
             return true;
         }
 
-        /** Initialize systemic event listeners and physics loops */
         #bootstrap() {
             this.#spawnParticles();
             this.#bindEvents();
-
-            // Start the motion logic
             this.#lastFrameTs = performance.now();
             requestAnimationFrame((ts) => this.#animate(ts));
         }
 
         #bindEvents() {
-            // Optimized Resize logic
             let resizeDebounce;
             window.addEventListener('resize', () => {
                 cancelAnimationFrame(resizeDebounce);
@@ -88,10 +88,13 @@
 
             document.addEventListener('visibilitychange', () => {
                 this.#isPaused = document.hidden;
+                if (!document.hidden) {
+                    // Reset timestamp on resume to prevent position jump
+                    this.#lastFrameTs = performance.now();
+                }
             });
         }
 
-        /** Helper to determine radius based on design tokens */
         #getSignalRadius(el) {
             const classes = el.classList;
             if (classes.contains('sig-lg')) return 28;
@@ -100,7 +103,6 @@
             return 18;
         }
 
-        /** Find an optimal X coordinate to prevent initial overcrowding */
         #getAvailableX(isFalling, exempt = null) {
             const lWidth = this.#config.laneWidth;
             const totalLanes = Math.floor(this.#dims.width / lWidth) || 1;
@@ -114,17 +116,25 @@
 
             const free = Array.from({ length: totalLanes }, (_, i) => i).filter(i => !occupied.has(i));
             const lane = free.length > 0 ? free[Math.floor(Math.random() * free.length)] : Math.floor(Math.random() * totalLanes);
-
             return (lane * lWidth) + (Math.random() * (lWidth * 0.4) + lWidth * 0.3);
         }
 
-        /** Create and prepare the particle pool */
         #spawnParticles() {
-            this.#signals.forEach((el, index) => {
+            // On very low-power touch devices, reduce to every other signal
+            const signalsToUse = this.#isTouchDevice
+                ? this.#signals.filter((_, i) => i % 2 === 0)
+                : this.#signals;
+
+            signalsToUse.forEach((el, index) => {
+                // Hide unused signals cleanly
+                if (this.#isTouchDevice && !signalsToUse.includes(el)) {
+                    el.style.opacity = '0';
+                    return;
+                }
+
                 const zLayer = 0.4 + Math.random() * 0.6;
                 const isFalling = Math.random() < this.#config.downFlowChance;
                 const bRadius = this.#getSignalRadius(el);
-
                 const speed = (isFalling ? this.#config.fallSpeed : this.#config.baseSpeed) * zLayer;
                 const vy = isFalling ? speed : -speed;
 
@@ -142,7 +152,6 @@
                     isFalling
                 };
 
-                // Apply initial hidden state and styles
                 Object.assign(el.style, {
                     position: 'absolute',
                     left: '0', top: '0',
@@ -156,46 +165,51 @@
 
                 this.#particles.push(p);
 
-                // Entrance animation
+                const stagger = this.#isLowPower ? 220 : 280;
                 setTimeout(() => {
                     p.active = true;
                     el.style.opacity = (p.z * 0.22).toFixed(2);
-                }, 400 + (index * (this.#isLowPower ? 180 : 280)));
+                }, 400 + (index * stagger));
             });
         }
 
-        /** Main Animation Loop */
         #animate(ts) {
             if (this.#isPaused) {
                 requestAnimationFrame((t) => this.#animate(t));
                 return;
             }
 
+            // Frame-time governor: cap deltaTime to prevent position jumps after tab switch
+            const rawDelta = ts - this.#lastFrameTs;
+            const deltaTime = Math.min(rawDelta, 50) / 16.67; // normalized to 60fps=1.0
             this.#lastFrameTs = ts;
 
-            // 1. Kinetic Pass
-            this.#processKineticPass();
+            this.#processKineticPass(deltaTime);
 
-            // 2. Physics Pass (repulsion)
-            this.#resolveRepulsions();
+            // Repulsion throttle: run every 3rd frame on desktop, skip on touch
+            if (!this.#isTouchDevice) {
+                this.#repulsionFrame++;
+                if (this.#repulsionFrame >= 3) {
+                    this.#repulsionFrame = 0;
+                    this.#resolveRepulsions();
+                }
+            }
 
-            // 3. Render Pass
             this.#updateDOM();
 
             requestAnimationFrame((t) => this.#animate(t));
         }
 
-        #processKineticPass() {
+        #processKineticPass(deltaTime = 1) {
             const drag = this.#config.drag;
             const recovery = this.#config.recovery;
 
             this.#particles.forEach(p => {
                 if (!p.active) return;
 
-                p.x += p.vx;
-                p.y += p.vy;
+                p.x += p.vx * deltaTime;
+                p.y += p.vy * deltaTime;
 
-                // Inertia & Vertical recovery
                 p.vx *= drag;
                 p.vy = p.vy * (1 - recovery) + p.baseVy * recovery;
 
@@ -224,7 +238,6 @@
                         const distance = Math.sqrt(distSq) || 0.1;
                         const angle = Math.atan2(dy, dx);
                         const push = (minDist - distance) * rForce;
-
                         const fx = Math.cos(angle) * push;
                         const fy = Math.sin(angle) * push;
 
@@ -262,18 +275,14 @@
                 }
             }
 
-            // Horizontal wrap (soft)
             if (p.x < -buffer) p.x = w + buffer;
             if (p.x > w + buffer) p.x = -buffer;
         }
     }
 
-    // Initialize after a stabilization delay to ensure layout is ready
     window.addEventListener('load', () => {
         setTimeout(() => {
-            try {
-                new NebulaPhysics();
-            } catch (e) { }
+            try { new NebulaPhysics(); } catch (e) { }
         }, 150);
     });
 })();
